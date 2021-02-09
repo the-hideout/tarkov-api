@@ -22,7 +22,7 @@ async function graphqlHandler(request, graphQLOptions) {
 
     const result = await graphql(schema, requestBody.query, resolvers);
     const body = JSON.stringify(result);
-    console.log(body);
+    // console.log(body);
 
     return new Response(body, {
         headers: {
