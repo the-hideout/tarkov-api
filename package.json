@@ -1,0 +1,19 @@
+{
+    "name": "tarkov-data-api",
+    "version": "1.0.0",
+    "description": "package for creating workers templates",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "prettier --write '**/*.{js,css,json,md}'"
+    },
+    "author": "Oskar Risberg <oskar.risberg@stendahls.se>",
+    "license": "ISC",
+    "devDependencies": {
+        "prettier": "^2.2.1"
+    },
+    "dependencies": {
+        "graphql": "^15.4.0",
+        "serverless-cloudflare-workers": "^1.2.0"
+    }
+}
