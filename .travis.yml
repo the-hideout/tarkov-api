@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - 14
+
+jobs:
+  include:
+    - name: Deploy worker
+      deploy:
+        provider: script
+        script: npx @cloudflare/wrangler publish
+        skip_cleanup: true
+        edge: true
