@@ -4,7 +4,7 @@
     "description": "package for creating workers templates",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "echo \"Error: no test specified\"",
         "format": "prettier --write '**/*.{js,css,json,md}'"
     },
     "author": "Oskar Risberg <oskar.risberg@stendahls.se>",
