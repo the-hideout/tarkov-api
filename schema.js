@@ -9,8 +9,8 @@ module.exports = `
 
   type Item {
     id: ID!
-    name: String!
-    shortName: String!
+    name: String
+    shortName: String
     basePrice: Int!
     updated: String!
     slots: Int!
@@ -23,7 +23,19 @@ module.exports = `
     avg24hPrice: Int
   }
 
+  type TaskItem {
+      item: Item!
+      count: Int!
+  }
+
+  type Barter {
+      source: String!
+      requiredItems: [TaskItem]!
+      rewardItems: [TaskItem]!
+  }
+
   type Query {
     item(id: ID!): Item
+    barters: [Barter]
   }
 `;
