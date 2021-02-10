@@ -61,6 +61,12 @@ class ItemsAPI {
         item.avg24hPrice = item.avg24Price;
     }
 
+    item.iconLink = item.icon_link;
+    item.imageLink = item.image_link;
+    item.basePrice = item.base_price;
+    item.shortName = item.shortname;
+    item.wikiLink = item.wiki_link;
+
     return item;
   }
 }
