@@ -57,7 +57,7 @@ class ItemsAPI {
     //     }
     // });
 
-    if(!item.avg24hPrice && item.avg24Price){
+    if(typeof item.avg24hPrice === 'undefined' && item.avg24Price){
         item.avg24hPrice = item.avg24Price;
     }
 
