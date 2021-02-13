@@ -67,6 +67,20 @@ class ItemsAPI {
     item.shortName = item.shortname;
     item.wikiLink = item.wiki_link;
 
+    if(item.properties){
+        if(item.properties.Accuracy){
+            item.accuracyModifier = item.properties.Accuracy;
+        }
+
+        if(item.properties.Recoil){
+            item.recoilModifier = item.properties.Recoil;
+        }
+
+        if(item.properties.Ergonomics){
+            item.ergonomicsModifier = item.properties.Ergonomics;
+        }
+    }
+
     return item;
   }
 }

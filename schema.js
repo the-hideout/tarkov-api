@@ -21,6 +21,9 @@ module.exports = `
     imageLink: String
     types: [String]!
     avg24hPrice: Int
+    accuracyModifier: Int
+    recoilModifier: Int
+    ergonomicsModifier: Int
   }
 
   type TaskItem {
