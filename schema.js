@@ -37,8 +37,16 @@ module.exports = `
       rewardItems: [TaskItem]!
   }
 
+  type Craft {
+    source: String!
+    time: String!
+    requiredItems: [TaskItem]!
+    rewardItems: [TaskItem]!
+}
+
   type Query {
     item(id: ID!): Item
     barters: [Barter]
+    crafts: [Craft]
   }
 `;
