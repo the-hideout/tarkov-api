@@ -28,7 +28,7 @@ module.exports = `
 
   type TaskItem {
       item: Item!
-      count: Int!
+      count: Float!
   }
 
   type Barter {
