@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const {
     graphql,
     buildSchema,
@@ -20,8 +22,22 @@ addEventListener('fetch', event => {
 async function graphqlHandler(request, graphQLOptions) {
     const requestBody = await request.json();
 
+    const queryHash = crypto.createHash('md5').update(requestBody.query).digest('hex');
+
+    const cachedResponse = await QUERY_CACHE.get(queryHash, 'json');
+
+    if(cachedResponse){
+        return new Response(JSON.stringify(cachedResponse), {
+            headers: {
+                'content-type': 'application/json',
+            },
+        });
+    }
+
     const result = await graphql(schema, requestBody.query, resolvers);
     const body = JSON.stringify(result);
+
+    await QUERY_CACHE.put(queryHash, body, {expirationTtl: 600});
 
     return new Response(body, {
         headers: {
