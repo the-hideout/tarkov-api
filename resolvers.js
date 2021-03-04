@@ -1,9 +1,17 @@
 const ItemsAPI = require('./datasources/items');
 const itemsAPI = new ItemsAPI();
+
 const BartersAPI = require('./datasources/barters');
 const bartersAPI = new BartersAPI();
+
 const CraftsAPI = require('./datasources/crafts');
 const craftsAPI = new CraftsAPI();
+
+const QuestsAPI = require('./datasources/quests');
+const questsAPI = new QuestsAPI();
+
+const TradersAPI = require('./datasources/traders');
+const tradersAPI = new TradersAPI();
 
 module.exports = {
     item: async (args) => {
@@ -16,5 +24,13 @@ module.exports = {
 
     crafts: async () => {
         return await craftsAPI.getList();
+    },
+
+    quests: async () => {
+        return await questsAPI.getList()
+    },
+
+    traders: async (args) => {
+        return await tradersApi.get(args.id);
     },
 };

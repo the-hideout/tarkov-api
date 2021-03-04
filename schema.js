@@ -1,10 +1,10 @@
 module.exports = `
   type GameProperty {
-      key: String!
-      numericValue: Float
-      stringValue: String
-      arrayValue: [String]
-      objectValue: String
+    key: String!
+    numericValue: Float
+    stringValue: String
+    arrayValue: [String]
+    objectValue: String
   }
 
   type Item {
@@ -27,14 +27,20 @@ module.exports = `
   }
 
   type TaskItem {
-      item: Item!
-      count: Float!
+    item: Item!
+    count: Float!
+  }
+
+  type QuestItem {
+    item: Item!
+    count: Float!
+    foundInRaid: Boolean!
   }
 
   type Barter {
-      source: String!
-      requiredItems: [TaskItem]!
-      rewardItems: [TaskItem]!
+    source: String!
+    requiredItems: [TaskItem]!
+    rewardItems: [TaskItem]!
   }
 
   type Craft {
@@ -42,11 +48,23 @@ module.exports = `
     time: String!
     requiredItems: [TaskItem]!
     rewardItems: [TaskItem]!
-}
+  }
+
+  type Trader {
+    id: String!
+    name: String!
+  }
+
+  type Quest {
+    id: String!
+    trader: Trader!
+    items: [QuestItem]
+  }
 
   type Query {
     item(id: ID!): Item
     barters: [Barter]
     crafts: [Craft]
+    quests: [Quest]
   }
 `;
