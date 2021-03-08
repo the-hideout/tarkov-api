@@ -14,6 +14,10 @@ const TradersAPI = require('./datasources/traders');
 const tradersAPI = new TradersAPI();
 
 module.exports = {
+    itemInit: async () => {
+        return await itemsAPI.init();
+    },
+
     item: async (args) => {
         return await itemsAPI.getItem(args.id);
     },

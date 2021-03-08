@@ -34,6 +34,8 @@ async function graphqlHandler(request, graphQLOptions) {
         });
     }
 
+    await resolvers.itemInit();
+
     const result = await graphql(schema, requestBody.query, resolvers);
     const body = JSON.stringify(result);
 
