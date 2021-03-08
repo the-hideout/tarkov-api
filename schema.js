@@ -45,7 +45,7 @@ module.exports = `
 
   type Craft {
     source: String!
-    time: String!
+    duration: Int!
     requiredItems: [TaskItem]!
     rewardItems: [TaskItem]!
   }

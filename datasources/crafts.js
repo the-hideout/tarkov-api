@@ -13,7 +13,7 @@ class CraftsAPI {
 
     for(const craft of crafts.data){
         returnData.push({
-            time: craft.time,
+            duration: craft.duration,
             source: craft.station,
             requiredItems: craft.requiredItems.map((itemData) => {
                 return {
