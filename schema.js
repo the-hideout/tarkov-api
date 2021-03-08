@@ -12,8 +12,7 @@ module.exports = `
     name: String
     shortName: String
     basePrice: Int!
-    updated: String!
-    slots: Int!
+    updated: String
     width: Int!
     height: Int!
     iconLink: String
@@ -21,9 +20,9 @@ module.exports = `
     imageLink: String
     types: [String]!
     avg24hPrice: Int
-    accuracyModifier: Int
-    recoilModifier: Int
-    ergonomicsModifier: Int
+    accuracyModifier: Float
+    recoilModifier: Float
+    ergonomicsModifier: Float
   }
 
   type TaskItem {
