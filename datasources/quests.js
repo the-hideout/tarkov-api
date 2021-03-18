@@ -15,19 +15,29 @@ class QuestsAPI {
 
         for(const quest of quests){
             const parsedQuestData = {
-                id: quest.questId,
-                trader: tradersAPI.get(quest.traderId),
-            }
-
-            if(quest.items && quest.items.length > 0){
-                parsedQuestData.items = quest.items.map((itemData) => {
+                ...quest,
+                giver: tradersAPI.getByName(quest.giver),
+                turnin: tradersAPI.getByName(quest.turnin),
+                requirements: quest.require,
+                wikiLink: quest.wiki,
+                reputation: quest.reputation.map((reputationData) => {
                     return {
-                        item: itemsAPI.getItem(itemData.id),
-                        count: itemData.count,
-                        foundInRaid: itemData.foundInRaid,
+                        trader: tradersAPI.getByName(reputationData.trader),
+                        amount: reputationData.rep,
                     };
-                });
-            }
+                }),
+                objectives: quest.objectives.map((objectiveData) => {
+                    const formattedObjective = {
+                        ...objectiveData,
+                    };
+
+                    if(objectiveData.type === 'collect' || objectiveData.type === 'find'){
+                        formattedObjective.targetItem = itemsAPI.getItem(formattedObjective.target);
+                    }
+
+                    return formattedObjective;
+                }),
+            };
 
             returnData.push(parsedQuestData);
         }

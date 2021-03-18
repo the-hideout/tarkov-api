@@ -30,12 +30,6 @@ module.exports = `
     count: Float!
   }
 
-  type QuestItem {
-    item: Item!
-    count: Float!
-    foundInRaid: Boolean!
-  }
-
   type Barter {
     source: String!
     requiredItems: [TaskItem]!
@@ -54,10 +48,36 @@ module.exports = `
     name: String!
   }
 
+  type QuestRequirement {
+      level: Int,
+      quests: [String]!
+  }
+
+  type QuestRewardReputation {
+      trader: Trader!
+      amount: Float!
+  }
+
+  type QuestObjective {
+      id: String
+      type: String!
+      target: String!
+      targetItem: Item
+      number: Int
+      location: String
+  }
+
   type Quest {
     id: String!
-    trader: Trader!
-    items: [QuestItem]
+    requirements: [QuestRequirement]!
+    giver: Trader!
+    turnin: Trader!
+    title: String!
+    wikiLink: String!
+    exp: Int!
+    unlocks: [String]!
+    reputation: [QuestRewardReputation!]
+    objectives: [QuestObjective]!
   }
 
   type Query {
