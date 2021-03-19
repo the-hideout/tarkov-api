@@ -31,6 +31,7 @@ class ItemsAPI {
     item.basePrice = item.base_price;
     item.shortName = item.shortname;
     item.wikiLink = item.wiki_link;
+    item.normalizedName = item.normalized_name;
 
     if(item.properties){
         if(item.properties.Accuracy){

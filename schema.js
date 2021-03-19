@@ -10,6 +10,7 @@ module.exports = `
   type Item {
     id: ID!
     name: String
+    normalizedName: String
     shortName: String
     basePrice: Int!
     updated: String
