@@ -22,6 +22,10 @@ module.exports = {
         return await itemsAPI.getItem(args.id);
     },
 
+    itemsByType: async(args) => {
+        return await itemsAPI.getItemsByType(args.type);
+    },
+
     barters: async () => {
         return await bartersAPI.getList();
     },

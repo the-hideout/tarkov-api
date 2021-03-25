@@ -1,4 +1,20 @@
 module.exports = `
+  enum ItemType {
+    ammo
+    armor
+    backpack
+    barter
+    glasses
+    helmet
+    keys
+    markedOnly
+    mods
+    noFlea
+    provisions
+    unLootable
+    wearable
+  }
+
   type GameProperty {
     key: String!
     numericValue: Float
@@ -19,7 +35,7 @@ module.exports = `
     iconLink: String
     wikiLink: String
     imageLink: String
-    types: [String]!
+    types: [ItemType]!
     avg24hPrice: Int
     accuracyModifier: Float
     recoilModifier: Float
@@ -83,6 +99,7 @@ module.exports = `
 
   type Query {
     item(id: ID!): Item
+    itemsByType(type: ItemType!): [Item]!
     barters: [Barter]
     crafts: [Craft]
     quests: [Quest]

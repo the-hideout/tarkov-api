@@ -1,6 +1,16 @@
+function camelCase(input) {
+    return input.toLowerCase().replace(/-(.)/g, function(match, group1) {
+        return group1.toUpperCase();
+    });
+}
+
+function camelCaseToDash(input) {
+    return input.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
+}
+
 class ItemsAPI {
   constructor(){
-    this.itemCache = {};
+    this.itemCache = false;
   }
 
   async init(){
@@ -8,20 +18,17 @@ class ItemsAPI {
       return true;
     }
 
-    this.itemCache = await ITEM_DATA.get('ITEM_CACHE', 'json');
+    try {
+        this.itemCache = await ITEM_DATA.get('ITEM_CACHE', 'json');
+    } catch (loadDataError){
+        console.error(loadDataError);
+    }
   }
 
-  async getItem(id) {
-    let item = this.itemCache[id];
-
-    if(!item){
-      item = await ITEM_DATA.get(id, 'json');
-    }
-
-    if(!item){
-        return {};
-    }
-
+  formatItem(rawItem) {
+    const item = {
+        ...rawItem,
+    };
     if(typeof item.avg24hPrice === 'undefined' && item.avg24Price){
         item.avg24hPrice = item.avg24Price;
     }
@@ -47,7 +54,34 @@ class ItemsAPI {
         }
     }
 
+    item.formattedTypes = item.types.map(type => camelCase(type));
+    item.types = item.formattedTypes;
+
     return item;
+  }
+
+  async getItem(id) {
+    let item = this.itemCache[id];
+
+    if(!item){
+      item = await ITEM_DATA.get(id, 'json');
+    }
+
+    if(!item){
+        return {};
+    }
+
+    return formatItem(item);
+  }
+
+  getItemsByType(type) {
+    return Object.values(this.itemCache)
+        .filter((rawItem) => {
+            return rawItem.types.includes(camelCaseToDash(type));
+        })
+        .map((rawItem) => {
+            return this.formatItem(rawItem);
+        });
   }
 }
 
