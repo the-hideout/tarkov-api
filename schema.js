@@ -5,6 +5,8 @@ module.exports = `
     backpack
     barter
     glasses
+    grenade
+    gun
     helmet
     keys
     markedOnly
