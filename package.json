@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\"",
-        "format": "prettier --write '**/*.{js,css,json,md}'"
+        "format": "prettier --write '**/*.{js,css,json,md}'",
+        "dev": "wrangler dev"
     },
     "author": "Oskar Risberg <oskar.risberg@stendahls.se>",
     "license": "ISC",
