@@ -71,7 +71,7 @@ class ItemsAPI {
         return {};
     }
 
-    return formatItem(item);
+    return this.formatItem(item);
   }
 
   getItemsByType(type) {
