@@ -9,6 +9,8 @@ class CraftsAPI {
         return {};
     }
 
+    await itemsAPI.init();
+
     const returnData = [];
 
     for(const craft of crafts.data){
