@@ -11,6 +11,8 @@ class BartersAPI {
 
     const returnData = [];
 
+    await itemsAPI.init();
+
     for(const barter of barters.data){
         returnData.push({
             source: barter.trader,
