@@ -52,6 +52,10 @@ class ItemsAPI {
         if(item.properties.Ergonomics){
             item.ergonomicsModifier = item.properties.Ergonomics;
         }
+
+        if(item.properties.grid && item.properties.grid.totalSize > 0){
+            item.hasGrid = true;
+        }
     }
 
     item.formattedTypes = item.types.map(type => camelCase(type));

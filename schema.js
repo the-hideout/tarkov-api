@@ -42,6 +42,7 @@ module.exports = `
     accuracyModifier: Float
     recoilModifier: Float
     ergonomicsModifier: Float
+    hasGrid: Boolean
   }
 
   type TaskItem {
