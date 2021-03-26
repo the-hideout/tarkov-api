@@ -43,6 +43,7 @@ module.exports = `
     recoilModifier: Float
     ergonomicsModifier: Float
     hasGrid: Boolean
+    blocksHeadphones: Boolean
   }
 
   type TaskItem {

@@ -56,6 +56,10 @@ class ItemsAPI {
         if(item.properties.grid && item.properties.grid.totalSize > 0){
             item.hasGrid = true;
         }
+
+        if(item.properties.BlocksEarpiece){
+            item.blocksHeadphones = true;
+        }
     }
 
     item.formattedTypes = item.types.map(type => camelCase(type));
