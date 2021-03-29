@@ -34,9 +34,7 @@ const traders = {
 };
 
 class TradersAPI {
-  async get(id) {
-    // const traders = await ITEM_DATA.get('TRADER_DATA', 'json');
-
+  get(id) {
     if(!traders){
         return {};
     }
@@ -44,20 +42,18 @@ class TradersAPI {
     return traders[id];
   }
 
-  async getByName(name) {
-    // const traders = await ITEM_DATA.get('TRADER_DATA', 'json');
-
+  getByName(name) {
     if(!traders){
         return {};
     }
 
-    for(const trader of traders){
-        if(trader.name === name){
-            return trader;
+    for(const traderId in traders){
+        if(traders[traderId].name === name){
+            return traders[traderId];
         }
     }
 
-    return {}
+    return {};
   }
 }
 
