@@ -1,3 +1,6 @@
+const TradersAPI = require('./traders');
+const tradersAPI = new TradersAPI();
+
 function camelCase(input) {
     return input.toLowerCase().replace(/-(.)/g, function(match, group1) {
         return group1.toUpperCase();
@@ -65,6 +68,16 @@ class ItemsAPI {
     item.formattedTypes = item.types.map(type => camelCase(type));
     item.types = item.formattedTypes;
 
+    item.traderPrices = item.traderPrices.map((traderPrice) => {
+        console.log(traderPrice.name);
+        const targetTrader = tradersAPI.getByName(traderPrice.name);
+
+        console.log(targetTrader);
+        return {
+            price: traderPrice.price,
+            trader: targetTrader,
+        };
+    });
     return item;
   }
 

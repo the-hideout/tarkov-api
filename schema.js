@@ -44,6 +44,7 @@ module.exports = `
     ergonomicsModifier: Float
     hasGrid: Boolean
     blocksHeadphones: Boolean
+    traderPrices: [TraderPrice]!
   }
 
   type TaskItem {
@@ -99,6 +100,11 @@ module.exports = `
     unlocks: [String]!
     reputation: [QuestRewardReputation!]
     objectives: [QuestObjective]!
+  }
+
+  type TraderPrice {
+      price: Int!
+      trader: Trader!
   }
 
   type Query {
