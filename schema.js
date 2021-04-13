@@ -111,6 +111,7 @@ module.exports = `
   type Query {
     item(id: ID!): Item
     itemsByType(type: ItemType!): [Item]!
+    itemsByName(name: String!): [Item]!
     barters: [Barter]
     crafts: [Craft]
     quests: [Quest]

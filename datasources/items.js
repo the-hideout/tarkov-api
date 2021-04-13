@@ -104,6 +104,16 @@ class ItemsAPI {
             return this.formatItem(rawItem);
         });
   }
+
+  getItemsByName(name) {
+    return Object.values(this.itemCache)
+        .filter((rawItem) => {
+            return rawItem.name.toLowerCase().includes(name) || rawItem.shortname.toLowerCase().includes(name);
+        })
+        .map((rawItem) => {
+            return this.formatItem(rawItem);
+        });
+  }
 }
 
 module.exports = ItemsAPI
