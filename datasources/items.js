@@ -98,7 +98,7 @@ class ItemsAPI {
   getItemsByType(type) {
     return Object.values(this.itemCache)
         .filter((rawItem) => {
-            return rawItem.types.includes(camelCaseToDash(type));
+            return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
         })
         .map((rawItem) => {
             return this.formatItem(rawItem);

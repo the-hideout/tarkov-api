@@ -1,5 +1,6 @@
 module.exports = `
   enum ItemType {
+    any
     ammo
     armor
     backpack
