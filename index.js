@@ -36,7 +36,7 @@ async function graphqlHandler(request, graphQLOptions) {
 
     await resolvers.itemInit();
 
-    const result = await graphql(schema, requestBody.query, resolvers);
+    const result = await graphql(schema, requestBody.query, resolvers, {}, requestBody.variables);
     const body = JSON.stringify(result);
 
     await QUERY_CACHE.put(queryHash, body, {expirationTtl: 600});
