@@ -46,6 +46,7 @@ module.exports = `
     hasGrid: Boolean
     blocksHeadphones: Boolean
     traderPrices: [TraderPrice]!
+    link: String
   }
 
   type TaskItem {

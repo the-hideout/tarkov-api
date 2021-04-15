@@ -42,6 +42,7 @@ class ItemsAPI {
     item.shortName = item.shortname;
     item.wikiLink = item.wiki_link;
     item.normalizedName = item.normalized_name;
+    item.link = `https://tarkov-tools.com/item/${item.normalizedName}`;
 
     if(item.properties){
         if(item.properties.Accuracy){
