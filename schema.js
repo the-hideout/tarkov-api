@@ -93,7 +93,7 @@ module.exports = `
 
   type Quest {
     id: String!
-    requirements: [QuestRequirement]!
+    requirements: QuestRequirement
     giver: Trader!
     turnin: Trader!
     title: String!
