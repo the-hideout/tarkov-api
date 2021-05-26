@@ -107,9 +107,10 @@ class ItemsAPI {
   }
 
   getItemsByName(name) {
+    const searchString = name.toLowerCase();
     return Object.values(this.itemCache)
         .filter((rawItem) => {
-            return rawItem.name.toLowerCase().includes(name) || rawItem.shortname.toLowerCase().includes(name);
+            return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
         })
         .map((rawItem) => {
             return this.formatItem(rawItem);
