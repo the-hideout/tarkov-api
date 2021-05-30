@@ -38,6 +38,7 @@ module.exports = `
     iconLink: String
     wikiLink: String
     imageLink: String
+    gridImageLink: String
     types: [ItemType]!
     avg24hPrice: Int
     accuracyModifier: Float

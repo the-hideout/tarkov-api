@@ -37,6 +37,7 @@ class ItemsAPI {
     }
 
     item.iconLink = item.icon_link;
+    item.gridImageLink = item.grid_image_link;
     item.imageLink = item.image_link;
     item.basePrice = item.base_price;
     item.shortName = item.shortname;
