@@ -48,6 +48,7 @@ module.exports = `
     blocksHeadphones: Boolean
     traderPrices: [TraderPrice]!
     link: String
+    lastLowPrice: Int
   }
 
   type TaskItem {
