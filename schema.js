@@ -50,6 +50,8 @@ module.exports = `
     link: String
     lastLowPrice: Int
     changeLast48h: Float
+    low24hPrice: Int
+    high24hPrice: Int
   }
 
   type TaskItem {
