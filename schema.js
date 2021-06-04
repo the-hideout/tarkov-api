@@ -49,6 +49,7 @@ module.exports = `
     traderPrices: [TraderPrice]!
     link: String
     lastLowPrice: Int
+    changeLast48h: Float
   }
 
   type TaskItem {
