@@ -1,14 +1,14 @@
-language: node_js
-node_js:
-  - 14
+# language: node_js
+# node_js:
+#   - 14
 
-jobs:
-  include:
-    - name: Deploy site
-      deploy:
-        provider: script
-        script: npx @cloudflare/wrangler publish
-        skip_cleanup: true
-        edge: true
-        on:
-          branch: main
+# jobs:
+#   include:
+#     - name: Deploy site
+#       deploy:
+#         provider: script
+#         script: npx @cloudflare/wrangler publish
+#         skip_cleanup: true
+#         edge: true
+#         on:
+#           branch: main
