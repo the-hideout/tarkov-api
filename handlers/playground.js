@@ -484,7 +484,10 @@ const html = baseEndpoint => `
         loadingWrapper.classList.add('fadeOut');
         const root = document.getElementById('root');
         root.classList.add('playgroundIn');
-        GraphQLPlayground.init(root, { endpoint: "${baseEndpoint}" })
+        GraphQLPlayground.init(root, {
+            endpoint: "${baseEndpoint}",
+            // 'schema.polling.enable': false,
+        })
       })
     </script>
   </body>
