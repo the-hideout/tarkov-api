@@ -81,8 +81,8 @@ module.exports = `
     changeLast48h: Float
     low24hPrice: Int
     high24hPrice: Int
-    sellFor: [ItemPrice!]
-    buyFor: [ItemPrice!]
+    # sellFor: [ItemPrice!]
+    # buyFor: [ItemPrice!]
   }
 
   type ItemPrice {
