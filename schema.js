@@ -18,6 +18,35 @@ module.exports = `
     wearable
   }
 
+  enum TraderName {
+    prapor
+    therapist
+    fence
+    skier
+    peacekeeper
+    mechanic
+    ragman
+    jaeger
+  }
+
+  enum ItemSourceName {
+    prapor
+    therapist
+    fence
+    skier
+    peacekeeper
+    mechanic
+    ragman
+    jaeger
+    flea
+  }
+
+  enum RequirementType {
+      playerLevel
+      loyaltyLevel
+      questCompleted
+  }
+
   type GameProperty {
     key: String!
     numericValue: Float
@@ -52,6 +81,19 @@ module.exports = `
     changeLast48h: Float
     low24hPrice: Int
     high24hPrice: Int
+    sellFor: [ItemPrice!]
+    buyFor: [ItemPrice!]
+  }
+
+  type ItemPrice {
+      source: ItemSourceName
+      price: Int
+      requirements: [PriceRequirement]!
+  }
+
+  type PriceRequirement {
+      type: RequirementType
+      value: Int
   }
 
   type TaskItem {
@@ -77,8 +119,23 @@ module.exports = `
     name: String!
   }
 
+  type TraderInventory {
+    id: String!
+    name: TraderName!
+    items: [TraderInventoryItem!]
+  }
+
+  type TraderInventoryItem {
+    item: Item!
+    minLevel: Int
+    price: Int
+    updated: String
+    questUnlockId: String
+    currency: String
+  }
+
   type QuestRequirement {
-      level: Int,
+      level: Int
       quests: [String]!
   }
 
@@ -121,5 +178,6 @@ module.exports = `
     barters: [Barter]
     crafts: [Craft]
     quests: [Quest]
+    # traderInventoryByName(name: TraderName!): TraderInventory
   }
 `;

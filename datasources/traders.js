@@ -51,10 +51,14 @@ class TradersAPI {
         if(traders[traderId].name === name){
             return traders[traderId];
         }
+
+        if(traders[traderId].name.toLowerCase() === name){
+            return traders[traderId];
+        }
     }
 
     return {};
   }
 }
 
-module.exports = TradersAPI
+module.exports = TradersAPI;

@@ -1,6 +1,9 @@
 const TradersAPI = require('./traders');
 const tradersAPI = new TradersAPI();
 
+const TraderInventoryAPI = require('./trader-inventory');
+const traderInventoryAPI = new TraderInventoryAPI();
+
 function camelCase(input) {
     return input.toLowerCase().replace(/-(.)/g, function(match, group1) {
         return group1.toUpperCase();
@@ -21,6 +24,8 @@ class ItemsAPI {
       return true;
     }
 
+    traderInventoryAPI.init();
+
     try {
         this.itemCache = await ITEM_DATA.get('ITEM_CACHE', 'json');
     } catch (loadDataError){
@@ -28,10 +33,11 @@ class ItemsAPI {
     }
   }
 
-  formatItem(rawItem) {
+  async formatItem(rawItem) {
     const item = {
         ...rawItem,
     };
+
     if(typeof item.avg24hPrice === 'undefined' && item.avg24Price){
         item.avg24hPrice = item.avg24Price;
     }
@@ -71,15 +77,43 @@ class ItemsAPI {
     item.types = item.formattedTypes;
 
     item.traderPrices = item.traderPrices.map((traderPrice) => {
-        console.log(traderPrice.name);
         const targetTrader = tradersAPI.getByName(traderPrice.name);
-
-        console.log(targetTrader);
         return {
             price: traderPrice.price,
             trader: targetTrader,
         };
     });
+
+    item.sellFor = [
+        ...item.traderPrices.map((traderPrice) => {
+            return {
+                price: traderPrice.price,
+                source: traderPrice.trader.name.toLowerCase(),
+                requirements: [],
+            };
+        }),
+        {
+            price: item.avg24hPrice,
+            source: 'flea',
+            requirements: [{
+                type: 'playerLevel',
+                value: 20,
+            }],
+        },
+    ];
+
+    item.buyFor = [
+        ...await traderInventoryAPI.getByItemId(item.id),
+        {
+            price: item.avg24hPrice,
+            source: 'flea',
+            requirements: [{
+                type: 'playerLevel',
+                value: 20,
+            }],
+        },
+    ];
+
     return item;
   }
 
@@ -94,7 +128,7 @@ class ItemsAPI {
         return {};
     }
 
-    return this.formatItem(item);
+    return await this.formatItem(item);
   }
 
   getItemsByType(type) {
@@ -102,19 +136,20 @@ class ItemsAPI {
         .filter((rawItem) => {
             return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
         })
-        .map((rawItem) => {
-            return this.formatItem(rawItem);
+        .map(async (rawItem) => {
+            return await this.formatItem(rawItem);
         });
   }
 
   getItemsByName(name) {
     const searchString = name.toLowerCase();
+
     return Object.values(this.itemCache)
         .filter((rawItem) => {
             return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
         })
-        .map((rawItem) => {
-            return this.formatItem(rawItem);
+        .map(async (rawItem) => {
+            return await this.formatItem(rawItem);
         });
   }
 }
