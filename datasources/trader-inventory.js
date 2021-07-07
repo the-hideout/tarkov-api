@@ -66,10 +66,10 @@ class TraderInventoryAPI {
                 }]
             };
 
-            if(cacheData.quest_unlock_id){
+            if(cacheData.quest_unlock){
                 newItem.requirements.push({
                     type: 'questCompleted',
-                    value: cacheData.quest_unlock_id,
+                    value: Number(cacheData.quest_unlock),
                 });
             }
 
