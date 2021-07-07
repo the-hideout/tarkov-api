@@ -52,35 +52,29 @@ class TraderInventoryAPI {
 //   }
 
   async getByItemId(itemId) {
-    const returnItems = [];
+      if(!this.itemCache[itemId]){
+          return [];
+      }
 
-    for(const trader in this.itemCache){
-        for(let i = 0; i < this.itemCache[trader].length; i = i + 1){
-            if(this.itemCache[trader][i].id !== itemId){
-                continue;
-            }
-
-            const newItem ={
-                source: trader,
-                price: this.itemCache[trader][i].price,
+      return this.itemCache[itemId].map((cacheData) => {
+            const newItem = {
+                source: cacheData.source,
+                price: cacheData.price,
                 requirements: [{
                     type: 'loyaltyLevel',
-                    value: this.itemCache[trader][i].min_level,
+                    value: cacheData.min_level,
                 }]
             };
 
-            if(this.itemCache[trader][i].quest_unlock_id){
+            if(cacheData.quest_unlock_id){
                 newItem.requirements.push({
                     type: 'questCompleted',
-                    value: this.itemCache[trader][i].quest_unlock_id,
+                    value: cacheData.quest_unlock_id,
                 });
             }
 
-            returnItems.push(newItem);
-        }
-    }
-
-    return returnItems;
+            return newItem;
+      });
   }
 }
 
