@@ -103,7 +103,7 @@ class ItemsAPI {
     ];
 
     item.buyFor = [
-        ...await traderInventoryAPI.getByItemId(item.id),
+        ...traderInventoryAPI.getByItemId(item.id),
         {
             price: item.avg24hPrice,
             source: 'flea',

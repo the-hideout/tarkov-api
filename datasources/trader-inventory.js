@@ -51,7 +51,7 @@ class TraderInventoryAPI {
 //     return traderInventory;
 //   }
 
-  async getByItemId(itemId) {
+  getByItemId(itemId) {
       if(!this.itemCache[itemId]){
           return [];
       }
