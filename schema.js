@@ -38,7 +38,7 @@ module.exports = `
     mechanic
     ragman
     jaeger
-    flea
+    fleaMarket
   }
 
   enum RequirementType {

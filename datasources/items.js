@@ -94,7 +94,7 @@ class ItemsAPI {
         }),
         {
             price: item.avg24hPrice,
-            source: 'flea',
+            source: 'fleaMarket',
             requirements: [{
                 type: 'playerLevel',
                 value: 20,
@@ -106,7 +106,7 @@ class ItemsAPI {
         ...traderInventoryAPI.getByItemId(item.id),
         {
             price: item.avg24hPrice,
-            source: 'flea',
+            source: 'fleaMarket',
             requirements: [{
                 type: 'playerLevel',
                 value: 20,
