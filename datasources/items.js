@@ -92,7 +92,10 @@ class ItemsAPI {
                 requirements: [],
             };
         }),
-        {
+    ];
+
+    if(!item.types.includes('noFlea')){
+        item.sellFor.push({
             price: item.avg24hPrice,
             source: 'fleaMarket',
             currency: 'RUB',
@@ -100,8 +103,8 @@ class ItemsAPI {
                 type: 'playerLevel',
                 value: 20,
             }],
-        },
-    ];
+        });
+    }
 
     item.buyFor = [
         ...traderInventoryAPI.getByItemId(item.id),
