@@ -88,6 +88,7 @@ module.exports = `
   type ItemPrice {
       source: ItemSourceName
       price: Int
+      currency: String
       requirements: [PriceRequirement]!
   }
 
