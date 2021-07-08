@@ -95,6 +95,7 @@ class ItemsAPI {
         {
             price: item.avg24hPrice,
             source: 'fleaMarket',
+            currency: 'RUB',
             requirements: [{
                 type: 'playerLevel',
                 value: 20,
@@ -107,6 +108,7 @@ class ItemsAPI {
         {
             price: item.avg24hPrice,
             source: 'fleaMarket',
+            currency: 'RUB',
             requirements: [{
                 type: 'playerLevel',
                 value: 20,

@@ -60,6 +60,7 @@ class TraderInventoryAPI {
             const newItem = {
                 source: cacheData.source,
                 price: cacheData.price,
+                currency: cacheData.currency,
                 requirements: [{
                     type: 'loyaltyLevel',
                     value: cacheData.min_level,
