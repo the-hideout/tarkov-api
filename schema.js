@@ -137,7 +137,7 @@ module.exports = `
 
   type QuestRequirement {
       level: Int
-      quests: [String]!
+      quests: [[Int]]!
   }
 
   type QuestRewardReputation {
@@ -148,7 +148,7 @@ module.exports = `
   type QuestObjective {
       id: String
       type: String!
-      target: String!
+      target: [String!]
       targetItem: Item
       number: Int
       location: String

@@ -8,6 +8,8 @@ class QuestsAPI {
     async getList() {
         const quests = await ITEM_DATA.get('QUEST_DATA', 'json');
 
+        await itemsAPI.init();
+
         if(!quests){
             return {};
         }
@@ -26,18 +28,34 @@ class QuestsAPI {
                         amount: reputationData.rep,
                     };
                 }),
-                objectives: quest.objectives.map((objectiveData) => {
+                objectives: quest.objectives.map(async (objectiveData) => {
                     const formattedObjective = {
                         ...objectiveData,
                     };
 
                     if(objectiveData.type === 'collect' || objectiveData.type === 'find'){
-                        formattedObjective.targetItem = itemsAPI.getItem(formattedObjective.target);
+                        formattedObjective.targetItem = await itemsAPI.getItem(formattedObjective.target);
+
+                        if(!formattedObjective.targetItem.id){
+                            console.log(`${quest.id} - ${formattedObjective.target}`);
+                        }
+                    }
+
+                    if(!Array.isArray(formattedObjective.target)){
+                        formattedObjective.target = [formattedObjective.target];
                     }
 
                     return formattedObjective;
                 }),
             };
+
+            parsedQuestData.requirements.quests = parsedQuestData.requirements.quests.map((stringOrArray) => {
+                if(Array.isArray(stringOrArray)){
+                    return stringOrArray;
+                }
+
+                return [stringOrArray];
+            });
 
             returnData.push(parsedQuestData);
         }
