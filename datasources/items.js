@@ -105,7 +105,10 @@ class ItemsAPI {
 
     item.buyFor = [
         ...traderInventoryAPI.getByItemId(item.id),
-        {
+    ];
+
+    if(item.avg24hPrice > 0){
+        item.buyFor.push({
             price: item.avg24hPrice,
             source: 'fleaMarket',
             currency: 'RUB',
@@ -113,8 +116,8 @@ class ItemsAPI {
                 type: 'playerLevel',
                 value: 20,
             }],
-        },
-    ];
+        });
+    }
 
     return item;
   }
