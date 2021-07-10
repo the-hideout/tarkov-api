@@ -172,6 +172,17 @@ module.exports = `
       trader: Trader!
   }
 
+  type HideoutModuleItemRequirement {
+      item: Item!
+      quantity: Int!
+  }
+
+  type HideoutModule {
+      name: String
+      level: Int
+      itemRequirements: [HideoutModuleItemRequirement]!
+  }
+
   type Query {
     item(id: ID!): Item
     itemsByType(type: ItemType!): [Item]!
@@ -179,6 +190,7 @@ module.exports = `
     barters: [Barter]
     crafts: [Craft]
     quests: [Quest]
+    hideoutModules: [HideoutModule]
     # traderInventoryByName(name: TraderName!): TraderInventory
   }
 `;

@@ -13,6 +13,9 @@ const questsAPI = new QuestsAPI();
 const TradersAPI = require('./datasources/traders');
 const tradersAPI = new TradersAPI();
 
+const HideoutAPI = require('./datasources/hideout');
+const hideoutAPI = new HideoutAPI();
+
 module.exports = {
     itemInit: async () => {
         return await itemsAPI.init();
@@ -45,4 +48,9 @@ module.exports = {
     traders: async (args) => {
         return await tradersApi.get(args.id);
     },
+
+    hideoutModules: async () => {
+        return await hideoutAPI.getList();
+    },
+
 };
