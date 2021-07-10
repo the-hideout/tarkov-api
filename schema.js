@@ -181,6 +181,7 @@ module.exports = `
       name: String
       level: Int
       itemRequirements: [HideoutModuleItemRequirement]!
+      moduleRequirements: [HideoutModule]!
   }
 
   type Query {

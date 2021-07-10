@@ -2,40 +2,64 @@ const ItemsAPI = require('./items');
 const itemsAPI = new ItemsAPI();
 
 class HideoutAPI {
-  async getList() {
-    const hideoutData = await ITEM_DATA.get('HIDEOUT_DATA', 'json');
-
-    if(!hideoutData){
-        return {};
+    constructor(){
+        this.moduleList = false;
     }
 
-    await itemsAPI.init();
+    async getList(){
+        if(this.moduleList){
+            return this.moduleList;
+        }
 
-    const returnData = [];
+        await itemsAPI.init();
 
-    for(const hideoutModule of hideoutData.data){
-        const newRequirement = {
-            name: hideoutModule.module,
-            level: hideoutModule.level,
-            itemRequirements: await Promise.all(hideoutModule.require.map(async (hideoutRequirement) => {
-                if(hideoutRequirement.type !== 'item'){
-                    return false;
-                }
+        const hideoutData = await ITEM_DATA.get('HIDEOUT_DATA', 'json');
+        const returnData = [];
 
-                return {
-                    item: await itemsAPI.getItem(hideoutRequirement.name),
-                    quantity: hideoutRequirement.quantity,
-                };
-            })),
-        };
+        for(const hideoutModule of hideoutData.data){
+            const newRequirement = {
+                name: hideoutModule.module,
+                level: hideoutModule.level,
+                itemRequirements: await Promise.all(hideoutModule.require.map(async (hideoutRequirement) => {
+                    if(hideoutRequirement.type !== 'item'){
+                        return false;
+                    }
 
-        newRequirement.itemRequirements = newRequirement.itemRequirements.filter(Boolean);
+                    return {
+                        item: await itemsAPI.getItem(hideoutRequirement.name),
+                        quantity: hideoutRequirement.quantity,
+                    };
+                })),
+                moduleRequirements: hideoutModule.require.map((hideoutRequirement) => {
+                    if(hideoutRequirement.type !== 'module'){
+                        return false;
+                    }
 
-        returnData.push(newRequirement);
+                    return {
+                        name: hideoutRequirement.name,
+                        level: hideoutRequirement.quantity,
+                    };
+                }).filter(Boolean),
+            };
+
+            newRequirement.itemRequirements = newRequirement.itemRequirements.filter(Boolean);
+            returnData.push(newRequirement);
+        }
+
+        for(const hideoutModule of returnData){
+            hideoutModule.moduleRequirements = hideoutModule.moduleRequirements.map((basicModuleObject) => {
+                return this.getModule(basicModuleObject.name, basicModuleObject.level, returnData);
+            });
+        }
+
+        this.moduleList = returnData;
+
+        return returnData;
     }
 
-    return returnData;
-  }
+    async getModule(name, level, moduleList) {
+        return moduleList.find(hideoutModule => hideoutModule.name === name && hideoutModule.level === level);
+    }
 }
 
 module.exports = HideoutAPI
