@@ -16,6 +16,8 @@ module.exports = `
     provisions
     unLootable
     wearable
+    rig
+    headphones
   }
 
   enum TraderName {
