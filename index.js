@@ -21,8 +21,12 @@ addEventListener('fetch', event => {
 
 async function graphqlHandler(request, graphQLOptions) {
     const requestBody = await request.json();
+    const queryHashString = JSON.stringify({
+        query: requestBody.query,
+        variables: requestBody.variables,
+    });
 
-    const queryHash = crypto.createHash('md5').update(requestBody.query).digest('hex');
+    const queryHash = crypto.createHash('md5').update(queryHashString).digest('hex');
 
     const cachedResponse = await QUERY_CACHE.get(queryHash, 'json');
 
