@@ -18,8 +18,8 @@ class QuestsAPI {
         for(const quest of quests){
             const parsedQuestData = {
                 ...quest,
-                giver: tradersAPI.getByName(quest.giver),
-                turnin: tradersAPI.getByName(quest.turnin),
+                giver: tradersAPI.getByDataId(quest.giver),
+                turnin: tradersAPI.getByDataId(quest.turnin),
                 requirements: quest.require,
                 wikiLink: quest.wiki,
                 reputation: quest.reputation.map((reputationData) => {
