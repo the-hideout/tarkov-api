@@ -20,10 +20,32 @@ addEventListener('fetch', event => {
 });
 
 async function graphqlHandler(request, graphQLOptions) {
-    const requestBody = await request.json();
+    const url = new URL(request.url);
+    let query = false;
+    let variables = false;
+
+    if(request.method === 'POST'){
+        try {
+            const requestBody = await request.json();
+            query = requestBody.query;
+            variables = requestBody.variables;
+        } catch (jsonError){
+            console.error(jsonError);
+
+            return new Response(null, {
+                status: 503,
+            });
+        }
+    }
+
+    if(request.method === 'GET'){
+        query = url.searchParams.get('query');
+        variables = url.searchParams.get('variables');
+    }
+
     const queryHashString = JSON.stringify({
-        query: requestBody.query,
-        variables: requestBody.variables,
+        query: query,
+        variables: variables,
     });
 
     const queryHash = crypto.createHash('md5').update(queryHashString).digest('hex');
@@ -40,7 +62,7 @@ async function graphqlHandler(request, graphQLOptions) {
 
     await resolvers.itemInit();
 
-    const result = await graphql(schema, requestBody.query, resolvers, {}, requestBody.variables);
+    const result = await graphql(schema, query, resolvers, {}, variables);
     const body = JSON.stringify(result);
 
     await QUERY_CACHE.put(queryHash, body, {expirationTtl: 600});
