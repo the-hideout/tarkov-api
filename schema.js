@@ -18,6 +18,7 @@ module.exports = `
     wearable
     rig
     headphones
+    suppressor
   }
 
   enum TraderName {
