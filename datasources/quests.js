@@ -33,7 +33,7 @@ class QuestsAPI {
                         ...objectiveData,
                     };
 
-                    if(objectiveData.type === 'collect' || objectiveData.type === 'find'){
+                    if(objectiveData.type === 'collect' || objectiveData.type === 'find' || objectiveData.type === 'place'){
                         formattedObjective.targetItem = await itemsAPI.getItem(formattedObjective.target);
 
                         if(!formattedObjective.targetItem.id){
