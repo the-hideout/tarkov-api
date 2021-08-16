@@ -141,6 +141,7 @@ module.exports = `
   type QuestRequirement {
       level: Int
       quests: [[Int]]!
+      prerequisiteQuests: [[Quest]]!
   }
 
   type QuestRewardReputation {

@@ -60,6 +60,23 @@ class QuestsAPI {
             returnData.push(parsedQuestData);
         }
 
+        for(const quest of returnData){
+            if(quest.require.quests.length === 0){
+                quest.require.prerequisiteQuests = [[]];
+                continue;
+            }
+
+            let questsList = [];
+
+            for(const questList of quest.require.quests){
+                questsList.push(questList.map((id) => {
+                    return returnData.find(tempQuest => tempQuest.id === id);
+                }));
+            }
+
+            quest.require.prerequisiteQuests = questsList;
+        }
+
         return returnData;
     }
 }
