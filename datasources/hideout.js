@@ -18,6 +18,7 @@ class HideoutAPI {
 
         for(const hideoutModule of hideoutData.data){
             const newRequirement = {
+                id: hideoutModule.id,
                 name: hideoutModule.module,
                 level: hideoutModule.level,
                 itemRequirements: await Promise.all(hideoutModule.require.map(async (hideoutRequirement) => {

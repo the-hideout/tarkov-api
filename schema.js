@@ -182,6 +182,7 @@ module.exports = `
   }
 
   type HideoutModule {
+      id: Int
       name: String
       level: Int
       itemRequirements: [HideoutModuleItemRequirement]!
