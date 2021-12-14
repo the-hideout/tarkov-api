@@ -10,6 +10,8 @@ const setCors = require('./utils/setCors');
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
 
+require('./loader');
+
 const schema = buildSchema(typeDefs);
 
 /**
@@ -67,7 +69,9 @@ async function graphqlHandler(request, graphQLOptions) {
     const result = await graphql(schema, query, resolvers, {}, variables);
     const body = JSON.stringify(result);
 
-    await QUERY_CACHE.put(queryHash, body, {expirationTtl: 600});
+    if(!url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
+        await QUERY_CACHE.put(queryHash, body, {expirationTtl: 600});
+    }
 
     return new Response(body, {
         headers: {
