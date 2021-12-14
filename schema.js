@@ -19,6 +19,7 @@ module.exports = `
     rig
     headphones
     suppressor
+    disabled
   }
 
   enum TraderName {
