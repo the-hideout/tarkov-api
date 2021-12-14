@@ -6,7 +6,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\"",
         "format": "prettier --write '**/*.{js,css,json,md}'",
-        "dev": "wrangler dev"
+        "dev": "wrangler --env development dev"
     },
     "author": "Oskar Risberg <oskar.risberg@stendahls.se>",
     "license": "ISC",

@@ -11,3 +11,7 @@ kv-namespaces = [
     { binding = "ITEM_DATA", id = "f04e5b75ee894b3a90cec2b7cc351311", preview_id = "f04e5b75ee894b3a90cec2b7cc351311" },
     { binding = "QUERY_CACHE", id = "2d6fcede6bfe4377ab1707ff58b785dc", preview_id = "2d6fcede6bfe4377ab1707ff58b785dc" }
 ]
+
+[env.development]
+routes = ["tutorial.cloudflareworkers.com/graphql","tutorial.cloudflareworkers.com/graphql*", "tutorial.cloudflareworkers.com/___graphql", "localhost:8787/graphql","localhost:8787/graphql*", "localhost:8787/___graphql"]
+kv-namespaces = []
