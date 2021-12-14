@@ -1,3 +1,8 @@
+/**
+ * This is used in DEV environments where we don't actually connect to the KV stores
+ * so we stub the implementations and download everything locally instead.
+ */
+
 const _get = async (url) => {
     const response = await fetch(url, {})
     return response.json()

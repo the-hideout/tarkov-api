@@ -19,3 +19,8 @@ Once you are ready, you can publish your code by running the following command:
 ```
 wrangler publish
 ```
+
+## Develop mode
+* Make sure you aren't logged in with wrangler `wrangler logout`
+* Start the dev environment by running `npm run dev`
+* Then open up the [Playground](http://127.0.0.1:8787/___graphql)
