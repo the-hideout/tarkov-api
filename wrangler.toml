@@ -4,8 +4,7 @@ type = "webpack"
 account_id = "66766e138fce1ac1d2ef95953e037f4e"
 zone_id = "1ef934527384406eb8a376100875e27b"
 workers_dev = true
-routes = ["tarkov-tools.com/graphql", "tarkov-tools.com/graphql*", "tarkov-tools.com/___graphql"]
-
+routes = ["tarkov-tools.com/graphql", "tarkov-tools.com/graphql*", "tarkov-tools.com/___graphql", "tarkov-tools.com/webhook*"]
 
 kv-namespaces = [
     { binding = "ITEM_DATA", id = "f04e5b75ee894b3a90cec2b7cc351311", preview_id = "f04e5b75ee894b3a90cec2b7cc351311" },
@@ -13,5 +12,5 @@ kv-namespaces = [
 ]
 
 [env.development]
-routes = ["tutorial.cloudflareworkers.com/graphql","tutorial.cloudflareworkers.com/graphql*", "tutorial.cloudflareworkers.com/___graphql", "localhost:8787/graphql","localhost:8787/graphql*", "localhost:8787/___graphql"]
+routes = ["tarkov-tools.com/graphql", "tarkov-tools.com/graphql*", "tarkov-tools.com/___graphql", "tarkov-tools.com/webhook*", "tutorial.cloudflareworkers.com/graphql","tutorial.cloudflareworkers.com/graphql*", "tutorial.cloudflareworkers.com/___graphql", "localhost:8787/graphql","localhost:8787/graphql*", "localhost:8787/___graphql"]
 kv-namespaces = []

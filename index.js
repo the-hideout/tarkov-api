@@ -12,6 +12,8 @@ const resolvers = require('./resolvers');
 
 require('./loader');
 
+const nightbot = require('./custom-endpoints/nightbot');
+
 const schema = buildSchema(typeDefs);
 
 /**
@@ -113,8 +115,12 @@ const graphQLOptions = {
 };
 
 const handleRequest = async request => {
-    const url = new URL(request.url)
+    const url = new URL(request.url);
     try {
+        if(url.pathname === '/webhook/nightbot'){
+            return nightbot(request);
+        }
+
         if (url.pathname === graphQLOptions.baseEndpoint) {
             const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(request, graphQLOptions)
             if (graphQLOptions.cors) {
