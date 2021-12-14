@@ -1,3 +1,4 @@
+compatibility_date = "2021-12-14"
 name = "tarkov-data-api"
 type = "webpack"
 account_id = "66766e138fce1ac1d2ef95953e037f4e"
