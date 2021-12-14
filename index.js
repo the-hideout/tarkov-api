@@ -50,14 +50,16 @@ async function graphqlHandler(request, graphQLOptions) {
 
     const queryHash = crypto.createHash('md5').update(queryHashString).digest('hex');
 
-    const cachedResponse = await QUERY_CACHE.get(queryHash, 'json');
+    if(!url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
+        const cachedResponse = await QUERY_CACHE.get(queryHash, 'json');
 
-    if(cachedResponse){
-        return new Response(JSON.stringify(cachedResponse), {
-            headers: {
-                'content-type': 'application/json',
-            },
-        });
+        if(cachedResponse){
+            return new Response(JSON.stringify(cachedResponse), {
+                headers: {
+                    'content-type': 'application/json',
+                },
+            });
+        }
     }
 
     await resolvers.itemInit();
