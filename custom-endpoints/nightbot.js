@@ -15,5 +15,5 @@ module.exports = async (request) => {
         return new Response(`Found no item matching that name`);
     }
 
-    return new Response(`${items[0].name} ${items[0].avg24hPrice}₽ https://tarkov-tools.com/item/${items[0].normalizedName}`);
+    return new Response(`${items[0].name} ${new Intl.NumberFormat().format(items[0].avg24hPrice)} ₽ https://tarkov-tools.com/item/${items[0].normalizedName}`);
 };
