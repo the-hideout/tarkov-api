@@ -33,7 +33,7 @@ class ItemsAPI {
     }
   }
 
-  async formatItem(rawItem) {
+  formatItem(rawItem) {
     const item = {
         ...rawItem,
     };
@@ -136,16 +136,16 @@ class ItemsAPI {
         return {};
     }
 
-    return await this.formatItem(item);
+    return this.formatItem(item);
   }
 
   getItemsByType(type) {
     return Object.values(this.itemCache)
         .filter((rawItem) => {
-            return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
+            return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
         })
-        .map(async (rawItem) => {
-            return await this.formatItem(rawItem);
+        .map((rawItem) => {
+            return this.formatItem(rawItem);
         });
   }
 
@@ -154,10 +154,10 @@ class ItemsAPI {
 
     return Object.values(this.itemCache)
         .filter((rawItem) => {
-            return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
+            return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
         })
-        .map(async (rawItem) => {
-            return await this.formatItem(rawItem);
+        .map((rawItem) => {
+            return this.formatItem(rawItem);
         });
   }
 }
