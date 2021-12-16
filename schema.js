@@ -86,6 +86,7 @@ module.exports = `
     link: String
     lastLowPrice: Int
     changeLast48h: Float
+    changeLast48hPercent: Float
     low24hPrice: Int
     high24hPrice: Int
     sellFor: [ItemPrice!]
