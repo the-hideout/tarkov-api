@@ -122,6 +122,11 @@ class ItemsAPI {
         });
     }
 
+    // Fallback images
+    item.imageLinkFallback = item.imageLink || 'https://assets.tarkov-tools.com/unknown-item-image.jpg';
+    item.iconLinkFallback = item.iconLink || 'https://assets.tarkov-tools.com/unknown-item-icon.jpg';
+    item.gridImageLinkFallback = item.gridImageLink || 'https://assets.tarkov-tools.com/unknown-item-grid-image.jpg';
+
     return item;
   }
 

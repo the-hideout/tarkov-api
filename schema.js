@@ -69,9 +69,12 @@ module.exports = `
     width: Int!
     height: Int!
     iconLink: String
+    iconLinkFallback: String!
     wikiLink: String
     imageLink: String
+    imageLinkFallback: String!
     gridImageLink: String
+    gridImageLinkFallback: String!
     types: [ItemType]!
     avg24hPrice: Int
     accuracyModifier: Float
