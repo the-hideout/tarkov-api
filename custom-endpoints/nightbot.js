@@ -1,6 +1,10 @@
 const ItemsAPI = require('../datasources/items');
 const itemsAPI = new ItemsAPI();
 
+function capitalize(s){
+    return s && s[0].toUpperCase() + s.slice(1);
+}
+
 module.exports = async (request) => {
     await itemsAPI.init();
     const url = new URL(request.url);
@@ -15,5 +19,8 @@ module.exports = async (request) => {
         return new Response(`Found no item matching that name`);
     }
 
-    return new Response(`${items[0].name} ${new Intl.NumberFormat().format(items[0].avg24hPrice)} ₽ https://tarkov-tools.com/item/${items[0].normalizedName}`);
+    const bestPrice = items[0].sellFor.sort((a, b) => b.price - a.price);
+
+
+    return new Response(`${items[0].name} ${new Intl.NumberFormat().format(bestPrice[0].price)} ₽ ${capitalize(bestPrice[0].source)} https://tarkov-tools.com/item/${items[0].normalizedName}`);
 };
