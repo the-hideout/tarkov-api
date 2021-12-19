@@ -91,6 +91,7 @@ module.exports = `
     high24hPrice: Int
     sellFor: [ItemPrice!]
     buyFor: [ItemPrice!]
+    containsItems: [ContainedItem]
   }
 
   type ItemPrice {

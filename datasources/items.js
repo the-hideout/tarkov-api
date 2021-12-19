@@ -127,6 +127,17 @@ class ItemsAPI {
     item.iconLinkFallback = item.iconLink || 'https://assets.tarkov-tools.com/unknown-item-icon.jpg';
     item.gridImageLinkFallback = item.gridImageLink || 'https://assets.tarkov-tools.com/unknown-item-grid-image.jpg';
 
+
+    if(item.containsItems && item.containsItems.length > 0){
+        item.containsItems = item.containsItems.map((containedItem) => {
+            return {
+                item: this.formatItem(this.itemCache[containedItem.itemId]),
+                count: containedItem.count,
+                quantity: containedItem.count,
+            };
+        });
+    }
+
     return item;
   }
 
