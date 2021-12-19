@@ -2,6 +2,7 @@ module.exports = `
   enum ItemType {
     any
     ammo
+    ammoBox
     armor
     backpack
     barter
