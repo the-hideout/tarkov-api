@@ -21,12 +21,14 @@ class CraftsAPI {
                 return {
                     item: itemsAPI.getItem(itemData.id),
                     count: itemData.count,
+                    quantity: itemData.count,
                 };
             }),
             rewardItems: craft.rewardItems.map((itemData) => {
                 return {
                     item: itemsAPI.getItem(itemData.id),
                     count: itemData.count,
+                    quantity: itemData.count,
                 };
             })
         });

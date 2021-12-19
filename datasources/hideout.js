@@ -29,6 +29,7 @@ class HideoutAPI {
                     return {
                         item: await itemsAPI.getItem(hideoutRequirement.name),
                         quantity: hideoutRequirement.quantity,
+                        count: hideoutRequirement.quantity,
                     };
                 })),
                 moduleRequirements: hideoutModule.require.map((hideoutRequirement) => {

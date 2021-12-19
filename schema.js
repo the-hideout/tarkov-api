@@ -108,6 +108,7 @@ module.exports = `
   type ContainedItem {
     item: Item!
     count: Float!
+    quantity: Int!
   }
 
   type Barter {
@@ -181,16 +182,11 @@ module.exports = `
       trader: Trader!
   }
 
-  type HideoutModuleItemRequirement {
-      item: Item!
-      quantity: Int!
-  }
-
   type HideoutModule {
       id: Int
       name: String
       level: Int
-      itemRequirements: [HideoutModuleItemRequirement]!
+      itemRequirements: [ContainedItem]!
       moduleRequirements: [HideoutModule]!
   }
 

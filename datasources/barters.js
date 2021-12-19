@@ -20,12 +20,14 @@ class BartersAPI {
                 return {
                     item: itemsAPI.getItem(itemData.id),
                     count: itemData.count,
+                    quantity: itemData.count,
                 };
             }),
             rewardItems: barter.rewardItems.map((itemData) => {
                 return {
                     item: itemsAPI.getItem(itemData.id),
                     count: itemData.count,
+                    quantity: itemData.count,
                 };
             })
         });
