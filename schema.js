@@ -1,26 +1,27 @@
 module.exports = `
   enum ItemType {
-    any
     ammo
     ammoBox
+    any
     armor
     backpack
     barter
+    disabled
     glasses
     grenade
     gun
+    headphones
     helmet
     keys
     markedOnly
     mods
     noFlea
+    preset
     provisions
+    rig
+    suppressor
     unLootable
     wearable
-    rig
-    headphones
-    suppressor
-    disabled
   }
 
   enum TraderName {
