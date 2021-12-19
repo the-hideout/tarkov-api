@@ -105,22 +105,22 @@ module.exports = `
       value: Int
   }
 
-  type TaskItem {
+  type ContainedItem {
     item: Item!
     count: Float!
   }
 
   type Barter {
     source: String!
-    requiredItems: [TaskItem]!
-    rewardItems: [TaskItem]!
+    requiredItems: [ContainedItem]!
+    rewardItems: [ContainedItem]!
   }
 
   type Craft {
     source: String!
     duration: Int!
-    requiredItems: [TaskItem]!
-    rewardItems: [TaskItem]!
+    requiredItems: [ContainedItem]!
+    rewardItems: [ContainedItem]!
   }
 
   type Trader {
