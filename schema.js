@@ -16,6 +16,7 @@ module.exports = `
     markedOnly
     mods
     noFlea
+    pistolGrip
     preset
     provisions
     rig
