@@ -70,7 +70,7 @@ class TraderInventoryAPI {
             if(cacheData.quest_unlock){
                 newItem.requirements.push({
                     type: 'questCompleted',
-                    value: Number(cacheData.quest_unlock),
+                    value: Number(cacheData.quest_unlock_id) || 1,
                 });
             }
 
