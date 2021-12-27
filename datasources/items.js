@@ -101,7 +101,7 @@ class ItemsAPI {
             currency: 'RUB',
             requirements: [{
                 type: 'playerLevel',
-                value: 20,
+                value: 15,
             }],
         });
     }
@@ -117,7 +117,7 @@ class ItemsAPI {
             currency: 'RUB',
             requirements: [{
                 type: 'playerLevel',
-                value: 20,
+                value: 15,
             }],
         });
     }
