@@ -104,6 +104,11 @@ module.exports = `
       requirements: [PriceRequirement]!
   }
 
+  type historicalPricePoint {
+    price: Int
+    timestamp: String
+  }
+
   type PriceRequirement {
       type: RequirementType
       value: Int
@@ -198,6 +203,7 @@ module.exports = `
     item(id: ID!): Item
     itemsByType(type: ItemType!): [Item]!
     itemsByName(name: String!): [Item]!
+    historicalItemPrices(id: ID!): [historicalPricePoint]!
     barters: [Barter]
     crafts: [Craft]
     quests: [Quest]
