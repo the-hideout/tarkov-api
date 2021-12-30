@@ -9,7 +9,13 @@ class historicalPricesAPI {
         }
 
         try {
-            this.itemCache[itemId] = await ITEM_DATA.get(`historical-prices-${itemId}`, 'json');
+            const cacheResponse = await ITEM_DATA.get(`historical-prices-${itemId}`, 'json');
+
+            if(cacheResponse === null){
+                return [];
+            }
+
+            this.itemCache[itemId] = cacheResponse;
         } catch (loadDataError){
             console.error(loadDataError);
 
