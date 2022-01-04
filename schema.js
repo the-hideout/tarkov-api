@@ -199,6 +199,25 @@ module.exports = `
       moduleRequirements: [HideoutModule]!
   }
 
+  type Status {
+      name: String!
+      message: String
+      status: Int!
+  }
+
+  type StatusMessage {
+    content: String!
+    time: String!
+    type: Int!
+    solveTime: String
+}
+
+  type ServerStatus {
+      generalStatus: Status
+      currentStatuses: [Status]
+      messages: [StatusMessage]
+  }
+
   type Query {
     item(id: ID!): Item
     itemsByType(type: ItemType!): [Item]!
@@ -208,6 +227,7 @@ module.exports = `
     crafts: [Craft]
     quests: [Quest]
     hideoutModules: [HideoutModule]
+    status: ServerStatus!
     # traderInventoryByName(name: TraderName!): TraderInventory
   }
 `;

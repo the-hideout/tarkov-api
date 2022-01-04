@@ -19,6 +19,8 @@ const hideoutAPI = new HideoutAPI();
 const HistoricalPricesAPI = require('./datasources/historical-prices');
 const historicalPricesAPI = new HistoricalPricesAPI();
 
+const status = require('./datasources/status');
+
 module.exports = {
     itemInit: async () => {
         return await itemsAPI.init();
@@ -58,5 +60,9 @@ module.exports = {
 
     historicalItemPrices: async (args) => {
         return await historicalPricesAPI.getByItemId(args.id);
+    },
+
+    status: async () => {
+        return await status();
     },
 };
