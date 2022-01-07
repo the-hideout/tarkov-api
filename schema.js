@@ -6,6 +6,7 @@ module.exports = `
     armor
     backpack
     barter
+    container
     disabled
     glasses
     grenade
