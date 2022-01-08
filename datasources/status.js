@@ -3,7 +3,16 @@ const statusMessagesURL = 'https://status.escapefromtarkov.com/api/message/list'
 const globalStatusUrl = 'https://status.escapefromtarkov.com/api/global/status';
 
 async function gatherResponse(response) {
-    return await response.json();
+    let responseOutput = false;
+    try {
+        const responseData = await response.json();
+
+        responseOutput = responseData;
+    } catch (jsonError){
+        console.log('json error');
+    }
+
+    return responseOutput;
 
     /* It's the wrong content-type so this doesn't apply */
 
@@ -32,17 +41,43 @@ async function handleRequest(url) {
             'accept': 'application/json, text/plain, */*',
         },
     };
-    const response = await fetch(url, init);
+    try {
+        const response = await fetch(url, init);
 
-    return await gatherResponse(response);
+        return await gatherResponse(response);
+    } catch (requestError){
+        console.log('request error');
+
+        return false;
+    }
 };
 
 module.exports = async () => {
-    const [services, messages, globalStatus] = await Promise.all([
-        handleRequest(servicesURL),
-        handleRequest(statusMessagesURL),
-        handleRequest(globalStatusUrl),
-    ]);
+    let services = [];
+    let messages = [];
+    let globalStatus = false;
+
+    try {
+        const [servicesResponse, messagesResponse, globalStatusResponse] = await Promise.allSettled([
+            handleRequest(servicesURL),
+            handleRequest(statusMessagesURL),
+            handleRequest(globalStatusUrl),
+        ]);
+
+        if(servicesResponse){
+            services = servicesResponse;
+        }
+
+        if(messagesResponse){
+            messages = messagesResponse;
+        }
+
+        if(globalStatusResponse){
+            globalStatus = globalStatusResponse;
+        }
+    } catch (requestError){
+        console.log('outer request error');
+    }
 
     const generalStatus = {
         name: 'Global',
