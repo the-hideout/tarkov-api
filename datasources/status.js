@@ -41,21 +41,18 @@ async function handleRequest(url) {
             'accept': 'application/json, text/plain, */*',
         },
     };
-    try {
-        const response = await fetch(url, init);
+    const response = await fetch(url, init);
 
-        return await gatherResponse(response);
-    } catch (requestError){
-        console.log('request error');
-
-        return false;
-    }
+    return await gatherResponse(response);
 };
 
 module.exports = async () => {
     let services = [];
     let messages = [];
-    let globalStatus = false;
+    let globalStatus = {
+        message: 'N/A',
+        status: 2,
+    };
 
     try {
         const [servicesResponse, messagesResponse, globalStatusResponse] = await Promise.allSettled([
@@ -64,15 +61,15 @@ module.exports = async () => {
             handleRequest(globalStatusUrl),
         ]);
 
-        if(servicesResponse && servicesResponse.status && servicesResponse.status === 'fulfilled'){
+        if(servicesResponse && servicesResponse.status && servicesResponse.status === 'fulfilled' && servicesResponse.value){
             services = servicesResponse.value;
         }
 
-        if(messagesResponse && messagesResponse.status && messagesResponse.status === 'fulfilled'){
+        if(messagesResponse && messagesResponse.status && messagesResponse.status === 'fulfilled' && messagesResponse.value){
             messages = messagesResponse.value;
         }
 
-        if(globalStatusResponse && globalStatusResponse.status && globalStatusResponse.status === 'fulfilled'){
+        if(globalStatusResponse && globalStatusResponse.status && globalStatusResponse.status === 'fulfilled' && globalStatusResponse.value){
             globalStatus = globalStatusResponse.value;
         }
     } catch (requestError){
@@ -84,10 +81,6 @@ module.exports = async () => {
         message: globalStatus.message,
         status: globalStatus.status,
     };
-
-    // console.log(services);
-    // console.log(messages);
-    // console.log(globalStatus);
 
     return {
         generalStatus: generalStatus,
