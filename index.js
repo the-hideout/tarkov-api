@@ -71,7 +71,7 @@ async function graphqlHandler(request, graphQLOptions) {
     const result = await graphql(schema, query, resolvers, {}, variables);
     const body = JSON.stringify(result);
 
-    if(!url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
+    if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
         await QUERY_CACHE.put(queryHash, body, {expirationTtl: 300});
     }
 
