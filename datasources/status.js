@@ -64,16 +64,16 @@ module.exports = async () => {
             handleRequest(globalStatusUrl),
         ]);
 
-        if(servicesResponse){
-            services = servicesResponse;
+        if(servicesResponse && servicesResponse.status && servicesResponse.status === 'fulfilled'){
+            services = servicesResponse.value;
         }
 
-        if(messagesResponse){
-            messages = messagesResponse;
+        if(messagesResponse && messagesResponse.status && messagesResponse.status === 'fulfilled'){
+            messages = messagesResponse.value;
         }
 
-        if(globalStatusResponse){
-            globalStatus = globalStatusResponse;
+        if(globalStatusResponse && globalStatusResponse.status && globalStatusResponse.status === 'fulfilled'){
+            globalStatus = globalStatusResponse.value;
         }
     } catch (requestError){
         console.log('outer request error');
