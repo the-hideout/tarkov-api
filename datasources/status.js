@@ -2,6 +2,13 @@ const servicesURL = 'https://status.escapefromtarkov.com/api/services';
 const statusMessagesURL = 'https://status.escapefromtarkov.com/api/message/list';
 const globalStatusUrl = 'https://status.escapefromtarkov.com/api/global/status';
 
+const statusMap = [
+    'OK',
+    'Updating',
+    'Unstable',
+    'Down',
+];
+
 async function gatherResponse(response) {
     let responseOutput = false;
     try {
@@ -62,11 +69,21 @@ module.exports = async () => {
         ]);
 
         if(servicesResponse && servicesResponse.status && servicesResponse.status === 'fulfilled' && servicesResponse.value){
-            services = servicesResponse.value;
+            services = servicesResponse.value.map((serviceStatus) => {
+                return {
+                    ...serviceStatus,
+                    statusCode: statusMap[serviceStatus.status],
+                };
+            });
         }
 
         if(messagesResponse && messagesResponse.status && messagesResponse.status === 'fulfilled' && messagesResponse.value){
-            messages = messagesResponse.value;
+            messages = messagesResponse.value.map((message) => {
+                return {
+                    ...message,
+                    statusCode: statusMap[message.type],
+                };
+            });
         }
 
         if(globalStatusResponse && globalStatusResponse.status && globalStatusResponse.status === 'fulfilled' && globalStatusResponse.value){
@@ -80,6 +97,7 @@ module.exports = async () => {
         name: 'Global',
         message: globalStatus.message,
         status: globalStatus.status,
+        statusCode: statusMap[globalStatus.status],
     };
 
     return {

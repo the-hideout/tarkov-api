@@ -55,6 +55,13 @@ module.exports = `
       questCompleted
   }
 
+  enum StatusCode {
+      OK
+      Updating
+      Unstable
+      Down
+  }
+
   type GameProperty {
     key: String!
     numericValue: Float
@@ -204,6 +211,7 @@ module.exports = `
       name: String!
       message: String
       status: Int!
+      statusCode: String!
   }
 
   type StatusMessage {
@@ -211,6 +219,7 @@ module.exports = `
     time: String!
     type: Int!
     solveTime: String
+    statusCode: String!
 }
 
   type ServerStatus {
