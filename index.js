@@ -125,6 +125,10 @@ const handleRequest = async request => {
             return nightbot(request);
         }
 
+        if(url.pathname === '/webhook/moobot'){
+            return nightbot(request);
+        }
+
         if (url.pathname === graphQLOptions.baseEndpoint) {
             const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(request, graphQLOptions)
             if (graphQLOptions.cors) {
