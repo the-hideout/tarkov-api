@@ -21,6 +21,8 @@ const historicalPricesAPI = new HistoricalPricesAPI();
 
 const status = require('./datasources/status');
 
+const traderResets = require('./datasources/trader-resets');
+
 module.exports = {
     itemInit: async () => {
         return await itemsAPI.init();
@@ -64,5 +66,9 @@ module.exports = {
 
     status: async () => {
         return await status();
+    },
+
+    traderResetTimes: async () => {
+        return await traderResets();
     },
 };

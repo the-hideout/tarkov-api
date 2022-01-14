@@ -228,6 +228,11 @@ module.exports = `
       messages: [StatusMessage]
   }
 
+  type TraderResetTime {
+      name: String
+      resetTimestamp: String
+  }
+
   type Query {
     item(id: ID!): Item
     itemsByType(type: ItemType!): [Item]!
@@ -239,5 +244,6 @@ module.exports = `
     hideoutModules: [HideoutModule]
     status: ServerStatus!
     # traderInventoryByName(name: TraderName!): TraderInventory
+    traderResetTimes: [TraderResetTime]
   }
 `;
