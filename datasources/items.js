@@ -110,7 +110,7 @@ class ItemsAPI {
         ...traderInventoryAPI.getByItemId(item.id),
     ];
 
-    if(item.avg24hPrice > 0){
+    if(!item.types.includes('noFlea')){
         item.buyFor.push({
             price: item.avg24hPrice,
             source: 'fleaMarket',
