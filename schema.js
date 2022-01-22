@@ -13,8 +13,10 @@ module.exports = `
     gun
     headphones
     helmet
+    injectors
     keys
     markedOnly
+    meds
     mods
     noFlea
     pistolGrip
@@ -62,6 +64,10 @@ module.exports = `
       Down
   }
 
+  enum LanguageCode {
+      en
+  }
+
   type GameProperty {
     key: String!
     numericValue: Float
@@ -103,6 +109,7 @@ module.exports = `
     sellFor: [ItemPrice!]
     buyFor: [ItemPrice!]
     containsItems: [ContainedItem]
+    translation(languageCode: LanguageCode): ItemTranslation
   }
 
   type ItemPrice {
@@ -110,6 +117,12 @@ module.exports = `
       price: Int
       currency: String
       requirements: [PriceRequirement]!
+  }
+
+  type ItemTranslation {
+      name: String
+      shortName: String
+      description: String
   }
 
   type historicalPricePoint {
