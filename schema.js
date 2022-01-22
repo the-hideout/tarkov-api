@@ -110,6 +110,7 @@ module.exports = `
     buyFor: [ItemPrice!]
     containsItems: [ContainedItem]
     bsgCategoryId: String
+    weight: Float
 
     translation(languageCode: LanguageCode): ItemTranslation
   }

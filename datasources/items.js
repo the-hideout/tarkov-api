@@ -75,6 +75,10 @@ class ItemsAPI {
         if(item.properties.bsgCategoryId){
             item.bsgCategoryId = item.properties.bsgCategoryId;
         }
+
+        if(typeof item.properties.weight !== 'undefined'){
+            item.weight = Number(item.properties.weight);
+        }
     }
 
     item.formattedTypes = item.types.map(type => camelCase(type));
