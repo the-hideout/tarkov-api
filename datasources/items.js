@@ -52,24 +52,28 @@ class ItemsAPI {
     item.link = `https://tarkov-tools.com/item/${item.normalizedName}`;
 
     if(item.properties){
-        if(item.properties.Accuracy){
-            item.accuracyModifier = item.properties.Accuracy;
+        if(item.properties.accuracy){
+            item.accuracyModifier = Number(item.properties.accuracy);
         }
 
-        if(item.properties.Recoil){
-            item.recoilModifier = item.properties.Recoil;
+        if(item.properties.recoil){
+            item.recoilModifier = Number(item.properties.recoil);
         }
 
-        if(item.properties.Ergonomics){
-            item.ergonomicsModifier = item.properties.Ergonomics;
+        if(item.properties.ergonomics){
+            item.ergonomicsModifier = Number(item.properties.ergonomics);
         }
 
         if(item.properties.grid && item.properties.grid.totalSize > 0){
             item.hasGrid = true;
         }
 
-        if(item.properties.BlocksEarpiece){
+        if(item.properties.blocksEarpiece){
             item.blocksHeadphones = true;
+        }
+
+        if(item.properties.bsgCategoryId){
+            item.bsgCategoryId = item.properties.bsgCategoryId;
         }
     }
 

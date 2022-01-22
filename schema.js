@@ -109,6 +109,8 @@ module.exports = `
     sellFor: [ItemPrice!]
     buyFor: [ItemPrice!]
     containsItems: [ContainedItem]
+    bsgCategoryId: String
+
     translation(languageCode: LanguageCode): ItemTranslation
   }
 
