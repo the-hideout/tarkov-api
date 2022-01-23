@@ -24,7 +24,7 @@ class ItemsAPI {
       return true;
     }
 
-    traderInventoryAPI.init();
+    await traderInventoryAPI.init();
 
     try {
         this.itemCache = await ITEM_DATA.get('ITEM_CACHE', 'json');
