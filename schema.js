@@ -141,7 +141,7 @@ module.exports = `
   type ContainedItem {
     item: Item!
     count: Float!
-    quantity: Int!
+    quantity: Float!
   }
 
   type Barter {
