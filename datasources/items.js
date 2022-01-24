@@ -188,7 +188,11 @@ class ItemsAPI {
   getItemsByBsgCategoryId(bsgCategoryId) {
     return Object.values(this.itemCache)
         .filter((rawItem) => {
-            return rawItem.bsgCategoryId === bsgCategoryId
+            if(!rawItem.properties){
+                return false;
+            }
+
+            return rawItem.properties.bsgCategoryId === bsgCategoryId;
         })
         .map((rawItem) => {
             return this.formatItem(rawItem)
