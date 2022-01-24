@@ -184,6 +184,16 @@ class ItemsAPI {
             return this.formatItem(rawItem);
         });
   }
+
+  getByBsgCategoryId = (bsgCategoryId) => {
+    return Object.values(this.itemCache)
+        .filter((rawItem) => {
+            return rawItem.bsgCategoryId === bsgCategoryId
+        })
+        .map((rawItem) => {
+            return this.formatItem(rawItem)
+        });
+  }
 }
 
 module.exports = ItemsAPI
