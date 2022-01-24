@@ -185,7 +185,7 @@ class ItemsAPI {
         });
   }
 
-  getByBsgCategoryId = (bsgCategoryId) => {
+  getByBsgCategoryId(bsgCategoryId) {
     return Object.values(this.itemCache)
         .filter((rawItem) => {
             return rawItem.bsgCategoryId === bsgCategoryId
