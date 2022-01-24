@@ -253,6 +253,7 @@ module.exports = `
     item(id: ID!): Item
     itemsByType(type: ItemType!): [Item]!
     itemsByName(name: String!): [Item]!
+    itemsByBsgCategoryId(bsgCategoryId: String!): [Item]!
     historicalItemPrices(id: ID!): [historicalPricePoint]!
     barters: [Barter]
     crafts: [Craft]

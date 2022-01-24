@@ -40,6 +40,10 @@ module.exports = {
         return await itemsAPI.getItemsByName(args.name);
     },
 
+    itemsByBsgCategoryId: async(args) => {
+        return await itemsAPI.getItemsByBsgCategoryId(args.bsgCategoryId);
+    },
+
     barters: async () => {
         return await bartersAPI.getList();
     },
