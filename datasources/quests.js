@@ -38,6 +38,7 @@ class QuestsAPI {
 
                         if(!formattedObjective.targetItem.id){
                             console.log(`${quest.id} - ${formattedObjective.target}`);
+                            formattedObjective.targetItem = null;
                         }
                     }
 
