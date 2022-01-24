@@ -40,6 +40,13 @@ class QuestsAPI {
                             console.log(`${quest.id} - ${formattedObjective.target}`);
                             formattedObjective.targetItem = null;
                         }
+                    } else if (objectiveData.type === 'mark') {
+                        formattedObjective.targetItem = await itemsAPI.getItem(formattedObjective.tool);
+
+                        if(!formattedObjective.targetItem.id){
+                            console.log(`${quest.id} - ${formattedObjective.tool}`);
+                            formattedObjective.targetItem = null;
+                        }
                     }
 
                     if(!Array.isArray(formattedObjective.target)){
