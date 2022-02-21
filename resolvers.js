@@ -39,7 +39,9 @@ module.exports = {
     itemsByName: async(args) => {
         return await itemsAPI.getItemsByName(args.name);
     },
-
+    itemByNormalizedName: async(args) => {
+        return await itemsAPI.getItemByNormalizedName(args.normalizedName);
+    },
     itemsByBsgCategoryId: async(args) => {
         return await itemsAPI.getItemsByBsgCategoryId(args.bsgCategoryId);
     },
