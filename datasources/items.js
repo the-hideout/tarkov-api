@@ -198,6 +198,16 @@ class ItemsAPI {
             return this.formatItem(rawItem)
         });
   }
+
+  getItemByNormalizedName(normalizedName) {
+    const item = Object.values(this.itemCache).find((item) => item.normalized_name === normalizedName);
+
+    if (!item) {
+        return null;
+    }
+
+    return this.formatItem(item);
+  }
 }
 
 module.exports = ItemsAPI
