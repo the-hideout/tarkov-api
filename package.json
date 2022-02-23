@@ -16,7 +16,7 @@
         "prettier": "^2.2.1"
     },
     "dependencies": {
-        "graphql": "^15.4.0",
+        "graphql": "^15.8.0",
         "serverless-cloudflare-workers": "^1.2.0"
     }
 }
