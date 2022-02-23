@@ -111,6 +111,8 @@ module.exports = `
     containsItems: [ContainedItem]
     bsgCategoryId: String
     weight: Float
+    velocity: Float
+    loudness: Int
 
     translation(languageCode: LanguageCode): ItemTranslation
   }

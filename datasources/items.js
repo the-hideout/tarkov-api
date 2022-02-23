@@ -4,6 +4,12 @@ const tradersAPI = new TradersAPI();
 const TraderInventoryAPI = require('./trader-inventory');
 const traderInventoryAPI = new TraderInventoryAPI();
 
+const availableProperties = [
+    'weight',
+    'velocity',
+    'loudness',
+];
+
 function camelCase(input) {
     return input.toLowerCase().replace(/-(.)/g, function(match, group1) {
         return group1.toUpperCase();
@@ -76,8 +82,10 @@ class ItemsAPI {
             item.bsgCategoryId = item.properties.bsgCategoryId;
         }
 
-        if(typeof item.properties.weight !== 'undefined'){
-            item.weight = Number(item.properties.weight);
+        for(const availableProperty of availableProperties){
+            if(typeof item.properties[availableProperty] !== 'undefined'){
+                item[availableProperty] = Number(item.properties[availableProperty]);
+            }
         }
     }
 
