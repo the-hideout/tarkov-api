@@ -6,8 +6,6 @@ zone_id = "777d475095752ccbe5d1d49e690a305b"
 workers_dev = true
 routes = ["api.thehideout.io/graphql", "api.thehideout.io/graphql*", "api.thehideout.io/___graphql", "api.thehideout.io/webhook*"]
 
-#
-
 [env.development]
 #routes = ["tarkov-tools.com/graphql", "tarkov-tools.com/graphql*", "tarkov-tools.com/___graphql", "tarkov-tools.com/webhook*", "tutorial.cloudflareworkers.com/graphql","tutorial.cloudflareworkers.com/graphql*", "tutorial.cloudflareworkers.com/___graphql", "localhost:8787/graphql","localhost:8787/graphql*", "localhost:8787/___graphql"]
 #kv-namespaces = []
