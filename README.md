@@ -1,4 +1,4 @@
-# Tarkov Tools API 💻
+# The Hideout API 💻
 
 This is the main API for [thehideout.io](https://thehideout.io/).
 
