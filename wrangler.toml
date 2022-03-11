@@ -5,6 +5,10 @@ account_id = "424ad63426a1ae47d559873f929eb9fc"
 zone_id = "777d475095752ccbe5d1d49e690a305b"
 workers_dev = true
 routes = ["api.thehideout.io/graphql", "api.thehideout.io/graphql*", "api.thehideout.io/___graphql", "api.thehideout.io/webhook*"]
+kv-namespaces = [
+    { binding = "ITEM_DATA", id = "2973a2dd070e4a348d87084171efe11a", preview_id = "2973a2dd070e4a348d87084171efe11a" },
+    { binding = "QUERY_CACHE", id = "7ae67967cff24ceaa31ca58c5a6da798", preview_id = "7ae67967cff24ceaa31ca58c5a6da798" }
+]
 
 [env.development]
 #routes = ["tarkov-tools.com/graphql", "tarkov-tools.com/graphql*", "tarkov-tools.com/___graphql", "tarkov-tools.com/webhook*", "tutorial.cloudflareworkers.com/graphql","tutorial.cloudflareworkers.com/graphql*", "tutorial.cloudflareworkers.com/___graphql", "localhost:8787/graphql","localhost:8787/graphql*", "localhost:8787/___graphql"]
