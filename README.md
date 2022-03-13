@@ -12,7 +12,7 @@ There is a graphql playground for you to use and expirement with, to get familia
 
 Example Query:
 
-```bash
+```graphql
 query {
   itemsByType(type: any) {
       id
