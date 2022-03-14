@@ -6,6 +6,7 @@ on:
 
 jobs:
   deploy:
+    environment: development
     runs-on: ubuntu-latest
 
     steps:
