@@ -16,11 +16,11 @@ Example Query:
 query {
   itemsByType(type: any) {
       id
-        name
-        shortName
-        wikiLink
-        iconLink
-        updated
+      name
+      shortName
+      wikiLink
+      iconLink
+      updated
   }
 }
 ```
