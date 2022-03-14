@@ -10,15 +10,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # pin@v1
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Publish
-        uses: cloudflare/wrangler-action@1.3.0
+      - name: Publish - Development
+        uses: cloudflare/wrangler-action@3424d15af26edad39d5276be3cc0cc9ffec22b55 # pin@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           environment: "development"
