@@ -22,3 +22,24 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           environment: "development"
+
+      # Post comment on PR with development deploy info
+      - uses: actions/github-script@5d03ada4b0a753e9460b312e61cc4f8fdeacf163 # pin@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `### API Deployment - Development 🪐
+
+            The API has been **deployed** to the **development** environment 🚀
+
+            - Endpoint: \`dev-api.thehideout.io\`
+            - Playground: [dev-api.thehideout.io/___graphql](https://dev-api.thehideout.io/___graphql)
+
+            > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\``;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
