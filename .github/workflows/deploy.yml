@@ -22,7 +22,6 @@ jobs:
         uses: cloudflare/wrangler-action@3424d15af26edad39d5276be3cc0cc9ffec22b55 # pin@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          environment: "production"
 
       # Send a deployment message to Discord via a webhook
       - name: Discord notification
