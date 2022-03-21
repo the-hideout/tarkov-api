@@ -2,11 +2,11 @@
 
 [![deploy](https://github.com/the-hideout/tarkov-data-api/actions/workflows/deploy.yml/badge.svg)](https://github.com/the-hideout/tarkov-data-api/actions/workflows/deploy.yml)
 
-This is the main API for [thehideout.io](https://thehideout.io/).
+This is the main API for [tarkov.dev](https://tarkov.dev).
 
 It's a simple [GraphQL](https://graphql.org/) API running on [Cloudflare workers](https://workers.cloudflare.com/).
 
-This API powers all of thehideout.io and other notable projects as well:
+This API powers all of tarkov.dev and other notable projects as well:
 
 - [ratscanner](https://github.com/RatScanner/RatScanner)
 - [errbot](https://github.com/GrantBirki/errbot)
@@ -16,7 +16,7 @@ This API powers all of thehideout.io and other notable projects as well:
 
 There is a GraphQL playground for you to use and test out
 
-**Link:** [api.thehideout.io/___graphql](https://api.thehideout.io/___graphql)
+**Link:** [api.tarkov.dev/___graphql](https://api.tarkov.dev/___graphql)
 
 Example Query:
 
