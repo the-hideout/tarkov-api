@@ -55,7 +55,7 @@ class ItemsAPI {
     item.shortName = item.shortname;
     item.wikiLink = item.wiki_link;
     item.normalizedName = item.normalized_name;
-    item.link = `https://tarkov-tools.com/item/${item.normalizedName}`;
+    item.link = `https://tarkov.dev/item/${item.normalizedName}`;
 
     if(item.properties){
         if(item.properties.accuracy){
@@ -139,9 +139,9 @@ class ItemsAPI {
     }
 
     // Fallback images
-    item.imageLinkFallback = item.imageLink || 'https://assets.tarkov-tools.com/unknown-item-image.jpg';
-    item.iconLinkFallback = item.iconLink || 'https://assets.tarkov-tools.com/unknown-item-icon.jpg';
-    item.gridImageLinkFallback = item.gridImageLink || 'https://assets.tarkov-tools.com/unknown-item-grid-image.jpg';
+    item.imageLinkFallback = item.imageLink || 'https://assets.tarkov.dev/unknown-item-image.jpg';
+    item.iconLinkFallback = item.iconLink || 'https://assets.tarkov.dev/unknown-item-icon.jpg';
+    item.gridImageLinkFallback = item.gridImageLink || 'https://assets.tarkov.dev/unknown-item-grid-image.jpg';
 
 
     if(item.containsItems && item.containsItems.length > 0){
