@@ -13,6 +13,10 @@ class TraderInventoryAPI {
 
         try {
             this.itemCache = await ITEM_DATA.get('TRADER_ITEMS', 'json');
+            const curr = await ITEM_DATA.get('CURRENCY_PRICES', 'json');
+            for (const id in curr) {
+                this.itemCache[id] = curr[id];
+            }
         } catch (loadDataError){
             console.error(loadDataError);
         }
