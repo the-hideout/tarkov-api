@@ -7,7 +7,7 @@ class BartersAPI {
     }
   async getList() {
     if (this.barterList) {
-        return this.craftLbarterListist;
+        return this.barterList;
     }
 
     const barters = await ITEM_DATA.get('BARTER_DATA', 'json');
@@ -51,16 +51,13 @@ class BartersAPI {
     const results = [];
 
     for (const barter of barters) {
-        console.log(barter.requiredItems);
         for (const i in barter.requiredItems) {
-            //console.log(`${requiredItem.item.id} | ${itemID}`);
             if (barter.requiredItems[i].item.id === itemID) {
                 results.push(barter);
             }
         }
 
         for (const i in barter.rewardItems) {
-
             if (barter.rewardItems[i].item.id === itemID) {
                 results.push(barter);
             }
