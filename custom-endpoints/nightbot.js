@@ -22,5 +22,5 @@ module.exports = async (request) => {
     const bestPrice = items[0].sellFor.sort((a, b) => b.price - a.price);
 
 
-    return new Response(`${items[0].name} ${new Intl.NumberFormat().format(bestPrice[0].price)} ₽ ${capitalize(bestPrice[0].source)} https://tarkov-tools.com/item/${items[0].normalizedName}`);
+    return new Response(`${items[0].name} ${new Intl.NumberFormat().format(bestPrice[0].price)} ₽ ${capitalize(bestPrice[0].source)} https://tarkov.dev/item/${items[0].normalizedName}`);
 };
