@@ -87,5 +87,13 @@ module.exports = {
 
     traderInventoryByName: async (args) => {
         return await traderInventory.getByTraderName(args.name);
+    },
+
+    craftsForItemID: async (args) => {
+        return await craftsAPI.getCraftsForItemID(args.id);
+    },
+
+    bartersForItemID: async (args) => {
+        return await bartersAPI.getBartersForItemID(args.id);
     }
 };

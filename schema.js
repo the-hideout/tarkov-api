@@ -263,9 +263,9 @@ module.exports = `
     quests: [Quest]
     hideoutModules: [HideoutModule]
     status: ServerStatus!
-    # traders(id: ID!): Trader
-    # tradersAll: [Trader]
     traderInventoryByName(name: TraderName!): TraderInventory
     traderResetTimes: [TraderResetTime]
+    bartersForItemID(id: ID!): [Barter]
+    craftsForItemID(id: ID!): [Craft]
   }
 `;
