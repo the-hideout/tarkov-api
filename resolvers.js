@@ -13,6 +13,9 @@ const questsAPI = new QuestsAPI();
 const TradersAPI = require('./datasources/traders');
 const tradersAPI = new TradersAPI();
 
+const TraderInventoryAPI = require('./datasources/trader-inventory');
+const traderInventory = new TraderInventoryAPI();
+
 const HideoutAPI = require('./datasources/hideout');
 const hideoutAPI = new HideoutAPI();
 
@@ -59,7 +62,11 @@ module.exports = {
     },
 
     traders: async (args) => {
-        return await tradersApi.get(args.id);
+        return await tradersAPI.get(args.id);
+    },
+
+    tradersAll: async () => {
+        return await tradersAPI.getAll();
     },
 
     hideoutModules: async () => {
@@ -77,4 +84,8 @@ module.exports = {
     traderResetTimes: async () => {
         return await traderResets();
     },
+
+    traderInventoryByName: async (args) => {
+        return await traderInventory.getByTraderName(args.name);
+    }
 };

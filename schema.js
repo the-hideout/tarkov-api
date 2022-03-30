@@ -263,7 +263,9 @@ module.exports = `
     quests: [Quest]
     hideoutModules: [HideoutModule]
     status: ServerStatus!
-    # traderInventoryByName(name: TraderName!): TraderInventory
+    # traders(id: ID!): Trader
+    # tradersAll: [Trader]
+    traderInventoryByName(name: TraderName!): TraderInventory
     traderResetTimes: [TraderResetTime]
   }
 `;
