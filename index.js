@@ -54,7 +54,7 @@ async function graphqlHandler(request, graphQLOptions) {
 
     const queryHash = crypto.createHash('md5').update(queryHashString).digest('hex');
 
-    if(!url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
+    /* if(!url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
         const cachedResponse = await QUERY_CACHE.get(queryHash, 'json');
 
         if(cachedResponse){
@@ -64,16 +64,16 @@ async function graphqlHandler(request, graphQLOptions) {
                 },
             });
         }
-    }
+    } */
 
     await resolvers.itemInit();
 
     const result = await graphql(schema, query, resolvers, {}, variables);
     const body = JSON.stringify(result);
 
-    if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
+    /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
         await QUERY_CACHE.put(queryHash, body, {expirationTtl: 300});
-    }
+    } */
 
     return new Response(body, {
         headers: {
