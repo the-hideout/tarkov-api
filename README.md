@@ -37,6 +37,13 @@ query {
 
 ## Development 🔨
 
+Prerequisites:
+
+- Comment out the two `routes =` lines in the `wrangler.toml` file
+- Run `wrangler login`
+
+Start the API server:
+
 - Start the dev environment by running `npm run dev`
 - Then open up the playground on [localhost:8787/___graphql](http://127.0.0.1:8787/___graphql)
 
