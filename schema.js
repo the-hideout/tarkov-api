@@ -140,10 +140,16 @@ module.exports = `
       value: Int
   }
 
+  type ItemAttribute {
+    type: String!
+    value: String
+  }
+
   type ContainedItem {
     item: Item!
     count: Float!
     quantity: Float!
+    attributes: [ItemAttribute]
   }
 
   type Barter {

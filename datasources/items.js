@@ -150,6 +150,7 @@ class ItemsAPI {
                 item: this.formatItem(this.itemCache[containedItem.itemId]),
                 count: containedItem.count,
                 quantity: containedItem.count,
+                attributes: []
             };
         });
     }
