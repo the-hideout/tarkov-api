@@ -98,35 +98,6 @@ type Item {
   translation(languageCode: LanguageCode): ItemTranslation
 }
 
-enum ItemType {
-  ammo
-  ammoBox
-  any
-  armor
-  backpack
-  barter
-  container
-  disabled
-  glasses
-  grenade
-  gun
-  headphones
-  helmet
-  injectors
-  keys
-  markedOnly
-  meds
-  mods
-  noFlea
-  pistolGrip
-  preset
-  provisions
-  rig
-  suppressor
-  unLootable
-  wearable
-}
-
 type ItemAttribute {
   type: String!
   value: String
@@ -155,6 +126,35 @@ type ItemTranslation {
   name: String
   shortName: String
   description: String
+}
+
+enum ItemType {
+  ammo
+  ammoBox
+  any
+  armor
+  backpack
+  barter
+  container
+  disabled
+  glasses
+  grenade
+  gun
+  headphones
+  helmet
+  injectors
+  keys
+  markedOnly
+  meds
+  mods
+  noFlea
+  pistolGrip
+  preset
+  provisions
+  rig
+  suppressor
+  unLootable
+  wearable
 }
 
 enum LanguageCode {
@@ -205,6 +205,12 @@ enum RequirementType {
   questCompleted
 }
 
+type ServerStatus {
+  generalStatus: Status
+  currentStatuses: [Status]
+  messages: [StatusMessage]
+}
+
 type Status {
   name: String!
   message: String
@@ -225,12 +231,6 @@ type StatusMessage {
   type: Int!
   solveTime: String
   statusCode: String!
-}
-
-type ServerStatus {
-  generalStatus: Status
-  currentStatuses: [Status]
-  messages: [StatusMessage]
 }
 
 type Trader {
