@@ -148,8 +148,10 @@ module.exports = `
 
   type Barter {
     source: String!
+    sourceName: ItemSourceName!
     requiredItems: [ContainedItem]!
     rewardItems: [ContainedItem]!
+    requirements: [PriceRequirement]!
   }
 
   type Craft {

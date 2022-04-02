@@ -16,6 +16,7 @@ class BartersAPI {
     for(const barter of barters.data){
         returnData.push({
             source: barter.trader,
+            sourceName: barter.sourceName,
             requiredItems: barter.requiredItems.map((itemData) => {
                 return {
                     item: itemsAPI.getItem(itemData.id),
@@ -29,7 +30,8 @@ class BartersAPI {
                     count: itemData.count,
                     quantity: itemData.count,
                 };
-            })
+            }),
+            requirements: barter.requirements
         });
     }
 
