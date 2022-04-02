@@ -1,0 +1,450 @@
+{
+	"info": {
+		"_postman_id": "6dba1e7a-d770-4bc3-a924-8835b1d1acee",
+		"name": "Tarkov.dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Barters",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"requiredItems\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"rewardItems\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\r\n    barters {\r\n        source\r\n        requiredItems {\r\n            item {\r\n                ...itemFragment\r\n            }\r\n        }\r\n        rewardItems {\r\n            item {\r\n                ...itemFragment\r\n            }\r\n        }\r\n    }\r\n}\r\n{{itemFragment}}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crafts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"requiredItems\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"rewardItems\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\r\n    crafts {\r\n        source\r\n        duration\r\n        requiredItems {\r\n            item {\r\n                ...itemFragment\r\n            }\r\n        }\r\n        rewardItems {\r\n            item {\r\n                ...itemFragment\r\n            }\r\n        }\r\n    }\r\n}\r\n{{itemFragment}}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Hideout Modules",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"itemRequirements\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"hideoutModules\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\r\n  hideoutModules {\r\n      id\r\n      name\r\n      level\r\n      itemRequirements {\r\n          item {\r\n            ...itemFragment\r\n          }\r\n          count\r\n          quantity\r\n      }\r\n      moduleRequirements {\r\n          id\r\n          name\r\n          level\r\n      }\r\n  }\r\n}\r\n{{itemFragment}}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Quests",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"quests\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"giver\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\r\n  quests {\r\n    id\r\n    giver {\r\n        id\r\n        name\r\n    }\r\n    turnin {\r\n        id\r\n        name\r\n    }\r\n    title\r\n    wikiLink\r\n    exp\r\n    unlocks\r\n    reputation {\r\n        trader {\r\n            name\r\n        }\r\n        amount\r\n    }\r\n    objectives {\r\n      id\r\n      type\r\n      target\r\n      number\r\n      location\r\n      targetItem {\r\n          ...itemFragment\r\n      }\r\n    }\r\n    requirements {\r\n      quests\r\n      level\r\n      prerequisiteQuests {\r\n          id\r\n      }\r\n    }\r\n  }\r\n}\r\n\r\n{{itemFragment}}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Server Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"messages\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"Website\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\r\n    status {\r\n        generalStatus {\r\n            name\r\n            message\r\n            status\r\n        }\r\n        messages {\r\n            content\r\n            time\r\n            type\r\n            solveTime\r\n        }\r\n        currentStatuses {\r\n            name\r\n            message\r\n            status\r\n        }\r\n    }\r\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Item by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"updated\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($id: ID!) {\r\n    item(id: $id) {\r\n        ...itemFragment\r\n    }\r\n}\r\n{{itemFragment}}",
+						"variables": "{\r\n    \"id\": \"5b7c710788a4506dec015957\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Items by Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"Graphics card\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($name: String!) {\r\n    itemsByName(name: $name) {\r\n        ...itemFragment\r\n    }\r\n}\r\n{{itemFragment}}",
+						"variables": "{\r\n    \"name\": \"GPU\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Items by Type",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"Graphics card\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"LEDX\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"Dollars\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"Euros\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($type: ItemType!) {\r\n    itemsByType(type: $type) {\r\n        ...itemFragment\r\n    }\r\n}\r\n{{itemFragment}}",
+						"variables": "{\r\n    \"type\": \"any\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Trader Reset Time",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has all traders\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"prapor\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"therapist\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"mechanic\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"jaeger\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"ragman\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"peacekeeper\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"skier\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"fence\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\r\n    traderResetTimes {\r\n        name\r\n        resetTimestamp\r\n    }\r\n}",
+						"variables": "{\r\n    \"name\": \"5447b5f14bdc2d61278b4567\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// pm.environment.set(\"tarko.dev.api\", \"http://127.0.0.1:8787/graphql\");"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "tarko.dev.api",
+			"value": "http://localhost:8787/graphql"
+		},
+		{
+			"key": "itemFragment",
+			"value": "fragment itemFragment on Item {id\n        name\n        normalizedName\n        shortName\n        basePrice\n        updated\n        width\n        height\n        iconLink\n        iconLinkFallback\n        wikiLink\n        imageLink\n        imageLinkFallback\n        gridImageLink\n        gridImageLinkFallback\n        types\n        avg24hPrice\n        accuracyModifier\n        recoilModifier\n        ergonomicsModifier\n        hasGrid\n        blocksHeadphones\n        traderPrices {\n            price\n            trader {\n                id\n                name\n            }\n        }\n        link\n        lastLowPrice\n        changeLast48h\n        changeLast48hPercent\n        low24hPrice\n        high24hPrice\n        sellFor {\n            source\n            price\n            currency\n            requirements {\n                type\n                value\n            }\n        }\n        buyFor {\n            source\n            price\n            currency\n            requirements {\n                type\n                value\n            }\n        }\n        containsItems {\n            count\n        }\n        bsgCategoryId\n        weight\n        velocity\n        loudness\n        translation(languageCode: en) {\n            name\n            shortName\n            description\n        }}"
+		}
+	]
+}

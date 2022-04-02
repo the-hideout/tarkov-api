@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# CI helper script for running tests
+
+START=1
+END=60
+
+# Start the GraphQL server in the background
+npm run ci &
+
+for (( c=$START; c<=$END; c++ ))
+do
+    echo "⏳ Checking for GraphQL server to come online - Attempt: #$c"
+    curl -s http://localhost:8787/graphql > /dev/null
+    if [ $? -eq 0 ]; then
+        echo "✔️ GraphQL server is up"
+        newman run script/ci/Tarkov.dev.postman_collection.json
+        exit $?
+    fi
+    sleep 1
+done
+
+echo "❌ GraphQL server did not respond in $END retries"
+exit 1
