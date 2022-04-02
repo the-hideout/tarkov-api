@@ -22,6 +22,7 @@ class CraftsAPI {
                     item: itemsAPI.getItem(itemData.id),
                     count: itemData.count,
                     quantity: itemData.count,
+                    attributes: []
                 };
             }),
             rewardItems: craft.rewardItems.map((itemData) => {
@@ -29,6 +30,7 @@ class CraftsAPI {
                     item: itemsAPI.getItem(itemData.id),
                     count: itemData.count,
                     quantity: itemData.count,
+                    attributes: []
                 };
             })
         });
