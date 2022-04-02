@@ -7,6 +7,7 @@
         "test": "echo \"Error: no test specified\"",
         "format": "prettier --write '**/*.{js,css,json,md}'",
         "dev": "wrangler --env development dev",
+        "ci": "wrangler --env development --config script/ci/wrangler-ci.toml dev",
         "local": "wrangler dev"
     },
     "author": "Oskar Risberg <oskar.risberg@stendahls.se>",
