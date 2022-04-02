@@ -3,7 +3,7 @@
 # CI helper script for running tests
 
 START=1
-END=30
+END=60
 
 # Start the GraphQL server in the background
 npm run ci &
