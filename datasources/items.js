@@ -165,7 +165,7 @@ class ItemsAPI {
       item = await ITEM_DATA.get(id, 'json');
     }
 
-    if(!item){
+    if(!item || item.types.includes('disabled') === true){
         return {};
     }
 
@@ -175,6 +175,7 @@ class ItemsAPI {
   getItemsByType(type) {
     return Object.values(this.itemCache)
         .filter((rawItem) => {
+            if (rawItem.types.includes('disabled') === true) return false
             return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
         })
         .map((rawItem) => {
@@ -187,6 +188,7 @@ class ItemsAPI {
 
     return Object.values(this.itemCache)
         .filter((rawItem) => {
+            if (rawItem.types.includes('disabled') === true) return false
             return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
         })
         .map((rawItem) => {
@@ -200,6 +202,8 @@ class ItemsAPI {
             if(!rawItem.properties){
                 return false;
             }
+
+            if (rawItem.types.includes('disabled') === true) return false
 
             return rawItem.properties.bsgCategoryId === bsgCategoryId;
         })
