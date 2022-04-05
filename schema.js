@@ -261,6 +261,7 @@ module.exports = `
 
   type Query {
     item(id: ID!): Item
+    itemsByIDs(ids: [ID]!): [Item]
     itemsByType(type: ItemType!): [Item]!
     itemsByName(name: String!): [Item]!
     itemByNormalizedName(normalizedName: String!): Item
