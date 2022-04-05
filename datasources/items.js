@@ -172,6 +172,16 @@ class ItemsAPI {
     return this.formatItem(item);
   }
 
+  getItemsByIDs(ids) {
+    return Object.values(this.itemCache)
+    .filter((rawItem) => {
+        return ids.includes(rawItem.id);
+    })
+    .map((rawItem) => {
+        return this.formatItem(rawItem);
+    });
+  }
+
   getItemsByType(type) {
     return Object.values(this.itemCache)
         .filter((rawItem) => {
@@ -183,6 +193,18 @@ class ItemsAPI {
   }
 
   getItemsByName(name) {
+    const searchString = name.toLowerCase();
+
+    return Object.values(this.itemCache)
+        .filter((rawItem) => {
+            return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
+        })
+        .map((rawItem) => {
+            return this.formatItem(rawItem);
+        });
+  }
+
+  getItemsByNames(names) {
     const searchString = name.toLowerCase();
 
     return Object.values(this.itemCache)
