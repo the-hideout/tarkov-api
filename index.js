@@ -16,11 +16,58 @@ const nightbot = require('./custom-endpoints/nightbot');
 
 const schema = buildSchema(typeDefs);
 
+async function sha256(message) {
+    // encode as UTF-8
+    const msgBuffer = new TextEncoder().encode(message);
+
+    // hash the message
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+    // convert ArrayBuffer to Array
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+    // convert bytes to hex string
+    const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
+    return hashHex;
+}
+  
+async function handlePostRequest(event) {
+    const request = event.request;
+    const body = await request.clone().text();
+
+    // Hash the request body to use it as a part of the cache key
+    const hash = await sha256(body);
+    const cacheUrl = new URL(request.url);
+
+    // Store the URL in cache by prepending the body's hash
+    cacheUrl.pathname = '/posts' + cacheUrl.pathname + hash;
+
+    // Convert to a GET to be able to cache
+    const cacheKey = new Request(cacheUrl.toString(), {
+        headers: request.headers,
+        method: 'GET',
+    });
+
+    const cache = caches.default;
+
+    // Find the cache key in the cache
+    let response = await cache.match(cacheKey);
+
+    // Otherwise, fetch response to POST request from origin
+    if (!response) {
+        response = await fetch(request);
+        event.waitUntil(cache.put(cacheKey, response.clone()));
+    }
+    return response;
+}
+
 /**
  * Example of how router can be used in an application
  *  */
 addEventListener('fetch', event => {
-    event.respondWith(handleRequest(event.request))
+    const request = event.request;
+    if (request.method.toUpperCase() === 'POST') return event.respondWith(handlePostRequest(event));
+    return event.respondWith(handleRequest(request));
 });
 
 async function graphqlHandler(request, graphQLOptions) {
