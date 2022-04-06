@@ -40,7 +40,7 @@ async function handlePostRequest(event) {
     const cacheUrl = new URL(request.url);
 
     // Store the URL in cache by prepending the body's hash
-    cacheUrl.pathname = '/posts' + cacheUrl.pathname + hash;
+    cacheUrl.pathname = cacheUrl.pathname + hash;
 
     // Convert to a GET to be able to cache
     const cacheKey = new Request(cacheUrl.toString(), {
