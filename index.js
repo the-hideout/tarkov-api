@@ -150,3 +150,4 @@ const handleRequest = async request => {
         return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 })
     }
 };
+
