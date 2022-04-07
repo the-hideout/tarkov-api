@@ -20,8 +20,11 @@ async function sha256(message) {
     // encode as UTF-8
     const msgBuffer = new TextEncoder().encode(message);
 
-    // hash the message
-    const hashBuffer = await crypto.webcrypto.subtle.digest('SHA-256', msgBuffer);
+    // hash the message - alternate method
+    const hashBuffer = crypto.createHash('sha256').update(msgBuffer).digest('hex');
+
+    // hash the message - original method
+    // const hashBuffer = await crypto.webcrypto.subtle.digest('SHA-256', msgBuffer);
 
     // convert ArrayBuffer to Array
     const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -99,7 +102,7 @@ async function graphqlHandler(request, graphQLOptions) {
         variables: variables,
     });
 
-    const queryHash = crypto.createHash('md5').update(queryHashString).digest('hex');
+    // const queryHash = crypto.createHash('md5').update(queryHashString).digest('hex');
 
     /* if(!url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
         const cachedResponse = await QUERY_CACHE.get(queryHash, 'json');
