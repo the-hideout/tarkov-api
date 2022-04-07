@@ -31,7 +31,6 @@ async function handlePostRequest(event) {
 
     // Hash the request body to use it as a part of the cache key
     const hash = await sha256(body);
-    console.log(`hash: ${hash}`);
     const cacheUrl = new URL(request.url);
 
     // Store the URL in cache by prepending the body's hash
@@ -39,11 +38,9 @@ async function handlePostRequest(event) {
 
     // Convert to a GET to be able to cache
     const cacheKey = new Request(cacheUrl.toString(), {
-        // headers: request.headers,
+        headers: request.headers,
         method: 'GET',
     });
-
-    console.log(cacheKey.url);
 
     const cache = caches.default;
 
@@ -52,13 +49,9 @@ async function handlePostRequest(event) {
 
     // Otherwise, fetch response to POST request from origin
     if (!response) {
-        response = await fetch(request);
+        response = await graphqlHandler(request, graphQLOptions);
         event.waitUntil(cache.put(cacheKey, response.clone()));
     }
-
-    console.log(response);
-    console.log(response.ok);
-    console.log(response.clone().text());
 
     return response;
 }
@@ -194,7 +187,7 @@ const handleRequest = async request => {
         if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
             return fetch(request)
         }
-        return new Response('Not found', { status: 404 })
+        return new Response('Not found CUSTOM', { status: 404 })
     } catch (err) {
         return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 })
     }
