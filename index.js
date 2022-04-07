@@ -21,16 +21,7 @@ async function sha256(message) {
     const msgBuffer = new TextEncoder().encode(message);
 
     // hash the message - alternate method
-    const hashBuffer = crypto.createHash('sha256').update(msgBuffer).digest('hex');
-
-    // hash the message - original method
-    // const hashBuffer = await crypto.webcrypto.subtle.digest('SHA-256', msgBuffer);
-
-    // convert ArrayBuffer to Array
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-
-    // convert bytes to hex string
-    const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
+    const hashHex = crypto.createHash('sha256').update(msgBuffer).digest('hex');
     return hashHex;
 }
   
@@ -40,6 +31,7 @@ async function handlePostRequest(event) {
 
     // Hash the request body to use it as a part of the cache key
     const hash = await sha256(body);
+    console.log(`hash: ${hash}`);
     const cacheUrl = new URL(request.url);
 
     // Store the URL in cache by prepending the body's hash
@@ -47,9 +39,11 @@ async function handlePostRequest(event) {
 
     // Convert to a GET to be able to cache
     const cacheKey = new Request(cacheUrl.toString(), {
-        headers: request.headers,
+        // headers: request.headers,
         method: 'GET',
     });
+
+    console.log(cacheKey.url);
 
     const cache = caches.default;
 
@@ -61,6 +55,11 @@ async function handlePostRequest(event) {
         response = await fetch(request);
         event.waitUntil(cache.put(cacheKey, response.clone()));
     }
+
+    console.log(response);
+    console.log(response.ok);
+    console.log(response.clone().text());
+
     return response;
 }
 
