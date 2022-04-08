@@ -117,6 +117,15 @@ const graphQLOptions = {
 const handleRequest = async request => {
     const url = new URL(request.url);
 
+    // Please make it stop
+    const clientIP = request.headers.get('CF-Connecting-IP');
+    const userAgent = request.headers.get('User-Agent') || '';
+    if (clientIP === '44.201.66.26' && userAgent.includes('got')) {
+        const response = new Response('Please stop, you are hitting us with a ton of requests and that costs us money :(', { status: 200 });
+        response.headers.append('cache-control', 'public, max-age=2592000');
+        return response;
+    }
+
     // Check for empty /graphql query
     if (url.pathname === "/graphql" && request.method === 'POST') {
         const json = await request.clone().json();
