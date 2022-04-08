@@ -122,7 +122,7 @@ const handleRequest = async request => {
         const json = await request.clone().json();
         if (json.query.trim() === "") {
             // Clone the response so that it's no longer immutable
-            const response = new Response('GraphQL requires a query in the body of the request', { status: 400 });
+            const response = new Response('GraphQL requires a query in the body of the request', { status: 200 });
             // Add a cache control header
             response.headers.append('cache-control', 'public, max-age=2592000');
             return response;
