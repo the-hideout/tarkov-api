@@ -20,7 +20,7 @@ const schema = buildSchema(typeDefs);
  * Example of how router can be used in an application
  *  */
 addEventListener('fetch', event => {
-    event.respondWith(handleRequest(event.request))
+    event.respondWith(handleRequest(event.request));
 });
 
 async function graphqlHandler(request, graphQLOptions) {
@@ -80,7 +80,7 @@ async function graphqlHandler(request, graphQLOptions) {
             'content-type': 'application/json',
         },
     });
-};
+}
 
 const graphQLOptions = {
     // Set the path for the GraphQL server
@@ -116,6 +116,19 @@ const graphQLOptions = {
 
 const handleRequest = async request => {
     const url = new URL(request.url);
+
+    // Check for empty /graphql query
+    if (url.pathname === "/graphql" && request.method === 'POST') {
+        const json = await request.clone().json();
+        if (json.query.trim() === "") {
+            // Clone the response so that it's no longer immutable
+            const response = new Response('GraphQL requires a query in the body of the request', { status: 400 });
+            // Add a cache control header
+            response.headers.append('cache-control', 'public, max-age=2592000');
+            return response;
+        }
+    }
+
     try {
         if(url.pathname === '/webhook/nightbot'){
             return nightbot(request);
@@ -130,23 +143,23 @@ const handleRequest = async request => {
         }
 
         if (url.pathname === graphQLOptions.baseEndpoint) {
-            const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(request, graphQLOptions)
+            const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(request, graphQLOptions);
             if (graphQLOptions.cors) {
-                setCors(response, graphQLOptions.cors)
+                setCors(response, graphQLOptions.cors);
             }
 
             return response;
         }
 
         if ( graphQLOptions.playgroundEndpoint && url.pathname === graphQLOptions.playgroundEndpoint ) {
-            return playground(request, graphQLOptions)
+            return playground(request, graphQLOptions);
         }
 
         if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
-            return fetch(request)
+            return fetch(request);
         }
-        return new Response('Not found', { status: 404 })
+        return new Response('Not found', { status: 404 });
     } catch (err) {
-        return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 })
+        return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
     }
 };
