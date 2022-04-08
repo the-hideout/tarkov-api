@@ -1,20 +1,4 @@
 module.exports = `
-type Query {
-  item(id: ID!): Item
-  itemsByType(type: ItemType!): [Item]!
-  itemsByName(name: String!): [Item]!
-  itemByNormalizedName(normalizedName: String!): Item
-  itemsByBsgCategoryId(bsgCategoryId: String!): [Item]!
-  historicalItemPrices(id: ID!): [historicalPricePoint]!
-  barters: [Barter]
-  crafts: [Craft]
-  quests: [Quest]
-  hideoutModules: [HideoutModule]
-  status: ServerStatus!
-  # traderInventoryByName(name: TraderName!): TraderInventory
-  traderResetTimes: [TraderResetTime]
-}
-
 type Barter {
   source: String!
   sourceName: ItemSourceName!
