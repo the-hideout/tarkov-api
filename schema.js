@@ -16,9 +16,11 @@ type ContainedItem {
 
 type Craft {
   source: String!
+  sourceName: String!
   duration: Int!
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
+  requirements: [PriceRequirement]!
 }
 
 type GameProperty {
@@ -187,6 +189,7 @@ enum RequirementType {
   playerLevel
   loyaltyLevel
   questCompleted
+  stationLevel
 }
 
 type ServerStatus {

@@ -17,12 +17,13 @@ class CraftsAPI {
         returnData.push({
             duration: craft.duration,
             source: craft.station,
+            sourceName: craft.sourceName,
             requiredItems: craft.requiredItems.map((itemData) => {
                 return {
                     item: itemsAPI.getItem(itemData.id),
                     count: itemData.count,
                     quantity: itemData.count,
-                    attributes: []
+                    attributes: itemData.attributes
                 };
             }),
             rewardItems: craft.rewardItems.map((itemData) => {
@@ -30,9 +31,10 @@ class CraftsAPI {
                     item: itemsAPI.getItem(itemData.id),
                     count: itemData.count,
                     quantity: itemData.count,
-                    attributes: []
+                    attributes: itemData.attributes
                 };
-            })
+            }),
+            requirements: craft.requirements
         });
     }
 
