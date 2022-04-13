@@ -2,6 +2,8 @@
 
 A document full of helpful examples for how you can use the GraphQL API.
 
+> Note: For even more examples (and different programming languages) check out our API page: [tarkov.dev/api](https://tarkov.dev/api)
+
 ## Examples
 
 ### Game Status
