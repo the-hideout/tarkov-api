@@ -17,6 +17,7 @@ class CraftsAPI {
 
     for(const craft of crafts.data){
         returnData.push({
+            id: craft.id,
             duration: craft.duration,
             source: craft.station,
             sourceName: craft.sourceName,
