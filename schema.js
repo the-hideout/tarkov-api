@@ -15,6 +15,7 @@ type ContainedItem {
 }
 
 type Craft {
+  id: String!
   source: String!
   sourceName: String!
   duration: Int!
