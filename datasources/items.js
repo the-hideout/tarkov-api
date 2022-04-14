@@ -112,7 +112,7 @@ class ItemsAPI {
 
     if(!item.types.includes('noFlea')){
         item.sellFor.push({
-            price: item.avg24hPrice,
+            price: item.lastLowPrice,
             source: 'fleaMarket',
             currency: 'RUB',
             requirements: [{
@@ -128,7 +128,7 @@ class ItemsAPI {
 
     if(!item.types.includes('noFlea')){
         item.buyFor.push({
-            price: item.avg24hPrice,
+            price: item.avg24hPrice || item.lastLowPrice,
             source: 'fleaMarket',
             currency: 'RUB',
             requirements: [{
