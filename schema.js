@@ -13,6 +13,7 @@ type Ammo {
   fragmentationChance: Float!
   ricochetChance: Float!
   penetrationChance: Float!
+  penetrationPower: Int!
   accuracy: Int!
   recoil: Int!
   initialSpeed: Int!
