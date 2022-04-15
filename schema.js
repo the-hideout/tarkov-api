@@ -1,4 +1,26 @@
 module.exports = `
+type Ammo {
+  item: Item!
+  weight: Float!
+  caliber: String!
+  stackMaxSize: Int!
+  tracer: Boolean!
+  tracerColor: String
+  ammoType: String!
+  projectileCount: Int
+  damage: Int!
+  armorDamage: Int!
+  fragmentationChance: Float!
+  ricochetChance: Float!
+  penetrationChance: Float!
+  penetrationPower: Int!
+  accuracy: Int!
+  recoil: Int!
+  initialSpeed: Int!
+  lightBleedModifier: Float!
+  heavyBleedModifier: Float!
+}
+
 type Barter {
   source: String!
   sourceName: ItemSourceName!
@@ -277,5 +299,6 @@ type Query {
   status: ServerStatus!
   # traderInventoryByName(name: TraderName!): TraderInventory
   traderResetTimes: [TraderResetTime]
+  ammo: [Ammo]
 }
 `;

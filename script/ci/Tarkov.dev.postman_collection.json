@@ -6,6 +6,51 @@
 	},
 	"item": [
 		{
+			"name": "Ammo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"caliber\");\r",
+							"     pm.expect(pm.response.text()).to.include(\"heavyBleedModifier\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\r\n    ammo {\r\n        item {\r\n            ...itemFragment\r\n            }\r\n        caliber\r\n            heavyBleedModifier\r\n                }\r\n}\r\n{{itemFragment}}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Barters",
 			"event": [
 				{

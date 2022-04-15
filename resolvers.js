@@ -19,6 +19,9 @@ const hideoutAPI = new HideoutAPI();
 const HistoricalPricesAPI = require('./datasources/historical-prices');
 const historicalPricesAPI = new HistoricalPricesAPI();
 
+const AmmoAPI = require('./datasources/ammo');
+const ammoAPI = new AmmoAPI();
+
 const status = require('./datasources/status');
 
 const traderResets = require('./datasources/trader-resets');
@@ -81,4 +84,7 @@ module.exports = {
     traderResetTimes: async () => {
         return await traderResets();
     },
+    ammo: async() => {
+        return await ammoAPI.getList();
+    }
 };
