@@ -16,8 +16,10 @@ class AmmoAPI {
     const returnData = [];
 
     for(const ammo of ammunition.data){
+        const item = itemsAPI.getItem(ammo.id);
+        if (!item) continue;
         returnData.push({
-            item: itemsAPI.getItem(ammo.id),
+            item: item,
             weight: ammo.weight,
             caliber: ammo.caliber,
             stackMaxSize: ammo.stackMaxSize,
