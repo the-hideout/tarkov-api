@@ -4,7 +4,7 @@ type Ammo {
   weight: Float!
   caliber: String!
   stackMaxSize: Int!
-  tracer: String!
+  tracer: Boolean!
   tracerColor: String
   ammoType: String!
   projectileCount: Int
