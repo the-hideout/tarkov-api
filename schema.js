@@ -75,7 +75,7 @@ type HideoutStationLevel {
   constructionTime: Int!
   description: String!
   itemRequirements: [RequirementItem]!
-  moduleRequirements: [RequirementModule]!
+  moduleRequirements: [RequirementHideoutStationLevel]!
   skillRequirements: [RequirementSkill]!
   traderRequirements: [RequirementTrader]!
 }
@@ -226,9 +226,9 @@ type QuestRewardReputation {
   amount: Float!
 }
 
-type RequirementHideoutModule {
+type RequirementHideoutStationLevel {
   id: ID
-  module: HideoutModule!
+  module: HideoutStationLevel!
 }
 
 type RequirementItem {
