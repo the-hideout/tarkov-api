@@ -8,7 +8,7 @@ const hideoutAPI = new HideoutNewAPI();
 
 class CraftsAPI {
   async getList() {
-    const crafts = await ITEM_DATA.get('CRAFT_DATA', 'json');
+    const crafts = await ITEM_DATA.get('CRAFT_DATA_TEST', 'json');
 
     if(!crafts){
         return {};

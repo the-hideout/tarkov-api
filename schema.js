@@ -38,13 +38,13 @@ type ContainedItem {
 
 type Craft {
   id: String!
-  source: String!
-  sourceName: String!
+  source: String! @deprecated(reason: "source is deprecated. Use hideoutStations instead.")
+  sourceName: String! @deprecated(reason: "sourceName is deprecated. Use hideoutStations instead.")
   stationLevel: HideoutStationLevel!
   duration: Int!
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
-  requirements: [PriceRequirement]!
+  requirements: [PriceRequirement]! @deprecated(reason: "requirements is deprecated. Use hideoutStations instead.")
 }
 
 type GameProperty {
