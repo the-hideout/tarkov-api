@@ -39,7 +39,7 @@ class TradersAPI {
         }
     }
 
-    formatTrader(rawTrader) {
+    async formatTrader(rawTrader) {
         const trader = {
             id: rawTrader.id,
             name: rawTrader.name,
@@ -51,7 +51,7 @@ class TradersAPI {
         return rawTrader;
     }
 
-    getList() {
+    async getList() {
         await this.init();
 
         if(this.traderList){
@@ -70,7 +70,7 @@ class TradersAPI {
         return returnData;
     }
 
-    get(id) {
+    async get(id) {
         await this.init();
         for(const trader of this.traderCache.data){
             if(trader.id === id){
@@ -81,7 +81,7 @@ class TradersAPI {
         return {};
     }
 
-    getByName(name) {
+    async getByName(name) {
         await this.init();
         for(const trader of this.traderCache.data){
             if(trader.name.toLowerCase() === name.toLowerCase()){
@@ -92,7 +92,7 @@ class TradersAPI {
         return {};
     }
 
-    getByLevel(traderId, level) {
+    async getByLevel(traderId, level) {
         await this.init();
         for (const rawTrader of this.traderCache.data) {
             if (rawTrader.id !== traderId) continue;
