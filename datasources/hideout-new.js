@@ -24,9 +24,13 @@ class HideoutNewAPI {
         const station = {
             ...rawStation
         };
-        station.modules = await Promise.all(station.stages.map(async stage => {
+        /*station.modules = await Promise.all(station.stages.map(async stage => {
             return await this.formatModule(stage, station);
-        }));
+        }));*/
+        station.modules = station.stages.map(stage => {
+            return this.formatModule(stage, station);
+        });
+
         return station;
     }
 
@@ -84,14 +88,14 @@ class HideoutNewAPI {
 
         await itemsAPI.init();
 
-        /*const returnData = await Promise.all(this.cache.data.map(async hideoutStation => {
+        const returnData = await Promise.all(this.cache.data.map(async hideoutStation => {
             return await this.formatStation(hideoutStation);
-        }));*/
-        const returnData = [];
+        }));
+        /*const returnData = [];
 
         for (const hideoutStation of this.cache.data) {
             returnData.push(this.formatStation(hideoutStation));
-        }
+        }*/
 
         this.stationList = returnData;
 
