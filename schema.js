@@ -22,12 +22,13 @@ type Ammo {
 }
 
 type Barter {
-  trader: Trader!
-  source: String! @deprecated(reason: "Use trader and requirements instead.")
-  sourceName: ItemSourceName! @deprecated(reason: "Use trader instead.")
+  traderLevel: TraderLevel!
+  taskUnlock: Task
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
-  requirements: [PriceRequirement]!
+  source: String! @deprecated(reason: "Use traderLevel instead.")
+  sourceName: ItemSourceName! @deprecated(reason: "Use traderLevel instead.")
+  requirements: [PriceRequirement]! @deprecated(reason: "Use traderLevel instead.")
 }
 
 type ContainedItem {
@@ -39,12 +40,12 @@ type ContainedItem {
 
 type Craft {
   id: ID!
-  source: String! @deprecated(reason: "Use stationLevel instead.")
-  sourceName: String! @deprecated(reason: "Use stationLevel instead.")
   stationLevel: HideoutStationLevel!
   duration: Int!
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
+  source: String! @deprecated(reason: "Use stationLevel instead.")
+  sourceName: String! @deprecated(reason: "Use stationLevel instead.")
   requirements: [PriceRequirement]! @deprecated(reason: "Use stationLevel instead.")
 }
 
@@ -56,21 +57,16 @@ type GameProperty {
   objectValue: String
 }
 
-"""
-HideoutModule is deprecated and replaced with HideoutStationLevel.
-"""
-type HideoutModule {
-  id: Int
-  name: String
-  level: Int
-  itemRequirements: [ContainedItem]!
-  moduleRequirements: [HideoutModule]!
+type HealthEffect {
+  bodyParts: [String]!
+  effects: [String]!
+  time: Int
 }
 
 type HideoutStation {
   id: ID!
   name: String!
-  modules: [HideoutStationLevel]!
+  levels: [HideoutStationLevel]!
 }
 
 type HideoutStationLevel {
@@ -135,7 +131,13 @@ type ItemAttribute {
   value: String
 }
 
+type ItemGroup {
+  items: [Item]!
+}
+
 type ItemPrice {
+  traderLevel: TraderLevel!
+  taskUnlock: Task
   source: ItemSourceName
   price: Int
   currency: String
@@ -193,43 +195,21 @@ enum LanguageCode {
   en
 }
 
+type NumberCompare {
+  compareMethod: String!
+  value: Float!
+}
+
+type OfferUnlock {
+  id: ID!
+  traderLevel: TraderLevel!
+  item: Item!
+}
+
 type PriceRequirement {
   type: RequirementType!
   value: Int
   stringValue: String
-}
-
-type Quest {
-  id: String!
-  requirements: QuestRequirement
-  giver: Trader!
-  turnin: Trader!
-  title: String!
-  wikiLink: String!
-  exp: Int!
-  unlocks: [String]!
-  reputation: [QuestRewardReputation!]
-  objectives: [QuestObjective]!
-}
-
-type QuestObjective {
-  id: String
-  type: String!
-  target: [String!]
-  targetItem: Item
-  number: Int
-  location: String
-}
-
-type QuestRequirement {
-  level: Int
-  quests: [[Int]]!
-  prerequisiteQuests: [[Quest]]!
-}
-
-type QuestRewardReputation {
-  trader: Trader!
-  amount: Float!
 }
 
 type RequirementHideoutStationLevel {
@@ -251,10 +231,14 @@ type RequirementSkill {
   level: Int!
 }
 
+type RequirementTask {
+  id: ID
+  task: Task!
+}
+
 type RequirementTrader {
   id: ID
-  trader: Trader!
-  level: Int!
+  traderLevel: TraderLevel!
 }
 
 enum RequirementType {
@@ -272,7 +256,7 @@ type ServerStatus {
 
 type SkillLevel {
   name: String!
-  level: Int!
+  level: Float!
 }
 
 type Status {
@@ -297,9 +281,199 @@ type StatusMessage {
   statusCode: String!
 }
 
+type Task {
+  id: ID!
+  name: String!
+  trader: Trader!
+  locationName: String!
+  experience: Int!
+  wikiLink: String
+  minPlayerLevel: Int
+  taskRequirements: [TaskStatusRequirement]!
+  traderLevelRequirements: [TraderLevel]!
+  objectives: [TaskObjective]!
+  startRewards: TaskRewards
+  finishRewards: TaskRewards
+}
+
+interface TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+}
+
+type TaskObjectiveExperience implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  healthEffect: HealthEffect!
+}
+
+type TaskObjectiveExtract implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  exitStatus: [String]!
+}
+
+type TaskObjectiveQuestItem implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  questItem: QuestItem!
+  count: Int!
+}
+
+type TaskObjectiveItem implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  questi: Item!
+  count: Int!
+  foundInRaid: Boolean!
+  dogTagLevel: Int
+  maxDurability: Int
+  minDurability: Int
+}
+
+type TaskObjectiveBasic implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+}
+
+type TaskObjectiveBuildItem implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  item: Item!
+  containsAll: [Item]!
+  containsOne: [Item]!
+  accuracy: NumberCompare
+  durability: NumberCompare
+  effectiveDistance: NumberCompare
+  ergonomics: NumberCompare
+  height: NumberCompare
+  magazineCapacity: NumberCompare
+  muzzleVelocity: NumberCompare
+  recoil: NumberCompare
+  weight: NumberCompare
+  width: NumberCompare
+}
+
+type TaskObjectiveMark implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  markerItem: Item!
+}
+
+type TaskObjectivePlayerLevel implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  playerLevel: Int!
+}
+
+type TaskObjectiveShoot implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  target: String!
+  count: Int!
+  shotType: String!
+  bodyParts = [String]!
+  usingWeapon [Item]
+  usingWeaponMods [ItemGroup]
+  distance: NumberCompare
+  healthEffect: HealthEffect
+  enemyHealthEffect: HealthEffect
+}
+
+type TaskObjectiveSkill implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  skillLevel: SkillLevel!
+}
+
+type TaskObjectiveTaskStatus implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  task: Task!
+  status: [String]!
+}
+
+type TaskObjectiveTraderLevel implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  traderLevel: TraderLevel!
+}
+
+type QuestItem {
+  id: ID!
+  name: String!
+}
+
+type TaskRewards {
+  traderStanding: [TraderStanding]!
+  items: [ContainedItem]!
+  offerUnlock: [OfferUnlock]!
+  skillLevelReward: [SkillLevel]!
+  traderUnlock: [Trader]!
+}
+
+type TaskStatusRequirement {
+  task: Task!
+  statuses: [String]!
+}
+
 type Trader {
   id: ID!
   name: String!
+  resetTime: String
+  currency: Item!
+  levels: [TraderLevel!]!
+}
+
+type TraderLevel {
+  id: ID!
+  name: String!
+  level: Int!
+  requiredPlayerLevel: Int!
+  requiredReputation: Float!
+  requiredCommerce: Int!
+  payRate: Float!
+  insuranceRate: Float
+  repairUnitCost: Int
 }
 
 type TraderInventory {
@@ -333,6 +507,14 @@ type TraderPrice {
   trader: Trader!
 }
 
+type TraderStanding {
+  trader: Trader!
+  standing: Float!
+}
+
+"""
+TraderResetTime is deprecated and replaced with Trader.
+"""
 type TraderResetTime {
   name: String
   resetTimestamp: String
@@ -348,12 +530,70 @@ type Query {
   historicalItemPrices(id: ID!): [historicalPricePoint]!
   barters: [Barter]
   crafts: [Craft]
-  quests: [Quest]
+  quests: [Quest] @deprecated(reason: "No longer maintained. Use tasks instead.")
   hideoutModules: [HideoutModule] @deprecated(reason: "No longer maintained. Use hideoutStations instead.")
   hideoutStations: [HideoutStation]!
   status: ServerStatus!
+  tasks: [Task]!
   # traderInventoryByName(name: TraderName!): TraderInventory
-  traderResetTimes: [TraderResetTime]
+  traderResetTimes: [TraderResetTime] @deprecated(reason: "Use traders instead.")
+  traders: [Trader]!
   ammo: [Ammo]
+}
+
+"""
+The below types are all deprecated and may not return current data.
+"""
+"""
+HideoutModule has been replaced with HideoutStationLevel.
+"""
+type HideoutModule {
+  id: Int
+  name: String
+  level: Int
+  itemRequirements: [ContainedItem]!
+  moduleRequirements: [HideoutModule]!
+}
+
+"""
+Quest has been replaced with Task.
+"""
+type Quest {
+  id: String!
+  requirements: QuestRequirement
+  giver: Trader!
+  turnin: Trader!
+  title: String!
+  wikiLink: String!
+  exp: Int!
+  unlocks: [String]!
+  reputation: [QuestRewardReputation!]
+  objectives: [QuestObjective]!
+}
+
+"""
+QuestObjective has been replaced with TaskObjective.
+"""
+type QuestObjective {
+  id: String
+  type: String!
+  target: [String!]
+  targetItem: Item
+  number: Int
+  location: String
+}
+
+"""
+QuestRequirement has been replaced with TaskRequirement.
+"""
+type QuestRequirement {
+  level: Int
+  quests: [[Int]]!
+  prerequisiteQuests: [[Quest]]!
+}
+
+type QuestRewardReputation {
+  trader: Trader!
+  amount: Float!
 }
 `;

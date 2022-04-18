@@ -1,86 +1,113 @@
-const traders = {
-    "54cb50c76803fa8b248b4571": {
-        "id": "54cb50c76803fa8b248b4571",
-        "name": "Prapor",
-        "dataId": 0,
-    },
-    "54cb57776803fa99248b456e": {
-        "id": "54cb57776803fa99248b456e",
-        "name": "Therapist",
-        "dataId": 1,
-    },
-    "58330581ace78e27b8b10cee": {
-        "id": "58330581ace78e27b8b10cee",
-        "name": "Skier",
-        "dataId": 2
-    },
-    "5935c25fb3acc3127c3d8cd9": {
-        "id": "5935c25fb3acc3127c3d8cd9",
-        "name": "Peacekeeper",
-        "dataId": 3
-    },
-    "5a7c2eca46aef81a7ca2145d": {
-        "id": "5a7c2eca46aef81a7ca2145d",
-        "name": "Mechanic",
-        "dataId": 4
-    },
-    "5ac3b934156ae10c4430e83c": {
-        "id": "5ac3b934156ae10c4430e83c",
-        "name": "Ragman",
-        "dataId": 5
-    },
-    "5c0647fdd443bc2504c2d371": {
-        "id": "5c0647fdd443bc2504c2d371",
-        "name": "Jaeger",
-        "dataId": 6
-    },
-    "579dc571d53a0658a154fbec": {
-        "id": "579dc571d53a0658a154fbec",
-        "name": "Fence",
-        "dataId": 7
-    }
+const ItemsAPI = require('./items');
+const itemsAPI = new ItemsAPI();
+
+const currencyMap = {
+    RUB: '5449016a4bdc2d6f028b456f',
+    USD: '5696686a4bdc2da3298b456a',
+    EUR: '569668774bdc2da2298b4568'
+};
+
+const dataIdMap = {
+    0: '54cb50c76803fa8b248b4571',
+    1: '54cb57776803fa99248b456e',
+    2: '58330581ace78e27b8b10cee',
+    3: '5935c25fb3acc3127c3d8cd9',
+    4: '5a7c2eca46aef81a7ca2145d',
+    5: '5ac3b934156ae10c4430e83c',
+    6: '5c0647fdd443bc2504c2d371',
+    7: '579dc571d53a0658a154fbec',
 };
 
 class TradersAPI {
-  get(id) {
-    if(!traders){
-        return {};
+    constructor(){
+        this.traderCache = false;
+        this.resetCache = false;
     }
 
-    return traders[id];
-  }
-
-  getByName(name) {
-    if(!traders){
-        return {};
-    }
-
-    for(const traderId in traders){
-        if(traders[traderId].name === name){
-            return traders[traderId];
+    async init(){
+        if(this.traderCache && this.resetCache){
+          return true;
         }
-
-        if(traders[traderId].name.toLowerCase() === name){
-            return traders[traderId];
+    
+        await itemsAPI.init();
+    
+        try {
+            this.traderCache = await ITEM_DATA.get('TRADER_DATA', 'json');
+            this.resetCache = await ITEM_DATA.get('RESET_TIMES', 'json');
+        } catch (error){
+            console.error(error);
         }
     }
 
-    return {};
-  }
+    formatTrader(rawTrader) {
+        const trader = {
+            id: rawTrader.id,
+            name: rawTrader.name,
+            resetTime: rawTrader.resetTime,
+            currency: await itemsAPI.getItem(currencyMap[rawTrader.currency]),
+            levels: rawTrader.levels
+        };
+        if (this.resetCache[rawTrader.name.toLowerCase()]) trader.resetTime = this.resetCache[rawTrader.name.toLowerCase()];
+        return rawTrader;
+    }
 
-  getByDataId(dataId) {
-    if(!traders){
+    getList() {
+        await this.init();
+
+        if(this.traderList){
+            return this.traderList;
+        }
+
+        await itemsAPI.init();
+
+        const returnData = [];
+        for(const trader of this.traderCache.data){
+            returnData.push(this.formatTrader(trader));
+        }
+
+        this.traderList = returnData;
+
+        return returnData;
+    }
+
+    get(id) {
+        await this.init();
+        for(const trader of this.traderCache.data){
+            if(trader.id === id){
+                return this.formatTrader(trader);
+            }
+        }
+
         return {};
     }
 
-    for(const traderId in traders){
-        if(traders[traderId].dataId === dataId){
-            return traders[traderId];
+    getByName(name) {
+        await this.init();
+        for(const trader of this.traderCache.data){
+            if(trader.name.toLowerCase() === name.toLowerCase()){
+                return this.formatTrader(trader);
+            }
         }
+
+        return {};
     }
 
-    return {};
-  }
+    getByLevel(traderId, level) {
+        await this.init();
+        for (const rawTrader of this.traderCache.data) {
+            if (rawTrader.id !== traderId) continue;
+            for (const rawLevel of hideoutStation.levels) {
+                if (rawLevel.level === level) {
+                    return rawLevel;
+                }
+            }
+        }
+        throw new Error(`Could not find trader ${traderId} level ${level}`);
+    }
+
+    getByDataId(dataId) {
+        return this.get(dataIdMap[dataId]);
+    }
 }
 
 module.exports = TradersAPI;

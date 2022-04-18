@@ -29,6 +29,9 @@ const traderResets = require('./datasources/trader-resets');
 const HideoutNewAPI = require('./datasources/hideout-new');
 const hideoutNewAPI = new HideoutNewAPI();
 
+const TasksAPI = require('./datasources/tasks');
+const tasksAPI = new TasksAPI();
+
 module.exports = {
     itemInit: async () => {
         return await itemsAPI.init();
@@ -69,7 +72,8 @@ module.exports = {
     },
 
     traders: async (args) => {
-        return await tradersAPI.get(args.id);
+        if (args) return await tradersAPI.get(args.id);
+        return tradersAPI.getList();
     },
 
     hideoutModules: async () => {
@@ -86,6 +90,10 @@ module.exports = {
 
     status: async () => {
         return await status();
+    },
+
+    tasks: async () => {
+        return tasksAPI.getList();
     },
 
     traderResetTimes: async () => {

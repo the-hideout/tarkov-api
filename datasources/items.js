@@ -158,7 +158,7 @@ class ItemsAPI {
     return item;
   }
 
-  async getItem(id) {
+  async getItem(id, contains) {
     let item = this.itemCache[id];
 
     if(!item){
@@ -169,7 +169,18 @@ class ItemsAPI {
         return {};
     }
 
-    return this.formatItem(item);
+    const formatted = await this.formatItem(item);
+    if (contains && Array.isArray(contains)) {
+        formatted.containsItems = await Promise.all(contains.map(async (cItem) => {
+            return {
+                item: await this.getItem(cItem.id),
+                count: cItem.count,
+                quantity: cItem.count,
+                attributes: []
+            }
+        }));
+    }
+    return formatted;
   }
 
   getItemsByIDs(ids) {

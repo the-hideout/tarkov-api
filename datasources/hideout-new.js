@@ -1,6 +1,9 @@
 const ItemsAPI = require('./items');
 const itemsAPI = new ItemsAPI();
 
+const TradersAPI = require('./traders');
+const tradersAPI = new TradersAPI();
+
 class HideoutNewAPI {
     constructor(){
         this.cache = false;
@@ -12,6 +15,7 @@ class HideoutNewAPI {
         }
     
         await itemsAPI.init();
+        await tradersAPI.init();
     
         try {
             this.cache = await ITEM_DATA.get('HIDEOUT_DATA_V2', 'json');
@@ -27,7 +31,7 @@ class HideoutNewAPI {
         /*station.modules = await Promise.all(station.stages.map(async stage => {
             return await this.formatModule(stage, station);
         }));*/
-        station.modules = station.stages.map(stage => {
+        station.levels = station.stages.map(stage => {
             return this.formatModule(stage, station);
         });
 
@@ -52,16 +56,12 @@ class HideoutNewAPI {
             level: rawModule.level,
             constructionTime: rawModule.constructionTime,
             description: rawModule.description,
-            traderRequirements: rawModule.traderRequirements.map(req => {
+            traderRequirements: await Promise.all(rawModule.traderRequirements.map(async (req) => {
                 return {
                     id: req.id,
-                    trader: {
-                        id: req.trader_id,
-                        name: req.name
-                    },
-                    level: req.level
+                    traderLevel: await tradersAPI.get(req.trader_id, req.level)
                 }
-            }),
+            })),
             moduleRequirements: await Promise.all(rawModule.moduleRequirements.map(async (req) => {
                 return {
                     id: req.id,
@@ -144,7 +144,7 @@ class HideoutNewAPI {
             if (station.id === id) return this.formatStation(station);
         }
         return {};
-      }
+    }
 }
 
 module.exports = HideoutNewAPI;
