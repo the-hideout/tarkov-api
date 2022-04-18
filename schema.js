@@ -194,8 +194,9 @@ enum LanguageCode {
 }
 
 type PriceRequirement {
-  type: RequirementType
+  type: RequirementType!
   value: Int
+  stringValue: String
 }
 
 type Quest {
