@@ -22,8 +22,9 @@ type Ammo {
 }
 
 type Barter {
-  source: String!
-  sourceName: ItemSourceName!
+  trader: Trader!
+  source: String! @deprecated(reason: "Use trader and requirements instead.")
+  sourceName: ItemSourceName! @deprecated(reason: "Use trader instead.")
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
   requirements: [PriceRequirement]!
@@ -55,13 +56,16 @@ type GameProperty {
   objectValue: String
 }
 
+"""
+HideoutModule is deprecated and replaced with HideoutStationLevel.
+"""
 type HideoutModule {
   id: Int
   name: String
   level: Int
   itemRequirements: [ContainedItem]!
   moduleRequirements: [HideoutModule]!
-} @deprecated(reason: "No longer maintained. Use HideoutStationLevel instead.")
+}
 
 type HideoutStation {
   id: ID!

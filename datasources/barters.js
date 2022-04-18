@@ -15,6 +15,10 @@ class BartersAPI {
 
     for(const barter of barters.data){
         returnData.push({
+            trader: {
+                id: barter.trader_id,
+                name: barter.trader_name
+            },
             source: barter.trader,
             sourceName: barter.sourceName,
             requiredItems: barter.requiredItems.map((itemData) => {
