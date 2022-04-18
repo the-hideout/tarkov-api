@@ -40,6 +40,7 @@ type Craft {
   id: String!
   source: String!
   sourceName: String!
+  stationLevel: HideoutStationLevel!
   duration: Int!
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
