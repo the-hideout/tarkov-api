@@ -88,8 +88,8 @@ class HideoutNewAPI {
 
         await itemsAPI.init();
 
-        const returnData = await Promise.all(this.cache.data.map(async hideoutStation => {
-            return await this.formatStation(hideoutStation);
+        const returnData = await Promise.all(this.cache.data.map(hideoutStation => {
+            return this.formatStation(hideoutStation);
         }));
         /*const returnData = [];
 
