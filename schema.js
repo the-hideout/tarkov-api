@@ -38,13 +38,13 @@ type ContainedItem {
 
 type Craft {
   id: ID!
-  source: String! @deprecated(reason: "source is deprecated. Use hideoutStations instead.")
-  sourceName: String! @deprecated(reason: "sourceName is deprecated. Use hideoutStations instead.")
+  source: String! @deprecated(reason: "Use stationLevel instead.")
+  sourceName: String! @deprecated(reason: "Use stationLevel instead.")
   stationLevel: HideoutStationLevel!
   duration: Int!
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
-  requirements: [PriceRequirement]! @deprecated(reason: "requirements is deprecated. Use hideoutStations instead.")
+  requirements: [PriceRequirement]! @deprecated(reason: "Use stationLevel instead.")
 }
 
 type GameProperty {
@@ -61,7 +61,7 @@ type HideoutModule {
   level: Int
   itemRequirements: [ContainedItem]!
   moduleRequirements: [HideoutModule]!
-}
+} @deprecated(reason: "No longer maintained. Use HideoutStationLevel instead.")
 
 type HideoutStation {
   id: ID!
@@ -344,7 +344,7 @@ type Query {
   barters: [Barter]
   crafts: [Craft]
   quests: [Quest]
-  hideoutModules: [HideoutModule] @deprecated(reason: "hideoutModules is no longer maintained. Use hideoutStations instead.")
+  hideoutModules: [HideoutModule] @deprecated(reason: "No longer maintained. Use hideoutStations instead.")
   hideoutStations: [HideoutStation]!
   status: ServerStatus!
   # traderInventoryByName(name: TraderName!): TraderInventory
