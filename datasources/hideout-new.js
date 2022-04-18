@@ -58,7 +58,7 @@ class HideoutNewAPI {
                     level: req.level
                 }
             }),
-            moduleRequirements: await Promise.all(rawModule.itemRequirements.map(async (req) => {
+            moduleRequirements: await Promise.all(rawModule.moduleRequirements.map(async (req) => {
                 return {
                     id: req.id,
                     module: this.getModuleByLevel(req.station_id, req.level),

@@ -343,7 +343,7 @@ type Query {
   barters: [Barter]
   crafts: [Craft]
   quests: [Quest]
-  hideoutModules: [HideoutModule]
+  hideoutModules: [HideoutModule] @deprecated(reason: "hideoutModules is no longer maintained. Use hideoutStations instead.")
   hideoutStations: [HideoutStation]!
   status: ServerStatus!
   # traderInventoryByName(name: TraderName!): TraderInventory
