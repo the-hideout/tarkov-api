@@ -26,6 +26,9 @@ const status = require('./datasources/status');
 
 const traderResets = require('./datasources/trader-resets');
 
+const HideoutNewAPI = require('./datasources/hideout-new');
+const hideoutNewAPI = new HideoutNewAPI();
+
 module.exports = {
     itemInit: async () => {
         return await itemsAPI.init();
@@ -66,11 +69,15 @@ module.exports = {
     },
 
     traders: async (args) => {
-        return await tradersApi.get(args.id);
+        return await tradersAPI.get(args.id);
     },
 
     hideoutModules: async () => {
         return await hideoutAPI.getList();
+    },
+
+    hideoutStations: async () => {
+        return await hideoutNewAPI.getList();
     },
 
     historicalItemPrices: async (args) => {

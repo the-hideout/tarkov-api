@@ -62,6 +62,24 @@ type HideoutModule {
   moduleRequirements: [HideoutModule]!
 }
 
+type HideoutStation {
+  id: String!
+  name: String!
+  modules: [HideoutModuleLevel]!
+}
+
+type HideoutStationLevel {
+  id: String!
+  name: String!
+  level: Int!
+  constructionTime: Int!
+  description: String!
+  itemRequirements: [RequirementItem]!
+  moduleRequirements: [RequirementHideoutModule]!
+  skillRequirements: [RequirementHideoutSkill]!
+  traderRequirements: [RequirementHideoutTrader]!
+}
+
 type historicalPricePoint {
   price: Int
   timestamp: String
@@ -208,6 +226,31 @@ type QuestRewardReputation {
   amount: Float!
 }
 
+type RequirementHideoutModule {
+  id: ID
+  module: HideoutModule!
+}
+
+type RequirementItem {
+  id: ID
+  item: Item!
+  count: Int!
+  quantity: Int!
+  attributes: [ItemAttribute]
+}
+
+type RequirementSkill {
+  id: ID
+  name: String!
+  level: Int!
+}
+
+type RequirementTrader {
+  id: ID
+  trader: Trader!
+  level: Int!
+}
+
 enum RequirementType {
   playerLevel
   loyaltyLevel
@@ -219,6 +262,11 @@ type ServerStatus {
   generalStatus: Status
   currentStatuses: [Status]
   messages: [StatusMessage]
+}
+
+type SkillLevel {
+  name: String!
+  level: Int!
 }
 
 type Status {
@@ -296,6 +344,7 @@ type Query {
   crafts: [Craft]
   quests: [Quest]
   hideoutModules: [HideoutModule]
+  hideoutStations: [HideoutStation]!
   status: ServerStatus!
   # traderInventoryByName(name: TraderName!): TraderInventory
   traderResetTimes: [TraderResetTime]
