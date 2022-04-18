@@ -65,7 +65,7 @@ type HideoutModule {
 type HideoutStation {
   id: String!
   name: String!
-  modules: [HideoutModuleLevel]!
+  modules: [HideoutStationLevel]!
 }
 
 type HideoutStationLevel {
@@ -75,9 +75,9 @@ type HideoutStationLevel {
   constructionTime: Int!
   description: String!
   itemRequirements: [RequirementItem]!
-  moduleRequirements: [RequirementHideoutModule]!
-  skillRequirements: [RequirementHideoutSkill]!
-  traderRequirements: [RequirementHideoutTrader]!
+  moduleRequirements: [RequirementModule]!
+  skillRequirements: [RequirementSkill]!
+  traderRequirements: [RequirementTrader]!
 }
 
 type historicalPricePoint {
