@@ -14,7 +14,7 @@ class HideoutNewAPI {
         await itemsAPI.init();
     
         try {
-            this.cache = (await ITEM_DATA.get('HIDEOUT_DATA_V2', 'json')).data;
+            this.cache = await ITEM_DATA.get('HIDEOUT_DATA_V2', 'json');
         } catch (error){
             console.error(error);
         }
@@ -128,7 +128,7 @@ class HideoutNewAPI {
     }
 
     async getStation(id) {
-        for (const station of this.cache) {
+        for (const station of this.cache.data) {
             if (station.id === id) return this.formatStation(station);
         }
         return {};
