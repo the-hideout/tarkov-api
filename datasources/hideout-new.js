@@ -77,6 +77,7 @@ class HideoutNewAPI {
     }
 
     async getList(){
+        await this.init();
         if(this.stationList){
             return this.stationList;
         }
@@ -95,6 +96,7 @@ class HideoutNewAPI {
     }
 
     getModuleById(id) {
+        await this.init();
         let station = false;
         let module = false;
         for (const hideoutStation of this.cache.data) {
@@ -111,6 +113,7 @@ class HideoutNewAPI {
     }
 
     getModuleByLevel(stationId, level) {
+        await this.init();
         let station = false;
         let module = false;
         for (const hideoutStation of this.cache.data) {
@@ -128,6 +131,7 @@ class HideoutNewAPI {
     }
 
     async getStation(id) {
+        await this.init();
         for (const station of this.cache.data) {
             if (station.id === id) return this.formatStation(station);
         }
