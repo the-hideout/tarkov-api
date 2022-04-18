@@ -134,6 +134,7 @@ class HideoutNewAPI {
             }
             break;
         }
+        if (!station || !module) throw new Error(`Could not find hideout station ${stationId} level ${level}`);
         return this.formatModule(module, station);
     }
 
