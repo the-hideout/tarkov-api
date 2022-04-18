@@ -124,7 +124,7 @@ class HideoutNewAPI {
         let station = false;
         let module = false;
         for (const hideoutStation of this.cache.data) {
-            if (!hideoutStation.id === stationId) continue;
+            if (hideoutStation.id !== stationId) continue;
             station = hideoutStation;
             for (const stage of hideoutStation.stages) {
                 if (stage.level === level) {
