@@ -37,7 +37,7 @@ type ContainedItem {
 }
 
 type Craft {
-  id: String!
+  id: ID!
   source: String! @deprecated(reason: "source is deprecated. Use hideoutStations instead.")
   sourceName: String! @deprecated(reason: "sourceName is deprecated. Use hideoutStations instead.")
   stationLevel: HideoutStationLevel!
@@ -64,13 +64,13 @@ type HideoutModule {
 }
 
 type HideoutStation {
-  id: String!
+  id: ID!
   name: String!
   modules: [HideoutStationLevel]!
 }
 
 type HideoutStationLevel {
-  id: String!
+  id: ID!
   name: String!
   level: Int!
   constructionTime: Int!
@@ -293,12 +293,12 @@ type StatusMessage {
 }
 
 type Trader {
-  id: String!
+  id: ID!
   name: String!
 }
 
 type TraderInventory {
-  id: String!
+  id: ID!
   name: TraderName!
   items: [TraderInventoryItem!]
 }
