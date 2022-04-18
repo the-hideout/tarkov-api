@@ -95,7 +95,7 @@ class HideoutNewAPI {
         return returnData;
     }
 
-    getModuleById(id) {
+    async getModuleById(id) {
         await this.init();
         let station = false;
         let module = false;
@@ -112,7 +112,7 @@ class HideoutNewAPI {
         return this.formatModule(module, station);
     }
 
-    getModuleByLevel(stationId, level) {
+    async getModuleByLevel(stationId, level) {
         await this.init();
         let station = false;
         let module = false;
