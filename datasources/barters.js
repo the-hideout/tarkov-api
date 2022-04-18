@@ -3,7 +3,7 @@ const itemsAPI = new ItemsAPI();
 
 class BartersAPI {
   async getList() {
-    const barters = await ITEM_DATA.get('BARTER_DATA', 'json');
+    const barters = await ITEM_DATA.get('BARTER_DATA_V2', 'json');
 
     if(!barters){
         return {};
