@@ -18,17 +18,17 @@ class QuestsAPI {
         for(const quest of quests){
             const parsedQuestData = {
                 ...quest,
-                giver: tradersAPI.getByDataId(quest.giver),
-                turnin: tradersAPI.getByDataId(quest.turnin),
+                giver: await tradersAPI.getByDataId(quest.giver),
+                turnin: await tradersAPI.getByDataId(quest.turnin),
                 requirements: quest.require,
                 wikiLink: quest.wiki,
-                reputation: quest.reputation.map((reputationData) => {
+                reputation: await Promise.all(quest.reputation.map(async (reputationData) => {
                     return {
-                        trader: tradersAPI.getByName(reputationData.trader),
+                        trader: await tradersAPI.getByName(reputationData.trader),
                         amount: reputationData.rep,
                     };
-                }),
-                objectives: quest.objectives.map(async (objectiveData) => {
+                })),
+                objectives: await Promise.all(quest.objectives.map(async (objectiveData) => {
                     const formattedObjective = {
                         ...objectiveData,
                     };
@@ -54,7 +54,7 @@ class QuestsAPI {
                     }
 
                     return formattedObjective;
-                }),
+                })),
             };
 
             parsedQuestData.requirements.quests = parsedQuestData.requirements.quests.map((stringOrArray) => {

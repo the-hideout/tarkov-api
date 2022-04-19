@@ -22,8 +22,8 @@ type Ammo {
 }
 
 type Barter {
-  traderLevel: TraderLevel!
-  taskUnlock: Task
+  #traderLevel: TraderLevel!
+  #taskUnlock: Task
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
   source: String! @deprecated(reason: "Use traderLevel instead.")
@@ -40,7 +40,7 @@ type ContainedItem {
 
 type Craft {
   id: ID!
-  stationLevel: HideoutStationLevel!
+  #stationLevel: HideoutStationLevel!
   duration: Int!
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
@@ -66,7 +66,7 @@ type HealthEffect {
 type HideoutStation {
   id: ID!
   name: String!
-  levels: [HideoutStationLevel]!
+  #levels: [HideoutStationLevel]!
 }
 
 type HideoutStationLevel {
@@ -75,10 +75,10 @@ type HideoutStationLevel {
   level: Int!
   constructionTime: Int!
   description: String!
-  itemRequirements: [RequirementItem]!
-  moduleRequirements: [RequirementHideoutStationLevel]!
-  skillRequirements: [RequirementSkill]!
-  traderRequirements: [RequirementTrader]!
+  #itemRequirements: [RequirementItem]!
+  #moduleRequirements: [RequirementHideoutStationLevel]!
+  #skillRequirements: [RequirementSkill]!
+  #traderRequirements: [RequirementTrader]!
 }
 
 type historicalPricePoint {
@@ -136,8 +136,6 @@ type ItemGroup {
 }
 
 type ItemPrice {
-  traderLevel: TraderLevel!
-  taskUnlock: Task
   source: ItemSourceName
   price: Int
   currency: String
@@ -202,7 +200,7 @@ type NumberCompare {
 
 type OfferUnlock {
   id: ID!
-  traderLevel: TraderLevel!
+  #traderLevel: TraderLevel!
   item: Item!
 }
 
@@ -214,7 +212,7 @@ type PriceRequirement {
 
 type RequirementHideoutStationLevel {
   id: ID
-  module: HideoutStationLevel!
+  #module: HideoutStationLevel!
 }
 
 type RequirementItem {
@@ -233,12 +231,12 @@ type RequirementSkill {
 
 type RequirementTask {
   id: ID
-  task: Task!
+  #task: Task!
 }
 
 type RequirementTrader {
   id: ID
-  traderLevel: TraderLevel!
+  #traderLevel: TraderLevel!
 }
 
 enum RequirementType {
@@ -284,16 +282,16 @@ type StatusMessage {
 type Task {
   id: ID!
   name: String!
-  trader: Trader!
+  #trader: Trader!
   locationName: String!
   experience: Int!
   wikiLink: String
   minPlayerLevel: Int
-  taskRequirements: [TaskStatusRequirement]!
-  traderLevelRequirements: [TraderLevel]!
-  objectives: [TaskObjective]!
-  startRewards: TaskRewards
-  finishRewards: TaskRewards
+  #taskRequirements: [TaskStatusRequirement]!
+  #traderLevelRequirements: [TraderLevel]!
+  #objectives: [TaskObjective]!
+  #startRewards: TaskRewards
+  #finishRewards: TaskRewards
 }
 
 interface TaskObjective {
@@ -310,7 +308,7 @@ type TaskObjectiveExperience implements TaskObjective {
   description: String!
   locationNames: [String]!
   optional: Boolean!
-  healthEffect: HealthEffect!
+  #healthEffect: HealthEffect!
 }
 
 type TaskObjectiveExtract implements TaskObjective {
@@ -328,7 +326,7 @@ type TaskObjectiveQuestItem implements TaskObjective {
   description: String!
   locationNames: [String]!
   optional: Boolean!
-  questItem: QuestItem!
+  #questItem: QuestItem!
   count: Int!
 }
 
@@ -338,7 +336,7 @@ type TaskObjectiveItem implements TaskObjective {
   description: String!
   locationNames: [String]!
   optional: Boolean!
-  questi: Item!
+  #item: Item!
   count: Int!
   foundInRaid: Boolean!
   dogTagLevel: Int
@@ -361,18 +359,18 @@ type TaskObjectiveBuildItem implements TaskObjective {
   locationNames: [String]!
   optional: Boolean!
   item: Item!
-  containsAll: [Item]!
-  containsOne: [Item]!
-  accuracy: NumberCompare
-  durability: NumberCompare
-  effectiveDistance: NumberCompare
-  ergonomics: NumberCompare
-  height: NumberCompare
-  magazineCapacity: NumberCompare
-  muzzleVelocity: NumberCompare
-  recoil: NumberCompare
-  weight: NumberCompare
-  width: NumberCompare
+  #containsAll: [Item]!
+  #containsOne: [Item]!
+  #accuracy: NumberCompare
+  #durability: NumberCompare
+  #effectiveDistance: NumberCompare
+  #ergonomics: NumberCompare
+  #height: NumberCompare
+  #magazineCapacity: NumberCompare
+  #muzzleVelocity: NumberCompare
+  #recoil: NumberCompare
+  #weight: NumberCompare
+  #width: NumberCompare
 }
 
 type TaskObjectiveMark implements TaskObjective {
@@ -381,7 +379,7 @@ type TaskObjectiveMark implements TaskObjective {
   description: String!
   locationNames: [String]!
   optional: Boolean!
-  markerItem: Item!
+  #markerItem: Item!
 }
 
 type TaskObjectivePlayerLevel implements TaskObjective {
@@ -403,11 +401,11 @@ type TaskObjectiveShoot implements TaskObjective {
   count: Int!
   shotType: String!
   bodyParts = [String]!
-  usingWeapon [Item]
-  usingWeaponMods [ItemGroup]
-  distance: NumberCompare
-  healthEffect: HealthEffect
-  enemyHealthEffect: HealthEffect
+  #usingWeapon [Item]
+  #usingWeaponMods [ItemGroup]
+  #distance: NumberCompare
+  #healthEffect: HealthEffect
+  #enemyHealthEffect: HealthEffect
 }
 
 type TaskObjectiveSkill implements TaskObjective {
@@ -416,7 +414,7 @@ type TaskObjectiveSkill implements TaskObjective {
   description: String!
   locationNames: [String]!
   optional: Boolean!
-  skillLevel: SkillLevel!
+  #skillLevel: SkillLevel!
 }
 
 type TaskObjectiveTaskStatus implements TaskObjective {
@@ -425,7 +423,7 @@ type TaskObjectiveTaskStatus implements TaskObjective {
   description: String!
   locationNames: [String]!
   optional: Boolean!
-  task: Task!
+  #task: Task!
   status: [String]!
 }
 
@@ -435,7 +433,7 @@ type TaskObjectiveTraderLevel implements TaskObjective {
   description: String!
   locationNames: [String]!
   optional: Boolean!
-  traderLevel: TraderLevel!
+  #traderLevel: TraderLevel!
 }
 
 type QuestItem {
@@ -444,15 +442,15 @@ type QuestItem {
 }
 
 type TaskRewards {
-  traderStanding: [TraderStanding]!
-  items: [ContainedItem]!
-  offerUnlock: [OfferUnlock]!
-  skillLevelReward: [SkillLevel]!
-  traderUnlock: [Trader]!
+  #traderStanding: [TraderStanding]!
+  #items: [ContainedItem]!
+  #offerUnlock: [OfferUnlock]!
+  #skillLevelReward: [SkillLevel]!
+  #traderUnlock: [Trader]!
 }
 
 type TaskStatusRequirement {
-  task: Task!
+  #task: Task!
   status: [String]!
 }
 
@@ -460,8 +458,8 @@ type Trader {
   id: ID!
   name: String!
   resetTime: String
-  currency: Item!
-  levels: [TraderLevel!]!
+  #currency: Item!
+  #levels: [TraderLevel!]!
 }
 
 type TraderLevel {

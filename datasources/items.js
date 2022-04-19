@@ -39,7 +39,7 @@ class ItemsAPI {
     }
   }
 
-  formatItem(rawItem) {
+  async formatItem(rawItem) {
     const item = {
         ...rawItem,
     };
@@ -92,19 +92,22 @@ class ItemsAPI {
     item.formattedTypes = item.types.map(type => camelCase(type));
     item.types = item.formattedTypes;
 
-    item.traderPrices = item.traderPrices.map((traderPrice) => {
-        const targetTrader = tradersAPI.getByName(traderPrice.name);
+    item.traderPrices = await Promise.all(item.traderPrices.map(async (traderPrice) => {
         return {
             price: traderPrice.price,
-            trader: targetTrader,
+            trader: await tradersAPI.getByName(traderPrice.name)
         };
-    });
+    }));
 
     item.sellFor = [
         ...item.traderPrices.map((traderPrice) => {
+            let currency = 'RUB';
+            if (traderPrice.trader.name.toLowerCase() === 'peacekeeper') currency = 'USD';
+            // all trader sell values currently listed in RUB
             return {
                 price: traderPrice.price,
                 source: traderPrice.trader.name.toLowerCase(),
+                currency: 'RUB',
                 requirements: [],
             };
         }),
@@ -145,14 +148,14 @@ class ItemsAPI {
 
 
     if(item.containsItems && item.containsItems.length > 0){
-        item.containsItems = item.containsItems.map((containedItem) => {
+        item.containsItems = Promise.all(item.containsItems.map(async (containedItem) => {
             return {
-                item: this.formatItem(this.itemCache[containedItem.itemId]),
+                item: await this.formatItem(this.itemCache[containedItem.itemId]),
                 count: containedItem.count,
                 quantity: containedItem.count,
                 attributes: []
             };
-        });
+        }));
     }
 
     return item;
@@ -183,7 +186,7 @@ class ItemsAPI {
     return formatted;
   }
 
-  getItemsByIDs(ids) {
+  async getItemsByIDs(ids) {
     return Object.values(this.itemCache)
     .filter((rawItem) => {
         return ids.includes(rawItem.id);
@@ -193,7 +196,7 @@ class ItemsAPI {
     });
   }
 
-  getItemsByType(type) {
+  async getItemsByType(type) {
     return Object.values(this.itemCache)
         .filter((rawItem) => {
             return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
@@ -203,7 +206,7 @@ class ItemsAPI {
         });
   }
 
-  getItemsByName(name) {
+  async getItemsByName(name) {
     const searchString = name.toLowerCase();
 
     return Object.values(this.itemCache)
@@ -215,7 +218,7 @@ class ItemsAPI {
         });
   }
 
-  getItemsByNames(names) {
+  async getItemsByNames(names) {
     const searchString = name.toLowerCase();
 
     return Object.values(this.itemCache)
@@ -227,7 +230,7 @@ class ItemsAPI {
         });
   }
 
-  getItemsByBsgCategoryId(bsgCategoryId) {
+  async getItemsByBsgCategoryId(bsgCategoryId) {
     return Object.values(this.itemCache)
         .filter((rawItem) => {
             if(!rawItem.properties){
@@ -241,7 +244,7 @@ class ItemsAPI {
         });
   }
 
-  getItemByNormalizedName(normalizedName) {
+  async getItemByNormalizedName(normalizedName) {
     const item = Object.values(this.itemCache).find((item) => item.normalized_name === normalizedName);
 
     if (!item) {
