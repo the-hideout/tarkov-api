@@ -91,11 +91,6 @@ class HideoutNewAPI {
         const returnData = await Promise.all(this.cache.data.map(hideoutStation => {
             return this.formatStation(hideoutStation);
         }));
-        /*const returnData = [];
-
-        for (const hideoutStation of this.cache.data) {
-            returnData.push(this.formatStation(hideoutStation));
-        }*/
 
         this.stationList = returnData;
 

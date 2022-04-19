@@ -4,6 +4,9 @@ const itemsAPI = new ItemsAPI();
 const TradersAPI = require('./traders');
 const tradersAPI = new TradersAPI();
 
+const TasksAPI = require('./tasks');
+const tasksAPI = new TasksAPI();
+
 class BartersAPI {
   async getList() {
     const barters = await ITEM_DATA.get('BARTER_DATA_V2', 'json');
@@ -23,22 +26,22 @@ class BartersAPI {
             questUnlock: null,
             source: barter.trader,
             sourceName: barter.sourceName,
-            requiredItems: barter.requiredItems.map((itemData) => {
+            requiredItems: await Promise.all(barter.requiredItems.map(async (itemData) => {
                 return {
-                    item: itemsAPI.getItem(itemData.id),
+                    item: await itemsAPI.getItem(itemData.id),
                     count: itemData.count,
                     quantity: itemData.count,
                     attributes: itemData.attributes
                 };
-            }),
-            rewardItems: barter.rewardItems.map((itemData) => {
+            })),
+            rewardItems: await Promise.all(barter.rewardItems.map(async (itemData) => {
                 return {
-                    item: itemsAPI.getItem(itemData.id),
+                    item: await itemsAPI.getItem(itemData.id),
                     count: itemData.count,
                     quantity: itemData.count,
                     attributes: []
                 };
-            }),
+            })),
             requirements: barter.requirements
         };
         let ll = 1;
@@ -46,7 +49,7 @@ class BartersAPI {
             if (req.type === 'loyaltyLevel') {
                 ll = req.value;
             } else if (req.type === 'questCompleted') {
-                // Add in questUnlock
+                barter.taskUnlock = await tasksAPI.get(req.stringValue);
             }
         }
         barterData.traderLevel = await tradersAPI.getByLevel(barter.trader_id, ll);

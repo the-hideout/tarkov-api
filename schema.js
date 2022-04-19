@@ -453,7 +453,7 @@ type TaskRewards {
 
 type TaskStatusRequirement {
   task: Task!
-  statuses: [String]!
+  status: [String]!
 }
 
 type Trader {
@@ -473,7 +473,7 @@ type TraderLevel {
   requiredCommerce: Int!
   payRate: Float!
   insuranceRate: Float
-  repairUnitCost: Int
+  repairCostMultiplier: Float
 }
 
 type TraderInventory {
@@ -548,8 +548,8 @@ The below types are all deprecated and may not return current data.
 HideoutModule has been replaced with HideoutStationLevel.
 """
 type HideoutModule {
-  id: Int @deprecated(reason: "Use HideoutStationLevel instead.")
-  name: String
+  id: Int @deprecated(reason: "Use HideoutStationLevel type instead.")
+  name: String @deprecated(reason: "Use HideoutStationLevel type instead.")
   level: Int
   itemRequirements: [ContainedItem]!
   moduleRequirements: [HideoutModule]!

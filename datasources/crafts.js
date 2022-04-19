@@ -11,7 +11,7 @@ class CraftsAPI {
     const crafts = await ITEM_DATA.get('CRAFT_DATA_V2', 'json');
 
     if(!crafts){
-        return {};
+        return [];
     }
 
     await itemsAPI.init();
@@ -24,52 +24,25 @@ class CraftsAPI {
             source: craft.station,
             sourceName: craft.sourceName,
             stationLevel: await hideoutAPI.getModuleByLevel(craft.station_id, craft.level),
-            requiredItems: craft.requiredItems.map((itemData) => {
+            requiredItems: await Promise.all(craft.requiredItems.map(async (itemData) => {
                 return {
-                    item: itemsAPI.getItem(itemData.id),
+                    item: await itemsAPI.getItem(itemData.id),
                     count: itemData.count,
                     quantity: itemData.count,
                     attributes: itemData.attributes
                 };
-            }),
-            rewardItems: craft.rewardItems.map((itemData) => {
+            })),
+            rewardItems: await Promise.all(craft.rewardItems.map(async (itemData) => {
                 return {
-                    item: itemsAPI.getItem(itemData.id),
+                    item: await itemsAPI.getItem(itemData.id),
                     count: itemData.count,
                     quantity: itemData.count,
                     attributes: itemData.attributes
                 };
-            }),
+            })),
             requirements: craft.requirements
         }
     }));
-
-    /*for(const craft of crafts.data){
-        returnData.push({
-            id: craft.id,
-            duration: craft.duration,
-            source: craft.station,
-            sourceName: craft.sourceName,
-            stationLevel: hideoutAPI.getModuleByLevel(craft.station_id, craft.level),
-            requiredItems: craft.requiredItems.map((itemData) => {
-                return {
-                    item: itemsAPI.getItem(itemData.id),
-                    count: itemData.count,
-                    quantity: itemData.count,
-                    attributes: itemData.attributes
-                };
-            }),
-            rewardItems: craft.rewardItems.map((itemData) => {
-                return {
-                    item: itemsAPI.getItem(itemData.id),
-                    count: itemData.count,
-                    quantity: itemData.count,
-                    attributes: itemData.attributes
-                };
-            }),
-            requirements: craft.requirements
-        });
-    }*/
 
     return returnData;
   }

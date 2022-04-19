@@ -37,7 +37,7 @@ class TasksAPI {
             taskRequirements: await Promise.all(rawTask.requirements.quests.map(async (tReq) => {
                 return {
                     task: await this.get(tReq.quest_id),
-                    statuses: tReq.status
+                    status: tReq.status
                 }
             })),
             traderLevelRequirements: await Promise.all(rawTask.requirements.traderLoyalty.map(async (llReq) => {
@@ -149,7 +149,7 @@ class TasksAPI {
         }
 
         if(!this.cache){
-            return {};
+            return [];
         }
 
         const returnData = await Promise.all(this.cache.data.map(rawTask => {

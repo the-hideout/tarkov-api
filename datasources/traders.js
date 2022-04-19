@@ -65,7 +65,7 @@ class TradersAPI {
             returnData.push(this.formatTrader(trader));
         }
 
-        this.traderList = returnData;
+        this.traderList = await Promise.all(returnData);
 
         return returnData;
     }
