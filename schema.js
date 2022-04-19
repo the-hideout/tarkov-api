@@ -548,7 +548,7 @@ The below types are all deprecated and may not return current data.
 HideoutModule has been replaced with HideoutStationLevel.
 """
 type HideoutModule {
-  id: Int
+  id: Int @deprecated(reason: "Use HideoutStationLevel instead.")
   name: String
   level: Int
   itemRequirements: [ContainedItem]!
