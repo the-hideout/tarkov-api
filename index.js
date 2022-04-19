@@ -153,7 +153,12 @@ const handleRequest = async request => {
         }
 
         if(url.pathname === '/twitch'){
-            return twitch(request);
+            const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await twitch(request);
+            if (graphQLOptions.cors) {
+                setCors(response, graphQLOptions.cors);
+            }
+
+            return response;
         }
 
         if (url.pathname === graphQLOptions.baseEndpoint) {
