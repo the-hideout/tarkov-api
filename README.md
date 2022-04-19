@@ -40,7 +40,7 @@ query {
 Prerequisites:
 
 - Comment out the two `routes =` lines in the `wrangler.toml` file
-- Run `wrangler login`
+- Run `wrangler login` - (needed for k/v store and secrets)
 
 Start the API server:
 
