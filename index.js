@@ -13,6 +13,7 @@ const resolvers = require('./resolvers');
 require('./loader');
 
 const nightbot = require('./custom-endpoints/nightbot');
+const twitch = require('./custom-endpoints/twitch');
 
 const schema = buildSchema(typeDefs);
 
@@ -149,6 +150,10 @@ const handleRequest = async request => {
 
         if(url.pathname === '/webhook/moobot'){
             return nightbot(request);
+        }
+
+        if(url.pathname === '/twitch'){
+            return twitch(request);
         }
 
         if (url.pathname === graphQLOptions.baseEndpoint) {
