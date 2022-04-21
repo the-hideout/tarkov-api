@@ -4,6 +4,7 @@ type = "webpack"
 account_id = "424ad63426a1ae47d559873f929eb9fc"
 zone_id = "777d475095752ccbe5d1d49e690a305b"
 workers_dev = true
+webpack_config = "webpack.config.js"
 # routes = ["api.tarkov.dev/graphql", "api.tarkov.dev/graphql*", "api.tarkov.dev/___graphql", "api.tarkov.dev/webhook*"]
 kv-namespaces = [
     { binding = "ITEM_DATA", id = "2973a2dd070e4a348d87084171efe11a", preview_id = "2973a2dd070e4a348d87084171efe11a" },
