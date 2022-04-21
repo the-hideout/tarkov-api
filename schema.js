@@ -559,6 +559,7 @@ type Query {
   itemByNormalizedName(normalizedName: String!): Item
   itemsByBsgCategoryId(bsgCategoryId: String!): [Item]!
   status: ServerStatus!
+  task(id: ID!): Task
   tasks: [Task]!
   traders: [Trader]!
   hideoutModules: [HideoutModule] @deprecated(reason: "No longer maintained. Use hideoutStations instead.")
