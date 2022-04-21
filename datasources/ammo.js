@@ -1,45 +1,46 @@
 // datasource for ammo
-
-const ItemsAPI = require('./items');
-const itemsAPI = new ItemsAPI();
+const buildAttributes = require('./build-attributes');
 
 class AmmoAPI {
+  constructor(){
+    this.cache = false;
+  }
+
+  async init(){
+    if(this.cache){
+      return true;
+    }
+
+    try {
+        this.cache = await ITEM_DATA.get('AMMO_DATA', 'json');
+    } catch (error){
+        console.error(error);
+    }
+  }
   async getList() {
-    const ammunition = await ITEM_DATA.get('AMMO_DATA', 'json');
+    await this.init();
 
-    if(!ammunition){
-        return {};
+    if(!this.cache){
+      return {};
     }
 
-    await itemsAPI.init();
-
-    const returnData = [];
-
-    for(const ammo of ammunition.data){
-        returnData.push({
-            item: itemsAPI.getItem(ammo.id),
-            weight: ammo.weight,
-            caliber: ammo.caliber,
-            stackMaxSize: ammo.stackMaxSize,
-            tracer: ammo.tracer,
-            tracerColor: ammo.tracerColor,
-            ammoType: ammo.ammoType,
-            projectileCount: ammo.projectileCount,
-            damage: ammo.damage,
-            armorDamage: ammo.armorDamage,
-            fragmentationChance: ammo.fragmentationChance,
-            ricochetChance: ammo.ricochetChance,
-            penetrationChance: ammo.penetrationChance,
-            penetrationPower: ammo.penetrationPower,
-            accuracy: ammo.accuracy,
-            recoil: ammo.recoil,
-            initialSpeed: ammo.initialSpeed,
-            heavyBleedModifier: ammo.heavyBleed,
-            lightBleedModifier: ammo.lightBleed
-        });
-    }
-
-    return returnData;
+    return this.cache.data.map(ammo => {
+      const ammoData = {
+        ...ammo,
+        item: ammo.id,
+        heavyBleedModifier: ammo.heavyBleed,
+        lightBleedModifier: ammo.lightBleed
+      };
+      ammoData.attributes = buildAttributes(ammoData, [
+        'id',
+        'item',
+        'name',
+        'shortName',
+        'heavyBleed',
+        'lightBleed'
+      ]);
+      return ammoData;
+    });
   }
 }
 

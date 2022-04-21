@@ -1,9 +1,3 @@
-const ItemsAPI = require('./items');
-const itemsAPI = new ItemsAPI();
-
-const TradersAPI = require('./traders');
-const tradersAPI = new TradersAPI();
-
 class TasksAPI {
     constructor(){
         this.cache = false;
@@ -15,9 +9,6 @@ class TasksAPI {
           return true;
         }
     
-        await itemsAPI.init();
-        await tradersAPI.init();
-    
         try {
             this.cache = await ITEM_DATA.get('QUEST_DATA_V2', 'json');
         } catch (error){
@@ -25,88 +16,54 @@ class TasksAPI {
         }
     }
 
-    async formatTask(rawTask) {
+    formatTask(rawTask) {
         return {
-            id: rawTask.id,
-            name: rawTask.name,
-            trader: await tradersAPI.get(rawTask.trader_id),
-            locationName: rawTask.locationName,
-            experience: rawTask.experience,
-            wikiLink: rawTask.wiki_link,
-            minPlayerLevel: rawTask.requrements.level,
-            taskRequirements: await Promise.all(rawTask.requirements.quests.map(async (tReq) => {
-                return {
-                    task: await this.get(tReq.quest_id),
-                    status: tReq.status
-                }
-            })),
-            traderLevelRequirements: await Promise.all(rawTask.requirements.traderLoyalty.map(async (llReq) => {
-                return await tradersAPI.getByLevel(llReq.trader_id, llReq.level)
-            })),
-            objectives: await Promise.all(rawTask.objectives.map(async (obj) => {
+            ...rawTask,
+            objectives: rawTask.objectives.map((obj) => {
                 const objective = {
                     ...obj
                 };
                 if (obj.type === 'findQuestItem' || obj.type === 'giveQuestItem' || obj.type === 'plantQuestItem') {
-                    objective.questItem = {
-                        id: obj.item_id,
-                        name: obj.item_name,
-                    };
-                    delete objective.item_id;
-                    delete objective.item_name;
+                    objective.gql_type = 'TaskObjectiveQuestItem';
                 } else if (obj.type === 'findItem' || obj.type === 'giveItem' || obj.type === 'plantItem') {
-                    objective.item = await itemsAPI.getItem(obj.item_id);
-                    delete objective.item_id;
-                    delete objective.item_name;
+                    objective.gql_type = 'TaskObjectiveItem';
                 } else if (obj.type === 'mark') {
-                    objective.markerItem = await itemsAPI.getItem(obj.item_id);
-                    delete objective.item_id;
-                    delete objective.item_name;
+                    objective.gql_type = 'TaskObjectiveMark';
                 } else if (obj.type === 'extract') {
-                    // handled via merge
+                    objective.gql_type = 'TaskObjectiveExtract';
                 } else if (obj.type === 'skill') {
-                    objective.skillLevel = {
-                        name: obj.skillName,
-                        level: obj.level
-                    }
-                    delete objective.skillName;
-                    delete objective.level;
+                    objective.gql_type = 'TaskObjectiveSkill';
                 } else if (obj.type === 'traderLoyalty') {
-                    objective.traderLevel = await tradersAPI.getByLevel(obj.trader_id, obj.level);
-                    delete objective.trader_id;
-                    delete objective.trader_name;
-                    delete objective.level;
-                } else if (obj.type === 'quest') {
-                    objective.task = await this.get(obj.quest_id);
-                    objective.status = obj.status;
-                    delete objective.quest_id;
-                    delete objective.quest_name;
-                } else if (obj.type === 'level') {
-                    // handled via merge
+                    objective.gql_type = 'TaskObjectiveTraderLevel';
+                } else if (obj.type === 'taskStatus') {
+                    objective.gql_type = 'TaskObjectiveTaskStatus';
+                } else if (obj.type === 'playerLevel') {
+                    objective.gql_type = 'TaskObjectivePlayerLevel';
                 } else if (obj.type === 'experience') {
-                    // handled via merge
+                    objective.gql_type = 'TaskObjectiveExperience';
                 } else if (obj.type === 'shoot') {
-                    objective.usingWeapon = await Promise.all(obj.usingWeapon.map(async (item) => {
-                        return await itemsAPI.getItem(item.id);
-                    }));
-                    objective.usingWeaponMods = await Promise.all(obj.usingWeaponMods.map(async (itemGroup) => {
-                        return await Promise.all(itemGroup.map(async (item) => {
-                            return await itemsAPI.getItem(item.id);
-                        }));
-                    }));
+                    objective.gql_type = 'TaskObjectiveShoot';
+                    /*objective.usingWeapon = obj.usingWeapon.map((item) => {
+                        return item.id;
+                    });
+                    objective.usingWeaponMods = obj.usingWeaponMods.map((itemGroup) => {
+                        return itemGroup.map((item) => {
+                            return item.id;
+                        });
+                    });*/
                 } else if (obj.type === 'buildWeapon') {
-                    objective.item = await itemsAPI.getItem(obj.item_id);
-                    delete objective.item_id;
-                    delete objective.item_name;
-                    objective.containsAll = await Promise.all(obj.containsAll.map(async (item) => {
-                        return await itemsAPI.getItem(item.id);
-                    }));
-                    objective.containsOne = await Promise.all(obj.containsOne.map(async (item) => {
-                        return await itemsAPI.getItem(item.id);
-                    }));
+                    objective.gql_type = 'TaskObjectiveBuildItem';
+                    objective.containsAll = obj.containsAll.map((item) => {
+                        return item.id;
+                    });
+                    objective.containsOne = obj.containsOne.map((item) => {
+                        return item.id;
+                    });
+                } else {
+                    objective.gql_type = 'TaskObjectiveBasic';
                 }
                 return objective;
-            })),
+            }),
             startRewards: this.formatRewards(rawTask.startRewards),
             finishRewards: this.formatRewards(rawTask.finishRewards)
         };
@@ -114,31 +71,24 @@ class TasksAPI {
 
     async formatRewards(rewards) {
         return {
-            traderStanding: await Promise.all(rewards.traderStanding.map(async (standing) => {
+            traderStanding: rewards.traderStanding,
+            items: rewards.item.map((item) => {
                 return {
-                    trader: await tradersAPI.get(standing.id),
-                    standing: standing.standing
-                };
-            })),
-            item: await Promise.all(rewards.item.map(async (item) => {
-                return {
-                    item: await itemsAPI.getItem(item.item_id, item.contains),
-                    count: item.count,
-                    quantity: item.count,
+                    ...item,
+                    item_contains: item.contains,
                     attributes: []
                 }
-            })),
-            offerUnlock: await Promise.all(rewards.offerUnlock.map(async (offer) => {
+            }),
+            offerUnlock: rewards.offerUnlock.map((offer) => {
                 return {
-                    id: offer.offer_id,
-                    traderLevel: await tradersAPI.getByLevel(offer.trader_id, offer.min_level),
-                    item: await itemsAPI.get(offer.item_id, offer.contains)
+                    item: offer.offer_id,
+                    trader_id: offer.trader_id,
+                    traderLevel: offer.min_level,
+                    item_contains: offer.contains
                 };
-            })),
-            skill: rewards.skill,
-            traderUnlock: await Promise.all(rewards.traderUnlock.map(async (trader) => {
-                return await tradersAPI.get(trader.trader_id);
-            }))
+            }),
+            skillLevelReward: rewards.skill,
+            traderUnlock: rewards.traderUnlock
         };
     }
 
@@ -163,11 +113,107 @@ class TasksAPI {
 
     async get(id) {
         await this.init();
+        if (!this.cache) {
+            return {};
+        }
         for (const task of this.cache.data) {
             if (task.id === id) return this.formatTask(task);
         }
         return {};
     }
+
+    async getTasksRequiringItem(itemId) {
+        await this.init();
+        if (!this.cache) {
+            return [];
+        }
+        const tasks = this.cache.data.filter(rawTask => {
+            for (const obj of rawTask.objectives) {
+                if (obj.item === itemId) {
+                    return true;
+                }
+                if (obj.markerItem === itemId) {
+                    return true;
+                }
+                if (obj.containsOne) {
+                    for (const item of obj.containsOne) {
+                        if (item.id === itemId) {
+                            return true;
+                        }
+                    }
+                }
+                if (obj.containsAll) {
+                    for (const item of obj.containsAll) {
+                        if (item.id === itemId) {
+                            return true;
+                        }
+                    }
+                }
+                if (obj.wearing) {
+                    for (const outfit of obj.wearing) {
+                        for (const item of outfit) {
+                            if (item.id === itemId) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                if (obj.usingWeapon) {
+                    for (const item of obj.usingWeapon) {
+                        if (item.id === itemId) {
+                            return true;
+                        }
+                    }
+                }
+                if (obj.usingWeaponMods) {
+                    for (const group of obj.usingWeaponMods) {
+                        for (const item of group) {
+                            if (item.id === itemId) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        });
+        return tasks.map(rawTask => {
+            return this.formatTask(rawTask);
+        });
+    }
+
+    async getTasksProvidingItem(itemId) {
+        await this.init();
+        if (!this.cache) {
+            return [];
+        }
+        const tasks = this.cache.data.filter(rawTask => {
+            for (const reward of rawTask.startRewards.item) {
+                if (reward.item === itemId) {
+                    return true
+                }
+                for (const inner of reward.contains) {
+                    if (inner.item === itemId) {
+                        return true;
+                    }
+                }
+            }
+            for (const reward of rawTask.finishRewards.item) {
+                if (reward.item === itemId) {
+                    return true;
+                }
+                for (const inner of reward.contains) {
+                    if (inner.item === itemId) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        });
+        return tasks.map(rawTask => {
+            return this.formatTask(rawTask);
+        });
+    }
 }
 
-module.exports = TasksAPI
+module.exports = TasksAPI;

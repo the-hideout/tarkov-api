@@ -1,14 +1,14 @@
-const TradersAPI = require('./traders');
-const tradersAPI = new TradersAPI();
+//const TradersAPI = require('./traders');
+//const tradersAPI = new TradersAPI();
 
 class TraderInventoryAPI {
     constructor(){
         this.itemCache = false;
-      }
+    }
 
-      async init(){
-        if(this.itemCache){
-          return true;
+    async init(){
+        if (this.itemCache){
+            return true;
         }
 
         try {
@@ -20,7 +20,7 @@ class TraderInventoryAPI {
         } catch (loadDataError){
             console.error(loadDataError);
         }
-      }
+    }
 
     // async getItems(name){
     //     const returnItems = [];
@@ -55,32 +55,33 @@ class TraderInventoryAPI {
 //     return traderInventory;
 //   }
 
-  getByItemId(itemId) {
-      if(!this.itemCache[itemId]){
-          return [];
-      }
+    async getByItemId(itemId) {
+        await this.init();
+        if(!this.itemCache[itemId]){
+            return [];
+        }
 
-      return this.itemCache[itemId].map((cacheData) => {
-            const newItem = {
-                source: cacheData.source,
-                price: cacheData.price,
-                currency: cacheData.currency,
-                requirements: [{
-                    type: 'loyaltyLevel',
-                    value: cacheData.min_level,
-                }]
-            };
+        return this.itemCache[itemId].map((cacheData) => {
+                const newItem = {
+                    source: cacheData.source,
+                    price: cacheData.price,
+                    currency: cacheData.currency,
+                    requirements: [{
+                        type: 'loyaltyLevel',
+                        value: cacheData.min_level,
+                    }]
+                };
 
-            if(cacheData.quest_unlock){
-                newItem.requirements.push({
-                    type: 'questCompleted',
-                    value: Number(cacheData.quest_unlock_id) || 1,
-                });
-            }
+                if(cacheData.quest_unlock){
+                    newItem.requirements.push({
+                        type: 'questCompleted',
+                        value: Number(cacheData.quest_unlock_id) || 1,
+                    });
+                }
 
-            return newItem;
-      });
-  }
+                return newItem;
+        });
+    }
 }
 
 module.exports = TraderInventoryAPI;

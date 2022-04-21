@@ -1,51 +1,30 @@
 // datasource for crafts
-
-const ItemsAPI = require('./items');
-const itemsAPI = new ItemsAPI();
-
-const HideoutNewAPI = require('./hideout-new');
-const hideoutAPI = new HideoutNewAPI();
-
 class CraftsAPI {
-  async getList() {
-    const crafts = await ITEM_DATA.get('CRAFT_DATA_V2', 'json');
-
-    if(!crafts){
-        return [];
+    constructor(){
+        this.caache = false;
     }
 
-    await itemsAPI.init();
-    await hideoutAPI.init();
-
-    const returnData = await Promise.all(crafts.data.map(async craft => {
-        return {
-            id: craft.id,
-            duration: craft.duration,
-            source: craft.station,
-            sourceName: craft.sourceName,
-            stationLevel: await hideoutAPI.getModuleByLevel(craft.station_id, craft.level),
-            requiredItems: await Promise.all(craft.requiredItems.map(async (itemData) => {
-                return {
-                    item: await itemsAPI.getItem(itemData.id),
-                    count: itemData.count,
-                    quantity: itemData.count,
-                    attributes: itemData.attributes
-                };
-            })),
-            rewardItems: await Promise.all(craft.rewardItems.map(async (itemData) => {
-                return {
-                    item: await itemsAPI.getItem(itemData.id),
-                    count: itemData.count,
-                    quantity: itemData.count,
-                    attributes: itemData.attributes
-                };
-            })),
-            requirements: craft.requirements
+    async init(){
+        if(this.cache){
+            return true;
         }
-    }));
 
-    return returnData;
-  }
+        try {
+            this.cache = await ITEM_DATA.get('CRAFT_DATA_V2', 'json');
+        } catch (loadDataError){
+            console.error(loadDataError);
+        }
+    }
+
+    async getList() {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        return this.cache.data;
+    }
 }
 
 module.exports = CraftsAPI

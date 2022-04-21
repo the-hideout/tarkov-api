@@ -1,6 +1,3 @@
-const ItemsAPI = require('./items');
-const itemsAPI = new ItemsAPI();
-
 const currencyMap = {
     RUB: '5449016a4bdc2d6f028b456f',
     USD: '5696686a4bdc2da3298b456a',
@@ -21,19 +18,15 @@ const dataIdMap = {
 class TradersAPI {
     constructor(){
         this.traderCache = false;
-        this.resetCache = false;
     }
 
     async init(){
-        if(this.traderCache && this.resetCache){
+        if(this.traderCache){
           return true;
         }
     
-        await itemsAPI.init();
-    
         try {
             this.traderCache = await ITEM_DATA.get('TRADER_DATA', 'json');
-            this.resetCache = await ITEM_DATA.get('RESET_TIMES', 'json');
         } catch (error){
             console.error(error);
         }
@@ -41,25 +34,17 @@ class TradersAPI {
 
     async formatTrader(rawTrader) {
         const trader = {
-            id: rawTrader.id,
-            name: rawTrader.name,
-            resetTime: rawTrader.resetTime,
-            currency: await itemsAPI.getItem(currencyMap[rawTrader.currency]),
-            levels: rawTrader.levels
+            ...rawTrader
         };
-        if (this.resetCache[rawTrader.name.toLowerCase()]) trader.resetTime = this.resetCache[rawTrader.name.toLowerCase()];
-        return rawTrader;
+        return trader;
     }
 
     async getList() {
         await this.init();
-
         if(this.traderList){
             return this.traderList;
         }
-
-        await itemsAPI.init();
-
+        if (!this.traderCache) return {};
         const returnData = [];
         for(const trader of this.traderCache.data){
             returnData.push(this.formatTrader(trader));
@@ -67,11 +52,12 @@ class TradersAPI {
 
         this.traderList = await Promise.all(returnData);
 
-        return returnData;
+        return this.traderList;
     }
 
     async get(id) {
         await this.init();
+        if (!this.traderCache) return {};
         for(const trader of this.traderCache.data){
             if(trader.id === id){
                 return this.formatTrader(trader);
@@ -83,6 +69,7 @@ class TradersAPI {
 
     async getByName(name) {
         await this.init();
+        if (!this.traderCache) return {};
         for(const trader of this.traderCache.data){
             if(trader.name.toLowerCase() === name.toLowerCase()){
                 return this.formatTrader(trader);
@@ -94,19 +81,49 @@ class TradersAPI {
 
     async getByLevel(traderId, level) {
         await this.init();
+        if (!this.traderCache) return {};
         for (const rawTrader of this.traderCache.data) {
             if (rawTrader.id !== traderId) continue;
-            for (const rawLevel of hideoutStation.levels) {
+            for (const rawLevel of rawTrader.levels) {
                 if (rawLevel.level === level) {
                     return rawLevel;
                 }
             }
         }
-        throw new Error(`Could not find trader ${traderId} level ${level}`);
+        console.log(`no trader found for ${traderId}, ${level}`);
+        return {};
     }
 
     getByDataId(dataId) {
         return this.get(dataIdMap[dataId]);
+    }
+
+    async getTraderResets() {
+        await this.init();
+        try {
+            const returnData = [];
+    
+            for (const trader of this.traderCache.data) {
+                returnData.push({
+                    name: trader.name.toLowerCase(),
+                    resetTimestamp: trader.resetTime,
+                });
+            }
+    
+            return returnData;
+        } catch (loadDataError){
+            console.error(loadDataError);
+    
+            return [];
+        }
+    }
+
+    getCurrencyMap() {
+        return currencyMap;
+    }
+
+    getDataIdMap() {
+        return dataIdMap;
     }
 }
 

@@ -18,6 +18,9 @@
         "prettier": "^2.6.1"
     },
     "dependencies": {
-        "graphql": "^15.8.0"
+        "graphql": "^15.8.0",
+        "@graphql-tools/merge": "6.2.14",
+        "@graphql-tools/load-files": "6.3.2",
+        "@graphql-tools/schema": "8.1.2"
     }
 }

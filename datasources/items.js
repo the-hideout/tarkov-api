@@ -1,9 +1,3 @@
-const TradersAPI = require('./traders');
-const tradersAPI = new TradersAPI();
-
-const TraderInventoryAPI = require('./trader-inventory');
-const traderInventoryAPI = new TraderInventoryAPI();
-
 const availableProperties = [
     'weight',
     'velocity',
@@ -21,238 +15,235 @@ function camelCaseToDash(input) {
 }
 
 class ItemsAPI {
-  constructor(){
-    this.itemCache = false;
-  }
-
-  async init(){
-    if(this.itemCache){
-      return true;
+    constructor(){
+        this.itemCache = false;
     }
 
-    await traderInventoryAPI.init();
+    async init(){
+        if(this.itemCache){
+            return true;
+        }
 
-    try {
-        this.itemCache = await ITEM_DATA.get('ITEM_CACHE', 'json');
-    } catch (loadDataError){
-        console.error(loadDataError);
-    }
-  }
-
-  async formatItem(rawItem) {
-    const item = {
-        ...rawItem,
-    };
-
-    if(typeof item.avg24hPrice === 'undefined' && item.avg24Price){
-        item.avg24hPrice = item.avg24Price;
+        try {
+            this.itemCache = await ITEM_DATA.get('ITEM_CACHE', 'json');
+        } catch (loadDataError){
+            console.error(loadDataError);
+        }
     }
 
-    item.iconLink = item.icon_link;
-    item.gridImageLink = item.grid_image_link;
-    item.imageLink = item.image_link;
-    item.basePrice = item.base_price;
-    item.shortName = item.shortname;
-    item.wikiLink = item.wiki_link;
-    item.normalizedName = item.normalized_name;
-    item.link = `https://tarkov.dev/item/${item.normalizedName}`;
+    formatItem(rawItem) {
+        const item = {
+            ...rawItem,
+        };
 
-    if(item.properties){
-        if(item.properties.accuracy){
-            item.accuracyModifier = Number(item.properties.accuracy);
-        }
+        item.iconLink = item.icon_link;
+        item.gridImageLink = item.grid_image_link;
+        item.imageLink = item.image_link;
+        item.basePrice = item.base_price;
+        item.shortName = item.shortname;
+        item.wikiLink = item.wiki_link;
+        item.normalizedName = item.normalized_name;
+        item.link = `https://tarkov.dev/item/${item.normalizedName}`;
 
-        if(item.properties.recoil){
-            item.recoilModifier = Number(item.properties.recoil);
-        }
+        if(item.properties){
+            if(item.properties.accuracy){
+                item.accuracyModifier = Number(item.properties.accuracy);
+            }
 
-        if(item.properties.ergonomics){
-            item.ergonomicsModifier = Number(item.properties.ergonomics);
-        }
+            if(item.properties.recoil){
+                item.recoilModifier = Number(item.properties.recoil);
+            }
 
-        if(item.properties.grid && item.properties.grid.totalSize > 0){
-            item.hasGrid = true;
-        }
+            if(item.properties.ergonomics){
+                item.ergonomicsModifier = Number(item.properties.ergonomics);
+            }
 
-        if(item.properties.blocksEarpiece){
-            item.blocksHeadphones = true;
-        }
+            if(item.properties.grid && item.properties.grid.totalSize > 0){
+                item.hasGrid = true;
+            }
 
-        if(item.properties.bsgCategoryId){
-            item.bsgCategoryId = item.properties.bsgCategoryId;
-        }
+            if(item.properties.blocksEarpiece){
+                item.blocksHeadphones = true;
+            }
 
-        for(const availableProperty of availableProperties){
-            if(typeof item.properties[availableProperty] !== 'undefined'){
-                item[availableProperty] = Number(item.properties[availableProperty]);
+            if(item.properties.bsgCategoryId){
+                item.bsgCategoryId = item.properties.bsgCategoryId;
+            }
+
+            for(const availableProperty of availableProperties){
+                if(typeof item.properties[availableProperty] !== 'undefined'){
+                    item[availableProperty] = Number(item.properties[availableProperty]);
+                }
             }
         }
-    }
 
-    item.formattedTypes = item.types.map(type => camelCase(type));
-    item.types = item.formattedTypes;
+        item.formattedTypes = item.types.map(type => camelCase(type));
+        item.types = item.formattedTypes;
 
-    item.traderPrices = await Promise.all(item.traderPrices.map(async (traderPrice) => {
-        return {
-            price: traderPrice.price,
-            trader: await tradersAPI.getByName(traderPrice.name)
-        };
-    }));
-
-    item.sellFor = [
-        ...item.traderPrices.map((traderPrice) => {
-            let currency = 'RUB';
-            if (traderPrice.trader.name.toLowerCase() === 'peacekeeper') currency = 'USD';
-            // all trader sell values currently listed in RUB
+        item.traderPrices = item.traderPrices.map((traderPrice) => {
             return {
                 price: traderPrice.price,
-                source: traderPrice.trader.name.toLowerCase(),
+                trader_name: traderPrice.name,
+                trader: traderPrice.name
+            };
+        });
+
+        item.sellFor = [
+            ...item.traderPrices.map((traderPrice) => {
+                let currency = 'RUB';
+                if (traderPrice.trader_name.toLowerCase() === 'peacekeeper') currency = 'USD';
+                // all trader sell values currently listed in RUB
+                return {
+                    price: traderPrice.price,
+                    source: traderPrice.trader_name.toLowerCase(),
+                    currency: 'RUB',
+                    requirements: [],
+                };
+            }),
+        ];
+
+        if(!item.types.includes('noFlea')){
+            item.sellFor.push({
+                price: item.lastLowPrice || 0,
+                source: 'fleaMarket',
                 currency: 'RUB',
-                requirements: [],
-            };
-        }),
-    ];
+                requirements: [{
+                    type: 'playerLevel',
+                    value: 15,
+                }],
+            });
+        }
 
-    if(!item.types.includes('noFlea')){
-        item.sellFor.push({
-            price: item.lastLowPrice || 0,
-            source: 'fleaMarket',
-            currency: 'RUB',
-            requirements: [{
-                type: 'playerLevel',
-                value: 15,
-            }],
-        });
+        item.buyFor = [];
+
+        if(!item.types.includes('noFlea')){
+            item.buyFor.push({
+                price: item.avg24hPrice || item.lastLowPrice || 0,
+                source: 'fleaMarket',
+                currency: 'RUB',
+                requirements: [{
+                    type: 'playerLevel',
+                    value: 15,
+                }],
+            });
+        }
+
+        // Fallback images
+        item.imageLinkFallback = item.imageLink || 'https://assets.tarkov.dev/unknown-item-image.jpg';
+        item.iconLinkFallback = item.iconLink || 'https://assets.tarkov.dev/unknown-item-icon.jpg';
+        item.gridImageLinkFallback = item.gridImageLink || 'https://assets.tarkov.dev/unknown-item-grid-image.jpg';
+
+
+        if(item.containsItems && item.containsItems.length > 0){
+            item.containsItems = item.containsItems.map((containedItem) => {
+                return {
+                    item: containedItem.itemId,
+                    count: containedItem.count,
+                    attributes: []
+                };
+            });
+        }
+
+        return item;
     }
 
-    item.buyFor = [
-        ...traderInventoryAPI.getByItemId(item.id),
-    ];
+    async getItem(id, contains) {
+        await this.init();
+        let item = this.itemCache[id];
+        if(!item){
+            item = await ITEM_DATA.get(id, 'json');
+        }
 
-    if(!item.types.includes('noFlea')){
-        item.buyFor.push({
-            price: item.avg24hPrice || item.lastLowPrice || 0,
-            source: 'fleaMarket',
-            currency: 'RUB',
-            requirements: [{
-                type: 'playerLevel',
-                value: 15,
-            }],
-        });
+        if(!item){
+            return {};
+        }
+
+        const formatted = await this.formatItem(item);
+        if (contains && Array.isArray(contains)) {
+            formatted.containsItems = contains.map((cItem) => {
+                return {
+                    ...cItem,
+                    attributes: []
+                }
+            });
+        }
+        return formatted;
     }
 
-    // Fallback images
-    item.imageLinkFallback = item.imageLink || 'https://assets.tarkov.dev/unknown-item-image.jpg';
-    item.iconLinkFallback = item.iconLink || 'https://assets.tarkov.dev/unknown-item-icon.jpg';
-    item.gridImageLinkFallback = item.gridImageLink || 'https://assets.tarkov.dev/unknown-item-grid-image.jpg';
-
-
-    if(item.containsItems && item.containsItems.length > 0){
-        item.containsItems = Promise.all(item.containsItems.map(async (containedItem) => {
-            return {
-                item: await this.formatItem(this.itemCache[containedItem.itemId]),
-                count: containedItem.count,
-                quantity: containedItem.count,
-                attributes: []
-            };
-        }));
-    }
-
-    return item;
-  }
-
-  async getItem(id, contains) {
-    let item = this.itemCache[id];
-
-    if(!item){
-      item = await ITEM_DATA.get(id, 'json');
-    }
-
-    if(!item){
-        return {};
-    }
-
-    const formatted = await this.formatItem(item);
-    if (contains && Array.isArray(contains)) {
-        formatted.containsItems = await Promise.all(contains.map(async (cItem) => {
-            return {
-                item: await this.getItem(cItem.id),
-                count: cItem.count,
-                quantity: cItem.count,
-                attributes: []
-            }
-        }));
-    }
-    return formatted;
-  }
-
-  async getItemsByIDs(ids) {
-    return Object.values(this.itemCache)
-    .filter((rawItem) => {
-        return ids.includes(rawItem.id);
-    })
-    .map((rawItem) => {
-        return this.formatItem(rawItem);
-    });
-  }
-
-  async getItemsByType(type) {
-    return Object.values(this.itemCache)
+    async getItemsByIDs(ids) {
+        await this.init();
+        return Object.values(this.itemCache)
         .filter((rawItem) => {
-            return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
+            return ids.includes(rawItem.id);
         })
         .map((rawItem) => {
             return this.formatItem(rawItem);
         });
-  }
-
-  async getItemsByName(name) {
-    const searchString = name.toLowerCase();
-
-    return Object.values(this.itemCache)
-        .filter((rawItem) => {
-            return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
-        })
-        .map((rawItem) => {
-            return this.formatItem(rawItem);
-        });
-  }
-
-  async getItemsByNames(names) {
-    const searchString = name.toLowerCase();
-
-    return Object.values(this.itemCache)
-        .filter((rawItem) => {
-            return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
-        })
-        .map((rawItem) => {
-            return this.formatItem(rawItem);
-        });
-  }
-
-  async getItemsByBsgCategoryId(bsgCategoryId) {
-    return Object.values(this.itemCache)
-        .filter((rawItem) => {
-            if(!rawItem.properties){
-                return false;
-            }
-
-            return rawItem.properties.bsgCategoryId === bsgCategoryId;
-        })
-        .map((rawItem) => {
-            return this.formatItem(rawItem)
-        });
-  }
-
-  async getItemByNormalizedName(normalizedName) {
-    const item = Object.values(this.itemCache).find((item) => item.normalized_name === normalizedName);
-
-    if (!item) {
-        return null;
     }
 
-    return this.formatItem(item);
-  }
+    async getItemsByType(type) {
+        await this.init();
+        return Object.values(this.itemCache)
+            .filter((rawItem) => {
+                return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
+            })
+            .map((rawItem) => {
+                return this.formatItem(rawItem);
+            });
+    }
+
+    async getItemsByName(name) {
+        await this.init();
+        const searchString = name.toLowerCase();
+
+        return Object.values(this.itemCache)
+            .filter((rawItem) => {
+                if (!rawItem.name || !rawItem.shortname) return false;
+                return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
+            })
+            .map((rawItem) => {
+                return this.formatItem(rawItem);
+            });
+    }
+
+    async getItemsByNames(names) {
+        await this.init();
+        const searchString = name.toLowerCase();
+
+        return Object.values(this.itemCache)
+            .filter((rawItem) => {
+                return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
+            })
+            .map((rawItem) => {
+                return this.formatItem(rawItem);
+            });
+    }
+
+    async getItemsByBsgCategoryId(bsgCategoryId) {
+        await this.init();
+        return Object.values(this.itemCache)
+            .filter((rawItem) => {
+                if(!rawItem.properties){
+                    return false;
+                }
+
+                return rawItem.properties.bsgCategoryId === bsgCategoryId;
+            })
+            .map((rawItem) => {
+                return this.formatItem(rawItem)
+            });
+    }
+
+    async getItemByNormalizedName(normalizedName) {
+        await this.init();
+        const item = Object.values(this.itemCache).find((item) => item.normalized_name === normalizedName);
+
+        if (!item) {
+            return null;
+        }
+
+        return this.formatItem(item);
+    }
 }
 
 module.exports = ItemsAPI
