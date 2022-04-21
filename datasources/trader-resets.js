@@ -3,7 +3,7 @@ module.exports = async () => {
         const resetTimes = await ITEM_DATA.get(`RESET_TIMES`, 'json');
         const returnData = [];
 
-        console.log(resetTimes);
+        //console.log(resetTimes);
 
         for(const trader in resetTimes){
             returnData.push({

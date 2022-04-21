@@ -107,7 +107,7 @@ module.exports = {
     },
     OfferUnlock: {
         item(data, args, context) {
-            if (data.item_contains && Array.isArray(data.item_contains) && data.item_contains.length > 0) return context.data.item.getItem(data.item, data.item_contains);
+            if (data.contains && Array.isArray(data.contains) && data.contains.length > 0) return context.data.item.getItem(data.item, data.contains);
             return context.data.item.getItem(data.item);
         },
         traderLevel(data, args, context) {

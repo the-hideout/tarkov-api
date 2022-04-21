@@ -75,16 +75,17 @@ class TasksAPI {
             items: rewards.item.map((item) => {
                 return {
                     ...item,
-                    item_contains: item.contains,
+                    contains: item.contains,
                     attributes: []
                 }
             }),
             offerUnlock: rewards.offerUnlock.map((offer) => {
                 return {
-                    item: offer.offer_id,
+                    id: offer.offer_id,
                     trader_id: offer.trader_id,
                     traderLevel: offer.min_level,
-                    item_contains: offer.contains
+                    item: offer.item,
+                    contains: offer.contains
                 };
             }),
             skillLevelReward: rewards.skill,

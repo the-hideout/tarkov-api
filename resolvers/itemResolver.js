@@ -50,7 +50,7 @@ module.exports = {
     },
     ContainedItem: {
         item(data, args, context) {
-            if (data.item_contains) return context.data.item.getItem(data.item, data.item_contains);
+            if (data.contains) return context.data.item.getItem(data.item, data.contains);
             return context.data.item.getItem(data.item);
         },
         quantity(data, args, context) {
