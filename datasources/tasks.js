@@ -43,14 +43,6 @@ class TasksAPI {
                     objective.gql_type = 'TaskObjectiveExperience';
                 } else if (obj.type === 'shoot') {
                     objective.gql_type = 'TaskObjectiveShoot';
-                    /*objective.usingWeapon = obj.usingWeapon.map((item) => {
-                        return item.id;
-                    });
-                    objective.usingWeaponMods = obj.usingWeaponMods.map((itemGroup) => {
-                        return itemGroup.map((item) => {
-                            return item.id;
-                        });
-                    });*/
                 } else if (obj.type === 'buildWeapon') {
                     objective.gql_type = 'TaskObjectiveBuildItem';
                     objective.containsAll = obj.containsAll.map((item) => {

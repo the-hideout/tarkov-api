@@ -88,7 +88,7 @@ type GameProperty {
 type HealthEffect {
   bodyParts: [String]!
   effects: [String]!
-  time: Int
+  time: NumberCompare
 }
 
 type HideoutStation {
@@ -440,7 +440,7 @@ type TaskObjectiveShoot implements TaskObjective {
   wearing: [ItemGroup]
   notWearing: [Item]
   distance: NumberCompare
-  healthEffect: HealthEffect
+  playerHealthEffect: HealthEffect
   enemyHealthEffect: HealthEffect
 }
 
