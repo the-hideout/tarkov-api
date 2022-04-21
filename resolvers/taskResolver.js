@@ -80,6 +80,11 @@ module.exports = {
             });
         }
     },
+    TaskObjectiveTaskStatus: {
+        task(data, args, context) {
+            return context.data.task.get(data.task);
+        }
+    },
     TaskObjectiveTraderLevel: {
         traderLevel(data, args, context) {
             return context.data.trader.getByLevel(data.trader_id, data.traderLevel);

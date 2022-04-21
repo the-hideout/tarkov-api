@@ -241,6 +241,11 @@ type PriceRequirement {
   stringValue: String
 }
 
+type QuestItem {
+  id: ID!
+  name: String!
+}
+
 type RequirementHideoutStationLevel {
   id: ID
   stationLevel: HideoutStationLevel!
@@ -333,6 +338,26 @@ interface TaskObjective {
   optional: Boolean!
 }
 
+type TaskObjectiveBasic implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+}
+
+type TaskObjectiveBuildItem implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  item: Item!
+  containsAll: [Item]!
+  containsOne: [Item]!
+  attributes: [AttributeThreshold]!
+}
+
 type TaskObjectiveExperience implements TaskObjective {
   id: ID
   type: String!
@@ -352,16 +377,6 @@ type TaskObjectiveExtract implements TaskObjective {
   zoneNames: [String]!
 }
 
-type TaskObjectiveQuestItem implements TaskObjective {
-  id: ID
-  type: String!
-  description: String!
-  locationNames: [String]!
-  optional: Boolean!
-  questItem: QuestItem!
-  count: Int!
-}
-
 type TaskObjectiveItem implements TaskObjective {
   id: ID
   type: String!
@@ -374,36 +389,6 @@ type TaskObjectiveItem implements TaskObjective {
   dogTagLevel: Int
   maxDurability: Int
   minDurability: Int
-}
-
-type TaskObjectiveBasic implements TaskObjective {
-  id: ID
-  type: String!
-  description: String!
-  locationNames: [String]!
-  optional: Boolean!
-}
-
-type TaskObjectiveBuildItem implements TaskObjective {
-  id: ID
-  type: String!
-  description: String!
-  locationNames: [String]!
-  optional: Boolean!
-  item: Item!
-  containsAll: [Item]!
-  containsOne: [Item]!
-  attributes: [AttributeThreshold]!
-  #accuracy: NumberCompare
-  #durability: NumberCompare
-  #effectiveDistance: NumberCompare
-  #ergonomics: NumberCompare
-  #height: NumberCompare
-  #magazineCapacity: NumberCompare
-  #muzzleVelocity: NumberCompare
-  #recoil: NumberCompare
-  #weight: NumberCompare
-  #width: NumberCompare
 }
 
 type TaskObjectiveMark implements TaskObjective {
@@ -422,6 +407,16 @@ type TaskObjectivePlayerLevel implements TaskObjective {
   locationNames: [String]!
   optional: Boolean!
   playerLevel: Int!
+}
+
+type TaskObjectiveQuestItem implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  locationNames: [String]!
+  optional: Boolean!
+  questItem: QuestItem!
+  count: Int!
 }
 
 type TaskObjectiveShoot implements TaskObjective {
@@ -470,11 +465,6 @@ type TaskObjectiveTraderLevel implements TaskObjective {
   locationNames: [String]!
   optional: Boolean!
   traderLevel: TraderLevel!
-}
-
-type QuestItem {
-  id: ID!
-  name: String!
 }
 
 type TaskRewards {
