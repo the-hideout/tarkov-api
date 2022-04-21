@@ -1,4 +1,4 @@
-module.exports = (object, excludeList = []) => {
+module.exports = (object, list = [], include = false) => {
     const attributes = {
         int: [],
         float: [],
@@ -6,7 +6,7 @@ module.exports = (object, excludeList = []) => {
         boolean: []
     }
     for (const att in object) {
-        if (excludeList.includes(att)) continue;
+        if ((list.includes(att) && !include) || (!list.includes(att) && include)) continue;
         const val = object[att];
         let type = typeof val;
         if (type === 'number') {

@@ -3,6 +3,9 @@ module.exports = {
         tasks(obj, args, context, info) {
             return context.data.task.getList();
         },
+        task(obj, args, context) {
+            return context.data.task.get(args.id);
+        },
         quests(obj, args, context, info) {
             return context.data.quest.getList();
         }
