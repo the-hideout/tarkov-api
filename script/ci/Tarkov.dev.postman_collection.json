@@ -50,7 +50,7 @@
 			},
 			"response": []
 		},
-		{
+		/* {
 			"name": "Barters",
 			"event": [
 				{
@@ -94,7 +94,7 @@
 				}
 			},
 			"response": []
-		},
+		}, */
 		{
 			"name": "Crafts",
 			"event": [
