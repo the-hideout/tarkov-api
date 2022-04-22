@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6dba1e7a-d770-4bc3-a924-8835b1d1acee",
+		"_postman_id": "084ae197-ff57-42e6-9389-f49ff4dd7632",
 		"name": "Tarkov.dev",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -352,6 +352,97 @@
 					"graphql": {
 						"query": "query($name: String!) {\r\n    itemsByName(name: $name) {\r\n        ...itemFragment\r\n    }\r\n}\r\n{{itemFragment}}",
 						"variables": "{\r\n    \"name\": \"GPU\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Item by Name - Detailed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"     pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct item id\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].id).to.eq(\"5733279d245977289b77ec24\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct item name\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].name).to.eq(\"Car battery\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct item normalizedName\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].normalizedName).to.eq(\"car-battery\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct item shortName\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].shortName).to.eq(\"Car batt.\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct item common number types\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].height).to.be.a(\"number\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].width).to.be.a(\"number\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].basePrice).to.be.a(\"number\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].avg24hPrice).to.be.a(\"number\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct item common link data\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].iconLink).to.include(\"https://\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].iconLinkFallback).to.include(\"https://\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].wikiLink).to.include(\"https://\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].imageLink).to.include(\"https://\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].imageLinkFallback).to.include(\"https://\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].gridImageLink).to.include(\"https://\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].gridImageLinkFallback).to.include(\"https://\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].link).to.include(\"https://\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct item types to be an array\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].types).to.be.a(\"array\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct item buyFor and sellFor to be an array\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].buyFor).to.be.a(\"array\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].sellFor).to.be.a(\"array\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct item types to be an array\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].hasGrid).to.eq(null);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"recoilModifier should be null for a non-weapon item\", function () {\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].recoilModifier).to.eq(null);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\r\n  itemsByName(name: \"car battery\") {\r\n    id\r\n    name\r\n    normalizedName\r\n    shortName\r\n    basePrice\r\n    recoilModifier\r\n    updated\r\n    width\r\n    height\r\n    iconLink\r\n    iconLinkFallback\r\n    wikiLink\r\n    imageLink\r\n    imageLinkFallback\r\n    gridImageLink\r\n    gridImageLinkFallback\r\n    types\r\n    avg24hPrice\r\n    hasGrid\r\n    link\r\n    sellFor {\r\n      price\r\n      source\r\n    }\r\n    buyFor {\r\n      price\r\n      source\r\n    }\r\n  }\r\n}",
+						"variables": ""
 					}
 				},
 				"url": {
