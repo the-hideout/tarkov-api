@@ -24,8 +24,12 @@ module.exports = {
         }
     },
     Item: {
-        buyFor(data, args, context) {
-            return context.data.traderInventory.getByItemId(data.id);
+        async buyFor(data, args, context) {
+            if (!data.buyFor) data.buyFor = [];
+            return [
+                ...data.buyFor,
+                ...await context.data.traderInventory.getByItemId(data.id)
+            ];
         },
         usedInTasks(data, args, context) {
             return context.data.task.getTasksRequiringItem(data.id);

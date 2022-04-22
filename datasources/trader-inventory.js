@@ -12,7 +12,7 @@ class TraderInventoryAPI {
         }
 
         try {
-            this.itemCache = await ITEM_DATA.get('TRADER_ITEMS', 'json');
+            this.itemCache = await ITEM_DATA.get('TRADER_ITEMS_V2', 'json');
             /*const curr = await ITEM_DATA.get('CURRENCY_PRICES', 'json');
             for (const id in curr) {
                 this.itemCache[id] = curr[id];
@@ -63,12 +63,10 @@ class TraderInventoryAPI {
 
         return this.itemCache[itemId].map((cacheData) => {
                 const newItem = {
-                    source: cacheData.source,
-                    price: cacheData.price,
-                    currency: cacheData.currency,
+                    ...cacheData,
                     requirements: [{
                         type: 'loyaltyLevel',
-                        value: cacheData.min_level,
+                        value: cacheData.minLevel,
                     }]
                 };
 
@@ -76,6 +74,7 @@ class TraderInventoryAPI {
                     newItem.requirements.push({
                         type: 'questCompleted',
                         value: Number(cacheData.quest_unlock_id) || 1,
+                        stringValue: cacheData.taskUnlock
                     });
                 }
 

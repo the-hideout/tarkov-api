@@ -102,7 +102,7 @@ class ItemsAPI {
             }),
         ];
 
-        if(!item.types.includes('noFlea')){
+        if(!item.types.includes('noFlea') && !item.types.includes('preset')){
             item.sellFor.push({
                 price: item.lastLowPrice || 0,
                 source: 'fleaMarket',
@@ -116,7 +116,7 @@ class ItemsAPI {
 
         item.buyFor = [];
 
-        if(!item.types.includes('noFlea')){
+        if(!item.types.includes('noFlea') && !item.types.includes('preset')){
             item.buyFor.push({
                 price: item.avg24hPrice || item.lastLowPrice || 0,
                 source: 'fleaMarket',
