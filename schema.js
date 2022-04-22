@@ -154,6 +154,10 @@ type Item {
   translation(languageCode: LanguageCode): ItemTranslation
   usedInTasks: [Task]!
   receivedFromTasks: [Task]!
+  bartersFor: [Barter]!
+  bartersUsing: [Barter]!
+  craftsFor: [Craft]!
+  craftsUsing: [Craft]!
 }
 
 type ItemAttribute {

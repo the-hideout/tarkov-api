@@ -36,6 +36,18 @@ module.exports = {
         },
         receivedFromTasks(data, args, context) {
             return context.data.task.getTasksProvidingItem(data.id);
+        },
+        bartersFor(data, args, context) {
+            return context.data.barter.getBartersForItem(data.id);
+        },
+        bartersUsing(data, args, context) {
+            return context.data.barter.getBartersUsingItem(data.id);
+        },
+        craftsFor(data, args, context) {
+            return context.data.craft.getCraftsForItem(data.id);
+        },
+        craftsUsing(data, args, context) {
+            return context.data.craft.getCraftsUsingItem(data.id);
         }
     },
     ItemAttribute: {
