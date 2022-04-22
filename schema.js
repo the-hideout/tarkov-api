@@ -85,6 +85,11 @@ type GameProperty {
   objectValue: String
 }
 
+type FleaMarket implements Vendor {
+  name: String!
+  minPlayerLevel: Int!
+}
+
 type HealthEffect {
   bodyParts: [String]!
   effects: [String]!
@@ -171,10 +176,11 @@ type ItemGroup {
 }
 
 type ItemPrice {
-  source: ItemSourceName
+  vendor: Vendor!
   price: Int
   currency: String
-  requirements: [PriceRequirement]!
+  source: ItemSourceName @deprecated(reason: "Use vendor instead.")
+  requirements: [PriceRequirement]! @deprecated(reason: "Use vendor instead.")
 }
 
 enum ItemSourceName {
@@ -530,6 +536,14 @@ enum TraderName {
   jaeger
 }
 
+type TraderOffer implements Vendor {
+  name: String!
+  trader: Trader!
+  traderLevel: TraderLevel!
+  minTraderLevel: Int
+  taskUnlock: Task
+}
+
 type TraderPrice {
   price: Int!
   trader: Trader!
@@ -539,6 +553,11 @@ type TraderStanding {
   trader: Trader!
   standing: Float!
 }
+
+interface Vendor {
+  name: String!
+}
+#union Vendor = TraderOffer | FleaMarket
 
 type Query {
   ammo: [Ammo]  

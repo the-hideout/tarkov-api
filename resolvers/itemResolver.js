@@ -27,8 +27,8 @@ module.exports = {
         async buyFor(data, args, context) {
             if (!data.buyFor) data.buyFor = [];
             return [
-                ...data.buyFor,
-                ...await context.data.traderInventory.getByItemId(data.id)
+                ...await context.data.traderInventory.getByItemId(data.id),
+                ...data.buyFor
             ];
         },
         usedInTasks(data, args, context) {
@@ -73,12 +73,26 @@ module.exports = {
             return data.count;
         }
     },
+    FleaMarket: {
+        name(data) {
+            return 'Flea Market';
+        },
+        minPlayerLevel() {
+            return 15;
+        }
+    },
     RequirementItem: {
         item(data, args, context) {
             return context.data.item.getItem(data.item);
         },
         quantity(data) {
             return data.count;
+        }
+    },
+    Vendor: {
+        __resolveType(data, args, context) {
+            if (data.trader) return 'TraderOffer';
+            return 'FleaMarket';
         }
     }
 };

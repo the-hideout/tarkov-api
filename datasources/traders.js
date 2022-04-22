@@ -15,6 +15,25 @@ const dataIdMap = {
     7: '579dc571d53a0658a154fbec',
 };
 
+const traderNameIdMap = {
+    'prapor': '54cb50c76803fa8b248b4571',
+    'Prapor': '54cb50c76803fa8b248b4571',
+    'therapist': '54cb57776803fa99248b456e',
+    'Therapist': '54cb57776803fa99248b456e',
+    'fence': '579dc571d53a0658a154fbec',
+    'Fence': '579dc571d53a0658a154fbec',
+    'skier': '58330581ace78e27b8b10cee',
+    'Skier': '58330581ace78e27b8b10cee',
+    'peacekeeper': '5935c25fb3acc3127c3d8cd9',
+    'Peacekeeper': '5935c25fb3acc3127c3d8cd9',
+    'mechanic': '5a7c2eca46aef81a7ca2145d',
+    'Mechanic': '5a7c2eca46aef81a7ca2145d',
+    'ragman': '5ac3b934156ae10c4430e83c',
+    'Ragman': '5ac3b934156ae10c4430e83c',
+    'jaeger': '5c0647fdd443bc2504c2d371',
+    'Jaeger': '5c0647fdd443bc2504c2d371',
+};
+
 class TradersAPI {
     constructor(){
         this.traderCache = false;
@@ -124,6 +143,10 @@ class TradersAPI {
 
     getDataIdMap() {
         return dataIdMap;
+    }
+
+    getNameIdMap() {
+        return traderNameIdMap;
     }
 }
 

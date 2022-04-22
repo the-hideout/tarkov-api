@@ -61,7 +61,8 @@ class TraderInventoryAPI {
             return [];
         }
 
-        return this.itemCache[itemId].map((cacheData) => {
+        return this.itemCache[itemId];
+        /*return this.itemCache[itemId].map((cacheData) => {
                 const newItem = {
                     ...cacheData,
                     requirements: [{
@@ -79,7 +80,7 @@ class TraderInventoryAPI {
                 }
 
                 return newItem;
-        });
+        });*/
     }
 }
 

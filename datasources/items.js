@@ -1,3 +1,6 @@
+const TraderApi = require('./traders');
+const traderApi = new TraderApi();
+
 const availableProperties = [
     'weight',
     'velocity',
@@ -80,11 +83,14 @@ class ItemsAPI {
         item.formattedTypes = item.types.map(type => camelCase(type));
         item.types = item.formattedTypes;
 
+        const traderMap = traderApi.getNameIdMap();
+
         item.traderPrices = item.traderPrices.map((traderPrice) => {
             return {
                 price: traderPrice.price,
                 trader_name: traderPrice.name,
-                trader: traderPrice.name
+                trader: traderMap[traderPrice.name],
+                trader_id: traderMap[traderPrice.name]
             };
         });
 
@@ -95,8 +101,15 @@ class ItemsAPI {
                 // all trader sell values currently listed in RUB
                 return {
                     price: traderPrice.price,
-                    source: traderPrice.trader_name.toLowerCase(),
                     currency: 'RUB',
+                    vendor: {
+                        trader: traderMap[traderPrice.trader_name],
+                        trader_id: traderMap[traderPrice.trader_name],
+                        traderLevel: 1,
+                        minTraderLevel: 1,
+                        taskUnlock: null
+                    },
+                    source: traderPrice.trader_name.toLowerCase(),
                     requirements: [],
                 };
             }),
@@ -105,8 +118,9 @@ class ItemsAPI {
         if(!item.types.includes('noFlea') && !item.types.includes('preset')){
             item.sellFor.push({
                 price: item.lastLowPrice || 0,
-                source: 'fleaMarket',
                 currency: 'RUB',
+                vendor: {},
+                source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
                     value: 15,
@@ -119,8 +133,9 @@ class ItemsAPI {
         if(!item.types.includes('noFlea') && !item.types.includes('preset')){
             item.buyFor.push({
                 price: item.avg24hPrice || item.lastLowPrice || 0,
-                source: 'fleaMarket',
                 currency: 'RUB',
+                vendor: {},
+                source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
                     value: 15,
