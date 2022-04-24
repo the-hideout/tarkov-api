@@ -96,6 +96,8 @@ class ItemsAPI {
         const targetTrader = tradersAPI.getByName(traderPrice.name);
         return {
             price: traderPrice.price,
+            priceRUB: traderPrice.price,
+            currency: 'RUB',
             trader: targetTrader,
         };
     });
@@ -104,6 +106,8 @@ class ItemsAPI {
         ...item.traderPrices.map((traderPrice) => {
             return {
                 price: traderPrice.price,
+                priceRUB: traderPrice.price,
+                currency: 'RUB',
                 source: traderPrice.trader.name.toLowerCase(),
                 requirements: [],
             };
@@ -113,6 +117,7 @@ class ItemsAPI {
     if(!item.types.includes('noFlea')){
         item.sellFor.push({
             price: item.lastLowPrice || 0,
+            priceRUB: item.lastLowPrice || 0,
             source: 'fleaMarket',
             currency: 'RUB',
             requirements: [{
@@ -129,6 +134,7 @@ class ItemsAPI {
     if(!item.types.includes('noFlea')){
         item.buyFor.push({
             price: item.avg24hPrice || item.lastLowPrice || 0,
+            priceRUB: item.avg24hPrice || item.lastLowPrice || 0,
             source: 'fleaMarket',
             currency: 'RUB',
             requirements: [{
