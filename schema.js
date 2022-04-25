@@ -144,7 +144,6 @@ type Item {
   ergonomicsModifier: Float
   hasGrid: Boolean
   blocksHeadphones: Boolean
-  traderPrices: [TraderPrice]!
   link: String
   lastLowPrice: Int
   changeLast48h: Float
@@ -165,6 +164,7 @@ type Item {
   bartersUsing: [Barter]!
   craftsFor: [Craft]!
   craftsUsing: [Craft]!
+  traderPrices: [TraderPrice]! @deprecated(reason: "Use sellFor instead.")
 }
 
 type ItemAttribute {
@@ -550,13 +550,6 @@ type TraderOffer implements Vendor {
   taskUnlock: Task
 }
 
-type TraderPrice {
-  price: Int!
-  currency: String!
-  priceRUB: Int!
-  trader: Trader!
-}
-
 type TraderStanding {
   trader: Trader!
   standing: Float!
@@ -641,6 +634,16 @@ type QuestRequirement {
 type QuestRewardReputation {
   trader: Trader! @deprecated(reason: "Use Task type instead.")
   amount: Float! @deprecated(reason: "Use Task type instead.")
+}
+
+"""
+TraderPrice is deprecated and replaced with ItemPrice.
+"""
+type TraderPrice {
+  price: Int! @deprecated(reason: "Use item.buyFor instead.")
+  currency: String! @deprecated(reason: "Use item.buyFor instead.")
+  priceRUB: Int! @deprecated(reason: "Use item.buyFor instead.")
+  trader: Trader! @deprecated(reason: "Use item.buyFor instead.")
 }
 
 """

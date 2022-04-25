@@ -119,22 +119,13 @@ class TradersAPI {
 
     async getTraderResets() {
         await this.init();
-        try {
-            const returnData = [];
-    
-            for (const trader of this.traderCache.data) {
-                returnData.push({
-                    name: trader.name.toLowerCase(),
-                    resetTimestamp: trader.resetTime,
-                });
+        if (!this.traderCache) return [];
+        return this.traderCache.data.map(trader => {
+            return {
+                name: trader.name,
+                resetTimestamp: trader.resetTime,
             }
-    
-            return returnData;
-        } catch (loadDataError){
-            console.error(loadDataError);
-    
-            return [];
-        }
+        });
     }
 
     getCurrencyMap() {
