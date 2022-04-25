@@ -1,12 +1,69 @@
 module.exports = {
     Query: {
         item(obj, args, context, info) {
-            return context.data.item.getItem(args.id);
+            if (args.id) return context.data.item.getItem(args.id);
+            if (args.normalizedName) return context.data.item.getItemByNormalizedName(args.normalizedName);
+            return Promise.reject(new Error('You must specify either the id or the normalizedName argument'));
+        },
+        async items(obj, args, context) {
+            let items = false;
+            let arguments = {
+                ids: {
+                    query: async ids => {
+                        return context.data.item.getItemsByIDs(ids);
+                    },
+                    filter: ids => {
+                        return items.filter(item => {
+                            return ids.includes[item.id];
+                        });
+                    }
+                },
+                name: {
+                    query: async name => {
+                        return context.data.item.getItemsByName(name);
+                    },
+                    filter: name => {
+                        const searchString = name.toLowerCase();
+                        return items.filter(item => {
+                            return item.name.toLowerCase().includes(searchString) || item.shortname.toLowerCase().includes(searchString);
+                        });
+                    }
+                },
+                type: {
+                    query: async type => {
+                        return context.data.item.getItemsByType(type);
+                    },
+                    filter: type => {
+                        return items.filter(item => {
+                            return item.types.includes(type);
+                        });
+                    }
+                },
+                bsgCategoryId: {
+                    query: async bsgcat => {
+                        return context.data.item.getItemsByBsgCategoryId(bsgcat);
+                    },
+                    filter: bsgcat => {
+                        return items.filter(item => {
+                            return item.bsgCategoryId === bsgcat;
+                        });
+                    }
+                },
+            }
+            if (Object.keys(args).length === 0) return context.data.item.getAllItems();
+            for (const argName in args) {
+                if (!arguments[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
+                if (!items) {
+                    items = await arguments[argName].query(args[argName]);
+                } else {
+                    items = arguments[argName].filter(args[argName]);
+                }
+            }
+            return items;
         },
         itemsByIDs(obj, args, context, info) {
-            return context.data.item.getItemsByIDs(args.ids)
+            return context.data.item.getItemsByIDs(args.ids);
         },
-    
         itemsByType(obj, args, context, info) {
             return context.data.item.getItemsByType(args.type);
         },

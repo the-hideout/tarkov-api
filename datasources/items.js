@@ -192,6 +192,13 @@ class ItemsAPI {
         return formatted;
     }
 
+    async getAllItems() {
+        await this.init();
+        return Object.values(this.itemCache).map((rawItem) => {
+            return this.formatItem(rawItem);
+        });
+    }
+
     async getItemsByIDs(ids) {
         await this.init();
         return Object.values(this.itemCache)

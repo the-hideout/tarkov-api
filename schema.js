@@ -566,17 +566,18 @@ type Query {
   crafts: [Craft]
   hideoutStations: [HideoutStation]!
   historicalItemPrices(id: ID!): [historicalPricePoint]!
-  item(id: ID!): Item
-  itemsByIDs(ids: [ID]!): [Item]
-  itemsByType(type: ItemType!): [Item]!
-  itemsByName(name: String!): [Item]!
-  itemByNormalizedName(normalizedName: String!): Item
-  itemsByBsgCategoryId(bsgCategoryId: String!): [Item]!
+  item(id: ID, normalizedName: String): Item
+  items(ids: [ID], name: String, type: ItemType, bsgCategoryId: String): [Item]!
   status: ServerStatus!
   task(id: ID!): Task
   tasks: [Task]!
   traders: [Trader]!
   hideoutModules: [HideoutModule] @deprecated(reason: "No longer maintained. Use hideoutStations instead.")
+  itemsByIDs(ids: [ID]!): [Item] @deprecated(reason: "Use items instead.")
+  itemsByType(type: ItemType!): [Item]! @deprecated(reason: "Use items instead.")
+  itemsByName(name: String!): [Item]! @deprecated(reason: "Use items instead.")
+  itemByNormalizedName(normalizedName: String!): Item @deprecated(reason: "Use item instead.")
+  itemsByBsgCategoryId(bsgCategoryId: String!): [Item]! @deprecated(reason: "Use items instead.")
   quests: [Quest] @deprecated(reason: "No longer maintained. Use tasks instead.")
   # traderInventoryByName(name: TraderName!): TraderInventory
   traderResetTimes: [TraderResetTime] @deprecated(reason: "Use traders instead.") 

@@ -71,7 +71,7 @@ async function graphqlHandler(request, graphQLOptions) {
     } */
 
     //await resolvers.itemInit();
-    await dataAPI.init();
+    //await dataAPI.init();
 
     const result = await graphql(schema, query, {}, {data: dataAPI}, variables);
     const body = JSON.stringify(result);
