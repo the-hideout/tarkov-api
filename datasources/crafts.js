@@ -55,6 +55,32 @@ class CraftsAPI {
             return false;
         });
     }
+
+    async getCraftsForStation(id) {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        return this.cache.data.filter(craft => {
+            if (craft.station_id === id) return true;
+            return false;
+        });
+    }
+
+    async getCraftsForStationLevel(id, level) {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        return this.cache.data.filter(craft => {
+            if (craft.station_id === id && craft.stationLevel === level) return true;
+            return false;
+        });
+    }
 }
 
 module.exports = CraftsAPI

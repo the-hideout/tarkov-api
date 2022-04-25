@@ -80,6 +80,32 @@ class BartersAPI {
             return this.formatBarter(barter);
         });
     }
+
+    async getBartersForTrader(id) {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        return this.cache.data.filter(barter => {
+            if (barter.trader_id === id) return true;
+            return false;
+        });
+    }
+
+    async getBartersForTraderLevel(id, level) {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        return this.cache.data.filter(barter => {
+            if (barter.trader_id === id && barter.traderLevel === level) return true;
+            return false;
+        });
+    }
 }
 
 module.exports = BartersAPI

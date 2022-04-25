@@ -10,6 +10,14 @@ module.exports = {
     Trader: {
         currency(trader, args, context) {
             return context.data.item.getItem(context.data.trader.getCurrencyMap()[trader.currency]);
+        },
+        barters(data, args, context) {
+            return context.data.barter.getBartersForTrader(data.id);
+        }
+    },
+    TraderLevel: {
+        barters(data, args, context) {
+            return context.data.barter.getBartersForTraderLevel(data.id.substring(0, data.id.indexOf('-')), data.level);
         }
     },
     TraderOffer: {

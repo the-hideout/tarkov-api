@@ -100,6 +100,7 @@ type HideoutStation {
   id: ID!
   name: String!
   levels: [HideoutStationLevel]!
+  crafts: [Craft]!
 }
 
 type HideoutStationLevel {
@@ -112,6 +113,7 @@ type HideoutStationLevel {
   stationLevelRequirements: [RequirementHideoutStationLevel]!
   skillRequirements: [RequirementSkill]!
   traderRequirements: [RequirementTrader]!
+  crafts: [Craft]!
 }
 
 type historicalPricePoint {
@@ -179,6 +181,8 @@ type ItemPrice {
   vendor: Vendor!
   price: Int
   currency: String
+  currencyItem: Item
+  priceRUB: Int
   source: ItemSourceName @deprecated(reason: "Use vendor instead.")
   requirements: [PriceRequirement]! @deprecated(reason: "Use vendor instead.")
 }
@@ -496,6 +500,7 @@ type Trader {
   resetTime: String
   currency: Item!
   levels: [TraderLevel!]!
+  barters: [Barter]!
 }
 
 type TraderLevel {
@@ -508,6 +513,7 @@ type TraderLevel {
   payRate: Float!
   insuranceRate: Float
   repairCostMultiplier: Float
+  barters: [Barter]!
 }
 
 type TraderInventory {
@@ -546,6 +552,8 @@ type TraderOffer implements Vendor {
 
 type TraderPrice {
   price: Int!
+  currency: String!
+  priceRUB: Int!
   trader: Trader!
 }
 

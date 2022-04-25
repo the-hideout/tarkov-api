@@ -28,7 +28,7 @@ class ItemsAPI {
         }
 
         try {
-            this.itemCache = await ITEM_DATA.get('ITEM_CACHE', 'json');
+            this.itemCache = await ITEM_DATA.get('ITEM_CACHE_V2', 'json');
         } catch (loadDataError){
             console.error(loadDataError);
         }
@@ -88,6 +88,8 @@ class ItemsAPI {
         item.traderPrices = item.traderPrices.map((traderPrice) => {
             return {
                 price: traderPrice.price,
+                priceRUB: traderPrice.priceRUB,
+                currency: traderPrice.currency,
                 trader_name: traderPrice.name,
                 trader: traderMap[traderPrice.name],
                 trader_id: traderMap[traderPrice.name]
@@ -101,7 +103,8 @@ class ItemsAPI {
                 // all trader sell values currently listed in RUB
                 return {
                     price: traderPrice.price,
-                    currency: 'RUB',
+                    currency: currency,
+                    priceRUB: traderPrice.priceRUB,
                     vendor: {
                         trader: traderMap[traderPrice.trader_name],
                         trader_id: traderMap[traderPrice.trader_name],
@@ -119,6 +122,8 @@ class ItemsAPI {
             item.sellFor.push({
                 price: item.lastLowPrice || 0,
                 currency: 'RUB',
+                currencyItem: '5449016a4bdc2d6f028b456f',
+                priceRUB: item.lastLowPrice || 0,
                 vendor: {},
                 source: 'fleaMarket',
                 requirements: [{
@@ -134,6 +139,8 @@ class ItemsAPI {
             item.buyFor.push({
                 price: item.avg24hPrice || item.lastLowPrice || 0,
                 currency: 'RUB',
+                currencyItem: '5449016a4bdc2d6f028b456f',
+                priceRUB: item.avg24hPrice || item.lastLowPrice || 0,
                 vendor: {},
                 source: 'fleaMarket',
                 requirements: [{

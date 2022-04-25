@@ -64,6 +64,11 @@ module.exports = {
             })
         }
     },
+    ItemPrice: {
+        currencyItem(data, args, context) {
+            return context.data.item.getItem(data.currencyItem);
+        }
+    },
     ContainedItem: {
         item(data, args, context) {
             if (data.contains) return context.data.item.getItem(data.item, data.contains);
