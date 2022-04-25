@@ -116,6 +116,7 @@ type ItemPrice {
   source: ItemSourceName
   price: Int
   currency: String
+  priceRUB: Int
   requirements: [PriceRequirement]!
 }
 
@@ -276,6 +277,8 @@ enum TraderName {
 
 type TraderPrice {
   price: Int!
+  currency: String!
+  priceRUB: Int!
   trader: Trader!
 }
 
