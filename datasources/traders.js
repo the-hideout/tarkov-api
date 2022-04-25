@@ -122,7 +122,7 @@ class TradersAPI {
         if (!this.traderCache) return [];
         return this.traderCache.data.map(trader => {
             return {
-                name: trader.name,
+                name: trader.name.toLowerCase(),
                 resetTimestamp: trader.resetTime,
             }
         });
