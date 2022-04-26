@@ -19,30 +19,30 @@ type Ammo {
   initialSpeed: Int!
   lightBleedModifier: Float!
   heavyBleedModifier: Float!
-  attributes: AttributeCollection!
+  #attributes: AttributeCollection!
 }
 
-type AttributeCollection {
-  int: [AttributeInt]!
-  float: [AttributeFloat]!
-  string: [ItemAttribute]!
-  boolean: [AttributeBoolean]!
-}
+#type AttributeCollection {
+#  int: [AttributeInt]!
+#  float: [AttributeFloat]!
+#  string: [ItemAttribute]!
+#  boolean: [AttributeBoolean]!
+#}
 
-type AttributeBoolean {
-  name: String!
-  value: Boolean!
-}
+#type AttributeBoolean {
+#  name: String!
+#  value: Boolean!
+#}
 
-type AttributeFloat {
-  name: String!
-  value: Float!
-}
+#type AttributeFloat {
+#  name: String!
+#  value: Float!
+#}
 
-type AttributeInt {
-  name: String!
-  value: Int!
-}
+#type AttributeInt {
+#  name: String!
+#  value: Int!
+#}
 
 type AttributeThreshold {
   name: String!
