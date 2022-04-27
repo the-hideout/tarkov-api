@@ -4,6 +4,7 @@
 class TraderInventoryAPI {
     constructor(){
         this.itemCache = false;
+        this.traderCache = false;
     }
 
     async init(){
@@ -19,6 +20,27 @@ class TraderInventoryAPI {
             }*/
         } catch (loadDataError){
             console.error(loadDataError);
+        }
+    }
+
+    async initTraderCache() {
+        await this.init();
+        if (this.traderCache) {
+            return true;
+        }
+
+        try {
+            const traderCache = {};
+            for (const id in this.itemCache) {
+                const itemOffers = this.itemCache[id];
+                for (const offer of itemOffers) {
+                    if (!traderCache[offer.vendor.trader_id]) traderCache[offer.vendor.trader_id] = [];
+                    traderCache[offer.vendor.trader_id].push(offer);
+                }
+            }
+            this.traderCache = traderCache;
+        } catch (error){
+            console.error(error);
         }
     }
 
@@ -81,6 +103,20 @@ class TraderInventoryAPI {
 
                 return newItem;
         });*/
+    }
+
+    async getPricesForTrader(traderId) {
+        await this.initTraderCache();
+        if (!this.traderCache[traderId]) return [];
+        return this.traderCache[traderId];
+    }
+
+    async getPricesForTraderLevel(traderId, level) {
+        await this.initTraderCache();
+        if (!this.traderCache[traderId]) return [];
+        return this.traderCache[traderId].filter(offer => {
+            return offer.vendor.traderLevel === level;
+        });
     }
 }
 

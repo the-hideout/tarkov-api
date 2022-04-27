@@ -68,7 +68,8 @@ type ContainedItem {
 
 type Craft {
   id: ID!
-  stationLevel: HideoutStationLevel!
+  station: HideoutStation!
+  level: Int!
   duration: Int!
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
@@ -262,7 +263,8 @@ type QuestItem {
 
 type RequirementHideoutStationLevel {
   id: ID
-  stationLevel: HideoutStationLevel!
+  station: HideoutStation!
+  level: Int!
 }
 
 type RequirementItem {

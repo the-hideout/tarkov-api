@@ -5,8 +5,8 @@ module.exports = {
         }
     },
     Craft: {
-        stationLevel(data, args, context) {
-            return context.data.hideout.getModuleByLevel(data.station_id, data.stationLevel);
+        station(data, args, context) {
+            return context.data.hideout.getModuleById(data.station);
         }
     }
 };
