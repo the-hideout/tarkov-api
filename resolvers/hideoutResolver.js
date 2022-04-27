@@ -19,7 +19,7 @@ module.exports = {
     },
     RequirementHideoutStationLevel: {
         station(data, args, context) {
-            return context.data.hideout.getModuleById(data.station);
+            return context.data.hideout.getStation(data.station);
         }
     }
 };

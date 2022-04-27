@@ -6,7 +6,7 @@ module.exports = {
     },
     Craft: {
         station(data, args, context) {
-            return context.data.hideout.getModuleById(data.station);
+            return context.data.hideout.getStation(data.station);
         }
     }
 };
