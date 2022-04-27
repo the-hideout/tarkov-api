@@ -1,7 +1,7 @@
 // datasource for crafts 
 class CraftsAPI {
     constructor(){
-        this.caache = false;
+        this.cache = false;
     }
 
     async init(){

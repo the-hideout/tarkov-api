@@ -1,6 +1,6 @@
 class BartersAPI {
     constructor(){
-        this.caache = false;
+        this.cache = false;
     }
 
     async init(){
