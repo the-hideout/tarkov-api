@@ -121,8 +121,8 @@ module.exports = {
         }
     },
     QuestRewardReputation: {
-        trader(data, args, context) {
-            return context.data.trader.get(data.trader_id);
+        async trader(data, args, context) {
+            return context.data.trader.getByName(data.trader);
         }
     }
 };
