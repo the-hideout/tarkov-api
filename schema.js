@@ -347,6 +347,7 @@ type Task {
   objectives: [TaskObjective]!
   startRewards: TaskRewards
   finishRewards: TaskRewards
+  factionName: String
   tarkovDataId: Int
 }
 
