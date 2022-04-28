@@ -20,17 +20,20 @@ function camelCaseToDash(input) {
 class ItemsAPI {
     constructor(){
         this.itemCache = false;
+        this.loading = false;
     }
 
     async init(){
-        if(this.itemCache){
-            return true;
-        }
-
         try {
-            this.itemCache = await ITEM_DATA.get('ITEM_CACHE_V2', 'json');
-        } catch (loadDataError){
-            console.error(loadDataError);
+            if (this.loading) await this.loading;
+            if(this.itemCache){
+                return true;
+            }
+            this.loading = ITEM_DATA.get('ITEM_CACHE_V2', 'json');
+            this.itemCache = await this.loading;
+            this.loading = false;
+        } catch (error){
+            console.error(error);
         }
     }
 

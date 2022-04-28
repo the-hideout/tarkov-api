@@ -37,15 +37,18 @@ const traderNameIdMap = {
 class TradersAPI {
     constructor(){
         this.traderCache = false;
+        this.loading = false;
     }
 
     async init(){
-        if(this.traderCache){
-          return true;
-        }
-    
         try {
-            this.traderCache = await ITEM_DATA.get('TRADER_DATA', 'json');
+            if (this.loading) await this.loading;
+            if(this.traderCache){
+                return true;
+            }
+            this.loading = ITEM_DATA.get('TRADER_DATA', 'json');
+            this.traderCache = await this.loading;
+            this.loading = false;
         } catch (error){
             console.error(error);
         }

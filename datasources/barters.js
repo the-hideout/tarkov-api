@@ -1,15 +1,18 @@
 class BartersAPI {
     constructor(){
         this.cache = false;
+        this.loading = false;
     }
 
     async init(){
-        if(this.cache){
-            return true;
-        }
-
         try {
-            this.cache = await ITEM_DATA.get('BARTER_DATA_V2', 'json');
+            if (this.loading) await this.loading;
+            if(this.cache){
+                return true;
+            }
+            this.loading = ITEM_DATA.get('BARTER_DATA_V2', 'json');
+            this.cache = await this.loading;
+            this.loading = false;
         } catch (loadDataError){
             console.error(loadDataError);
         }
@@ -102,7 +105,7 @@ class BartersAPI {
         }
 
         return this.cache.data.filter(barter => {
-            if (barter.trader_id === id && barter.traderLevel === level) return true;
+            if (barter.trader_id === id && barter.level === level) return true;
             return false;
         });
     }

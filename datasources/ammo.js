@@ -4,15 +4,20 @@ const buildAttributes = require('./build-attributes');
 class AmmoAPI {
   constructor(){
     this.cache = false;
+    this.loading = false;
   }
 
   async init(){
-    if(this.cache){
-      return true;
-    }
-
     try {
-        this.cache = await ITEM_DATA.get('AMMO_DATA', 'json');
+        if (this.loading) {
+          await this.loading;
+        }
+        if(this.cache){
+          return true;
+        }
+        this.loading = ITEM_DATA.get('AMMO_DATA', 'json');
+        this.cache = await this.loading;
+        this.loading = false;
     } catch (error){
         console.error(error);
     }

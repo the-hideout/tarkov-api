@@ -5,15 +5,18 @@ class TraderInventoryAPI {
     constructor(){
         this.itemCache = false;
         this.traderCache = false;
+        this.loading = false;
     }
 
     async init(){
-        if (this.itemCache){
-            return true;
-        }
-
         try {
-            this.itemCache = await ITEM_DATA.get('TRADER_ITEMS_V2', 'json');
+            if (this.loading) await this.loading;
+            if (this.itemCache){
+                return true;
+            }
+            this.loading = ITEM_DATA.get('TRADER_ITEMS_V2', 'json');
+            this.itemCache = await this.loading;
+            this.loading = false;
             /*const curr = await ITEM_DATA.get('CURRENCY_PRICES', 'json');
             for (const id in curr) {
                 this.itemCache[id] = curr[id];

@@ -13,11 +13,6 @@ module.exports = {
     Task: {
         trader(data, args, context) {
             return context.data.trader.get(data.trader);
-        },
-        traderLevelRequirements(data, args, context) {
-            return data.traderLevelRequirements.map(req => {
-                return context.data.trader.getByLevel(req.trader_id, req.level);
-            });            
         }
     },
     TaskObjective: {
@@ -30,13 +25,13 @@ module.exports = {
             return context.data.item.getItem(data.item);
         },
         containsAll(data, args, context) {
-            return data.containsAll.map((id) => {
-                return context.data.item.getItem(id);
+            return data.containsAll.map((item) => {
+                return context.data.item.getItem(item.id);
             });
         },
         containsOne(data, args, context) {
-            return data.containsOne.map((id) => {
-                return context.data.item.getItem(id);
+            return data.containsOne.map((item) => {
+                return context.data.item.getItem(item.id);
             });
         }
     },
@@ -86,23 +81,15 @@ module.exports = {
         }
     },
     TaskObjectiveTraderLevel: {
-        traderLevel(data, args, context) {
-            return context.data.trader.getByLevel(data.trader_id, data.traderLevel);
+        trader(data, args, context) {
+            return context.data.trader.get(data.trader_id);
         }
     },
     TaskRewards: {
-        traderStanding(data, args, context) {
-            return data.traderStanding.map(ts => {
-                return {
-                    trader: context.data.trader.get(ts.trader),
-                    standing: ts.standing
-                };
-            });
-        },
         traderUnlock(data, args, context) {
-            return data.traderUnlock.map(unlock => {
-                return context.data.trader.get(unlock.trader);
-            });
+            return Promise.all(data.traderUnlock.map(unlock => {
+                return context.data.trader.get(unlock.trader_id);
+            }));
         }
     },
     TaskStatusRequirement: {
@@ -115,8 +102,8 @@ module.exports = {
             if (data.contains && Array.isArray(data.contains) && data.contains.length > 0) return context.data.item.getItem(data.item, data.contains);
             return context.data.item.getItem(data.item);
         },
-        traderLevel(data, args, context) {
-            return context.data.trader.getByLevel(data.trader_id, data.traderLevel)
+        trader(data, args, context) {
+            return context.data.trader.get(data.trader_id)
         }
     },
     Quest: {
@@ -135,7 +122,7 @@ module.exports = {
     },
     QuestRewardReputation: {
         trader(data, args, context) {
-            return context.data.trader.getByName(data.trader);
+            return context.data.trader.get(data.trader_id);
         }
     }
 };

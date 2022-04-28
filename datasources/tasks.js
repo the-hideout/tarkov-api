@@ -2,15 +2,18 @@ class TasksAPI {
     constructor(){
         this.cache = false;
         this.taskList = false;
+        this.loading = false;
     }
 
     async init(){
-        if(this.cache){
-          return true;
-        }
-    
         try {
-            this.cache = await ITEM_DATA.get('QUEST_DATA_V2', 'json');
+            if (this.loading) await this.loading;
+            if(this.cache){
+                return true;
+            }
+            this.loading = ITEM_DATA.get('TASK_DATA', 'json');
+            this.cache = await this.loading;
+            this.loading = false;
         } catch (error){
             console.error(error);
         }
@@ -33,7 +36,7 @@ class TasksAPI {
                     objective.gql_type = 'TaskObjectiveExtract';
                 } else if (obj.type === 'skill') {
                     objective.gql_type = 'TaskObjectiveSkill';
-                } else if (obj.type === 'traderLoyalty') {
+                } else if (obj.type === 'traderLevel') {
                     objective.gql_type = 'TaskObjectiveTraderLevel';
                 } else if (obj.type === 'taskStatus') {
                     objective.gql_type = 'TaskObjectiveTaskStatus';
@@ -45,19 +48,19 @@ class TasksAPI {
                     objective.gql_type = 'TaskObjectiveShoot';
                 } else if (obj.type === 'buildWeapon') {
                     objective.gql_type = 'TaskObjectiveBuildItem';
-                    objective.containsAll = obj.containsAll.map((item) => {
+                    /*objective.containsAll = obj.containsAll.map((item) => {
                         return item.id;
                     });
                     objective.containsOne = obj.containsOne.map((item) => {
                         return item.id;
-                    });
+                    });*/
                 } else {
                     objective.gql_type = 'TaskObjectiveBasic';
                 }
                 return objective;
             }),
-            startRewards: this.formatRewards(rawTask.startRewards),
-            finishRewards: this.formatRewards(rawTask.finishRewards)
+            /*startRewards: this.formatRewards(rawTask.startRewards),
+            finishRewards: this.formatRewards(rawTask.finishRewards)*/
         };
     }
 
@@ -67,19 +70,10 @@ class TasksAPI {
             items: rewards.item.map((item) => {
                 return {
                     ...item,
-                    contains: item.contains,
                     attributes: []
                 }
             }),
-            offerUnlock: rewards.offerUnlock.map((offer) => {
-                return {
-                    id: offer.offer_id,
-                    trader_id: offer.trader_id,
-                    traderLevel: offer.min_level,
-                    item: offer.item,
-                    contains: offer.contains
-                };
-            }),
+            offerUnlock: rewards.offerUnlock,
             skillLevelReward: rewards.skill,
             traderUnlock: rewards.traderUnlock
         };

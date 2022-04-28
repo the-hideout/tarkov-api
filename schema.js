@@ -50,13 +50,14 @@ type AttributeThreshold {
 }
 
 type Barter {
-  traderLevel: TraderLevel!
+  trader: Trader!
+  level: Int!
   taskUnlock: Task
   requiredItems: [ContainedItem]!
   rewardItems: [ContainedItem]!
-  source: String! @deprecated(reason: "Use traderLevel instead.")
-  sourceName: ItemSourceName! @deprecated(reason: "Use traderLevel instead.")
-  requirements: [PriceRequirement]! @deprecated(reason: "Use traderLevel instead.")
+  source: String! @deprecated(reason: "Use trader and level instead.")
+  sourceName: ItemSourceName! @deprecated(reason: "Use trader instead.")
+  requirements: [PriceRequirement]! @deprecated(reason: "Use level instead.")
 }
 
 type ContainedItem {
@@ -106,7 +107,7 @@ type HideoutStation {
 
 type HideoutStationLevel {
   id: ID!
-  name: String!
+  #name: String!
   level: Int!
   constructionTime: Int!
   description: String!
@@ -246,7 +247,8 @@ type NumberCompare {
 
 type OfferUnlock {
   id: ID!
-  traderLevel: TraderLevel!
+  trader: Trader!
+  level: Int!
   item: Item!
 }
 
@@ -288,7 +290,8 @@ type RequirementTask {
 
 type RequirementTrader {
   id: ID
-  traderLevel: TraderLevel!
+  trader: Trader!
+  level: Int!
 }
 
 enum RequirementType {
@@ -340,10 +343,11 @@ type Task {
   wikiLink: String
   minPlayerLevel: Int
   taskRequirements: [TaskStatusRequirement]!
-  traderLevelRequirements: [TraderLevel]!
+  traderLevelRequirements: [RequirementTrader]!
   objectives: [TaskObjective]!
   startRewards: TaskRewards
   finishRewards: TaskRewards
+  tarkovDataId: Int
 }
 
 interface TaskObjective {
@@ -480,7 +484,8 @@ type TaskObjectiveTraderLevel implements TaskObjective {
   description: String!
   locationNames: [String]!
   optional: Boolean!
-  traderLevel: TraderLevel!
+  trader: Trader!
+  level: Int!
 }
 
 type TaskRewards {
@@ -503,11 +508,12 @@ type Trader {
   currency: Item!
   levels: [TraderLevel!]!
   barters: [Barter]!
+  cashOffers: [TraderCashOffer]!
 }
 
 type TraderLevel {
   id: ID!
-  name: String!
+  #name: String!
   level: Int!
   requiredPlayerLevel: Int!
   requiredReputation: Float!
@@ -516,21 +522,18 @@ type TraderLevel {
   insuranceRate: Float
   repairCostMultiplier: Float
   barters: [Barter]!
+  cashOffers: [TraderCashOffer]!
 }
 
-type TraderInventory {
-  id: ID!
-  name: TraderName!
-  items: [TraderInventoryItem!]
-}
-
-type TraderInventoryItem {
+type TraderCashOffer {
   item: Item!
-  minLevel: Int
+  minTraderLevel: Int
   price: Int
-  updated: String
-  questUnlockId: String
   currency: String
+  currencyItem: Item
+  priceRUB: Int
+  #updated: String
+  taskUnlock: Task
 }
 
 enum TraderName {
@@ -547,7 +550,7 @@ enum TraderName {
 type TraderOffer implements Vendor {
   name: String!
   trader: Trader!
-  traderLevel: TraderLevel!
+  #traderLevel: TraderLevel!
   minTraderLevel: Int
   taskUnlock: Task
 }
@@ -581,7 +584,6 @@ type Query {
   itemByNormalizedName(normalizedName: String!): Item @deprecated(reason: "Use item instead.")
   itemsByBsgCategoryId(bsgCategoryId: String!): [Item]! @deprecated(reason: "Use items instead.")
   quests: [Quest] @deprecated(reason: "No longer maintained. Use tasks instead.")
-  # traderInventoryByName(name: TraderName!): TraderInventory
   traderResetTimes: [TraderResetTime] @deprecated(reason: "Use traders instead.") 
 }
 

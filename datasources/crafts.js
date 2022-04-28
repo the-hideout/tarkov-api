@@ -2,15 +2,18 @@
 class CraftsAPI {
     constructor(){
         this.cache = false;
+        this.loading = false;
     }
 
     async init(){
-        if(this.cache){
-            return true;
-        }
-
         try {
-            this.cache = await ITEM_DATA.get('CRAFT_DATA_V2', 'json');
+            if (this.loading) await this.loading;
+            if(this.cache){
+                return true;
+            }
+            this.loading = ITEM_DATA.get('CRAFT_DATA_V2', 'json');
+            this.cache = await this.loading;
+            this.loading = false;
         } catch (loadDataError){
             console.error(loadDataError);
         }
@@ -77,7 +80,7 @@ class CraftsAPI {
         }
 
         return this.cache.data.filter(craft => {
-            if (craft.station_id === id && craft.stationLevel === level) return true;
+            if (craft.station_id === id && craft.level === level) return true;
             return false;
         });
     }
