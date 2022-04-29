@@ -367,6 +367,12 @@ type Task {
   startRewards: TaskRewards
   finishRewards: TaskRewards
   factionName: String
+  neededKeys: [TaskKey]
+}
+
+type TaskKey {
+  keys: [Item]!
+  map: Map
 }
 
 interface TaskObjective {

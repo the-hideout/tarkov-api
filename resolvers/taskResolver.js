@@ -27,6 +27,16 @@ module.exports = {
             return context.data.map.get(data.location_id);
         }
     },
+    TaskKey: {
+        keys(data, args, context) {
+            return data.key_ids.map(id => {
+                return context.data.item.getItem(id);
+            });
+        },
+        map(data, args, context) {
+            return context.data.map.get(data.map_id);
+        }
+    },
     TaskObjective: {
         __resolveType(data, args, context) {
             return data.gql_type;
