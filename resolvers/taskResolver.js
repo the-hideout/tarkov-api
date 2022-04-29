@@ -1,7 +1,16 @@
 module.exports = {
     Query: {
-        tasks(obj, args, context, info) {
-            return context.data.task.getList();
+        async tasks(obj, args, context, info) {
+            const tasks = await context.data.task.getList();
+            if (args.faction) {
+                const filterFaction = args.faction.toLowerCase();
+                return tasks.filter(task => {
+                    if (!task.factionName) return true;
+                    const taskFaction = task.factionName.toLowerCase();
+                    return taskFaction === 'any' || taskFaction === filterFaction;
+                });
+            }
+            return tasks;
         },
         task(obj, args, context) {
             return context.data.task.get(args.id);

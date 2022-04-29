@@ -259,7 +259,7 @@ type PriceRequirement {
 }
 
 type QuestItem {
-  id: ID!
+  id: ID
   name: String!
 }
 
@@ -335,7 +335,8 @@ type StatusMessage {
 }
 
 type Task {
-  id: ID!
+  id: ID
+  tarkovDataId: Int
   name: String!
   trader: Trader!
   locationName: String!
@@ -348,7 +349,6 @@ type Task {
   startRewards: TaskRewards
   finishRewards: TaskRewards
   factionName: String
-  tarkovDataId: Int
 }
 
 interface TaskObjective {
@@ -576,7 +576,7 @@ type Query {
   items(ids: [ID], name: String, type: ItemType, bsgCategoryId: String): [Item]!
   status: ServerStatus!
   task(id: ID!): Task
-  tasks: [Task]!
+  tasks(faction: String): [Task]!
   traders: [Trader]!
   hideoutModules: [HideoutModule] @deprecated(reason: "No longer maintained. Use hideoutStations instead.")
   itemsByIDs(ids: [ID]!): [Item] @deprecated(reason: "Use items instead.")
