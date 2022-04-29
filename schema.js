@@ -248,14 +248,14 @@ type Map {
   description: String
   enemies: [String]
   raidDuration: Int
-  svg: MapSvg
+  #svg: MapSvg
 }
 
-type MapSvg {
-  file: String
-  floors: [String]
-  defaultFloor: String
-}
+#type MapSvg {
+#  file: String
+#  floors: [String]
+#  defaultFloor: String
+#}
 
 type NumberCompare {
   compareMethod: String!
