@@ -33,6 +33,9 @@ const tradersAPI = new TradersAPI();
 const TasksAPI = require('./tasks');
 const tasksAPI = new TasksAPI();
 
+const MapAPI = require('./maps');
+const mapAPI = new MapAPI();
+
 module.exports = {
     init: async () => {
         try {
@@ -52,5 +55,6 @@ module.exports = {
     traderInventory: traderInventoryAPI,
     trader: tradersAPI,
     task: tasksAPI,
-    status: status
+    status: status,
+    map: mapAPI
 }

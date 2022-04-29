@@ -22,11 +22,27 @@ module.exports = {
     Task: {
         trader(data, args, context) {
             return context.data.trader.get(data.trader);
+        },
+        map(data, args, context) {
+            return context.data.map.get(data.location_id);
         }
     },
     TaskObjective: {
         __resolveType(data, args, context) {
             return data.gql_type;
+        },
+        maps(data, args, context) {
+            console.log(`getting maps for objective ${data.id}`);
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
+        }
+    },
+    TaskObjectiveBasic: {
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
         }
     },
     TaskObjectiveBuildItem: {
@@ -42,16 +58,66 @@ module.exports = {
             return data.containsOne.map((item) => {
                 return context.data.item.getItem(item.id);
             });
+        },
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
+        }
+    },
+    TaskObjectiveExperience: {
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
+        }
+    },
+    TaskObjectiveExtract: {
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
         }
     },
     TaskObjectiveItem: {
         item(data, args, context) {
             return context.data.item.getItem(data.item);
+        },
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
         }
     },
     TaskObjectiveMark: {
         markerItem(data, args, context) {
             return context.data.item.getItem(data.markerItem);
+        },
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
+        }
+    },
+    TaskObjectivePlayerLevel: {
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
+        }
+    },
+    TaskObjectiveQuestItem: {
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
+        }
+    },
+    TaskObjectiveSkill: {
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
         }
     },
     TaskObjectiveShoot: {
@@ -82,16 +148,31 @@ module.exports = {
             return data.notWearing.map((id) => {
                 return context.data.item.getItem(id);
             });
+        },
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
         }
     },
     TaskObjectiveTaskStatus: {
         task(data, args, context) {
             return context.data.task.get(data.task);
+        },
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
         }
     },
     TaskObjectiveTraderLevel: {
         trader(data, args, context) {
             return context.data.trader.get(data.trader_id);
+        },
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(id);
+            });
         }
     },
     TaskRewards: {

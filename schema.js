@@ -240,6 +240,23 @@ enum LanguageCode {
   en
 }
 
+type Map {
+  id: ID!
+  tarkovDataId: ID
+  name: String
+  wiki: String
+  description: String
+  enemies: [String]
+  raidDuration: Int
+  svg: MapSvg
+}
+
+type MapSvg {
+  file: String
+  floors: [String]
+  defaultFloor: String
+}
+
 type NumberCompare {
   compareMethod: String!
   value: Float!
@@ -339,7 +356,8 @@ type Task {
   tarkovDataId: Int
   name: String!
   trader: Trader!
-  locationName: String!
+  #locationName: String!
+  map: Map
   experience: Int!
   wikiLink: String
   minPlayerLevel: Int
@@ -355,7 +373,8 @@ interface TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
 }
 
@@ -363,7 +382,8 @@ type TaskObjectiveBasic implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
 }
 
@@ -371,7 +391,8 @@ type TaskObjectiveBuildItem implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   item: Item!
   containsAll: [Item]!
@@ -383,7 +404,8 @@ type TaskObjectiveExperience implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   healthEffect: HealthEffect!
 }
@@ -392,7 +414,8 @@ type TaskObjectiveExtract implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   exitStatus: [String]!
   zoneNames: [String]!
@@ -402,7 +425,8 @@ type TaskObjectiveItem implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   item: Item!
   count: Int!
@@ -416,7 +440,8 @@ type TaskObjectiveMark implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   markerItem: Item!
 }
@@ -425,7 +450,8 @@ type TaskObjectivePlayerLevel implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   playerLevel: Int!
 }
@@ -434,7 +460,8 @@ type TaskObjectiveQuestItem implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   questItem: QuestItem!
   count: Int!
@@ -444,7 +471,8 @@ type TaskObjectiveShoot implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   target: String!
   count: Int!
@@ -464,7 +492,8 @@ type TaskObjectiveSkill implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   skillLevel: SkillLevel!
 }
@@ -473,7 +502,8 @@ type TaskObjectiveTaskStatus implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   task: Task!
   status: [String]!
@@ -483,7 +513,8 @@ type TaskObjectiveTraderLevel implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  locationNames: [String]!
+  #locationNames: [String]!
+  maps: [Map]!
   optional: Boolean!
   trader: Trader!
   level: Int!
@@ -574,6 +605,7 @@ type Query {
   historicalItemPrices(id: ID!): [historicalPricePoint]!
   item(id: ID, normalizedName: String): Item
   items(ids: [ID], name: String, type: ItemType, bsgCategoryId: String): [Item]!
+  maps: [Map]!
   status: ServerStatus!
   task(id: ID!): Task
   tasks(faction: String): [Task]!
