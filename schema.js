@@ -616,13 +616,13 @@ type Query {
   task(id: ID!): Task
   tasks(faction: String): [Task]!
   traders: [Trader]!
-  hideoutModules: [HideoutModule] @deprecated(reason: "No longer maintained. Use hideoutStations instead.")
+  hideoutModules: [HideoutModule] @deprecated(reason: "Use hideoutStations instead.")
   itemsByIDs(ids: [ID]!): [Item] @deprecated(reason: "Use items instead.")
   itemsByType(type: ItemType!): [Item]! @deprecated(reason: "Use items instead.")
   itemsByName(name: String!): [Item]! @deprecated(reason: "Use items instead.")
   itemByNormalizedName(normalizedName: String!): Item @deprecated(reason: "Use item instead.")
   itemsByBsgCategoryId(bsgCategoryId: String!): [Item]! @deprecated(reason: "Use items instead.")
-  quests: [Quest] @deprecated(reason: "No longer maintained. Use tasks instead.")
+  quests: [Quest] @deprecated(reason: "Use tasks instead.")
   traderResetTimes: [TraderResetTime] @deprecated(reason: "Use traders instead.") 
 }
 
