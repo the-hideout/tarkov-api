@@ -202,68 +202,126 @@ class ItemsAPI {
         });
     }
 
-    async getItemsByIDs(ids) {
+    async getItemsByIDs(ids, items = false) {
         await this.init();
-        return Object.values(this.itemCache.data)
-        .filter((rawItem) => {
+        let format = false;
+        if (!items) {
+            items = Object.values(this.itemCache.data);
+            format = true;
+        }
+        return items.filter((rawItem) => {
             return ids.includes(rawItem.id);
-        })
-        .map((rawItem) => {
+        }).map((rawItem) => {
+            if (!format) return rawItem;
             return this.formatItem(rawItem);
         });
     }
 
-    async getItemsByType(type) {
+    async getItemsByType(type, items = false) {
         await this.init();
-        return Object.values(this.itemCache.data)
-            .filter((rawItem) => {
-                return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
-            })
-            .map((rawItem) => {
-                return this.formatItem(rawItem);
-            });
+        let format = false;
+        if (!items) {
+            items = Object.values(this.itemCache.data);
+            format = true;
+        }
+        return items.filter((rawItem) => {
+            return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
+        }).map((rawItem) => {
+            if (!format) return rawItem;
+            return this.formatItem(rawItem);
+        });
     }
 
-    async getItemsByName(name) {
+    async getItemsByName(name, items = false) {
         await this.init();
+        let format = false;
+        if (!items) {
+            items = Object.values(this.itemCache.data);
+            format = true;
+        }
         const searchString = name.toLowerCase();
 
-        return Object.values(this.itemCache.data)
-            .filter((rawItem) => {
-                if (!rawItem.name || !rawItem.shortname) return false;
-                return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
-            })
-            .map((rawItem) => {
-                return this.formatItem(rawItem);
-            });
-    }
+        return items.filter((rawItem) => {
+            if (!rawItem.name || !rawItem.shortname) return false;
+            return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
+        }).map((rawItem) => {
+            if (!format) return rawItem;
+            return this.formatItem(rawItem);
+        });
+}
 
-    async getItemsByNames(names) {
+    async getItemsByNames(names, items = false) {
         await this.init();
-        const searchString = name.toLowerCase();
-
-        return Object.values(this.itemCache.data)
-            .filter((rawItem) => {
-                return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
-            })
-            .map((rawItem) => {
-                return this.formatItem(rawItem);
-            });
-    }
-
-    async getItemsByBsgCategoryId(bsgCategoryId) {
-        await this.init();
-        return Object.values(this.itemCache.data)
-            .filter((rawItem) => {
-                if(!rawItem.properties){
-                    return false;
+        let format = false;
+        if (!items) {
+            items = Object.values(this.itemCache.data);
+            format = true;
+        }
+        const searchStrings = names.map(name => {
+            return name.toLowerCase();
+        });
+        return items.filter((rawItem) => {
+            for (const search of searchStrings) {
+                if (rawItem.name.toLowerCase().includes(search) || rawItem.shortname.toLowerCase().includes(search)) {
+                    return true;
                 }
+            }
+            return false;
+        }).map((rawItem) => {
+            if (!format) return rawItem;
+            return this.formatItem(rawItem);
+        });
+    }
 
-                return rawItem.properties.bsgCategoryId === bsgCategoryId;
-            })
-            .map((rawItem) => {
-                return this.formatItem(rawItem)
-            });
+    async getItemsByBsgCategoryId(bsgCategoryId, items = false) {
+        await this.init();
+        let format = false;
+        if (!items) {
+            items = Object.values(this.itemCache.data);
+            format = true;
+        }
+        return items.filter((rawItem) => {
+            if (!rawItem.properties) {
+                return false;
+            }
+
+            return rawItem.properties.bsgCategoryId === bsgCategoryId;
+        }).map((rawItem) => {
+            if (!format) return rawItem;
+            return this.formatItem(rawItem)
+        });
+    }
+
+    async getItemsInBsgCategory(bsgCategoryId, items = false) {
+        await this.init();
+        let format = false;
+        if (!items) {
+            items = Object.values(this.itemCache.data);
+            format = true;
+        }
+        const categories = [
+            bsgCategoryId,
+            ...this.getSubCategories(bsgCategoryId)
+        ];
+        return items.filter(item => {
+            if (!item.properties) return false;
+            return categories.includes(item.properties.bsgCategoryId);
+        }).map(item => {
+            if (!format) return item;
+            return this.formatItem(item);
+        });
+    }
+
+    getSubCategories(id) {
+        const subCats = [];
+        for (const catId in this.itemCache.categories) {
+            const cat = this.itemCache.categories[catId];
+            if (cat.parent_id === id) {
+                subCats.push(cat.id);
+                subCats.push(...this.getSubCategories(cat.id));
+            }
+        }
+        return subCats;
     }
 
     async getItemByNormalizedName(normalizedName) {

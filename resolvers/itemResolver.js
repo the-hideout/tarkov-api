@@ -7,57 +7,35 @@ module.exports = {
         },
         async items(obj, args, context) {
             let items = false;
-            let arguments = {
-                ids: {
-                    query: async ids => {
-                        return context.data.item.getItemsByIDs(ids);
-                    },
-                    filter: ids => {
-                        return items.filter(item => {
-                            return ids.includes[item.id];
-                        });
-                    }
+            let filters = {
+                ids: async ids => {
+                    return context.data.item.getItemsByIDs(ids, items);
                 },
-                name: {
-                    query: async name => {
-                        return context.data.item.getItemsByName(name);
-                    },
-                    filter: name => {
-                        const searchString = name.toLowerCase();
-                        return items.filter(item => {
-                            return item.name.toLowerCase().includes(searchString) || item.shortname.toLowerCase().includes(searchString);
-                        });
-                    }
+                name: async name => {
+                    return context.data.item.getItemsByName(name, items);
                 },
-                type: {
-                    query: async type => {
-                        return context.data.item.getItemsByType(type);
-                    },
-                    filter: type => {
-                        return items.filter(item => {
-                            return item.types.includes(type);
-                        });
-                    }
+                names: async names => {
+                    return context.data.item.getItemsByNames(names, items);
                 },
-                bsgCategoryId: {
-                    query: async bsgcat => {
-                        return context.data.item.getItemsByBsgCategoryId(bsgcat);
-                    },
-                    filter: bsgcat => {
-                        return items.filter(item => {
-                            return item.bsgCategoryId === bsgcat;
-                        });
-                    }
+                type: async type => {
+                    return context.data.item.getItemsByType(type, items);
+                },
+                bsgCategoryId: async bsgcat => {
+                    return context.data.item.getItemsByBsgCategoryId(bsgcat, items);
+                },
+                bsgCategory: async bsgcat => {
+                    return context.data.item.getItemsInBsgCategory(bsgcat, items);
                 },
             }
             if (Object.keys(args).length === 0) return context.data.item.getAllItems();
             for (const argName in args) {
-                if (!arguments[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
-                if (!items) {
-                    items = await arguments[argName].query(args[argName]);
+                if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
+                items = await filters[argName](args[argName], items);
+                /*if (!items) {
+                    items = await filters[argName].query(args[argName]);
                 } else {
-                    items = arguments[argName].filter(args[argName]);
-                }
+                    items = filters[argName].filter(args[argName]);
+                }*/
             }
             return items;
         },
