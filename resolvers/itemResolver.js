@@ -31,11 +31,6 @@ module.exports = {
             for (const argName in args) {
                 if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
                 items = await filters[argName](args[argName], items);
-                /*if (!items) {
-                    items = await filters[argName].query(args[argName]);
-                } else {
-                    items = filters[argName].filter(args[argName]);
-                }*/
             }
             return items;
         },
