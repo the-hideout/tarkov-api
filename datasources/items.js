@@ -197,14 +197,14 @@ class ItemsAPI {
 
     async getAllItems() {
         await this.init();
-        return Object.values(this.itemCache).map((rawItem) => {
+        return Object.values(this.itemCache.data).map((rawItem) => {
             return this.formatItem(rawItem);
         });
     }
 
     async getItemsByIDs(ids) {
         await this.init();
-        return Object.values(this.itemCache)
+        return Object.values(this.itemCache.data)
         .filter((rawItem) => {
             return ids.includes(rawItem.id);
         })
@@ -215,7 +215,7 @@ class ItemsAPI {
 
     async getItemsByType(type) {
         await this.init();
-        return Object.values(this.itemCache)
+        return Object.values(this.itemCache.data)
             .filter((rawItem) => {
                 return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
             })
@@ -228,7 +228,7 @@ class ItemsAPI {
         await this.init();
         const searchString = name.toLowerCase();
 
-        return Object.values(this.itemCache)
+        return Object.values(this.itemCache.data)
             .filter((rawItem) => {
                 if (!rawItem.name || !rawItem.shortname) return false;
                 return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
@@ -242,7 +242,7 @@ class ItemsAPI {
         await this.init();
         const searchString = name.toLowerCase();
 
-        return Object.values(this.itemCache)
+        return Object.values(this.itemCache.data)
             .filter((rawItem) => {
                 return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
             })
@@ -253,7 +253,7 @@ class ItemsAPI {
 
     async getItemsByBsgCategoryId(bsgCategoryId) {
         await this.init();
-        return Object.values(this.itemCache)
+        return Object.values(this.itemCache.data)
             .filter((rawItem) => {
                 if(!rawItem.properties){
                     return false;
@@ -268,13 +268,27 @@ class ItemsAPI {
 
     async getItemByNormalizedName(normalizedName) {
         await this.init();
-        const item = Object.values(this.itemCache).find((item) => item.normalized_name === normalizedName);
+        const item = Object.values(this.itemCache.data).find((item) => item.normalized_name === normalizedName);
 
         if (!item) {
             return null;
         }
 
         return this.formatItem(item);
+    }
+
+    async getCategory(id) {
+        await this.init();
+        return this.itemCache.categories[id];
+    }
+
+    async getCategories() {
+        await this.init();
+        const categories = [];
+        for (const id in this.itemCache.categories) {
+            categories.push(this.itemCache.categories[id]);
+        }
+        return categories;
     }
 }
 

@@ -61,6 +61,9 @@ module.exports = {
             }
             return items;
         },
+        itemCategories(obj, args, context) {
+            return context.data.item.getCategories();
+        },
         itemsByIDs(obj, args, context, info) {
             return context.data.item.getItemsByIDs(args.ids);
         },
@@ -88,6 +91,10 @@ module.exports = {
                 ...data.buyFor
             ];
         },
+        bsgCategory(data, args, context) {
+            if (data.bsgCategoryId) return context.data.item.getCategory(data.bsgCategoryId);
+            return null;
+        },
         usedInTasks(data, args, context) {
             return context.data.task.getTasksRequiringItem(data.id);
         },
@@ -111,6 +118,12 @@ module.exports = {
         type(data, args, context) {
             if (data.type) return data.type;
             return data.name;
+        }
+    },
+    ItemCategory: {
+        parent(data, args, context) {
+            if (data.parent_id) return context.data.item.getCategory(data.parent_id);
+            return null;
         }
     },
     ItemGroup: {

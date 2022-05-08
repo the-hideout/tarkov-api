@@ -156,6 +156,7 @@ type Item {
   buyFor: [ItemPrice!]
   containsItems: [ContainedItem]
   bsgCategoryId: String
+  bsgCategory: ItemCategory
   weight: Float
   velocity: Float
   loudness: Int
@@ -173,6 +174,12 @@ type ItemAttribute {
   type: String!
   name: String!
   value: String
+}
+
+type ItemCategory {
+  id: ID!
+  name: String!
+  parent: ItemCategory
 }
 
 type ItemGroup {
@@ -611,6 +618,7 @@ type Query {
   historicalItemPrices(id: ID!): [historicalPricePoint]!
   item(id: ID, normalizedName: String): Item
   items(ids: [ID], name: String, type: ItemType, bsgCategoryId: String): [Item]!
+  itemCategories: [ItemCategory]!
   maps: [Map]!
   status: ServerStatus!
   task(id: ID!): Task

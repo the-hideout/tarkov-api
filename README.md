@@ -39,6 +39,7 @@ query {
 
 Prerequisites:
 
+- Install [Wrangler](https://github.com/cloudflare/wrangler)
 - Comment out the two `routes =` lines in the `wrangler.toml` file
 - Run `wrangler login` - (needed for k/v store and secrets)
 
