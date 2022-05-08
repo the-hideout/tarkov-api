@@ -174,7 +174,7 @@ class ItemsAPI {
 
     async getItem(id, contains) {
         await this.init();
-        let item = this.itemCache[id];
+        let item = this.itemCache.data[id];
         if(!item){
             item = await ITEM_DATA.get(id, 'json');
         }
