@@ -636,11 +636,11 @@ type Query {
 
 """
 The below types are all deprecated and may not return current data.
-HideoutModule has been replaced with HideoutStationLevel.
+HideoutModule has been replaced with HideoutStation.
 """
 type HideoutModule {
-  id: Int @deprecated(reason: "Use HideoutStationLevel type instead.")
-  name: String @deprecated(reason: "Use HideoutStationLevel type instead.")
+  id: Int @deprecated(reason: "Use HideoutStation type instead.")
+  name: String @deprecated(reason: "Use HideoutStation type instead.")
   level: Int
   itemRequirements: [ContainedItem]!
   moduleRequirements: [HideoutModule]!
