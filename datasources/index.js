@@ -44,6 +44,15 @@ module.exports = {
             console.error('error initializing data api', error.stack);
         }
     },
+    getDepth: (info) => {
+        let depth = -1;
+        let currentLevel = info.path;
+        while (currentLevel.prev) {
+            depth++;
+            currentLevel = currentLevel.prev;
+        }
+        return depth;
+    },
     ammo: ammoAPI,
     barter: bartersAPI,
     craft: craftsAPI,

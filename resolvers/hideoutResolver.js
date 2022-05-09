@@ -8,12 +8,14 @@ module.exports = {
         },
     },
     HideoutStation: {
-        crafts(data, args, context) {
+        crafts(data, args, context, info) {
+            if (context.data.getDepth(info) > 1) return Promise.reject(new Error('HideoutStation.crafts is unavailable at a query depth greater than 1.'));
             return context.data.craft.getCraftsForStation(data.id);
         }
     },
     HideoutStationLevel: {
-        crafts(data, args, context) {
+        crafts(data, args, context, info) {
+            if (context.data.getDepth(info) > 1) return Promise.reject(new Error('HideoutStationLevel.crafts is unavailable at a query depth greater than 1.'));
             return context.data.craft.getCraftsForStationLevel(data.id.substring(0, data.id.indexOf('-')), data.level);
         }
     },

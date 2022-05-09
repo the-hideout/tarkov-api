@@ -11,18 +11,22 @@ module.exports = {
         currency(trader, args, context) {
             return context.data.item.getItem(context.data.trader.getCurrencyMap()[trader.currency]);
         },
-        barters(data, args, context) {
+        barters(data, args, context, info) {
+            if (context.data.getDepth(info) > 1) return Promise.reject(new Error('Trader.barters is unavailable at a query depth greater than 1.'));
             return context.data.barter.getBartersForTrader(data.id);
         },
-        cashOffers(data, args, context) {
+        cashOffers(data, args, context, info) {
+            if (context.data.getDepth(info) > 1) return Promise.reject(new Error('Trader.cashOffers is unavailable at a query depth greater than 1.'));
             return context.data.traderInventory.getPricesForTrader(data.id);
         }
     },
     TraderLevel: {
-        barters(data, args, context) {
+        barters(data, args, context, info) {
+            if (context.data.getDepth(info) > 1) return Promise.reject(new Error('TraderLevel.barters is unavailable at a query depth greater than 1.'));
             return context.data.barter.getBartersForTraderLevel(data.id.substring(0, data.id.indexOf('-')), data.level);
         },
-        cashOffers(data, args, context) {
+        cashOffers(data, args, context, info) {
+            if (context.data.getDepth(info) > 1) return Promise.reject(new Error('TraderLevel.cashOffers is unavailable at a query depth greater than 1.'));
             return context.data.traderInventory.getPricesForTraderLevel(data.id.substring(0, data.id.indexOf('-')), data.level);
         }
     },

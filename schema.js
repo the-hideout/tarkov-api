@@ -102,6 +102,7 @@ type HideoutStation {
   id: ID!
   name: String!
   levels: [HideoutStationLevel]!
+  "crafts is only available via the hideoutStations query."
   crafts: [Craft]!
 }
 
@@ -115,6 +116,7 @@ type HideoutStationLevel {
   stationLevelRequirements: [RequirementHideoutStationLevel]!
   skillRequirements: [RequirementSkill]!
   traderRequirements: [RequirementTrader]!
+  "crafts is only available via the hideoutStations query."
   crafts: [Craft]!
 }
 
@@ -552,6 +554,7 @@ type Trader {
   resetTime: String
   currency: Item!
   levels: [TraderLevel!]!
+  "barters and cashOffers are only available via the traders query."
   barters: [Barter]!
   cashOffers: [TraderCashOffer]!
 }
@@ -566,6 +569,7 @@ type TraderLevel {
   payRate: Float!
   insuranceRate: Float
   repairCostMultiplier: Float
+  "barters and cashOffers are only available via the traders query."
   barters: [Barter]!
   cashOffers: [TraderCashOffer]!
 }
