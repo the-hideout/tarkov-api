@@ -162,6 +162,7 @@ type Item {
   weight: Float
   velocity: Float
   loudness: Int
+  discardLimit: Int
   translation(languageCode: LanguageCode): ItemTranslation
   usedInTasks: [Task]!
   receivedFromTasks: [Task]!
@@ -621,7 +622,7 @@ type Query {
   hideoutStations: [HideoutStation]!
   historicalItemPrices(id: ID!): [historicalPricePoint]!
   item(id: ID, normalizedName: String): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, bsgCategoryId: String, bsgCategory: String): [Item]!
+  items(ids: [ID], name: String, names: [String], type: ItemType, bsgCategoryId: String, bsgCategory: String discardLimited: Boolean): [Item]!
   itemCategories: [ItemCategory]!
   maps: [Map]!
   status: ServerStatus!

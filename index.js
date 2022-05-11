@@ -11,6 +11,7 @@ const playground = require('./handlers/playground');
 const setCors = require('./utils/setCors');
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
+const graphqlUtil = require('./utils/graphql-util');
 
 require('./loader');
 
@@ -73,7 +74,7 @@ async function graphqlHandler(request, graphQLOptions) {
     //await resolvers.itemInit();
     //await dataAPI.init();
 
-    const result = await graphql(schema, query, {}, {data: dataAPI}, variables);
+    const result = await graphql(schema, query, {}, {data: dataAPI, util: graphqlUtil}, variables);
     const body = JSON.stringify(result);
 
     /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){

@@ -335,6 +335,21 @@ class ItemsAPI {
         return this.formatItem(item);
     }
 
+    async getItemsByDiscardLimitedStatus(limited, items = false) {
+        await this.init();
+        let format = false;
+        if (!items) {
+            items = Object.values(this.itemCache.data);
+            format = true;
+        }
+        return items.filter(item => {
+            return (item.discardLimit > -1 && limited) || (item.discardLimit == -1 && !limited);
+        }).map(item => {
+            if (!format) return item;
+            return this.formatItem(item);
+        });
+    }
+
     async getCategory(id) {
         await this.init();
         return this.itemCache.categories[id];
