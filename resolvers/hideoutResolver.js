@@ -15,7 +15,7 @@ module.exports = {
     },
     HideoutStationLevel: {
         crafts(data, args, context, info) {
-            if (context.data.getDepth(info) > 1) return Promise.reject(new Error('HideoutStationLevel.crafts is unavailable at a query depth greater than 1.'));
+            if (context.data.getDepth(info) > 3) return Promise.reject(new Error('HideoutStationLevel.crafts is unavailable at a query depth greater than 2.'));
             return context.data.craft.getCraftsForStationLevel(data.id.substring(0, data.id.indexOf('-')), data.level);
         }
     },

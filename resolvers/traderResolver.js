@@ -22,11 +22,11 @@ module.exports = {
     },
     TraderLevel: {
         barters(data, args, context, info) {
-            if (context.data.getDepth(info) > 1) return Promise.reject(new Error('TraderLevel.barters is unavailable at a query depth greater than 1.'));
+            if (context.data.getDepth(info) > 3) return Promise.reject(new Error('TraderLevel.barters is unavailable at a query depth greater than 2.'));
             return context.data.barter.getBartersForTraderLevel(data.id.substring(0, data.id.indexOf('-')), data.level);
         },
         cashOffers(data, args, context, info) {
-            if (context.data.getDepth(info) > 1) return Promise.reject(new Error('TraderLevel.cashOffers is unavailable at a query depth greater than 1.'));
+            if (context.data.getDepth(info) > 3) return Promise.reject(new Error('TraderLevel.cashOffers is unavailable at a query depth greater than 2.'));
             return context.data.traderInventory.getPricesForTraderLevel(data.id.substring(0, data.id.indexOf('-')), data.level);
         }
     },
