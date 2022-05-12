@@ -26,9 +26,9 @@ module.exports = {
                 bsgCategory: async bsgcat => {
                     return context.data.item.getItemsInBsgCategory(bsgcat, items);
                 },
-                discardLimited: async limited => {
+                /*discardLimited: async limited => {
                     return context.data.item.getItemsByDiscardLimitedStatus(limited, items);
-                },
+                },*/
             }
             if (Object.keys(args).length === 0) return context.data.item.getAllItems();
             for (const argName in args) {

@@ -622,7 +622,7 @@ type Query {
   hideoutStations: [HideoutStation]!
   historicalItemPrices(id: ID!): [historicalPricePoint]!
   item(id: ID, normalizedName: String): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, bsgCategoryId: String, bsgCategory: String discardLimited: Boolean): [Item]!
+  items(ids: [ID], name: String, names: [String], type: ItemType, bsgCategoryId: String, bsgCategory: String): [Item]!
   itemCategories: [ItemCategory]!
   maps: [Map]!
   status: ServerStatus!
