@@ -57,6 +57,9 @@ module.exports = {
         },
         historicalItemPrices(obj, args, context, info) {
             return context.data.historicalPrice.getByItemId(args.id);
+        },
+        fleaMarket(obj, args, context) {
+            return context.data.item.getFleaMarket();
         }
     },
     Item: {

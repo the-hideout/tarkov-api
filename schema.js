@@ -90,6 +90,16 @@ type GameProperty {
 type FleaMarket implements Vendor {
   name: String!
   minPlayerLevel: Int!
+  enabled: Boolean!
+  sellOfferFeeRate: Float!
+  sellRequirementFeeRate: Float!
+  reputationLevels: [FleaMarketReputationLevel]!
+}
+
+type FleaMarketReputationLevel {
+  offers: Int!
+  minRep: Float!
+  maxRep: Float!
 }
 
 type HealthEffect {
@@ -620,6 +630,7 @@ type Query {
   ammo: [Ammo]  
   barters: [Barter]
   crafts: [Craft]
+  fleaMarket: FleaMarket!
   hideoutStations: [HideoutStation]!
   historicalItemPrices(id: ID!): [historicalPricePoint]!
   item(id: ID, normalizedName: String): Item

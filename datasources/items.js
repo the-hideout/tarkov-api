@@ -121,34 +121,32 @@ class ItemsAPI {
             }),
         ];
 
+        item.buyFor = [];
+
         if(!item.types.includes('noFlea') && !item.types.includes('preset')){
             item.sellFor.push({
                 price: item.lastLowPrice || 0,
                 currency: 'RUB',
                 currencyItem: '5449016a4bdc2d6f028b456f',
                 priceRUB: item.lastLowPrice || 0,
-                vendor: {},
+                vendor: this.itemCache.flea,
                 source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
-                    value: 15,
+                    value: this.itemCache.flea.minPlayerLevel,
                 }],
             });
-        }
 
-        item.buyFor = [];
-
-        if(!item.types.includes('noFlea') && !item.types.includes('preset')){
             item.buyFor.push({
                 price: item.avg24hPrice || item.lastLowPrice || 0,
                 currency: 'RUB',
                 currencyItem: '5449016a4bdc2d6f028b456f',
                 priceRUB: item.avg24hPrice || item.lastLowPrice || 0,
-                vendor: {},
+                vendor: this.itemCache.flea,
                 source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
-                    value: 15,
+                    value: this.itemCache.flea.minPlayerLevel,
                 }],
             });
         }
@@ -362,6 +360,11 @@ class ItemsAPI {
             categories.push(this.itemCache.categories[id]);
         }
         return categories;
+    }
+
+    async getFleaMarket() {
+        await this.init();
+        return this.itemCache.flea;
     }
 }
 
