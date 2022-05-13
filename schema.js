@@ -564,6 +564,7 @@ type Trader {
   name: String!
   resetTime: String
   currency: Item!
+  discount: Float!
   levels: [TraderLevel!]!
   "barters and cashOffers are only available via the traders query."
   barters: [Barter]!
