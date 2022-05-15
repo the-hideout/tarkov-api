@@ -112,6 +112,7 @@ type HideoutStation {
   id: ID!
   name: String!
   levels: [HideoutStationLevel]!
+  tarkovDataId: Int
   "crafts is only available via the hideoutStations query."
   crafts: [Craft]!
 }
@@ -126,6 +127,7 @@ type HideoutStationLevel {
   stationLevelRequirements: [RequirementHideoutStationLevel]!
   skillRequirements: [RequirementSkill]!
   traderRequirements: [RequirementTrader]!
+  tarkovDataId: Int
   "crafts is only available via the hideoutStations query."
   crafts: [Craft]!
 }
