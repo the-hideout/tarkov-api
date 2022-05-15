@@ -180,6 +180,7 @@ type Item {
   bartersUsing: [Barter]!
   craftsFor: [Craft]!
   craftsUsing: [Craft]!
+  fleaMarketFee(price: Int, intelCenterLevel: Int, hideoutManagementLevel: Int, count: Int, requireAll: Boolean): Int
   traderPrices: [TraderPrice]! @deprecated(reason: "Use sellFor instead.")
 }
 

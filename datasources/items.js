@@ -42,14 +42,14 @@ class ItemsAPI {
             ...rawItem,
         };
 
-        item.iconLink = item.icon_link;
+        /*item.iconLink = item.icon_link;
         item.gridImageLink = item.grid_image_link;
         item.imageLink = item.image_link;
         item.basePrice = item.base_price;
         item.shortName = item.shortname;
         item.wikiLink = item.wiki_link;
         item.normalizedName = item.normalized_name;
-        item.link = `https://tarkov.dev/item/${item.normalizedName}`;
+        item.link = `https://tarkov.dev/item/${item.normalizedName}`;*/
 
         if(item.properties){
             if(item.properties.accuracy){

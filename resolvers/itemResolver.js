@@ -91,7 +91,35 @@ module.exports = {
         },
         craftsUsing(data, args, context) {
             return context.data.craft.getCraftsUsingItem(data.id);
-        }
+        },
+        async fleaMarketFee(data, args, context) {
+            if (data.types.includes('noFlea')) return null;
+            const options = {
+                price: data.lastLowPrice || data.basePrice,
+                intelCenterLevel: 0,
+                hideoutManagementLevel: 0,
+                count: 1,
+                requireAll: false,
+                ...args
+            };
+            const flea = await context.data.item.getFleaMarket();
+            const q = options.requireAll ? 1 : options.count;
+            const vo = data.basePrice*(options.count/q);
+            const vr = options.price;
+            let po = Math.log10(vo / vr);
+            if (vr < vo) po = Math.pow(po, 1.08);
+            let pr = Math.log10(vr / vo);
+            if (vr >= vo) pr = Math.pow(pr, 1.08);
+            const ti = flea.sellOfferFeeRate;
+            const tr = flea.sellRequirementFeeRate;
+            let fee = (vo*ti*Math.pow(4.0,po)*q)+(vr*tr*Math.pow(4.0,pr)*q);
+            if (options.intelCenterLevel >= 3) {
+                let discount = 0.3;
+                discount = discount+(discount*options.hideoutManagementLevel*0.01);
+                fee = fee-(fee*discount);
+            }
+            return Math.round(fee);
+        },
     },
     ItemAttribute: {
         type(data, args, context) {
@@ -130,9 +158,6 @@ module.exports = {
     FleaMarket: {
         name(data) {
             return 'Flea Market';
-        },
-        minPlayerLevel() {
-            return 15;
         }
     },
     RequirementItem: {
