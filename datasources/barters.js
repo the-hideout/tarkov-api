@@ -33,8 +33,7 @@ class BartersAPI {
                     ...itemData,
                     attributes: []
                 };
-            }),
-            requirements: barter.requirements
+            })
         };
     }
 
@@ -45,9 +44,10 @@ class BartersAPI {
             return [];
         }
 
-        return this.cache.data.map(barter => {
+        /*return this.cache.data.map(barter => {
             return this.formatBarter(barter);
-        });
+        });*/
+        return this.cache.data;
     }
 
     async getBartersForItem(id) {
@@ -62,9 +62,9 @@ class BartersAPI {
                 if (item.item === id) return true;
             }
             return false;
-        }).map(barter => {
+        });/*.map(barter => {
             return this.formatBarter(barter);
-        });
+        });*/
     }
 
     async getBartersUsingItem(id) {
@@ -79,9 +79,9 @@ class BartersAPI {
                 if (item.item === id) return true;
             }
             return false;
-        }).map(barter => {
+        });/*.map(barter => {
             return this.formatBarter(barter);
-        });
+        });*/
     }
 
     async getBartersForTrader(id) {

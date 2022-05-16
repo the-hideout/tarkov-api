@@ -125,6 +125,10 @@ module.exports = {
         type(data, args, context) {
             if (data.type) return data.type;
             return data.name;
+        },
+        name(data) {
+            if (data.name) return data.name;
+            return data.type;
         }
     },
     ItemCategory: {
