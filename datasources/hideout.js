@@ -49,59 +49,38 @@ class HideoutAPI {
 
     async getList(){
         await this.init();
-        if(this.stationList){
-            return this.stationList;
-        }
-
-        const returnData = await Promise.all(this.cache.data.map(async hideoutStation => {
-            return await this.formatStation(hideoutStation);
-        }));
-
-        this.stationList = returnData;
-
-        return returnData;
+        return this.cache.data;
     }
 
     async getModuleById(id) {
         await this.init();
-        let station = false;
-        let module = false;
         for (const hideoutStation of this.cache.data) {
             for (const stage of hideoutStation.levels) {
                 if (stage.id === id) {
-                    station = hideoutStation;
-                    module = stage;
-                    break;
+                    return stage;
                 }
             }
-            if (station) break;
         }
-        return await this.formatModule(module, station);
+        return {};
     }
 
     async getModuleByLevel(stationId, level) {
         await this.init();
-        let station = false;
-        let module = false;
         for (const hideoutStation of this.cache.data) {
             if (hideoutStation.id !== stationId) continue;
-            station = hideoutStation;
             for (const stage of hideoutStation.levels) {
                 if (stage.level === level) {
-                    module = stage;
-                    break;
+                    return stage;
                 }
             }
-            break;
         }
-        if (!station || !module) return {};//throw new Error(`Could not find hideout station ${stationId} level ${level}`);
-        return this.formatModule(module, station);
+        return {};
     }
 
     async getStation(id) {
         await this.init();
         for (const station of this.cache.data) {
-            if (station.id === id) return await this.formatStation(station);
+            if (station.id === id) return station;
         }
         return {};
     }
