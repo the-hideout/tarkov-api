@@ -1,12 +1,6 @@
 const TraderApi = require('./traders');
 const traderApi = new TraderApi();
 
-const availableProperties = [
-    'weight',
-    'velocity',
-    'loudness',
-];
-
 function camelCase(input) {
     return input.toLowerCase().replace(/-(.)/g, function(match, group1) {
         return group1.toUpperCase();
@@ -41,47 +35,6 @@ class ItemsAPI {
         const item = {
             ...rawItem,
         };
-
-        /*item.iconLink = item.icon_link;
-        item.gridImageLink = item.grid_image_link;
-        item.imageLink = item.image_link;
-        item.basePrice = item.base_price;
-        item.shortName = item.shortname;
-        item.wikiLink = item.wiki_link;
-        item.normalizedName = item.normalized_name;
-        item.link = `https://tarkov.dev/item/${item.normalizedName}`;*/
-
-        if(item.properties){
-            if(item.properties.accuracy){
-                item.accuracyModifier = Number(item.properties.accuracy);
-            }
-
-            if(item.properties.recoil){
-                item.recoilModifier = Number(item.properties.recoil);
-            }
-
-            if(item.properties.ergonomics){
-                item.ergonomicsModifier = Number(item.properties.ergonomics);
-            }
-
-            if(item.properties.grid && item.properties.grid.totalSize > 0){
-                item.hasGrid = true;
-            }
-
-            if(item.properties.blocksEarpiece){
-                item.blocksHeadphones = true;
-            }
-
-            if(item.properties.bsgCategoryId){
-                item.bsgCategoryId = item.properties.bsgCategoryId;
-            }
-
-            for(const availableProperty of availableProperties){
-                if(typeof item.properties[availableProperty] !== 'undefined'){
-                    item[availableProperty] = Number(item.properties[availableProperty]);
-                }
-            }
-        }
 
         item.formattedTypes = item.types.map(type => camelCase(type));
         item.types = item.formattedTypes;
@@ -155,17 +108,6 @@ class ItemsAPI {
         item.imageLinkFallback = item.imageLink || 'https://assets.tarkov.dev/unknown-item-image.jpg';
         item.iconLinkFallback = item.iconLink || 'https://assets.tarkov.dev/unknown-item-icon.jpg';
         item.gridImageLinkFallback = item.gridImageLink || 'https://assets.tarkov.dev/unknown-item-grid-image.jpg';
-
-
-        if(item.containsItems && item.containsItems.length > 0){
-            item.containsItems = item.containsItems.map((containedItem) => {
-                return {
-                    item: containedItem.itemId,
-                    count: containedItem.count,
-                    attributes: []
-                };
-            });
-        }
 
         return item;
     }
