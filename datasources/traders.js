@@ -54,35 +54,18 @@ class TradersAPI {
         }
     }
 
-    async formatTrader(rawTrader) {
-        const trader = {
-            ...rawTrader
-        };
-        return trader;
-    }
-
     async getList() {
         await this.init();
-        if(this.traderList){
-            return this.traderList;
-        }
-        if (!this.traderCache) return {};
-        const returnData = [];
-        for(const trader of this.traderCache.data){
-            returnData.push(this.formatTrader(trader));
-        }
-
-        this.traderList = await Promise.all(returnData);
-
-        return this.traderList;
+        if (!this.traderCache) return [];
+        return this.traderCache.data;
     }
 
     async get(id) {
         await this.init();
         if (!this.traderCache) return {};
-        for(const trader of this.traderCache.data){
+        for (const trader of this.traderCache.data){
             if(trader.id === id){
-                return this.formatTrader(trader);
+                return trader;
             }
         }
 
@@ -94,7 +77,7 @@ class TradersAPI {
         if (!this.traderCache) return {};
         for(const trader of this.traderCache.data){
             if(trader.name.toLowerCase() === name.toLowerCase()){
-                return this.formatTrader(trader);
+                return trader;
             }
         }
 
@@ -104,9 +87,9 @@ class TradersAPI {
     async getByLevel(traderId, level) {
         await this.init();
         if (!this.traderCache) return {};
-        for (const rawTrader of this.traderCache.data) {
-            if (rawTrader.id !== traderId) continue;
-            for (const rawLevel of rawTrader.levels) {
+        for (const trader of this.traderCache.data) {
+            if (trader.id !== traderId) continue;
+            for (const rawLevel of trader.levels) {
                 if (rawLevel.level === level) {
                     return rawLevel;
                 }

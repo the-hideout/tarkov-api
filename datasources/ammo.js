@@ -1,5 +1,5 @@
 // datasource for ammo
-const buildAttributes = require('./build-attributes');
+const buildAttributes = require('../utils/build-attributes');
 
 class AmmoAPI {
   constructor(){
