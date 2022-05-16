@@ -174,7 +174,7 @@ type Item {
   weight: Float
   velocity: Float
   loudness: Int
-  discardLimit: Int
+  #discardLimit: Int
   translation(languageCode: LanguageCode): ItemTranslation
   usedInTasks: [Task]!
   receivedFromTasks: [Task]!
