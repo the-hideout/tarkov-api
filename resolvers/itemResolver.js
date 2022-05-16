@@ -120,6 +120,10 @@ module.exports = {
             }
             return Math.round(fee);
         },
+        async historicalPrices(data, args, context, info) {
+            context.util.testDepthLimit(info, 1);
+            return context.data.historicalPrice.getByItemId(data.id);
+        }
     },
     ItemAttribute: {
         type(data, args, context) {

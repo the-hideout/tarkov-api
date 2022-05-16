@@ -182,6 +182,8 @@ type Item {
   bartersUsing: [Barter]!
   craftsFor: [Craft]!
   craftsUsing: [Craft]!
+  "historicalPrices is only available via the item and items queries."
+  historicalPrices: [historicalPricePoint]
   fleaMarketFee(price: Int, intelCenterLevel: Int, hideoutManagementLevel: Int, count: Int, requireAll: Boolean): Int
   traderPrices: [TraderPrice]! @deprecated(reason: "Use sellFor instead.")
 }
