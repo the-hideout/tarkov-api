@@ -104,11 +104,6 @@ class ItemsAPI {
             });
         }
 
-        // Fallback images
-        item.imageLinkFallback = item.imageLink || 'https://assets.tarkov.dev/unknown-item-image.jpg';
-        item.iconLinkFallback = item.iconLink || 'https://assets.tarkov.dev/unknown-item-icon.jpg';
-        item.gridImageLinkFallback = item.gridImageLink || 'https://assets.tarkov.dev/unknown-item-grid-image.jpg';
-
         return item;
     }
 
