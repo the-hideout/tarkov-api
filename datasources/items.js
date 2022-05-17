@@ -1,16 +1,3 @@
-const TraderApi = require('./traders');
-const traderApi = new TraderApi();
-
-function camelCase(input) {
-    return input.toLowerCase().replace(/-(.)/g, function(match, group1) {
-        return group1.toUpperCase();
-    });
-}
-
-function camelCaseToDash(input) {
-    return input.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
-}
-
 class ItemsAPI {
     constructor(){
         this.itemCache = false;
@@ -35,40 +22,24 @@ class ItemsAPI {
         const item = {
             ...rawItem,
         };
-
-        item.formattedTypes = item.types.map(type => camelCase(type));
-        item.types = item.formattedTypes;
-
-        const traderMap = traderApi.getNameIdMap();
-
-        item.traderPrices = item.traderPrices.map((traderPrice) => {
-            return {
-                price: traderPrice.price,
-                priceRUB: traderPrice.priceRUB,
-                currency: traderPrice.currency,
-                trader_name: traderPrice.name,
-                trader: traderMap[traderPrice.name],
-                trader_id: traderMap[traderPrice.name]
-            };
-        });
-
+        
+        // add trader prices to sellFor
         item.sellFor = [
             ...item.traderPrices.map((traderPrice) => {
                 let currency = 'RUB';
-                if (traderPrice.trader_name.toLowerCase() === 'peacekeeper') currency = 'USD';
-                // all trader sell values currently listed in RUB
+                if (traderPrice.name.toLowerCase() === 'peacekeeper') currency = 'USD';
                 return {
                     price: traderPrice.price,
                     currency: currency,
                     priceRUB: traderPrice.priceRUB,
                     vendor: {
-                        trader: traderMap[traderPrice.trader_name],
-                        trader_id: traderMap[traderPrice.trader_name],
+                        trader: traderPrice.trader,
+                        trader_id: traderPrice.trader,
                         traderLevel: 1,
                         minTraderLevel: 1,
                         taskUnlock: null
                     },
-                    source: traderPrice.trader_name.toLowerCase(),
+                    source: traderPrice.name.toLowerCase(),
                     requirements: [],
                 };
             }),
@@ -76,6 +47,7 @@ class ItemsAPI {
 
         item.buyFor = [];
 
+        // add flea prices to sellFor and buyFor
         if(!item.types.includes('noFlea') && !item.types.includes('preset')){
             item.sellFor.push({
                 price: item.lastLowPrice || 0,
@@ -160,7 +132,7 @@ class ItemsAPI {
             format = true;
         }
         return items.filter((rawItem) => {
-            return rawItem.types.includes(camelCaseToDash(type)) || type === 'any';
+            return rawItem.types.includes(type) || type === 'any';
         }).map((rawItem) => {
             if (!format) return rawItem;
             return this.formatItem(rawItem);
