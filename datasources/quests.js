@@ -1,6 +1,14 @@
+const ItemsAPI = require('./items');
+const itemsAPI = new ItemsAPI();
+
+const TradersAPI = require('./traders');
+const tradersAPI = new TradersAPI();
+
 class QuestsAPI {
     async getList() {
         const quests = await ITEM_DATA.get('QUEST_DATA', 'json');
+
+        await itemsAPI.init();
 
         if(!quests){
             return {};
@@ -10,31 +18,33 @@ class QuestsAPI {
         for(const quest of quests){
             const parsedQuestData = {
                 ...quest,
+                giver: tradersAPI.getByDataId(quest.giver),
+                turnin: tradersAPI.getByDataId(quest.turnin),
                 requirements: quest.require,
                 wikiLink: quest.wiki,
                 reputation: quest.reputation.map((reputationData) => {
                     return {
-                        trader: reputationData.trader,
+                        trader: tradersAPI.getByName(reputationData.trader),
                         amount: reputationData.rep,
                     };
                 }),
-                objectives: quest.objectives.map((objectiveData) => {
+                objectives: quest.objectives.map(async (objectiveData) => {
                     const formattedObjective = {
                         ...objectiveData,
                     };
 
                     if(objectiveData.type === 'collect' || objectiveData.type === 'find' || objectiveData.type === 'place'){
-                        formattedObjective.targetItem = formattedObjective.target;
+                        formattedObjective.targetItem = await itemsAPI.getItem(formattedObjective.target);
 
                         if(!formattedObjective.targetItem.id){
-                            //console.log(`${quest.id} - ${formattedObjective.target}`);
+                            console.log(`${quest.id} - ${formattedObjective.target}`);
                             formattedObjective.targetItem = null;
                         }
                     } else if (objectiveData.type === 'mark') {
-                        formattedObjective.targetItem = formattedObjective.tool;
+                        formattedObjective.targetItem = await itemsAPI.getItem(formattedObjective.tool);
 
                         if(!formattedObjective.targetItem.id){
-                            //console.log(`${quest.id} - ${formattedObjective.tool}`);
+                            console.log(`${quest.id} - ${formattedObjective.tool}`);
                             formattedObjective.targetItem = null;
                         }
                     }

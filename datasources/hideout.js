@@ -1,89 +1,67 @@
+const ItemsAPI = require('./items');
+const itemsAPI = new ItemsAPI();
+
 class HideoutAPI {
     constructor(){
-        this.cache = false;
-        this.loading = false;
-    }
-
-    async init(){
-        try {
-            if (this.loading) await this.loading;
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('HIDEOUT_DATA_V2', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (error){
-            console.error(error);
-        }
-    }
-
-    formatStation(rawStation) {
-        return {
-            ...rawStation,
-            levels: rawStation.levels.map( stage => {
-                return this.formatModule(stage, rawStation);
-            })
-        };
-    }
-
-    formatModule(rawModule, station = false) {
-        if (!station) {
-            for (const hideoutStation of this.cache.data) {
-                for (const stage of hideoutStation.levels) {
-                    if (stage.id === rawModule.id) {
-                        station = hideoutStation;
-                        break;
-                    }
-                }
-                if (station) break;
-            }
-        }
-        if (!station) return {};
-        const module = {
-            ...rawModule,
-            name: station.name
-        };
-        return module;
+        this.moduleList = false;
     }
 
     async getList(){
-        await this.init();
-        return this.cache.data;
+        if(this.moduleList){
+            return this.moduleList;
+        }
+
+        await itemsAPI.init();
+
+        const hideoutData = await ITEM_DATA.get('HIDEOUT_DATA', 'json');
+        const returnData = [];
+
+        for(const hideoutModule of hideoutData.data){
+            const newRequirement = {
+                id: hideoutModule.id,
+                name: hideoutModule.module,
+                level: hideoutModule.level,
+                itemRequirements: await Promise.all(hideoutModule.require.map(async (hideoutRequirement) => {
+                    if(hideoutRequirement.type !== 'item'){
+                        return false;
+                    }
+
+                    return {
+                        item: await itemsAPI.getItem(hideoutRequirement.name),
+                        quantity: hideoutRequirement.quantity,
+                        count: hideoutRequirement.quantity,
+                    };
+                })),
+                moduleRequirements: hideoutModule.require.map((hideoutRequirement) => {
+                    if(hideoutRequirement.type !== 'module'){
+                        return false;
+                    }
+
+                    return {
+                        name: hideoutRequirement.name,
+                        level: hideoutRequirement.quantity,
+                    };
+                }).filter(Boolean),
+            };
+
+            newRequirement.itemRequirements = newRequirement.itemRequirements.filter(Boolean);
+            returnData.push(newRequirement);
+        }
+
+        for(const hideoutModule of returnData){
+            hideoutModule.moduleRequirements = hideoutModule.moduleRequirements.map((basicModuleObject) => {
+                return this.getModule(basicModuleObject.name, basicModuleObject.level, returnData);
+            });
+        }
+
+        this.moduleList = returnData;
+
+        return returnData;
     }
 
-    async getModuleById(id) {
-        await this.init();
-        for (const hideoutStation of this.cache.data) {
-            for (const stage of hideoutStation.levels) {
-                if (stage.id === id) {
-                    return stage;
-                }
-            }
-        }
-        return {};
-    }
-
-    async getModuleByLevel(stationId, level) {
-        await this.init();
-        for (const hideoutStation of this.cache.data) {
-            if (hideoutStation.id !== stationId) continue;
-            for (const stage of hideoutStation.levels) {
-                if (stage.level === level) {
-                    return stage;
-                }
-            }
-        }
-        return {};
-    }
-
-    async getStation(id) {
-        await this.init();
-        for (const station of this.cache.data) {
-            if (station.id === id) return station;
-        }
-        return {};
+    async getModule(name, level, moduleList) {
+        return moduleList.find(hideoutModule => hideoutModule.name === name && hideoutModule.level === level);
     }
 }
 
-module.exports = HideoutAPI;
+module.exports = HideoutAPI

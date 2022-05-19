@@ -1,89 +1,48 @@
-// datasource for crafts 
+// datasource for crafts
+
+const ItemsAPI = require('./items');
+const itemsAPI = new ItemsAPI();
+
 class CraftsAPI {
-    constructor(){
-        this.cache = false;
-        this.loading = false;
+  async getList() {
+    const crafts = await ITEM_DATA.get('CRAFT_DATA', 'json');
+
+    if(!crafts){
+        return {};
     }
 
-    async init(){
-        try {
-            if (this.loading) await this.loading;
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('CRAFT_DATA_V2', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (loadDataError){
-            console.error(loadDataError);
-        }
-    }
+    await itemsAPI.init();
 
-    async getList() {
-        await this.init();
+    const returnData = [];
 
-        if(!this.cache){
-            return [];
-        }
-
-        return this.cache.data;
-    }
-
-    async getCraftsForItem(id) {
-        await this.init();
-
-        if(!this.cache){
-            return [];
-        }
-
-        return this.cache.data.filter(craft => {
-            for (const item of craft.rewardItems) {
-                if (item.item === id) return true;
-            }
-            return false;
+    for(const craft of crafts.data){
+        returnData.push({
+            id: craft.id,
+            duration: craft.duration,
+            source: craft.station,
+            sourceName: craft.sourceName,
+            requiredItems: craft.requiredItems.map((itemData) => {
+                return {
+                    item: itemsAPI.getItem(itemData.id),
+                    count: itemData.count,
+                    quantity: itemData.count,
+                    attributes: itemData.attributes
+                };
+            }),
+            rewardItems: craft.rewardItems.map((itemData) => {
+                return {
+                    item: itemsAPI.getItem(itemData.id),
+                    count: itemData.count,
+                    quantity: itemData.count,
+                    attributes: itemData.attributes
+                };
+            }),
+            requirements: craft.requirements
         });
     }
 
-    async getCraftsUsingItem(id) {
-        await this.init();
-
-        if(!this.cache){
-            return [];
-        }
-
-        return this.cache.data.filter(craft => {
-            for (const item of craft.requiredItems) {
-                if (item.item === id) return true;
-            }
-            return false;
-        });
-    }
-
-    async getCraftsForStation(id) {
-        await this.init();
-
-        if(!this.cache){
-            return [];
-        }
-
-        return this.cache.data.filter(craft => {
-            if (craft.station_id === id) return true;
-            return false;
-        });
-    }
-
-    async getCraftsForStationLevel(id, level) {
-        await this.init();
-
-        if(!this.cache){
-            return [];
-        }
-
-        return this.cache.data.filter(craft => {
-            if (craft.station_id === id && craft.level === level) return true;
-            return false;
-        });
-    }
+    return returnData;
+  }
 }
 
 module.exports = CraftsAPI

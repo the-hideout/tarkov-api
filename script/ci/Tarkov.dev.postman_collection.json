@@ -75,6 +75,76 @@
 			"response": []
 		},
 		{
+			"name": "Barters",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"requiredItems\");\r",
+							"    pm.expect(pm.response.text()).to.include(\"rewardItems\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"correct ammo common types\", function () {\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.id).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.name).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.normalizedName).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.shortName).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.basePrice).to.be.a(\"number\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.updated).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.width).to.be.a(\"number\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.height).to.be.a(\"number\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.iconLink).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.iconLinkFallback).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.wikiLink).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.imageLink).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.imageLinkFallback).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.gridImageLink).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.gridImageLinkFallback).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.types).to.be.a(\"array\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.avg24hPrice).to.be.a(\"number\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.link).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.sellFor).to.be.a(\"array\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.buyFor).to.be.a(\"array\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.bsgCategoryId).to.be.a(\"string\");\r",
+							"    pm.expect(pm.response.json().data.barters[0].requiredItems[0].item.weight).to.be.a(\"number\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\r\n    barters {\r\n        source\r\n        requiredItems {\r\n            item {\r\n                ...itemFragment\r\n            }\r\n        }\r\n        rewardItems {\r\n            item {\r\n                ...itemFragment\r\n            }\r\n        }\r\n    }\r\n}\r\n{{itemFragment}}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Crafts",
 			"event": [
 				{
