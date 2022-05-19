@@ -1,44 +1,114 @@
-const ItemsAPI = require('./items');
-const itemsAPI = new ItemsAPI();
-
 class BartersAPI {
-  async getList() {
-    const barters = await ITEM_DATA.get('BARTER_DATA', 'json');
-
-    if(!barters){
-        return {};
+    constructor(){
+        this.cache = false;
+        this.loading = false;
     }
 
-    const returnData = [];
+    async init(){
+        try {
+            if (this.loading) await this.loading;
+            if(this.cache){
+                return true;
+            }
+            this.loading = ITEM_DATA.get('BARTER_DATA_V2', 'json');
+            this.cache = await this.loading;
+            this.loading = false;
+        } catch (loadDataError){
+            console.error(loadDataError);
+        }
+    }
 
-    await itemsAPI.init();
-
-    for(const barter of barters.data){
-        returnData.push({
+    formatBarter(barter) {
+        return {
+            ...barter,
             source: barter.trader,
-            sourceName: barter.sourceName,
             requiredItems: barter.requiredItems.map((itemData) => {
                 return {
-                    item: itemsAPI.getItem(itemData.id),
-                    count: itemData.count,
-                    quantity: itemData.count,
-                    attributes: itemData.attributes
+                    ...itemData,
+                    attributes: []
                 };
             }),
             rewardItems: barter.rewardItems.map((itemData) => {
                 return {
-                    item: itemsAPI.getItem(itemData.id),
-                    count: itemData.count,
-                    quantity: itemData.count,
+                    ...itemData,
                     attributes: []
                 };
-            }),
-            requirements: barter.requirements
+            })
+        };
+    }
+
+    async getList() {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        /*return this.cache.data.map(barter => {
+            return this.formatBarter(barter);
+        });*/
+        return this.cache.data;
+    }
+
+    async getBartersForItem(id) {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        return this.cache.data.filter(barter => {
+            for (const item of barter.rewardItems) {
+                if (item.item === id) return true;
+            }
+            return false;
+        });/*.map(barter => {
+            return this.formatBarter(barter);
+        });*/
+    }
+
+    async getBartersUsingItem(id) {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        return this.cache.data.filter(barter => {
+            for (const item of barter.requiredItems) {
+                if (item.item === id) return true;
+            }
+            return false;
+        });/*.map(barter => {
+            return this.formatBarter(barter);
+        });*/
+    }
+
+    async getBartersForTrader(id) {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        return this.cache.data.filter(barter => {
+            if (barter.trader_id === id) return true;
+            return false;
         });
     }
 
-    return returnData;
-  }
+    async getBartersForTraderLevel(id, level) {
+        await this.init();
+
+        if(!this.cache){
+            return [];
+        }
+
+        return this.cache.data.filter(barter => {
+            if (barter.trader_id === id && barter.level === level) return true;
+            return false;
+        });
+    }
 }
 
 module.exports = BartersAPI

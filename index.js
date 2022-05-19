@@ -1,21 +1,25 @@
 const crypto = require('crypto');
+const { makeExecutableSchema } = require('@graphql-tools/schema');
 
 const {
     graphql,
     buildSchema,
 } = require('graphql');
 
+const dataAPI = require('./datasources');
 const playground = require('./handlers/playground');
 const setCors = require('./utils/setCors');
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
+const graphqlUtil = require('./utils/graphql-util');
 
 require('./loader');
 
 const nightbot = require('./custom-endpoints/nightbot');
 const twitch = require('./custom-endpoints/twitch');
 
-const schema = buildSchema(typeDefs);
+//const schema = buildSchema(typeDefs);
+const schema = makeExecutableSchema({typeDefs, resolvers: resolvers});
 
 /**
  * Example of how router can be used in an application
@@ -67,9 +71,10 @@ async function graphqlHandler(request, graphQLOptions) {
         }
     } */
 
-    await resolvers.itemInit();
+    //await resolvers.itemInit();
+    //await dataAPI.init();
 
-    const result = await graphql(schema, query, resolvers, {}, variables);
+    const result = await graphql(schema, query, {}, {data: dataAPI, util: graphqlUtil}, variables);
     const body = JSON.stringify(result);
 
     /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){

@@ -39,7 +39,7 @@ query {
 
 Prerequisites:
 
-- Comment out the two `routes =` lines in the `wrangler.toml` file
+- Install [Wrangler](https://github.com/cloudflare/wrangler)
 - Run `wrangler login` - (needed for k/v store and secrets)
 
 Start the API server:

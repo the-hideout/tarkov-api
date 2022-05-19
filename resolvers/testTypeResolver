@@ -1,0 +1,10 @@
+module.exports = {
+    TestType: {
+        id(trader, args) {
+            return trader.id;
+        },
+        name(trader, args) {
+            return trader.name;
+        }
+    }
+};

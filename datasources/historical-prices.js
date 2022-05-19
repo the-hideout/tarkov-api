@@ -1,28 +1,27 @@
 class historicalPricesAPI {
     constructor(){
-        this.itemCache = {};
+        this.cache = false;
+        this.loading = false;
+    }
+
+    async init(){
+        try {
+            if (this.loading) await this.loading;
+            if(this.cache){
+                return true;
+            }
+            this.loading = ITEM_DATA.get('HISTORICAL_PRICES', 'json');
+            this.cache = await this.loading;
+            this.loading = false;
+        } catch (error){
+            console.error(error);
+        }
     }
 
     async getByItemId(itemId) {
-        if(this.itemCache[itemId]){
-            return this.itemCache[itemId];
-        }
-
-        try {
-            const cacheResponse = await ITEM_DATA.get(`historical-prices-${itemId}`, 'json');
-
-            if(cacheResponse === null){
-                return [];
-            }
-
-            this.itemCache[itemId] = cacheResponse;
-        } catch (loadDataError){
-            console.error(loadDataError);
-
-            return [];
-        }
-
-        return this.itemCache[itemId];
+        await this.init();
+        if (!this.cache || !this.cache[itemId]) return [];
+        return this.cache[itemId];
     }
 }
 
