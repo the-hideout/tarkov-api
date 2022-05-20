@@ -273,6 +273,7 @@ type Map {
   description: String
   enemies: [String]
   raidDuration: Int
+  players: String
   #svg: MapSvg
 }
 
