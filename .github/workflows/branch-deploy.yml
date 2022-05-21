@@ -2,7 +2,7 @@ name: branch-deploy
 
 on:
   issue_comment:
-    types: [created]
+    types: [ created ]
 
 # Permissions needed for reacting and adding comments for IssueOps commands
 permissions:
@@ -18,12 +18,12 @@ jobs:
 
     steps:
 
-      - uses: GrantBirki/branch-deploy@v1.4.1
+      - uses: GrantBirki/branch-deploy@8290f4d0376d06d0ecd74c05363bc045e7e6950a # pin@v1.4.1
         id: branch-deploy
 
       - name: Checkout
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
         with:
           ref: ${{ steps.branch-deploy.outputs.ref }}
 
