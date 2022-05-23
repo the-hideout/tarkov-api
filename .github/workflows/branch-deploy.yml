@@ -1,0 +1,40 @@
+name: branch-deploy
+
+on:
+  issue_comment:
+    types: [ created ]
+
+# Permissions needed for reacting and adding comments for IssueOps commands
+permissions:
+  pull-requests: write
+  deployments: write
+  contents: read
+
+jobs:
+  deploy:
+    environment: secrets
+    if: ${{ github.event.issue.pull_request }} # only run on pull request comments
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: GrantBirki/branch-deploy@8290f4d0376d06d0ecd74c05363bc045e7e6950a # pin@v1.4.1
+        id: branch-deploy
+
+      - name: Checkout
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+        with:
+          ref: ${{ steps.branch-deploy.outputs.ref }}
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # pin@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Publish - Production
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
+        uses: cloudflare/wrangler-action@3424d15af26edad39d5276be3cc0cc9ffec22b55 # pin@1.3.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}

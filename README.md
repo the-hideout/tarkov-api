@@ -49,6 +49,8 @@ Start the API server:
 
 ## Deployment 🚀
 
+If you wish to deploy locally and have permissions to do so, run the following command:
+
 ```bash
 wrangler publish
 ```
