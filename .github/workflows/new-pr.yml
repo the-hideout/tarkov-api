@@ -20,4 +20,5 @@ jobs:
       - name: comment
         uses: GrantBirki/comment@bb830751dec236a7779e86b2fa1566448f9e7c5f # pin@v1.0.0
         with:
+          issue-number: ${{ github.event.number }}
           file: .github/new-pr-comment.md
