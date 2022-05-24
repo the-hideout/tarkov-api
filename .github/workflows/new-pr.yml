@@ -7,7 +7,6 @@ on:
 
 permissions:
   pull-requests: write
-  issues: write
 
 jobs:
   comment:
@@ -18,7 +17,6 @@ jobs:
       # Comment on new PR requests with deployment instructions
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3.0.2
       - name: comment
-        uses: GrantBirki/comment@bb830751dec236a7779e86b2fa1566448f9e7c5f # pin@v1.0.0
+        uses: GrantBirki/comment@5f428382792637d756694f5e0ca49ba56354125c # pin@v2.0.0
         with:
-          issue-number: ${{ github.event.number }}
           file: .github/new-pr-comment.md
