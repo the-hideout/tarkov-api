@@ -139,7 +139,7 @@ class ItemsAPI {
         });
     }
 
-    async getItemsByName(name, items = false) {
+    async getItemsByName(name, items = false, lang = 'en') {
         await this.init();
         let format = false;
         if (!items) {
@@ -149,15 +149,21 @@ class ItemsAPI {
         const searchString = name.toLowerCase();
 
         return items.filter((rawItem) => {
-            if (!rawItem.name || !rawItem.shortname) return false;
-            return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
+            if (!rawItem.locale || !rawItem.locale[lang]) return false;
+            if (rawItem.locale[lang].name && rawItem.locale[lang].name.toString().toLowerCase().includes(searchString)) {
+                return true;
+            }
+            if (rawItem.locale[lang].shortName && rawItem.locale[lang].shortName.toString().toLowerCase().includes(searchString)) {
+                return true;
+            }
+            return false;
         }).map((rawItem) => {
             if (!format) return rawItem;
             return this.formatItem(rawItem);
         });
 }
 
-    async getItemsByNames(names, items = false) {
+    async getItemsByNames(names, items = false, lang = 'en') {
         await this.init();
         let format = false;
         if (!items) {
@@ -167,11 +173,17 @@ class ItemsAPI {
         const searchStrings = names.map(name => {
             return name.toLowerCase();
         });
+        console.log(lang);
         return items.filter((rawItem) => {
+            if (!rawItem.locale || !rawItem.locale[lang]) return false;
             for (const search of searchStrings) {
-                if (rawItem.name.toLowerCase().includes(search) || rawItem.shortname.toLowerCase().includes(search)) {
+                if (rawItem.locale[lang].name && rawItem.locale[lang].name.toString().toLowerCase().includes(search)) {
                     return true;
                 }
+                if (rawItem.locale[lang].shortName && rawItem.locale[lang].shortName.toString().toLowerCase().includes(search)) {
+                    return true;
+                }
+                return false;
             }
             return false;
         }).map((rawItem) => {
