@@ -10,7 +10,7 @@ class ItemsAPI {
             if(this.itemCache){
                 return true;
             }
-            this.loading = ITEM_DATA.get('ITEM_CACHE_V2', 'json');
+            this.loading = ITEM_DATA.get('ITEM_CACHE_V3', 'json');
             this.itemCache = await this.loading;
             this.loading = false;
         } catch (error){

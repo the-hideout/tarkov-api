@@ -11,7 +11,7 @@ class TasksAPI {
             if(this.cache){
                 return true;
             }
-            this.loading = ITEM_DATA.get('TASK_DATA', 'json');
+            this.loading = ITEM_DATA.get('TASK_DATA_V2', 'json');
             this.cache = await this.loading;
             this.loading = false;
         } catch (error){

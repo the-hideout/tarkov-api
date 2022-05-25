@@ -10,7 +10,7 @@ class HideoutAPI {
             if(this.cache){
                 return true;
             }
-            this.loading = ITEM_DATA.get('HIDEOUT_DATA_V2', 'json');
+            this.loading = ITEM_DATA.get('HIDEOUT_DATA_V3', 'json');
             this.cache = await this.loading;
             this.loading = false;
         } catch (error){

@@ -13,7 +13,7 @@ class MapAPI {
         if(this.cache){
           return true;
         }
-        this.loading = ITEM_DATA.get('MAP_DATA', 'json');
+        this.loading = ITEM_DATA.get('MAP_DATA_V2', 'json');
         this.cache = await this.loading;
         this.loading = false;
     } catch (error){

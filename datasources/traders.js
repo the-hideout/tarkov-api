@@ -46,7 +46,7 @@ class TradersAPI {
             if(this.traderCache){
                 return true;
             }
-            this.loading = ITEM_DATA.get('TRADER_DATA', 'json');
+            this.loading = ITEM_DATA.get('TRADER_DATA_V2', 'json');
             this.traderCache = await this.loading;
             this.loading = false;
         } catch (error){

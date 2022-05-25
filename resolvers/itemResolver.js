@@ -32,6 +32,7 @@ module.exports = {
             }
             if (Object.keys(args).length === 0) return context.data.item.getAllItems();
             for (const argName in args) {
+                if (argName === 'lang') continue;
                 if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
                 items = await filters[argName](args[argName], items);
             }
@@ -63,6 +64,12 @@ module.exports = {
         }
     },
     Item: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        },
+        shortName(data,args, context, info) {
+            return context.util.getLocale(data, 'shortName', info);
+        },
         async buyFor(data, args, context) {
             if (!data.buyFor) data.buyFor = [];
             return [
