@@ -18,35 +18,13 @@ class BartersAPI {
         }
     }
 
-    formatBarter(barter) {
-        return {
-            ...barter,
-            source: barter.trader,
-            requiredItems: barter.requiredItems.map((itemData) => {
-                return {
-                    ...itemData,
-                    attributes: []
-                };
-            }),
-            rewardItems: barter.rewardItems.map((itemData) => {
-                return {
-                    ...itemData,
-                    attributes: []
-                };
-            })
-        };
-    }
-
     async getList() {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Barter cache is empty'));
         }
 
-        /*return this.cache.data.map(barter => {
-            return this.formatBarter(barter);
-        });*/
         return this.cache.data;
     }
 
@@ -54,7 +32,7 @@ class BartersAPI {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Barter cache is empty'));
         }
 
         return this.cache.data.filter(barter => {
@@ -62,16 +40,14 @@ class BartersAPI {
                 if (item.item === id) return true;
             }
             return false;
-        });/*.map(barter => {
-            return this.formatBarter(barter);
-        });*/
+        });
     }
 
     async getBartersUsingItem(id) {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Barter cache is empty'));
         }
 
         return this.cache.data.filter(barter => {
@@ -79,16 +55,14 @@ class BartersAPI {
                 if (item.item === id) return true;
             }
             return false;
-        });/*.map(barter => {
-            return this.formatBarter(barter);
-        });*/
+        });
     }
 
     async getBartersForTrader(id) {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Barter cache is empty'));
         }
 
         return this.cache.data.filter(barter => {
@@ -101,7 +75,7 @@ class BartersAPI {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Barter cache is empty'));
         }
 
         return this.cache.data.filter(barter => {

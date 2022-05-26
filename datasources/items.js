@@ -81,13 +81,12 @@ class ItemsAPI {
 
     async getItem(id, contains) {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         let item = this.itemCache.data[id];
         if(!item){
-            item = await ITEM_DATA.get(id, 'json');
-        }
-
-        if(!item){
-            return {};
+            return Promise.reject(new Error(`No item found with id ${id}`));
         }
 
         const formatted = await this.formatItem(item);
@@ -104,6 +103,9 @@ class ItemsAPI {
 
     async getAllItems() {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         return Object.values(this.itemCache.data).map((rawItem) => {
             return this.formatItem(rawItem);
         });
@@ -111,6 +113,9 @@ class ItemsAPI {
 
     async getItemsByIDs(ids, items = false) {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         let format = false;
         if (!items) {
             items = Object.values(this.itemCache.data);
@@ -126,6 +131,9 @@ class ItemsAPI {
 
     async getItemsByType(type, items = false) {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         let format = false;
         if (!items) {
             items = Object.values(this.itemCache.data);
@@ -141,6 +149,9 @@ class ItemsAPI {
 
     async getItemsByName(name, items = false, lang = 'en') {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         let format = false;
         if (!items) {
             items = Object.values(this.itemCache.data);
@@ -165,6 +176,9 @@ class ItemsAPI {
 
     async getItemsByNames(names, items = false, lang = 'en') {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         let format = false;
         if (!items) {
             items = Object.values(this.itemCache.data);
@@ -194,6 +208,9 @@ class ItemsAPI {
 
     async getItemsByBsgCategoryId(bsgCategoryId, items = false) {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         let format = false;
         if (!items) {
             items = Object.values(this.itemCache.data);
@@ -213,6 +230,9 @@ class ItemsAPI {
 
     async getItemsInBsgCategory(bsgCategoryId, items = false) {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         let format = false;
         if (!items) {
             items = Object.values(this.itemCache.data);
@@ -245,6 +265,9 @@ class ItemsAPI {
 
     async getItemByNormalizedName(normalizedName) {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         const item = Object.values(this.itemCache.data).find((item) => item.normalized_name === normalizedName);
 
         if (!item) {
@@ -256,6 +279,9 @@ class ItemsAPI {
 
     async getItemsByDiscardLimitedStatus(limited, items = false) {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         let format = false;
         if (!items) {
             items = Object.values(this.itemCache.data);
@@ -271,11 +297,17 @@ class ItemsAPI {
 
     async getCategory(id) {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         return this.itemCache.categories[id];
     }
 
     async getCategories() {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         const categories = [];
         for (const id in this.itemCache.categories) {
             categories.push(this.itemCache.categories[id]);
@@ -285,6 +317,9 @@ class ItemsAPI {
 
     async getFleaMarket() {
         await this.init();
+        if (!this.itemCache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         return this.itemCache.flea;
     }
 }

@@ -42,7 +42,31 @@ module.exports = {
     },
     TaskObjective: {
         __resolveType(data, args, context) {
-            return data.gql_type;
+            //return data.gql_type;
+            if (data.type === 'findQuestItem' || data.type === 'giveQuestItem' || data.type === 'plantQuestItem') {
+                return 'TaskObjectiveQuestItem';
+            } else if (data.type === 'findItem' || data.type === 'giveItem' || data.type === 'plantItem') {
+                return 'TaskObjectiveItem';
+            } else if (data.type === 'mark') {
+                return 'TaskObjectiveMark';
+            } else if (data.type === 'extract') {
+                return 'TaskObjectiveExtract';
+            } else if (data.type === 'skill') {
+                return 'TaskObjectiveSkill';
+            } else if (data.type === 'traderLevel') {
+                return 'TaskObjectiveTraderLevel';
+            } else if (data.type === 'taskStatus') {
+                return 'TaskObjectiveTaskStatus';
+            } else if (data.type === 'playerLevel') {
+                return 'TaskObjectivePlayerLevel';
+            } else if (data.type === 'experience') {
+                return 'TaskObjectiveExperience';
+            } else if (data.type === 'shoot') {
+                return 'TaskObjectiveShoot';
+            } else if (data.type === 'buildWeapon') {
+                return 'TaskObjectiveBuildItem';
+            }
+            return 'TaskObjectiveBasic';
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {

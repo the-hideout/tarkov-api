@@ -23,7 +23,7 @@ class CraftsAPI {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Craft cache is empty'));
         }
 
         return this.cache.data;
@@ -33,7 +33,7 @@ class CraftsAPI {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Craft cache is empty'));
         }
 
         return this.cache.data.filter(craft => {
@@ -48,7 +48,7 @@ class CraftsAPI {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Craft cache is empty'));
         }
 
         return this.cache.data.filter(craft => {
@@ -63,7 +63,7 @@ class CraftsAPI {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Craft cache is empty'));
         }
 
         return this.cache.data.filter(craft => {
@@ -76,7 +76,7 @@ class CraftsAPI {
         await this.init();
 
         if(!this.cache){
-            return [];
+            return Promise.reject(new Error('Craft cache is empty'));
         }
 
         return this.cache.data.filter(craft => {

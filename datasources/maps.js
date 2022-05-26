@@ -25,7 +25,7 @@ class MapAPI {
     await this.init();
 
     if (!this.cache) {
-      return [];
+      return Promise.reject(new Error('Map cache is empty'));
     }
     return this.cache.data;
   }
@@ -34,12 +34,13 @@ class MapAPI {
     await this.init();
 
     if(!this.cache){
-      return {};
+      return Promise.reject(new Error('Map cache is empty'));
     }
 
     for (const map of this.cache.data) {
       if (map.id === id || map.tarkovDataId === id) return map;
     }
+    return Promise.reject(new Error(`No map found with id ${id}`));
   }
 }
 

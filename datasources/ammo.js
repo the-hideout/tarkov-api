@@ -1,6 +1,4 @@
 // datasource for ammo
-const buildAttributes = require('../utils/build-attributes');
-
 class AmmoAPI {
   constructor(){
     this.cache = false;
@@ -26,26 +24,10 @@ class AmmoAPI {
     await this.init();
 
     if(!this.cache){
-      return {};
+      return Promise.reject(new Error('Ammo cache is empty'));
     }
 
-    return this.cache.data.map(ammo => {
-      const ammoData = {
-        ...ammo,
-        item: ammo.id,
-        heavyBleedModifier: ammo.heavyBleed,
-        lightBleedModifier: ammo.lightBleed
-      };
-      ammoData.attributes = buildAttributes(ammoData, [
-        'id',
-        'item',
-        'name',
-        'shortName',
-        'heavyBleed',
-        'lightBleed'
-      ]);
-      return ammoData;
-    });
+    return this.cache.data;
   }
 }
 

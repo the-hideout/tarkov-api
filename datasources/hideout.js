@@ -18,42 +18,19 @@ class HideoutAPI {
         }
     }
 
-    formatStation(rawStation) {
-        return {
-            ...rawStation,
-            levels: rawStation.levels.map( stage => {
-                return this.formatModule(stage, rawStation);
-            })
-        };
-    }
-
-    formatModule(rawModule, station = false) {
-        if (!station) {
-            for (const hideoutStation of this.cache.data) {
-                for (const stage of hideoutStation.levels) {
-                    if (stage.id === rawModule.id) {
-                        station = hideoutStation;
-                        break;
-                    }
-                }
-                if (station) break;
-            }
-        }
-        if (!station) return {};
-        const module = {
-            ...rawModule,
-            name: station.name
-        };
-        return module;
-    }
-
     async getList(){
         await this.init();
+        if(!this.cache){
+            return Promise.reject(new Error('Hideout cache is empty'));
+        }
         return this.cache.data;
     }
 
     async getModuleById(id) {
         await this.init();
+        if(!this.cache){
+            return Promise.reject(new Error('Hideout cache is empty'));
+        }
         for (const hideoutStation of this.cache.data) {
             for (const stage of hideoutStation.levels) {
                 if (stage.id === id) {
@@ -61,11 +38,14 @@ class HideoutAPI {
                 }
             }
         }
-        return {};
+        return Promise.reject(new Error(`No hideout station level found with id ${id}`));
     }
 
     async getModuleByLevel(stationId, level) {
         await this.init();
+        if(!this.cache){
+            return Promise.reject(new Error('Hideout cache is empty'));
+        }
         for (const hideoutStation of this.cache.data) {
             if (hideoutStation.id !== stationId) continue;
             for (const stage of hideoutStation.levels) {
@@ -74,15 +54,18 @@ class HideoutAPI {
                 }
             }
         }
-        return {};
+        return Promise.reject(new Error(`No hideout station level found with id ${stationId} and level ${level}`));
     }
 
     async getStation(id) {
         await this.init();
+        if(!this.cache){
+            return Promise.reject(new Error('Hideout cache is empty'));
+        }
         for (const station of this.cache.data) {
             if (station.id === id) return station;
         }
-        return {};
+        return Promise.reject(new Error(`No hideout station found with id ${id}`));
     }
 }
 
