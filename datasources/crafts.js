@@ -17,25 +17,18 @@ class CraftsAPI {
         } catch (loadDataError){
             console.error(loadDataError);
         }
+        if(!this.cache){
+            return Promise.reject(new Error('Crafts cache failed to load'));
+        }
     }
 
     async getList() {
         await this.init();
-
-        if(!this.cache){
-            return Promise.reject(new Error('Craft cache is empty'));
-        }
-
         return this.cache.data;
     }
 
     async getCraftsForItem(id) {
         await this.init();
-
-        if(!this.cache){
-            return Promise.reject(new Error('Craft cache is empty'));
-        }
-
         return this.cache.data.filter(craft => {
             for (const item of craft.rewardItems) {
                 if (item.item === id) return true;
@@ -46,11 +39,6 @@ class CraftsAPI {
 
     async getCraftsUsingItem(id) {
         await this.init();
-
-        if(!this.cache){
-            return Promise.reject(new Error('Craft cache is empty'));
-        }
-
         return this.cache.data.filter(craft => {
             for (const item of craft.requiredItems) {
                 if (item.item === id) return true;
@@ -61,11 +49,6 @@ class CraftsAPI {
 
     async getCraftsForStation(id) {
         await this.init();
-
-        if(!this.cache){
-            return Promise.reject(new Error('Craft cache is empty'));
-        }
-
         return this.cache.data.filter(craft => {
             if (craft.station_id === id) return true;
             return false;
@@ -74,11 +57,6 @@ class CraftsAPI {
 
     async getCraftsForStationLevel(id, level) {
         await this.init();
-
-        if(!this.cache){
-            return Promise.reject(new Error('Craft cache is empty'));
-        }
-
         return this.cache.data.filter(craft => {
             if (craft.station_id === id && craft.level === level) return true;
             return false;
@@ -86,4 +64,4 @@ class CraftsAPI {
     }
 }
 
-module.exports = CraftsAPI
+module.exports = CraftsAPI;

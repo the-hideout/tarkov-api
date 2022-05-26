@@ -59,4 +59,4 @@ class HideoutLegacyAPI {
     }
 }
 
-module.exports = HideoutLegacyAPI
+module.exports = HideoutLegacyAPI;

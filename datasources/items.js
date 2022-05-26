@@ -1,20 +1,23 @@
 class ItemsAPI {
     constructor(){
-        this.itemCache = false;
+        this.cache = false;
         this.loading = false;
     }
 
     async init(){
         try {
             if (this.loading) await this.loading;
-            if(this.itemCache){
+            if(this.cache){
                 return true;
             }
             this.loading = ITEM_DATA.get('ITEM_CACHE_V3', 'json');
-            this.itemCache = await this.loading;
+            this.cache = await this.loading;
             this.loading = false;
         } catch (error){
             console.error(error);
+        }
+        if (!this.cache) {
+            return Promise.reject(new Error('Item cache failed to load'));
         }
     }
 
@@ -54,11 +57,11 @@ class ItemsAPI {
                 currency: 'RUB',
                 currencyItem: '5449016a4bdc2d6f028b456f',
                 priceRUB: item.lastLowPrice || 0,
-                vendor: this.itemCache.flea,
+                vendor: this.cache.flea,
                 source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
-                    value: this.itemCache.flea.minPlayerLevel,
+                    value: this.cache.flea.minPlayerLevel,
                 }],
             });
 
@@ -67,11 +70,11 @@ class ItemsAPI {
                 currency: 'RUB',
                 currencyItem: '5449016a4bdc2d6f028b456f',
                 priceRUB: item.avg24hPrice || item.lastLowPrice || 0,
-                vendor: this.itemCache.flea,
+                vendor: this.cache.flea,
                 source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
-                    value: this.itemCache.flea.minPlayerLevel,
+                    value: this.cache.flea.minPlayerLevel,
                 }],
             });
         }
@@ -81,10 +84,7 @@ class ItemsAPI {
 
     async getItem(id, contains) {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
-        let item = this.itemCache.data[id];
+        let item = this.cache.data[id];
         if(!item){
             return Promise.reject(new Error(`No item found with id ${id}`));
         }
@@ -103,22 +103,16 @@ class ItemsAPI {
 
     async getAllItems() {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
-        return Object.values(this.itemCache.data).map((rawItem) => {
+        return Object.values(this.cache.data).map((rawItem) => {
             return this.formatItem(rawItem);
         });
     }
 
     async getItemsByIDs(ids, items = false) {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -131,12 +125,9 @@ class ItemsAPI {
 
     async getItemsByType(type, items = false) {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -149,12 +140,9 @@ class ItemsAPI {
 
     async getItemsByName(name, items = false, lang = 'en') {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         const searchString = name.toLowerCase();
@@ -176,12 +164,9 @@ class ItemsAPI {
 
     async getItemsByNames(names, items = false, lang = 'en') {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         const searchStrings = names.map(name => {
@@ -208,12 +193,9 @@ class ItemsAPI {
 
     async getItemsByBsgCategoryId(bsgCategoryId, items = false) {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -230,12 +212,9 @@ class ItemsAPI {
 
     async getItemsInBsgCategory(bsgCategoryId, items = false) {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         const categories = [
@@ -253,8 +232,8 @@ class ItemsAPI {
 
     getSubCategories(id) {
         const subCats = [];
-        for (const catId in this.itemCache.categories) {
-            const cat = this.itemCache.categories[catId];
+        for (const catId in this.cache.categories) {
+            const cat = this.cache.categories[catId];
             if (cat.parent_id === id) {
                 subCats.push(cat.id);
                 subCats.push(...this.getSubCategories(cat.id));
@@ -265,10 +244,7 @@ class ItemsAPI {
 
     async getItemByNormalizedName(normalizedName) {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
-        const item = Object.values(this.itemCache.data).find((item) => item.normalized_name === normalizedName);
+        const item = Object.values(this.cache.data).find((item) => item.normalized_name === normalizedName);
 
         if (!item) {
             return null;
@@ -279,12 +255,9 @@ class ItemsAPI {
 
     async getItemsByDiscardLimitedStatus(limited, items = false) {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         return items.filter(item => {
@@ -297,31 +270,25 @@ class ItemsAPI {
 
     async getCategory(id) {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
-        return this.itemCache.categories[id];
+        return this.cache.categories[id];
     }
 
     async getCategories() {
         await this.init();
-        if (!this.itemCache) {
+        if (!this.cache) {
             return Promise.reject(new Error('Item cache is empty'));
         }
         const categories = [];
-        for (const id in this.itemCache.categories) {
-            categories.push(this.itemCache.categories[id]);
+        for (const id in this.cache.categories) {
+            categories.push(this.cache.categories[id]);
         }
         return categories;
     }
 
     async getFleaMarket() {
         await this.init();
-        if (!this.itemCache) {
-            return Promise.reject(new Error('Item cache is empty'));
-        }
-        return this.itemCache.flea;
+        return this.cache.flea;
     }
 }
 
-module.exports = ItemsAPI
+module.exports = ItemsAPI;

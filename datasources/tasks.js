@@ -16,22 +16,18 @@ class TasksAPI {
         } catch (error){
             console.error(error);
         }
+        if (!this.cache) {
+            return Promise.reject(new Error('Task cache failed to load'));
+        }
     }
 
     async getList() {
         await this.init();
-        if(!this.cache){
-            return Promise.reject(new Error('Task cache is empty'));
-        }
-
         return this.cache.data;
     }
 
     async get(id) {
         await this.init();
-        if (!this.cache) {
-            return Promise.reject(new Error('Task cache is empty'));
-        }
         for (const task of this.cache.data) {
             if (task.id === id || task.tarkovDataId) return rawtask;
         }
@@ -40,9 +36,6 @@ class TasksAPI {
 
     async getTasksRequiringItem(itemId) {
         await this.init();
-        if (!this.cache) {
-            return Promise.reject(new Error('Task cache is empty'));
-        }
         const tasks = this.cache.data.filter(rawTask => {
             for (const obj of rawTask.objectives) {
                 if (obj.item === itemId) {
@@ -100,9 +93,6 @@ class TasksAPI {
 
     async getTasksProvidingItem(itemId) {
         await this.init();
-        if (!this.cache) {
-            return Promise.reject(new Error('Task cache is empty'));
-        }
         const tasks = this.cache.data.filter(rawTask => {
             for (const reward of rawTask.startRewards.item) {
                 if (reward.item === itemId) {

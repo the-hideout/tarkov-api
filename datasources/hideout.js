@@ -16,21 +16,18 @@ class HideoutAPI {
         } catch (error){
             console.error(error);
         }
+        if(!this.cache){
+            return Promise.reject(new Error('Hideout cache failed to load'));
+        }
     }
 
     async getList(){
         await this.init();
-        if(!this.cache){
-            return Promise.reject(new Error('Hideout cache is empty'));
-        }
         return this.cache.data;
     }
 
     async getModuleById(id) {
         await this.init();
-        if(!this.cache){
-            return Promise.reject(new Error('Hideout cache is empty'));
-        }
         for (const hideoutStation of this.cache.data) {
             for (const stage of hideoutStation.levels) {
                 if (stage.id === id) {
@@ -43,9 +40,6 @@ class HideoutAPI {
 
     async getModuleByLevel(stationId, level) {
         await this.init();
-        if(!this.cache){
-            return Promise.reject(new Error('Hideout cache is empty'));
-        }
         for (const hideoutStation of this.cache.data) {
             if (hideoutStation.id !== stationId) continue;
             for (const stage of hideoutStation.levels) {
@@ -59,9 +53,6 @@ class HideoutAPI {
 
     async getStation(id) {
         await this.init();
-        if(!this.cache){
-            return Promise.reject(new Error('Hideout cache is empty'));
-        }
         for (const station of this.cache.data) {
             if (station.id === id) return station;
         }

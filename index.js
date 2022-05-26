@@ -107,10 +107,10 @@ const graphQLOptions = {
     // or pass an object to configure each header
   //   cors: true,
     cors: {
-      allowCredentials: 'true',
-      allowHeaders: 'Content-type',
-      allowOrigin: '*',
-      allowMethods: 'GET, POST, PUT',
+        allowCredentials: 'true',
+        allowHeaders: 'Content-type',
+        allowOrigin: '*',
+        allowMethods: 'GET, POST, PUT',
     },
 
     // Enable KV caching for external REST data source requests

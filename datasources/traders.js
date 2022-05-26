@@ -36,58 +36,60 @@ const traderNameIdMap = {
 
 class TradersAPI {
     constructor(){
-        this.traderCache = false;
+        this.cache = false;
         this.loading = false;
     }
 
     async init(){
         try {
             if (this.loading) await this.loading;
-            if(this.traderCache){
+            if(this.cache){
                 return true;
             }
             this.loading = ITEM_DATA.get('TRADER_DATA_V2', 'json');
-            this.traderCache = await this.loading;
+            this.cache = await this.loading;
             this.loading = false;
         } catch (error){
             console.error(error);
+        }
+        if (!this.cache) {
+            return Promise.reject(new Error('Trader cache failed to load'));
         }
     }
 
     async getList() {
         await this.init();
-        if (!this.traderCache) return [];
-        return this.traderCache.data;
+        return this.cache.data;
     }
 
     async get(id) {
         await this.init();
-        if (!this.traderCache) return {};
-        for (const trader of this.traderCache.data){
+        if (!this.cache) return {};
+        for (const trader of this.cache.data){
             if(trader.id === id){
                 return trader;
             }
         }
 
-        return {};
+        return Promise.reject(new Error(`No trader found with id ${id}`));
     }
 
     async getByName(name) {
         await this.init();
-        if (!this.traderCache) return {};
-        for(const trader of this.traderCache.data){
+        if (!this.cache) return {};
+        for(const trader of this.cache.data){
             if(trader.name.toLowerCase() === name.toLowerCase()){
                 return trader;
             }
         }
 
-        return {};
+        return Promise.reject(new Error(`No trader found with name ${name}`));
     }
 
     async getByLevel(traderId, level) {
         await this.init();
-        if (!this.traderCache) return {};
-        for (const trader of this.traderCache.data) {
+        if (!this.cache) return {};
+        for (const trader of this.cache.data) {
             if (trader.id !== traderId) continue;
             for (const rawLevel of trader.levels) {
                 if (rawLevel.level === level) {
@@ -95,8 +97,7 @@ class TradersAPI {
                 }
             }
         }
-        console.log(`no trader found for ${traderId}, ${level}`);
-        return {};
+        return Promise.reject(new Error(`No trader found with id ${traderId} and level ${level}`));
     }
 
     getByDataId(dataId) {
@@ -105,8 +106,8 @@ class TradersAPI {
 
     async getTraderResets() {
         await this.init();
-        if (!this.traderCache) return [];
-        return this.traderCache.data.map(trader => {
+        if (!this.cache) return [];
+        return this.cache.data.map(trader => {
             return {
                 name: trader.name.toLowerCase(),
                 resetTimestamp: trader.resetTime,

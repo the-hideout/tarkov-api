@@ -79,4 +79,4 @@ class QuestsAPI {
     }
 }
 
-module.exports = QuestsAPI
+module.exports = QuestsAPI;
