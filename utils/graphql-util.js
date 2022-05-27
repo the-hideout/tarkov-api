@@ -29,7 +29,7 @@ module.exports = {
     },
     getLocale: (data, field, info) => {
         const lang = module.exports.getLang(info);
-        if (data.locale && data.locale[lang] && data.locale[lang][field]) return data.locale[lang][field];
+        if (data.locale && lang in data.locale && field in data.locale[lang]) return data.locale[lang][field];
         return data[field];
     }
 };
