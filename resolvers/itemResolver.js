@@ -5,17 +5,18 @@ module.exports = {
             if (args.normalizedName) return context.data.item.getItemByNormalizedName(args.normalizedName);
             return Promise.reject(new Error('You must specify either the id or the normalizedName argument'));
         },
-        async items(obj, args, context) {
+        async items(obj, args, context, info) {
             let items = false;
+            const lang = context.util.getLang(info);
             let filters = {
                 ids: async ids => {
                     return context.data.item.getItemsByIDs(ids, items);
                 },
                 name: async name => {
-                    return context.data.item.getItemsByName(name, items);
+                    return context.data.item.getItemsByName(name, items, lang);
                 },
                 names: async names => {
-                    return context.data.item.getItemsByNames(names, items);
+                    return context.data.item.getItemsByNames(names, items, lang);
                 },
                 type: async type => {
                     return context.data.item.getItemsByType(type, items);
@@ -30,11 +31,13 @@ module.exports = {
                     return context.data.item.getItemsByDiscardLimitedStatus(limited, items);
                 },*/
             }
-            if (Object.keys(args).length === 0) return context.data.item.getAllItems();
+            //if (Object.keys(args).length === 0) return context.data.item.getAllItems();
             for (const argName in args) {
+                if (argName === 'lang') continue;
                 if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
                 items = await filters[argName](args[argName], items);
             }
+            if (!items) return context.data.item.getAllItems();
             return items;
         },
         itemCategories(obj, args, context) {
@@ -63,6 +66,12 @@ module.exports = {
         }
     },
     Item: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        },
+        shortName(data,args, context, info) {
+            return context.util.getLocale(data, 'shortName', info);
+        },
         async buyFor(data, args, context) {
             if (!data.buyFor) data.buyFor = [];
             return [
@@ -136,6 +145,9 @@ module.exports = {
         }
     },
     ItemCategory: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        },
         parent(data, args, context) {
             if (data.parent_id) return context.data.item.getCategory(data.parent_id);
             return null;

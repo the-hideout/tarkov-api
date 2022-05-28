@@ -20,6 +20,9 @@ module.exports = {
         }
     },
     Task: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        },
         trader(data, args, context) {
             return context.data.trader.get(data.trader);
         },
@@ -39,10 +42,33 @@ module.exports = {
     },
     TaskObjective: {
         __resolveType(data, args, context) {
-            return data.gql_type;
+            //return data.gql_type;
+            if (data.type === 'findQuestItem' || data.type === 'giveQuestItem' || data.type === 'plantQuestItem') {
+                return 'TaskObjectiveQuestItem';
+            } else if (data.type === 'findItem' || data.type === 'giveItem' || data.type === 'plantItem') {
+                return 'TaskObjectiveItem';
+            } else if (data.type === 'mark') {
+                return 'TaskObjectiveMark';
+            } else if (data.type === 'extract') {
+                return 'TaskObjectiveExtract';
+            } else if (data.type === 'skill') {
+                return 'TaskObjectiveSkill';
+            } else if (data.type === 'traderLevel') {
+                return 'TaskObjectiveTraderLevel';
+            } else if (data.type === 'taskStatus') {
+                return 'TaskObjectiveTaskStatus';
+            } else if (data.type === 'playerLevel') {
+                return 'TaskObjectivePlayerLevel';
+            } else if (data.type === 'experience') {
+                return 'TaskObjectiveExperience';
+            } else if (data.type === 'shoot') {
+                return 'TaskObjectiveShoot';
+            } else if (data.type === 'buildWeapon') {
+                return 'TaskObjectiveBuildItem';
+            }
+            return 'TaskObjectiveBasic';
         },
         maps(data, args, context) {
-            console.log(`getting maps for objective ${data.id}`);
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
@@ -53,6 +79,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveBuildItem: {
@@ -73,6 +102,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveExperience: {
@@ -80,6 +112,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveExtract: {
@@ -87,6 +122,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveItem: {
@@ -97,6 +135,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveMark: {
@@ -107,6 +148,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectivePlayerLevel: {
@@ -114,6 +158,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveQuestItem: {
@@ -121,6 +168,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveSkill: {
@@ -128,9 +178,15 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveShoot: {
+        target(data, args, context, info) {
+            return context.util.getLocale(data, 'target', info);
+        },
         usingWeapon(data, args, context) {
             return data.usingWeapon.map(item => {
                 return context.data.item.getItem(item.id);
@@ -163,6 +219,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveTaskStatus: {
@@ -173,6 +232,9 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
     },
     TaskObjectiveTraderLevel: {
@@ -183,7 +245,15 @@ module.exports = {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
             });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         }
+    },
+    QuestItem: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        },
     },
     TaskRewards: {
         traderUnlock(data, args, context) {

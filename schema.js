@@ -175,7 +175,6 @@ type Item {
   velocity: Float
   loudness: Int
   #discardLimit: Int
-  translation(languageCode: LanguageCode): ItemTranslation
   usedInTasks: [Task]!
   receivedFromTasks: [Task]!
   bartersFor: [Barter]!
@@ -185,6 +184,7 @@ type Item {
   "historicalPrices is only available via the item and items queries."
   historicalPrices: [historicalPricePoint]
   fleaMarketFee(price: Int, intelCenterLevel: Int, hideoutManagementLevel: Int, count: Int, requireAll: Boolean): Int
+  translation(languageCode: LanguageCode): ItemTranslation @deprecated(reason: "Use the lang argument on queries instead.")
   traderPrices: [TraderPrice]! @deprecated(reason: "Use sellFor instead.")
 }
 
@@ -226,12 +226,6 @@ enum ItemSourceName {
   fleaMarket
 }
 
-type ItemTranslation {
-  name: String
-  shortName: String
-  description: String
-}
-
 enum ItemType {
   ammo
   ammoBox
@@ -262,7 +256,15 @@ enum ItemType {
 }
 
 enum LanguageCode {
+  cz
+  de
   en
+  es
+  fr
+  hu
+  ru
+  tr
+  zh
 }
 
 type Map {
@@ -634,20 +636,20 @@ interface Vendor {
 #union Vendor = TraderOffer | FleaMarket
 
 type Query {
-  ammo: [Ammo]  
-  barters: [Barter]
-  crafts: [Craft]
-  fleaMarket: FleaMarket!
-  hideoutStations: [HideoutStation]!
-  historicalItemPrices(id: ID!): [historicalPricePoint]!
-  item(id: ID, normalizedName: String): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, bsgCategoryId: String, bsgCategory: String): [Item]!
+  ammo(lang: LanguageCode): [Ammo]  
+  barters(lang: LanguageCode): [Barter]
+  crafts(lang: LanguageCode): [Craft]
+  fleaMarket(lang: LanguageCode): FleaMarket!
+  hideoutStations(lang: LanguageCode): [HideoutStation]!
+  historicalItemPrices(id: ID!, lang: LanguageCode): [historicalPricePoint]!
+  item(id: ID, normalizedName: String, lang: LanguageCode): Item
+  items(ids: [ID], name: String, names: [String], type: ItemType, bsgCategoryId: String, bsgCategory: String, lang: LanguageCode): [Item]!
   itemCategories: [ItemCategory]!
-  maps: [Map]!
+  maps(lang: LanguageCode): [Map]!
   status: ServerStatus!
-  task(id: ID!): Task
-  tasks(faction: String): [Task]!
-  traders: [Trader]!
+  task(id: ID!, lang: LanguageCode): Task
+  tasks(faction: String, lang: LanguageCode): [Task]!
+  traders(lang: LanguageCode): [Trader]!
   hideoutModules: [HideoutModule] @deprecated(reason: "Use hideoutStations instead.")
   itemsByIDs(ids: [ID]!): [Item] @deprecated(reason: "Use items instead.")
   itemsByType(type: ItemType!): [Item]! @deprecated(reason: "Use items instead.")
@@ -660,6 +662,15 @@ type Query {
 
 """
 The below types are all deprecated and may not return current data.
+ItemTranslation has been replaced with the lang argument on all queries
+"""
+type ItemTranslation {
+  name: String @deprecated(reason: "Use the lang argument on queries instead.")
+  shortName: String @deprecated(reason: "Use the lang argument on queries instead.")
+  description: String @deprecated(reason: "Use the lang argument on queries instead.")
+}
+
+"""
 HideoutModule has been replaced with HideoutStation.
 """
 type HideoutModule {

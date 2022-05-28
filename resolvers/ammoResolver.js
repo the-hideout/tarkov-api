@@ -6,7 +6,7 @@ module.exports = {
     },
     Ammo: {
         item(data, args, context) {
-            return context.data.item.getItem(data.item);
+            return context.data.item.getItem(data.id);
         }
     }
 };

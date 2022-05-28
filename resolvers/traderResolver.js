@@ -8,6 +8,9 @@ module.exports = {
         },
     },
     Trader: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        },
         currency(trader, args, context) {
             return context.data.item.getItem(context.data.trader.getCurrencyMap()[trader.currency]);
         },

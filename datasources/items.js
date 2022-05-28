@@ -1,20 +1,23 @@
 class ItemsAPI {
     constructor(){
-        this.itemCache = false;
+        this.cache = false;
         this.loading = false;
     }
 
     async init(){
         try {
             if (this.loading) await this.loading;
-            if(this.itemCache){
+            if(this.cache){
                 return true;
             }
-            this.loading = ITEM_DATA.get('ITEM_CACHE_V2', 'json');
-            this.itemCache = await this.loading;
+            this.loading = ITEM_DATA.get('ITEM_CACHE_V3', 'json');
+            this.cache = await this.loading;
             this.loading = false;
         } catch (error){
             console.error(error);
+        }
+        if (!this.cache) {
+            return Promise.reject(new Error('Item cache failed to load'));
         }
     }
 
@@ -54,11 +57,11 @@ class ItemsAPI {
                 currency: 'RUB',
                 currencyItem: '5449016a4bdc2d6f028b456f',
                 priceRUB: item.lastLowPrice || 0,
-                vendor: this.itemCache.flea,
+                vendor: this.cache.flea,
                 source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
-                    value: this.itemCache.flea.minPlayerLevel,
+                    value: this.cache.flea.minPlayerLevel,
                 }],
             });
 
@@ -67,11 +70,11 @@ class ItemsAPI {
                 currency: 'RUB',
                 currencyItem: '5449016a4bdc2d6f028b456f',
                 priceRUB: item.avg24hPrice || item.lastLowPrice || 0,
-                vendor: this.itemCache.flea,
+                vendor: this.cache.flea,
                 source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
-                    value: this.itemCache.flea.minPlayerLevel,
+                    value: this.cache.flea.minPlayerLevel,
                 }],
             });
         }
@@ -81,13 +84,9 @@ class ItemsAPI {
 
     async getItem(id, contains) {
         await this.init();
-        let item = this.itemCache.data[id];
+        let item = this.cache.data[id];
         if(!item){
-            item = await ITEM_DATA.get(id, 'json');
-        }
-
-        if(!item){
-            return {};
+            return Promise.reject(new Error(`No item found with id ${id}`));
         }
 
         const formatted = await this.formatItem(item);
@@ -104,7 +103,7 @@ class ItemsAPI {
 
     async getAllItems() {
         await this.init();
-        return Object.values(this.itemCache.data).map((rawItem) => {
+        return Object.values(this.cache.data).map((rawItem) => {
             return this.formatItem(rawItem);
         });
     }
@@ -113,7 +112,7 @@ class ItemsAPI {
         await this.init();
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -128,7 +127,7 @@ class ItemsAPI {
         await this.init();
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -139,39 +138,51 @@ class ItemsAPI {
         });
     }
 
-    async getItemsByName(name, items = false) {
+    async getItemsByName(name, items = false, lang = 'en') {
         await this.init();
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         const searchString = name.toLowerCase();
 
         return items.filter((rawItem) => {
-            if (!rawItem.name || !rawItem.shortname) return false;
-            return rawItem.name.toLowerCase().includes(searchString) || rawItem.shortname.toLowerCase().includes(searchString);
+            if (!rawItem.locale || !rawItem.locale[lang]) return false;
+            if (rawItem.locale[lang].name && rawItem.locale[lang].name.toString().toLowerCase().includes(searchString)) {
+                return true;
+            }
+            if (rawItem.locale[lang].shortName && rawItem.locale[lang].shortName.toString().toLowerCase().includes(searchString)) {
+                return true;
+            }
+            return false;
         }).map((rawItem) => {
             if (!format) return rawItem;
             return this.formatItem(rawItem);
         });
 }
 
-    async getItemsByNames(names, items = false) {
+    async getItemsByNames(names, items = false, lang = 'en') {
         await this.init();
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         const searchStrings = names.map(name => {
             return name.toLowerCase();
         });
+        console.log(lang);
         return items.filter((rawItem) => {
+            if (!rawItem.locale || !rawItem.locale[lang]) return false;
             for (const search of searchStrings) {
-                if (rawItem.name.toLowerCase().includes(search) || rawItem.shortname.toLowerCase().includes(search)) {
+                if (rawItem.locale[lang].name && rawItem.locale[lang].name.toString().toLowerCase().includes(search)) {
                     return true;
                 }
+                if (rawItem.locale[lang].shortName && rawItem.locale[lang].shortName.toString().toLowerCase().includes(search)) {
+                    return true;
+                }
+                return false;
             }
             return false;
         }).map((rawItem) => {
@@ -184,7 +195,7 @@ class ItemsAPI {
         await this.init();
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -203,7 +214,7 @@ class ItemsAPI {
         await this.init();
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         const categories = [
@@ -221,8 +232,8 @@ class ItemsAPI {
 
     getSubCategories(id) {
         const subCats = [];
-        for (const catId in this.itemCache.categories) {
-            const cat = this.itemCache.categories[catId];
+        for (const catId in this.cache.categories) {
+            const cat = this.cache.categories[catId];
             if (cat.parent_id === id) {
                 subCats.push(cat.id);
                 subCats.push(...this.getSubCategories(cat.id));
@@ -233,7 +244,7 @@ class ItemsAPI {
 
     async getItemByNormalizedName(normalizedName) {
         await this.init();
-        const item = Object.values(this.itemCache.data).find((item) => item.normalized_name === normalizedName);
+        const item = Object.values(this.cache.data).find((item) => item.normalized_name === normalizedName);
 
         if (!item) {
             return null;
@@ -246,7 +257,7 @@ class ItemsAPI {
         await this.init();
         let format = false;
         if (!items) {
-            items = Object.values(this.itemCache.data);
+            items = Object.values(this.cache.data);
             format = true;
         }
         return items.filter(item => {
@@ -259,22 +270,25 @@ class ItemsAPI {
 
     async getCategory(id) {
         await this.init();
-        return this.itemCache.categories[id];
+        return this.cache.categories[id];
     }
 
     async getCategories() {
         await this.init();
+        if (!this.cache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
         const categories = [];
-        for (const id in this.itemCache.categories) {
-            categories.push(this.itemCache.categories[id]);
+        for (const id in this.cache.categories) {
+            categories.push(this.cache.categories[id]);
         }
         return categories;
     }
 
     async getFleaMarket() {
         await this.init();
-        return this.itemCache.flea;
+        return this.cache.flea;
     }
 }
 
-module.exports = ItemsAPI
+module.exports = ItemsAPI;

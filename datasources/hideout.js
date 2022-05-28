@@ -10,41 +10,15 @@ class HideoutAPI {
             if(this.cache){
                 return true;
             }
-            this.loading = ITEM_DATA.get('HIDEOUT_DATA_V2', 'json');
+            this.loading = ITEM_DATA.get('HIDEOUT_DATA_V3', 'json');
             this.cache = await this.loading;
             this.loading = false;
         } catch (error){
             console.error(error);
         }
-    }
-
-    formatStation(rawStation) {
-        return {
-            ...rawStation,
-            levels: rawStation.levels.map( stage => {
-                return this.formatModule(stage, rawStation);
-            })
-        };
-    }
-
-    formatModule(rawModule, station = false) {
-        if (!station) {
-            for (const hideoutStation of this.cache.data) {
-                for (const stage of hideoutStation.levels) {
-                    if (stage.id === rawModule.id) {
-                        station = hideoutStation;
-                        break;
-                    }
-                }
-                if (station) break;
-            }
+        if(!this.cache){
+            return Promise.reject(new Error('Hideout cache failed to load'));
         }
-        if (!station) return {};
-        const module = {
-            ...rawModule,
-            name: station.name
-        };
-        return module;
     }
 
     async getList(){
@@ -61,7 +35,7 @@ class HideoutAPI {
                 }
             }
         }
-        return {};
+        return Promise.reject(new Error(`No hideout station level found with id ${id}`));
     }
 
     async getModuleByLevel(stationId, level) {
@@ -74,7 +48,7 @@ class HideoutAPI {
                 }
             }
         }
-        return {};
+        return Promise.reject(new Error(`No hideout station level found with id ${stationId} and level ${level}`));
     }
 
     async getStation(id) {
@@ -82,7 +56,7 @@ class HideoutAPI {
         for (const station of this.cache.data) {
             if (station.id === id) return station;
         }
-        return {};
+        return Promise.reject(new Error(`No hideout station found with id ${id}`));
     }
 }
 
