@@ -256,6 +256,30 @@ type ItemPropertiesArmor {
   material: ArmorMaterial
 }
 
+type ItemPropertiesArmorAttachment {
+  class: Int
+  durability: Int
+  repairCost: Int
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
+  headZones: [String]
+  material: ArmorMaterial
+}
+
+type ItemPropertiesChestRig {
+  class: Int
+  durability: Int
+  repairCost: Int
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
+  zones: [String]
+  material: ArmorMaterial
+  capacity: Int
+  pouches: [ItemStorageGrid]
+}
+
 type ItemPropertiesFoodDrink {
   energy: Int
   hydration: Int
@@ -271,20 +295,103 @@ type ItemPropertiesGrenade {
   contusionRadius: Int
 }
 
-type ItemPropertiesTacticalRig {
+type ItemPropertiesHelmet {
   class: Int
   durability: Int
   repairCost: Int
   speedPenalty: Float
   turnPenalty: Float
   ergoPenalty: Int
-  zones: [String]
+  headZones: [String]
   material: ArmorMaterial
-  capacity: Int
-  pouches: [ItemStorageGrid]
+  deafening: String
 }
 
-union ItemProperties = ItemPropertiesAmmo | ItemPropertiesArmor | ItemPropertiesFoodDrink | ItemPropertiesGrenade | ItemPropertiesTacticalRig
+type ItemPropertiesMagazine {
+  ergonomics: Float
+  recoil: Float
+  capacity: Int
+  loadModifier: Float
+  ammoCheckModifier: Float
+  malfunctionChance: Float
+}
+
+type ItemPropertiesMedicalItem {
+  uses: Int
+  useTime: Int
+  cures: [String]
+}
+
+type ItemPropertiesMedKit {
+  hitpoints: Int
+  useTime: Int
+  maxHealPerUse: Int
+  cures: [String]
+  hpCostLightBleeding: Int
+  hpCostHeavyBleeding: Int
+}
+
+type ItemPropertiesNightVision {
+  intensity: Float
+  noiseIntensity: Float
+  noiseScale: Float
+  diffuseIntensity: Float
+}
+
+type ItemPropertiesPainkiller {
+  uses: Int
+  useTime: Int
+  cures: [String]
+  painkillerDuration: Int
+  energyImpact: Int
+  hydrationImpact: Int
+}
+
+type ItemPropertiesScope {
+  ergonomics: Float
+  recoil: Float
+  zoomLevels: [[Float]]
+}
+
+type ItemPropertiesSurgicalKit {
+  uses: Int
+  useTime: Int
+  cures: [String]
+  minLimbHealth: Float
+  maxLimbHealth: Float
+}
+
+type ItemPropertiesWeapon {
+  caliber: String
+  ergonomics: Float
+  recoilVertical: Int
+  recoilHorizontal: Int
+  repairCost: Int
+  defaultAmmo: Item
+}
+
+type ItemPropertiesWeaponMod {
+  ergonomics: Float
+  recoil: Float
+}
+
+union ItemProperties = 
+  ItemPropertiesAmmo | 
+  ItemPropertiesArmor | 
+  ItemPropertiesArmorAttachment | 
+  ItemPropertiesChestRig | 
+  ItemPropertiesFoodDrink | 
+  ItemPropertiesGrenade | 
+  ItemPropertiesHelmet | 
+  ItemPropertiesMagazine | 
+  ItemPropertiesMedicalItem | 
+  ItemPropertiesMedKit | 
+  ItemPropertiesNightVision | 
+  ItemPropertiesPainkiller | 
+  ItemPropertiesScope | 
+  ItemPropertiesSurgicalKit | 
+  ItemPropertiesWeapon | 
+  ItemPropertiesWeaponMod
 
 enum ItemSourceName {
   prapor
@@ -720,7 +827,7 @@ type Query {
   hideoutStations(lang: LanguageCode): [HideoutStation]!
   historicalItemPrices(id: ID!, lang: LanguageCode): [historicalPricePoint]!
   item(id: ID, normalizedName: String, lang: LanguageCode): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], bsgCategoryId: String, bsgCategory: String, lang: LanguageCode): [Item]!
+  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode): [Item]!
   itemCategories: [ItemCategory]!
   maps(lang: LanguageCode): [Map]!
   status: ServerStatus!

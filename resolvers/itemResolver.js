@@ -24,8 +24,14 @@ module.exports = {
                 types: async types => {
                     return context.data.item.getItemsByTypes(types, items);
                 },
+                categoryNames: async bsgcats => {
+                    return context.data.item.getItemsByCategoryEnums(bsgcats, items);
+                },
                 bsgCategoryId: async bsgcat => {
                     return context.data.item.getItemsByBsgCategoryId(bsgcat, items);
+                },
+                bsgCategoryIds: async bsgcats => {
+                    return context.data.item.getItemsByBsgCategoryIds(bsgcats, items);
                 },
                 bsgCategory: async bsgcat => {
                     return context.data.item.getItemsInBsgCategory(bsgcat, items);
@@ -178,6 +184,30 @@ module.exports = {
     ItemPropertiesArmor: {
         material(data, args, context) {
             return context.data.item.getArmorMaterial(data.armor_material_id);
+        },
+        zones(data, args, context, info) {
+            return context.util.getLocale(data, 'zones', info);
+        }
+    },
+    ItemPropertiesChestRig: {
+        material(data, args, context) {
+            return context.data.item.getArmorMaterial(data.armor_material_id);
+        },
+        zones(data, args, context, info) {
+            return context.util.getLocale(data, 'zones', info);
+        }
+    },
+    ItemPropertiesHelmet: {
+        material(data, args, context) {
+            return context.data.item.getArmorMaterial(data.armor_material_id);
+        },
+        headZones(data, args, context, info) {
+            return context.util.getLocale(data, 'headZones', info);
+        }
+    },
+    ItemPropertiesWeapon: {
+        defaultAmmo(data, args, context) {
+            return context.data.item.getItem(data.default_ammo_id);
         },
     },
     ContainedItem: {
