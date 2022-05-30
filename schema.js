@@ -44,6 +44,16 @@ type Ammo {
 #  value: Int!
 #}
 
+type ArmorMaterial {
+  name: String
+  destructibility: Float
+  minRepairDegradation: Float
+  maxRepairDegradation: Float
+  explosionDestructibility: Float
+  minRepairKitDegradation: Float
+  maxRepairKitDegradation: Float
+}
+
 type AttributeThreshold {
   name: String!
   requirement: NumberCompare!
@@ -155,6 +165,7 @@ type Item {
   gridImageLinkFallback: String!
   types: [ItemType]!
   avg24hPrice: Int
+  properties: ItemProperties
   accuracyModifier: Float
   recoilModifier: Float
   ergonomicsModifier: Float
@@ -214,6 +225,67 @@ type ItemPrice {
   requirements: [PriceRequirement]! @deprecated(reason: "Use vendor instead.")
 }
 
+type ItemPropertiesAmmo {
+  caliber: String!
+  stackMaxSize: Int!
+  tracer: Boolean!
+  tracerColor: String
+  ammoType: String!
+  projectileCount: Int
+  damage: Int!
+  armorDamage: Int!
+  fragmentationChance: Float!
+  ricochetChance: Float!
+  penetrationChance: Float!
+  penetrationPower: Int!
+  accuracy: Int!
+  recoil: Int!
+  initialSpeed: Int!
+  lightBleedModifier: Float!
+  heavyBleedModifier: Float!
+}
+
+type ItemPropertiesArmor {
+  class: Int
+  durability: Int
+  repairCost: Int
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
+  zones: [String]
+  material: ArmorMaterial
+}
+
+type ItemPropertiesFoodDrink {
+  energy: Int
+  hydration: Int
+  units: Int
+}
+
+type ItemPropertiesGrenade {
+  type: String
+  fuse: Float
+  minExplosionDistance: Int
+  maxExplosionDistance: Int
+  fragments: Int
+  contusionRadius: Int
+}
+
+type ItemPropertiesTacticalRig {
+  class: Int
+  durability: Int
+  repairCost: Int
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
+  zones: [String]
+  material: ArmorMaterial
+  capacity: Int
+  pouches: [ItemStorageGrid]
+}
+
+union ItemProperties = ItemPropertiesAmmo | ItemPropertiesArmor | ItemPropertiesFoodDrink | ItemPropertiesGrenade | ItemPropertiesTacticalRig
+
 enum ItemSourceName {
   prapor
   therapist
@@ -224,6 +296,11 @@ enum ItemSourceName {
   ragman
   jaeger
   fleaMarket
+}
+
+type ItemStorageGrid {
+  width: Int!
+  height: Int!
 }
 
 enum ItemType {
@@ -643,7 +720,7 @@ type Query {
   hideoutStations(lang: LanguageCode): [HideoutStation]!
   historicalItemPrices(id: ID!, lang: LanguageCode): [historicalPricePoint]!
   item(id: ID, normalizedName: String, lang: LanguageCode): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, bsgCategoryId: String, bsgCategory: String, lang: LanguageCode): [Item]!
+  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], bsgCategoryId: String, bsgCategory: String, lang: LanguageCode): [Item]!
   itemCategories: [ItemCategory]!
   maps(lang: LanguageCode): [Map]!
   status: ServerStatus!
