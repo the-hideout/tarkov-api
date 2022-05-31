@@ -358,6 +358,11 @@ class ItemsAPI {
         return this.cache.flea;
     }
 
+    async getArmorMaterials() {
+        await this.init();
+        return Object.values(this.cache.armorMats).sort();
+    }
+
     async getArmorMaterial(matKey) {
         await this.init();
         return this.cache.armorMats[matKey];

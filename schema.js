@@ -45,6 +45,7 @@ type Ammo {
 #}
 
 type ArmorMaterial {
+  id: String
   name: String
   destructibility: Float
   minRepairDegradation: Float
@@ -823,17 +824,18 @@ type Query {
   ammo(lang: LanguageCode): [Ammo]  
   barters(lang: LanguageCode): [Barter]
   crafts(lang: LanguageCode): [Craft]
-  fleaMarket(lang: LanguageCode): FleaMarket!
   hideoutStations(lang: LanguageCode): [HideoutStation]!
   historicalItemPrices(id: ID!, lang: LanguageCode): [historicalPricePoint]!
   item(id: ID, normalizedName: String, lang: LanguageCode): Item
   items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode): [Item]!
-  itemCategories: [ItemCategory]!
+  itemCategories(lang: LanguageCode): [ItemCategory]!
   maps(lang: LanguageCode): [Map]!
   status: ServerStatus!
   task(id: ID!, lang: LanguageCode): Task
   tasks(faction: String, lang: LanguageCode): [Task]!
   traders(lang: LanguageCode): [Trader]!
+  fleaMarket(lang: LanguageCode): FleaMarket!
+  armorMaterials(lang: LanguageCode): [ArmorMaterial]!
   hideoutModules: [HideoutModule] @deprecated(reason: "Use hideoutStations instead.")
   itemsByIDs(ids: [ID]!): [Item] @deprecated(reason: "Use items instead.")
   itemsByType(type: ItemType!): [Item]! @deprecated(reason: "Use items instead.")

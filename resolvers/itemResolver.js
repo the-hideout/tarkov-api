@@ -70,6 +70,9 @@ module.exports = {
         historicalItemPrices(obj, args, context, info) {
             return context.data.historicalPrice.getByItemId(args.id);
         },
+        armorMaterials(obj, args, context) {
+            return context.data.item.getArmorMaterials();
+        },
         fleaMarket(obj, args, context) {
             return context.data.item.getFleaMarket();
         }
@@ -225,8 +228,8 @@ module.exports = {
         }
     },
     FleaMarket: {
-        name(data) {
-            return 'Flea Market';
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
         }
     },
     RequirementItem: {
