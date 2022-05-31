@@ -153,14 +153,6 @@ module.exports = {
             return null;
         }
     },
-    ItemGroup: {
-        items(data, args, context) {
-            return data.items.map(async item => {
-                item = await item;
-                return context.data.item.getItem(item.id);
-            })
-        }
-    },
     ItemPrice: {
         currencyItem(data, args, context) {
             return context.data.item.getItem(data.currencyItem);
