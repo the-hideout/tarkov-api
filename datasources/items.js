@@ -94,10 +94,9 @@ class ItemsAPI {
         const formatted = await this.formatItem(item);
         if (contains && Array.isArray(contains)) {
             formatted.containsItems = contains.map((cItem) => {
-                return {
-                    ...cItem,
-                    attributes: []
-                }
+                if (!cItem.attributes) cItem.attributes = [];
+                if (!cItem.count) cItem.count = 1;
+                return cItem;
             });
         }
         return formatted;

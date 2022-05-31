@@ -27,7 +27,8 @@ module.exports = {
             return context.data.trader.get(data.trader);
         },
         map(data, args, context) {
-            return context.data.map.get(data.location_id);
+            if (data.location_id) return context.data.map.get(data.location_id);
+            return null;
         }
     },
     TaskKey: {
@@ -142,7 +143,7 @@ module.exports = {
     },
     TaskObjectiveMark: {
         markerItem(data, args, context) {
-            return context.data.item.getItem(data.markerItem);
+            return context.data.item.getItem(data.item_id);
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
@@ -194,25 +195,21 @@ module.exports = {
         },
         usingWeaponMods(data, args, context) {
             return data.usingWeaponMods.map(itemGroup => {
-                return {
-                    items: itemGroup.map(item => {
-                        return context.data.item.getItem(item.id);
-                    })
-                };
+                return itemGroup.map(item => {
+                    return context.data.item.getItem(item.id);
+                });
             });
         },
         wearing(data, args, context) {
             return data.wearing.map(itemGroup => {
-                return {
-                    items: itemGroup.map(item => {
-                        return context.data.item.getItem(item.id);
-                    })
-                };
+                return itemGroup.map(item => {
+                    return context.data.item.getItem(item.id);
+                });
             });
         },
         notWearing(data, args, context) {
-            return data.notWearing.map((id) => {
-                return context.data.item.getItem(id);
+            return data.notWearing.map((item) => {
+                return context.data.item.getItem(item.id);
             });
         },
         maps(data, args, context) {

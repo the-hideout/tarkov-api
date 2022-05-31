@@ -212,10 +212,6 @@ type ItemCategory {
   parent: ItemCategory
 }
 
-type ItemGroup {
-  items: [Item]!
-}
-
 type ItemPrice {
   vendor: Vendor!
   price: Int
@@ -699,8 +695,8 @@ type TaskObjectiveShoot implements TaskObjective {
   zoneNames: [String]!
   bodyParts: [String]!
   usingWeapon: [Item]
-  usingWeaponMods: [ItemGroup]
-  wearing: [ItemGroup]
+  usingWeaponMods: [[Item]]
+  wearing: [[Item]]
   notWearing: [Item]
   distance: NumberCompare
   playerHealthEffect: HealthEffect
