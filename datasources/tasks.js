@@ -29,7 +29,7 @@ class TasksAPI {
     async get(id) {
         await this.init();
         for (const task of this.cache.data) {
-            if (task.id === id || task.tarkovDataId) return task;
+            if (task.id === id || task.tarkovDataId === id) return task;
         }
         return Promise.reject(new Error(`No task found with id ${id}`));
     }
