@@ -18,7 +18,7 @@ jobs:
 
     steps:
 
-      - uses: GrantBirki/branch-deploy@8290f4d0376d06d0ecd74c05363bc045e7e6950a # pin@v1.4.1
+      - uses: GrantBirki/branch-deploy@5d7ea46552d858242fa4bf16625e9f29b1ee1b63 # pin@v1.4.2
         id: branch-deploy
 
       - name: Checkout
