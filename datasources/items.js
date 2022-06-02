@@ -1,3 +1,5 @@
+const { item } = require(".");
+
 class ItemsAPI {
     constructor(){
         this.cache = false;
@@ -10,7 +12,7 @@ class ItemsAPI {
             if(this.cache){
                 return true;
             }
-            this.loading = ITEM_DATA.get('ITEM_CACHE_V3', 'json');
+            this.loading = ITEM_DATA.get('ITEM_CACHE_V4', 'json');
             this.cache = await this.loading;
             this.loading = false;
         } catch (error){
@@ -137,6 +139,24 @@ class ItemsAPI {
         });
     }
 
+    async getItemsByTypes(types, items = false) {
+        await this.init();
+        let format = false;
+        if (!items) {
+            items = Object.values(this.cache.data);
+            format = true;
+        }
+        return items.filter((rawItem) => {
+            for (const type of types) {
+                if (rawItem.types.includes(type) || type === 'any') return true;
+            }
+            return false;
+        }).map((rawItem) => {
+            if (!format) return rawItem;
+            return this.formatItem(rawItem);
+        });
+    }
+
     async getItemsByName(name, items = false, lang = 'en') {
         await this.init();
         let format = false;
@@ -181,7 +201,6 @@ class ItemsAPI {
                 if (rawItem.locale[lang].shortName && rawItem.locale[lang].shortName.toString().toLowerCase().includes(search)) {
                     return true;
                 }
-                return false;
             }
             return false;
         }).map((rawItem) => {
@@ -198,11 +217,52 @@ class ItemsAPI {
             format = true;
         }
         return items.filter((rawItem) => {
-            if (!rawItem.properties) {
-                return false;
-            }
+            return rawItem.bsgCategoryId === bsgCategoryId;
+        }).map((rawItem) => {
+            if (!format) return rawItem;
+            return this.formatItem(rawItem)
+        });
+    }
 
-            return rawItem.properties.bsgCategoryId === bsgCategoryId;
+    async getItemsByBsgCategoryIds(bsgCategoryIds, items = false) {
+        await this.init();
+        let format = false;
+        if (!items) {
+            items = Object.values(this.cache.data);
+            format = true;
+        }
+        return items.filter((rawItem) => {
+            for (const bsgCategoryId of bsgCategoryIds) {
+                if (rawItem.bsgCategoryId === bsgCategoryId) {
+                    return true;
+                }
+            }
+            return false;
+        }).map((rawItem) => {
+            if (!format) return rawItem;
+            return this.formatItem(rawItem)
+        });
+    }
+
+    async getItemsByCategoryEnums(names, items = false) {
+        await this.init();
+        let format = false;
+        if (!items) {
+            items = Object.values(this.cache.data);
+            format = true;
+        }
+        const categories = await this.getCategoriesEnum();
+        return items.filter((rawItem) => {
+            for (const name of names) {
+                const includedCats = [
+                    categories[name].id,
+                    ...this.getSubCategories(categories[name].id)
+                ];
+                if (includedCats.includes(rawItem.bsgCategoryId)) {
+                    return true;
+                }
+            }
+            return false;
         }).map((rawItem) => {
             if (!format) return rawItem;
             return this.formatItem(rawItem)
@@ -221,8 +281,7 @@ class ItemsAPI {
             ...this.getSubCategories(bsgCategoryId)
         ];
         return items.filter(item => {
-            if (!item.properties) return false;
-            return categories.includes(item.properties.bsgCategoryId);
+            return categories.includes(item.bsgCategoryId);
         }).map(item => {
             if (!format) return item;
             return this.formatItem(item);
@@ -284,9 +343,28 @@ class ItemsAPI {
         return categories;
     }
 
+    async getCategoriesEnum() {
+        const cats = await this.getCategories();
+        const map = {};
+        for (const id in cats) {
+            map[cats[id].enumName] = cats[id];
+        }
+        return map;
+    }
+
     async getFleaMarket() {
         await this.init();
         return this.cache.flea;
+    }
+
+    async getArmorMaterials() {
+        await this.init();
+        return Object.values(this.cache.armorMats).sort();
+    }
+
+    async getArmorMaterial(matKey) {
+        await this.init();
+        return this.cache.armorMats[matKey];
     }
 }
 

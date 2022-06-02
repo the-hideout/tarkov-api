@@ -21,8 +21,17 @@ module.exports = {
                 type: async type => {
                     return context.data.item.getItemsByType(type, items);
                 },
+                types: async types => {
+                    return context.data.item.getItemsByTypes(types, items);
+                },
+                categoryNames: async bsgcats => {
+                    return context.data.item.getItemsByCategoryEnums(bsgcats, items);
+                },
                 bsgCategoryId: async bsgcat => {
                     return context.data.item.getItemsByBsgCategoryId(bsgcat, items);
+                },
+                bsgCategoryIds: async bsgcats => {
+                    return context.data.item.getItemsByBsgCategoryIds(bsgcats, items);
                 },
                 bsgCategory: async bsgcat => {
                     return context.data.item.getItemsInBsgCategory(bsgcat, items);
@@ -60,6 +69,9 @@ module.exports = {
         },
         historicalItemPrices(obj, args, context, info) {
             return context.data.historicalPrice.getByItemId(args.id);
+        },
+        armorMaterials(obj, args, context) {
+            return context.data.item.getArmorMaterials();
         },
         fleaMarket(obj, args, context) {
             return context.data.item.getFleaMarket();
@@ -158,6 +170,41 @@ module.exports = {
             return context.data.item.getItem(data.currencyItem);
         }
     },
+    ItemProperties: {
+        __resolveType(data) {
+            if (data.propertiesType) return data.propertiesType;
+            return null;
+        }
+    },
+    ItemPropertiesArmor: {
+        material(data, args, context) {
+            return context.data.item.getArmorMaterial(data.armor_material_id);
+        },
+        zones(data, args, context, info) {
+            return context.util.getLocale(data, 'zones', info);
+        }
+    },
+    ItemPropertiesChestRig: {
+        material(data, args, context) {
+            return context.data.item.getArmorMaterial(data.armor_material_id);
+        },
+        zones(data, args, context, info) {
+            return context.util.getLocale(data, 'zones', info);
+        }
+    },
+    ItemPropertiesHelmet: {
+        material(data, args, context) {
+            return context.data.item.getArmorMaterial(data.armor_material_id);
+        },
+        headZones(data, args, context, info) {
+            return context.util.getLocale(data, 'headZones', info);
+        }
+    },
+    ItemPropertiesWeapon: {
+        defaultAmmo(data, args, context) {
+            return context.data.item.getItem(data.default_ammo_id);
+        },
+    },
     ContainedItem: {
         item(data, args, context) {
             if (data.contains) return context.data.item.getItem(data.item, data.contains);
@@ -167,9 +214,14 @@ module.exports = {
             return data.count;
         }
     },
+    ArmorMaterial: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        }
+    },
     FleaMarket: {
-        name(data) {
-            return 'Flea Market';
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
         }
     },
     RequirementItem: {

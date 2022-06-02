@@ -44,6 +44,17 @@ type Ammo {
 #  value: Int!
 #}
 
+type ArmorMaterial {
+  id: String
+  name: String
+  destructibility: Float
+  minRepairDegradation: Float
+  maxRepairDegradation: Float
+  explosionDestructibility: Float
+  minRepairKitDegradation: Float
+  maxRepairKitDegradation: Float
+}
+
 type AttributeThreshold {
   name: String!
   requirement: NumberCompare!
@@ -155,6 +166,7 @@ type Item {
   gridImageLinkFallback: String!
   types: [ItemType]!
   avg24hPrice: Int
+  properties: ItemProperties
   accuracyModifier: Float
   recoilModifier: Float
   ergonomicsModifier: Float
@@ -210,6 +222,174 @@ type ItemPrice {
   requirements: [PriceRequirement]! @deprecated(reason: "Use vendor instead.")
 }
 
+type ItemPropertiesAmmo {
+  caliber: String!
+  stackMaxSize: Int!
+  tracer: Boolean!
+  tracerColor: String
+  ammoType: String!
+  projectileCount: Int
+  damage: Int!
+  armorDamage: Int!
+  fragmentationChance: Float!
+  ricochetChance: Float!
+  penetrationChance: Float!
+  penetrationPower: Int!
+  accuracy: Int!
+  recoil: Int!
+  initialSpeed: Int!
+  lightBleedModifier: Float!
+  heavyBleedModifier: Float!
+}
+
+type ItemPropertiesArmor {
+  class: Int
+  durability: Int
+  repairCost: Int
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
+  zones: [String]
+  material: ArmorMaterial
+}
+
+type ItemPropertiesArmorAttachment {
+  class: Int
+  durability: Int
+  repairCost: Int
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
+  headZones: [String]
+  material: ArmorMaterial
+}
+
+type ItemPropertiesChestRig {
+  class: Int
+  durability: Int
+  repairCost: Int
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
+  zones: [String]
+  material: ArmorMaterial
+  capacity: Int
+  pouches: [ItemStorageGrid]
+}
+
+type ItemPropertiesFoodDrink {
+  energy: Int
+  hydration: Int
+  units: Int
+}
+
+type ItemPropertiesGrenade {
+  type: String
+  fuse: Float
+  minExplosionDistance: Int
+  maxExplosionDistance: Int
+  fragments: Int
+  contusionRadius: Int
+}
+
+type ItemPropertiesHelmet {
+  class: Int
+  durability: Int
+  repairCost: Int
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
+  headZones: [String]
+  material: ArmorMaterial
+  deafening: String
+}
+
+type ItemPropertiesMagazine {
+  ergonomics: Float
+  recoil: Float
+  capacity: Int
+  loadModifier: Float
+  ammoCheckModifier: Float
+  malfunctionChance: Float
+}
+
+type ItemPropertiesMedicalItem {
+  uses: Int
+  useTime: Int
+  cures: [String]
+}
+
+type ItemPropertiesMedKit {
+  hitpoints: Int
+  useTime: Int
+  maxHealPerUse: Int
+  cures: [String]
+  hpCostLightBleeding: Int
+  hpCostHeavyBleeding: Int
+}
+
+type ItemPropertiesNightVision {
+  intensity: Float
+  noiseIntensity: Float
+  noiseScale: Float
+  diffuseIntensity: Float
+}
+
+type ItemPropertiesPainkiller {
+  uses: Int
+  useTime: Int
+  cures: [String]
+  painkillerDuration: Int
+  energyImpact: Int
+  hydrationImpact: Int
+}
+
+type ItemPropertiesScope {
+  ergonomics: Float
+  recoil: Float
+  zoomLevels: [[Float]]
+}
+
+type ItemPropertiesSurgicalKit {
+  uses: Int
+  useTime: Int
+  cures: [String]
+  minLimbHealth: Float
+  maxLimbHealth: Float
+}
+
+type ItemPropertiesWeapon {
+  caliber: String
+  ergonomics: Float
+  recoilVertical: Int
+  recoilHorizontal: Int
+  repairCost: Int
+  defaultAmmo: Item
+}
+
+type ItemPropertiesWeaponMod {
+  ergonomics: Float
+  recoil: Float
+}
+
+union ItemProperties = 
+  ItemPropertiesAmmo | 
+  ItemPropertiesArmor | 
+  ItemPropertiesArmorAttachment | 
+  ItemPropertiesChestRig | 
+  ItemPropertiesFoodDrink | 
+  ItemPropertiesGrenade | 
+  ItemPropertiesHelmet | 
+  ItemPropertiesMagazine | 
+  ItemPropertiesMedicalItem | 
+  ItemPropertiesMedKit | 
+  ItemPropertiesNightVision | 
+  ItemPropertiesPainkiller | 
+  ItemPropertiesScope | 
+  ItemPropertiesSurgicalKit | 
+  ItemPropertiesWeapon | 
+  ItemPropertiesWeaponMod
+
 enum ItemSourceName {
   prapor
   therapist
@@ -220,6 +400,11 @@ enum ItemSourceName {
   ragman
   jaeger
   fleaMarket
+}
+
+type ItemStorageGrid {
+  width: Int!
+  height: Int!
 }
 
 enum ItemType {
@@ -635,17 +820,18 @@ type Query {
   ammo(lang: LanguageCode): [Ammo]  
   barters(lang: LanguageCode): [Barter]
   crafts(lang: LanguageCode): [Craft]
-  fleaMarket(lang: LanguageCode): FleaMarket!
   hideoutStations(lang: LanguageCode): [HideoutStation]!
   historicalItemPrices(id: ID!, lang: LanguageCode): [historicalPricePoint]!
   item(id: ID, normalizedName: String, lang: LanguageCode): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, bsgCategoryId: String, bsgCategory: String, lang: LanguageCode): [Item]!
-  itemCategories: [ItemCategory]!
+  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode): [Item]!
+  itemCategories(lang: LanguageCode): [ItemCategory]!
   maps(lang: LanguageCode): [Map]!
   status: ServerStatus!
   task(id: ID!, lang: LanguageCode): Task
   tasks(faction: String, lang: LanguageCode): [Task]!
   traders(lang: LanguageCode): [Trader]!
+  fleaMarket(lang: LanguageCode): FleaMarket!
+  armorMaterials(lang: LanguageCode): [ArmorMaterial]!
   hideoutModules: [HideoutModule] @deprecated(reason: "Use hideoutStations instead.")
   itemsByIDs(ids: [ID]!): [Item] @deprecated(reason: "Use items instead.")
   itemsByType(type: ItemType!): [Item]! @deprecated(reason: "Use items instead.")
