@@ -1,4 +1,4 @@
-# The Hideout API 💻
+# The Hideout API (Escape from Tarkov) 💻
 
 [![deploy](https://github.com/the-hideout/tarkov-data-api/actions/workflows/deploy.yml/badge.svg)](https://github.com/the-hideout/tarkov-data-api/actions/workflows/deploy.yml) [![Discord](https://img.shields.io/discord/956236955815907388?color=7388DA&label=Discord)](https://discord.gg/XPAsKGHSzH)
 
@@ -11,6 +11,17 @@ This API powers all of tarkov.dev and other notable projects as well:
 - [ratscanner](https://github.com/RatScanner/RatScanner)
 - [errbot](https://github.com/GrantBirki/errbot)
 - [thehideout](https://play.google.com/store/apps/details?id=com.austinhodak.thehideout&hl=en_US&gl=US)
+
+## What is this? 💡
+
+A community made GraphQL API for Escape from Tarkov
+
+- 🆓 Free
+- 🔨 Easy to use
+- 📖 Open source
+- 🧑‍🤝‍🧑 Community driven
+- ⚡ Ultra fast
+- ⏰ Data is constantly updated in real-time
 
 ## API Playground 🎾
 
