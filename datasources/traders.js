@@ -45,13 +45,13 @@ class TradersAPI {
             if (this.loading) {
                 return new Promise((resolve) => {
                     const isDone = () => {
-                      if (this.loading === false) {
-                        resolve()
-                      } else {
-                        setTimeout(isDone, 5)
-                      }
+                        if (this.loading === false) {
+                            resolve();
+                        } else {
+                            setTimeout(isDone, 5);
+                        }
                     }
-                    isDone()
+                    isDone();
                 });
             }
             if(this.cache){
