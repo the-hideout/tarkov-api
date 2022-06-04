@@ -1,11 +1,8 @@
-const crypto = require('crypto');
+//const crypto = require('crypto');
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { mergeTypeDefs } = require('@graphql-tools/merge');
 
-const {
-    graphql,
-    buildSchema,
-} = require('graphql');
+const { graphql } = require('graphql');
 
 const dataAPI = require('./datasources');
 const playground = require('./handlers/playground');
@@ -20,14 +17,48 @@ require('./loader');
 const nightbot = require('./custom-endpoints/nightbot');
 const twitch = require('./custom-endpoints/twitch');
 
+let schema = false;
+let loadingSchema = false;
+
 /**
  * Example of how router can be used in an application
  *  */
+
+async function getSchema() {
+    if (schema){
+        return schema;
+    }
+    if (loadingSchema) {
+        return new Promise((resolve) => {
+            const isDone = () => {
+                if (loadingSchema === false) {
+                    resolve(schema);
+                } else {
+                    setTimeout(isDone, 5);
+                }
+            }
+            isDone();
+        });
+    }
+    loadingSchema = true;
+    return new Promise((resolve, reject) => {
+        dynamicTypeDefs(dataAPI).then(dynamicTypeDefs => {
+            schema = makeExecutableSchema({typeDefs: mergeTypeDefs([typeDefs, dynamicTypeDefs]), resolvers: resolvers});
+            loadingSchema = false;
+            resolve(schema);
+        }).catch(error => {
+            loadingSchema = false;
+            reject(error);
+        });
+    });
+}
+
 addEventListener('fetch', event => {
-    event.respondWith(handleRequest(event.request));
+    event.respondWith(handleRequest(event));
 });
 
-async function graphqlHandler(request, graphQLOptions) {
+async function graphqlHandler(event, graphQLOptions) {
+    const request = event.request;
     const url = new URL(request.url);
     let query = false;
     let variables = false;
@@ -51,14 +82,14 @@ async function graphqlHandler(request, graphQLOptions) {
         variables = url.searchParams.get('variables');
     }
 
-    const queryHashString = JSON.stringify({
+    /* const queryHashString = JSON.stringify({
         query: query,
         variables: variables,
     });
 
     const queryHash = crypto.createHash('md5').update(queryHashString).digest('hex');
 
-    /* if(!url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
+    if(!url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
         const cachedResponse = await QUERY_CACHE.get(queryHash, 'json');
 
         if(cachedResponse){
@@ -70,12 +101,8 @@ async function graphqlHandler(request, graphQLOptions) {
         }
     } */
 
-    //await resolvers.itemInit();
-    //await dataAPI.init();
-
-    //const schema = buildSchema(typeDefs);
-    const schema = makeExecutableSchema({typeDefs: mergeTypeDefs([typeDefs, await dynamicTypeDefs(dataAPI)]), resolvers: resolvers});
-    const result = await graphql(schema, query, {}, {data: dataAPI, util: graphqlUtil}, variables);
+    //const schema = makeExecutableSchema({typeDefs: mergeTypeDefs([typeDefs, await dynamicTypeDefs(dataAPI)]), resolvers: resolvers});
+    const result = await graphql(await getSchema(), query, {}, {data: dataAPI, util: graphqlUtil}, variables);
     const body = JSON.stringify(result);
 
     /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
@@ -121,7 +148,8 @@ const graphQLOptions = {
     kvCache: false,
 };
 
-const handleRequest = async request => {
+const handleRequest = async event => {
+    const request = event.request;
     const url = new URL(request.url);
 
     // Check for empty /graphql query
@@ -159,7 +187,7 @@ const handleRequest = async request => {
         }
 
         if (url.pathname === graphQLOptions.baseEndpoint) {
-            const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(request, graphQLOptions);
+            const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(event, graphQLOptions);
             if (graphQLOptions.cors) {
                 setCors(response, graphQLOptions.cors);
             }
@@ -179,3 +207,7 @@ const handleRequest = async request => {
         return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
     }
 };
+
+(async () => {
+    initSchema();
+})();
