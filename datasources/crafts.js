@@ -1,36 +1,9 @@
 // datasource for crafts 
-class CraftsAPI {
-    constructor(){
-        this.cache = false;
-        this.loading = false;
-    }
+const WorkerKV = require('../utils/worker-kv');
 
-    async init(){
-        try {
-            if (this.loading) {
-                return new Promise((resolve) => {
-                    const isDone = () => {
-                        if (this.loading === false) {
-                            resolve();
-                        } else {
-                            setTimeout(isDone, 5);
-                        }
-                    }
-                    isDone();
-                });
-            }
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('CRAFT_DATA_V2', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (loadDataError){
-            console.error(loadDataError);
-        }
-        if(!this.cache){
-            return Promise.reject(new Error('Crafts cache failed to load'));
-        }
+class CraftsAPI extends WorkerKV {
+    constructor(){
+        super('CRAFT_DATA_V2');
     }
 
     async getList() {

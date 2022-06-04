@@ -1,3 +1,5 @@
+const WorkerKV = require('../utils/worker-kv');
+
 const currencyMap = {
     RUB: '5449016a4bdc2d6f028b456f',
     USD: '5696686a4bdc2da3298b456a',
@@ -34,38 +36,9 @@ const traderNameIdMap = {
     'Jaeger': '5c0647fdd443bc2504c2d371',
 };
 
-class TradersAPI {
-    constructor(){
-        this.cache = false;
-        this.loading = false;
-    }
-
-    async init(){
-        try {
-            if (this.loading) {
-                return new Promise((resolve) => {
-                    const isDone = () => {
-                        if (this.loading === false) {
-                            resolve();
-                        } else {
-                            setTimeout(isDone, 5);
-                        }
-                    }
-                    isDone();
-                });
-            }
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('TRADER_DATA_V2', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (error){
-            console.error(error);
-        }
-        if (!this.cache) {
-            return Promise.reject(new Error('Trader cache failed to load'));
-        }
+class TradersAPI extends WorkerKV {
+    constructor() {
+        super('TRADER_DATA_V2');
     }
 
     async getList() {

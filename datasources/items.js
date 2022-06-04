@@ -1,37 +1,8 @@
-const { item } = require(".");
+const WorkerKV = require('../utils/worker-kv');
 
-class ItemsAPI {
-    constructor(){
-        this.cache = false;
-        this.loading = false;
-    }
-
-    async init(){
-        try {
-            if (this.loading) {
-                return new Promise((resolve) => {
-                    const isDone = () => {
-                        if (this.loading === false) {
-                            resolve();
-                        } else {
-                            setTimeout(isDone, 5);
-                        }
-                    }
-                    isDone();
-                });
-            }
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('ITEM_CACHE_V4', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (error){
-            console.error(error);
-        }
-        if (!this.cache) {
-            return Promise.reject(new Error('Item cache failed to load'));
-        }
+class ItemsAPI extends WorkerKV {
+    constructor() {
+        super('ITEM_CACHE_V4');
     }
 
     formatItem(rawItem) {

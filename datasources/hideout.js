@@ -1,35 +1,8 @@
-class HideoutAPI {
-    constructor(){
-        this.cache = false;
-        this.loading = false;
-    }
+const WorkerKV = require('../utils/worker-kv');
 
-    async init(){
-        try {
-            if (this.loading) {
-                return new Promise((resolve) => {
-                    const isDone = () => {
-                        if (this.loading === false) {
-                            resolve();
-                        } else {
-                            setTimeout(isDone, 5);
-                        }
-                    }
-                    isDone();
-                });
-            }
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('HIDEOUT_DATA_V3', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (error){
-            console.error(error);
-        }
-        if(!this.cache){
-            return Promise.reject(new Error('Hideout cache failed to load'));
-        }
+class HideoutAPI extends WorkerKV {
+    constructor() {
+        super('HIDEOUT_DATA_V3');
     }
 
     async getList(){
