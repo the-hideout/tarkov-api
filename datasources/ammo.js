@@ -8,10 +8,19 @@ class AmmoAPI {
     async init(){
         try {
             if (this.loading) {
-            await this.loading;
+                return new Promise((resolve) => {
+                    const isDone = () => {
+                      if (this.loading === false) {
+                        resolve()
+                      } else {
+                        setTimeout(isDone, 5)
+                      }
+                    }
+                    isDone()
+                });
             }
-            if(this.cache){
-            return true;
+            if (this.cache){
+                return true;
             }
             this.loading = ITEM_DATA.get('AMMO_DATA', 'json');
             this.cache = await this.loading;

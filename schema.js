@@ -181,8 +181,8 @@ type Item {
   sellFor: [ItemPrice!]
   buyFor: [ItemPrice!]
   containsItems: [ContainedItem]
+  category: ItemCategory
   bsgCategoryId: String
-  bsgCategory: ItemCategory
   weight: Float
   velocity: Float
   loudness: Int
@@ -198,6 +198,7 @@ type Item {
   fleaMarketFee(price: Int, intelCenterLevel: Int, hideoutManagementLevel: Int, count: Int, requireAll: Boolean): Int
   translation(languageCode: LanguageCode): ItemTranslation @deprecated(reason: "Use the lang argument on queries instead.")
   traderPrices: [TraderPrice]! @deprecated(reason: "Use sellFor instead.")
+  bsgCategory: ItemCategory @deprecated(reason: "Use category instead.")
 }
 
 type ItemAttribute {

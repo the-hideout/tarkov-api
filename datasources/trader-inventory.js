@@ -7,7 +7,18 @@ class TraderInventoryAPI {
 
     async init(){
         try {
-            if (this.loading) await this.loading;
+            if (this.loading) {
+                return new Promise((resolve) => {
+                    const isDone = () => {
+                      if (this.loading === false) {
+                        resolve()
+                      } else {
+                        setTimeout(isDone, 5)
+                      }
+                    }
+                    isDone()
+                });
+            }
             if (this.cache){
                 return true;
             }
