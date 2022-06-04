@@ -2,7 +2,7 @@ module.exports = `
 type Ammo {
   item: Item!
   weight: Float!
-  caliber: String!
+  caliber: String
   stackMaxSize: Int!
   tracer: Boolean!
   tracerColor: String
@@ -15,7 +15,7 @@ type Ammo {
   penetrationChance: Float!
   penetrationPower: Int!
   accuracy: Int!
-  recoil: Int!
+  recoil: Int
   initialSpeed: Int!
   lightBleedModifier: Float!
   heavyBleedModifier: Float!
@@ -224,23 +224,23 @@ type ItemPrice {
 }
 
 type ItemPropertiesAmmo {
-  caliber: String!
-  stackMaxSize: Int!
-  tracer: Boolean!
+  caliber: String
+  stackMaxSize: Int
+  tracer: Boolean
   tracerColor: String
-  ammoType: String!
+  ammoType: String
   projectileCount: Int
-  damage: Int!
-  armorDamage: Int!
-  fragmentationChance: Float!
-  ricochetChance: Float!
-  penetrationChance: Float!
-  penetrationPower: Int!
-  accuracy: Int!
-  recoil: Int!
-  initialSpeed: Int!
-  lightBleedModifier: Float!
-  heavyBleedModifier: Float!
+  damage: Int
+  armorDamage: Int
+  fragmentationChance: Float
+  ricochetChance: Float
+  penetrationChance: Float
+  penetrationPower: Int
+  accuracy: Int
+  recoil: Float
+  initialSpeed: Int
+  lightBleedModifier: Float
+  heavyBleedModifier: Float
 }
 
 type ItemPropertiesArmor {
