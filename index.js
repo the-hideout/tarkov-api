@@ -12,7 +12,7 @@ const dynamicTypeDefs = require('./schema_dynamic');
 const resolvers = require('./resolvers');
 const graphqlUtil = require('./utils/graphql-util');
 
-require('./loader');
+//require('./loader');
 
 const nightbot = require('./custom-endpoints/nightbot');
 const twitch = require('./custom-endpoints/twitch');
@@ -166,15 +166,15 @@ const handleRequest = async event => {
 
     try {
         if(url.pathname === '/webhook/nightbot'){
-            return nightbot(request);
+            return nightbot(request, dataAPI);
         }
 
         if(url.pathname === '/webhook/stream-elements'){
-            return nightbot(request);
+            return nightbot(request, dataAPI);
         }
 
         if(url.pathname === '/webhook/moobot'){
-            return nightbot(request);
+            return nightbot(request, dataAPI);
         }
 
         if(url.pathname === '/twitch'){

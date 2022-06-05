@@ -1,19 +1,15 @@
-const ItemsAPI = require('../datasources/items');
-const itemsAPI = new ItemsAPI();
-
 function capitalize(s){
     return s && s[0].toUpperCase() + s.slice(1);
 }
 
-module.exports = async (request) => {
-    await itemsAPI.init();
+module.exports = async (request, data) => {
     const url = new URL(request.url);
 
     if(!url.searchParams.get('q')){
         return new Response(`Missing a query param called q`);
     }
 
-    const items = itemsAPI.getItemsByName(url.searchParams.get('q'));
+    const items = await data.item.getItemsByName(url.searchParams.get('q'));
 
     if(items.length === 0){
         return new Response(`Found no item matching that name`);
