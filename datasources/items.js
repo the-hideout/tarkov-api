@@ -145,7 +145,7 @@ class ItemsAPI extends WorkerKV {
             format = true;
         }
         const searchString = name.toLowerCase();
-        if (searchString === '') return Promise.reject(new Error('Item name cannot be blank'));
+        if (searchString === '') return Promise.reject(new Error('Searched item name cannot be blank'));
 
         return items.filter((rawItem) => {
             if (!rawItem.locale || !rawItem.locale[lang]) return false;
@@ -170,7 +170,7 @@ class ItemsAPI extends WorkerKV {
             format = true;
         }
         const searchStrings = names.map(name => {
-            if (name === '') throw new Error('Item name cannot be blank');
+            if (name === '') throw new Error('Searched item name cannot be blank');
             return name.toLowerCase();
         });
         console.log(lang);
