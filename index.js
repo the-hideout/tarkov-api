@@ -101,7 +101,6 @@ async function graphqlHandler(event, graphQLOptions) {
         }
     } */
 
-    //const schema = makeExecutableSchema({typeDefs: mergeTypeDefs([typeDefs, await dynamicTypeDefs(dataAPI)]), resolvers: resolvers});
     const result = await graphql(await getSchema(), query, {}, {data: dataAPI, util: graphqlUtil}, variables);
     const body = JSON.stringify(result);
 

@@ -46,7 +46,9 @@ module.exports = {
                 if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
                 items = await filters[argName](args[argName], items);
             }
-            if (!items) return context.data.item.getAllItems();
+            if (!items) {
+                items = context.data.item.getAllItems();
+            }
             return items;
         },
         itemCategories(obj, args, context) {

@@ -48,7 +48,6 @@ class TradersAPI extends WorkerKV {
 
     async get(id) {
         await this.init();
-        if (!this.cache) return {};
         for (const trader of this.cache.data){
             if(trader.id === id){
                 return trader;
@@ -60,7 +59,6 @@ class TradersAPI extends WorkerKV {
 
     async getByName(name) {
         await this.init();
-        if (!this.cache) return {};
         for(const trader of this.cache.data){
             if(trader.name.toLowerCase() === name.toLowerCase()){
                 return trader;
@@ -72,7 +70,6 @@ class TradersAPI extends WorkerKV {
 
     async getByLevel(traderId, level) {
         await this.init();
-        if (!this.cache) return {};
         for (const trader of this.cache.data) {
             if (trader.id !== traderId) continue;
             for (const rawLevel of trader.levels) {
@@ -90,7 +87,6 @@ class TradersAPI extends WorkerKV {
 
     async getTraderResets() {
         await this.init();
-        if (!this.cache) return [];
         return this.cache.data.map(trader => {
             return {
                 name: trader.name.toLowerCase(),
