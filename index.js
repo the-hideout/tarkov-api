@@ -1,7 +1,8 @@
 //const crypto = require('crypto');
+const {EventEmitter} = require('events');
+
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { mergeTypeDefs } = require('@graphql-tools/merge');
-
 const { graphql } = require('graphql');
 
 const dataAPI = require('./datasources');
@@ -19,6 +20,8 @@ const twitch = require('./custom-endpoints/twitch');
 
 let schema = false;
 let loadingSchema = false;
+const schemaEvents = new EventEmitter();
+schemaEvents.setMaxListeners(0);
 
 /**
  * Example of how router can be used in an application
@@ -30,14 +33,9 @@ async function getSchema() {
     }
     if (loadingSchema) {
         return new Promise((resolve) => {
-            const isDone = () => {
-                if (loadingSchema === false) {
-                    resolve(schema);
-                } else {
-                    setTimeout(isDone, 5);
-                }
-            }
-            isDone();
+            schemaEvents.once('loaded', () => {
+                resolve();
+            });
         });
     }
     loadingSchema = true;
@@ -45,6 +43,7 @@ async function getSchema() {
         dynamicTypeDefs(dataAPI).then(dynamicTypeDefs => {
             schema = makeExecutableSchema({typeDefs: mergeTypeDefs([typeDefs, dynamicTypeDefs]), resolvers: resolvers});
             loadingSchema = false;
+            schemaEvents.emit('loaded');
             resolve(schema);
         }).catch(error => {
             loadingSchema = false;

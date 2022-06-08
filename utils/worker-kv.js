@@ -15,7 +15,7 @@ class WorkerKV {
         }
         if (this.loading) {
             return new Promise((resolve) => {
-                this.events.on('loaded', () => {
+                this.events.once('loaded', () => {
                     resolve();
                 });
             });
