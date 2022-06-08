@@ -178,6 +178,7 @@ type Item {
   changeLast48hPercent: Float
   low24hPrice: Int
   high24hPrice: Int
+  lastOfferCount: Int
   sellFor: [ItemPrice!]
   buyFor: [ItemPrice!]
   containsItems: [ContainedItem]
