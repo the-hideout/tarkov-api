@@ -1,24 +1,8 @@
-class BartersAPI {
-    constructor(){
-        this.cache = false;
-        this.loading = false;
-    }
+const WorkerKV = require('../utils/worker-kv');
 
-    async init(){
-        try {
-            if (this.loading) await this.loading;
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('BARTER_DATA_V2', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (loadDataError){
-            console.error(loadDataError);
-        }
-        if(!this.cache){
-            return Promise.reject(new Error('Barter cache failed to load'));
-        }
+class BartersAPI extends WorkerKV {
+    constructor() {
+        super('BARTER_DATA_V2');
     }
 
     async getList() {

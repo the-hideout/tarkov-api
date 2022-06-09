@@ -1,21 +1,8 @@
-class historicalPricesAPI {
-    constructor(){
-        this.cache = false;
-        this.loading = false;
-    }
+const WorkerKV = require('../utils/worker-kv');
 
-    async init(){
-        try {
-            if (this.loading) await this.loading;
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('HISTORICAL_PRICES', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (error){
-            console.error(error);
-        }
+class historicalPricesAPI extends WorkerKV {
+    constructor() {
+        super('HISTORICAL_PRICES');
     }
 
     async getByItemId(itemId) {

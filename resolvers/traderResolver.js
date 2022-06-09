@@ -54,22 +54,21 @@ module.exports = {
         },
         trader(data, args, context) {
             return context.data.trader.get(data.trader_id);
-        },/*
-        traderLevel(data, args, context) {
-            return context.data.trader.getByLevel(data.trader_id, data.traderLevel)
-        },*/
+        },
         taskUnlock(data, args, context) {
             if (data.taskUnlock) return context.data.task.get(data.taskUnlock);
             return null;
         },
     },
     TraderPrice: {
-        trader(data, args, context) {
-            /*if (data.trader_name) {
-                return context.data.trader.getByName(data.trader_name);
+        async trader(data, args, context) {
+            try {
+                return await context.data.trader.get(data.trader);
+            }catch (error) {
+                //console.log('error getting trader ', error);
+                //console.log(JSON.stringify(error.stack, null, 4));
+                console.log('error was thrown', error);
             }
-            return data.trader;*/
-            return context.data.trader.get(data.trader);
         }
     },
     RequirementTrader: {

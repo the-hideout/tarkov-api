@@ -1,3 +1,5 @@
+const WorkerKV = require('../utils/worker-kv');
+
 const currencyMap = {
     RUB: '5449016a4bdc2d6f028b456f',
     USD: '5696686a4bdc2da3298b456a',
@@ -34,27 +36,9 @@ const traderNameIdMap = {
     'Jaeger': '5c0647fdd443bc2504c2d371',
 };
 
-class TradersAPI {
-    constructor(){
-        this.cache = false;
-        this.loading = false;
-    }
-
-    async init(){
-        try {
-            if (this.loading) await this.loading;
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('TRADER_DATA_V2', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (error){
-            console.error(error);
-        }
-        if (!this.cache) {
-            return Promise.reject(new Error('Trader cache failed to load'));
-        }
+class TradersAPI extends WorkerKV {
+    constructor() {
+        super('TRADER_DATA_V2');
     }
 
     async getList() {
@@ -64,7 +48,6 @@ class TradersAPI {
 
     async get(id) {
         await this.init();
-        if (!this.cache) return {};
         for (const trader of this.cache.data){
             if(trader.id === id){
                 return trader;
@@ -76,7 +59,6 @@ class TradersAPI {
 
     async getByName(name) {
         await this.init();
-        if (!this.cache) return {};
         for(const trader of this.cache.data){
             if(trader.name.toLowerCase() === name.toLowerCase()){
                 return trader;
@@ -88,7 +70,6 @@ class TradersAPI {
 
     async getByLevel(traderId, level) {
         await this.init();
-        if (!this.cache) return {};
         for (const trader of this.cache.data) {
             if (trader.id !== traderId) continue;
             for (const rawLevel of trader.levels) {
@@ -106,7 +87,6 @@ class TradersAPI {
 
     async getTraderResets() {
         await this.init();
-        if (!this.cache) return [];
         return this.cache.data.map(trader => {
             return {
                 name: trader.name.toLowerCase(),

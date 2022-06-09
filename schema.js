@@ -2,7 +2,7 @@ module.exports = `
 type Ammo {
   item: Item!
   weight: Float!
-  caliber: String!
+  caliber: String
   stackMaxSize: Int!
   tracer: Boolean!
   tracerColor: String
@@ -15,7 +15,7 @@ type Ammo {
   penetrationChance: Float!
   penetrationPower: Int!
   accuracy: Int!
-  recoil: Int!
+  recoil: Int
   initialSpeed: Int!
   lightBleedModifier: Float!
   heavyBleedModifier: Float!
@@ -178,11 +178,12 @@ type Item {
   changeLast48hPercent: Float
   low24hPrice: Int
   high24hPrice: Int
+  lastOfferCount: Int
   sellFor: [ItemPrice!]
   buyFor: [ItemPrice!]
   containsItems: [ContainedItem]
+  category: ItemCategory
   bsgCategoryId: String
-  bsgCategory: ItemCategory
   weight: Float
   velocity: Float
   loudness: Int
@@ -198,6 +199,7 @@ type Item {
   fleaMarketFee(price: Int, intelCenterLevel: Int, hideoutManagementLevel: Int, count: Int, requireAll: Boolean): Int
   translation(languageCode: LanguageCode): ItemTranslation @deprecated(reason: "Use the lang argument on queries instead.")
   traderPrices: [TraderPrice]! @deprecated(reason: "Use sellFor instead.")
+  bsgCategory: ItemCategory @deprecated(reason: "Use category instead.")
 }
 
 type ItemAttribute {
@@ -223,23 +225,23 @@ type ItemPrice {
 }
 
 type ItemPropertiesAmmo {
-  caliber: String!
-  stackMaxSize: Int!
-  tracer: Boolean!
+  caliber: String
+  stackMaxSize: Int
+  tracer: Boolean
   tracerColor: String
-  ammoType: String!
+  ammoType: String
   projectileCount: Int
-  damage: Int!
-  armorDamage: Int!
-  fragmentationChance: Float!
-  ricochetChance: Float!
-  penetrationChance: Float!
-  penetrationPower: Int!
-  accuracy: Int!
-  recoil: Int!
-  initialSpeed: Int!
-  lightBleedModifier: Float!
-  heavyBleedModifier: Float!
+  damage: Int
+  armorDamage: Int
+  fragmentationChance: Float
+  ricochetChance: Float
+  penetrationChance: Float
+  penetrationPower: Int
+  accuracy: Int
+  recoil: Float
+  initialSpeed: Int
+  lightBleedModifier: Float
+  heavyBleedModifier: Float
 }
 
 type ItemPropertiesArmor {

@@ -10,6 +10,7 @@ kv-namespaces = [
     { binding = "ITEM_DATA", id = "2973a2dd070e4a348d87084171efe11a", preview_id = "2973a2dd070e4a348d87084171efe11a" },
     { binding = "QUERY_CACHE", id = "7ae67967cff24ceaa31ca58c5a6da798", preview_id = "7ae67967cff24ceaa31ca58c5a6da798" }
 ]
+vars = { ENVIRONMENT = "production" }
 
 [env.development]
 routes = []
@@ -18,3 +19,4 @@ kv-namespaces = [
     { binding = "ITEM_DATA", id = "2973a2dd070e4a348d87084171efe11a", preview_id = "2973a2dd070e4a348d87084171efe11a" },
     { binding = "QUERY_CACHE", id = "7ae67967cff24ceaa31ca58c5a6da798", preview_id = "7ae67967cff24ceaa31ca58c5a6da798" }
 ]
+vars = { ENVIRONMENT = "development" }

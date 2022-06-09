@@ -1,26 +1,8 @@
-const { item } = require(".");
+const WorkerKV = require('../utils/worker-kv');
 
-class ItemsAPI {
-    constructor(){
-        this.cache = false;
-        this.loading = false;
-    }
-
-    async init(){
-        try {
-            if (this.loading) await this.loading;
-            if(this.cache){
-                return true;
-            }
-            this.loading = ITEM_DATA.get('ITEM_CACHE_V4', 'json');
-            this.cache = await this.loading;
-            this.loading = false;
-        } catch (error){
-            console.error(error);
-        }
-        if (!this.cache) {
-            return Promise.reject(new Error('Item cache failed to load'));
-        }
+class ItemsAPI extends WorkerKV {
+    constructor() {
+        super('ITEM_CACHE_V4');
     }
 
     formatItem(rawItem) {
@@ -31,11 +13,9 @@ class ItemsAPI {
         // add trader prices to sellFor
         item.sellFor = [
             ...item.traderPrices.map((traderPrice) => {
-                let currency = 'RUB';
-                if (traderPrice.name.toLowerCase() === 'peacekeeper') currency = 'USD';
                 return {
                     price: traderPrice.price,
-                    currency: currency,
+                    currency: traderPrice.currency,
                     priceRUB: traderPrice.priceRUB,
                     vendor: {
                         trader: traderPrice.trader,
@@ -91,7 +71,7 @@ class ItemsAPI {
             return Promise.reject(new Error(`No item found with id ${id}`));
         }
 
-        const formatted = await this.formatItem(item);
+        const formatted = this.formatItem(item);
         if (contains && Array.isArray(contains)) {
             formatted.containsItems = contains.map((cItem) => {
                 if (!cItem.attributes) cItem.attributes = [];
@@ -165,6 +145,7 @@ class ItemsAPI {
             format = true;
         }
         const searchString = name.toLowerCase();
+        if (searchString === '') return Promise.reject(new Error('Searched item name cannot be blank'));
 
         return items.filter((rawItem) => {
             if (!rawItem.locale || !rawItem.locale[lang]) return false;
@@ -179,7 +160,7 @@ class ItemsAPI {
             if (!format) return rawItem;
             return this.formatItem(rawItem);
         });
-}
+    }
 
     async getItemsByNames(names, items = false, lang = 'en') {
         await this.init();
@@ -189,6 +170,7 @@ class ItemsAPI {
             format = true;
         }
         const searchStrings = names.map(name => {
+            if (name === '') throw new Error('Searched item name cannot be blank');
             return name.toLowerCase();
         });
         console.log(lang);
