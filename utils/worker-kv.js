@@ -11,21 +11,51 @@ class WorkerKV {
 
     async init(){
         if (this.cache){
+            //console.log('already loaded', this.kvName);
             return true;
         }
         if (this.loading) {
-            return new Promise((resolve) => {
-                this.events.once('loaded', () => {
-                    resolve();
-                });
+            //console.log('waiting for load', this.kvName);
+            return new Promise((resolve, reject) => {
+                try {
+                    this.events.once('loaded', () => {
+                        //console.log(this.kvName, 'loaded event handled');
+                        resolve();
+                    });
+                } catch (error) {
+                    console.log(error);
+                    reject(error);
+                }
             });
+            /*return new Promise((resolve) => {
+                const isDone = () => {
+                    if (this.loading === false) {
+                        resolve();
+                    } else {
+                        try {
+                            setTimeout(isDone, 5);
+                        } catch (error) {
+                            console.log(error.stack);
+                            reject(error);
+                        }
+                    }
+                }
+                isDone();
+            });*/
         }
         this.loading = true;
         return new Promise((resolve, reject) => {
             ITEM_DATA.get(this.kvName, 'json').then(data => {
                 this.cache = data;
                 this.loading = false;
-                this.events.emit('loaded');
+                //console.log(this.kvName, 'listeners', this.events.listenerCount('loaded'));
+                try {
+                    //console.time(this.kvName+' emit');
+                    this.events.emit('loaded');
+                    //console.timeEnd(this.kvName+' emit');
+                } catch (error) {
+                    console.log(error);
+                }
                 resolve();
             }).catch(error => {
                 this.loading = false;

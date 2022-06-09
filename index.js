@@ -5,7 +5,8 @@ const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { mergeTypeDefs } = require('@graphql-tools/merge');
 const { graphql } = require('graphql');
 
-const dataAPI = require('./datasources');
+const DataSource = require('./datasources');
+const dataAPI = new DataSource();
 const playground = require('./handlers/playground');
 const setCors = require('./utils/setCors');
 const typeDefs = require('./schema');
@@ -20,8 +21,8 @@ const twitch = require('./custom-endpoints/twitch');
 
 let schema = false;
 let loadingSchema = false;
-const schemaEvents = new EventEmitter();
-schemaEvents.setMaxListeners(0);
+//const schemaEvents = new EventEmitter();
+//schemaEvents.setMaxListeners(0);
 
 /**
  * Example of how router can be used in an application
@@ -32,24 +33,32 @@ async function getSchema() {
         return schema;
     }
     if (loadingSchema) {
-        return new Promise((resolve) => {
+        /*return new Promise((resolve) => {
             schemaEvents.once('loaded', () => {
-                resolve();
+                resolve(schema);
             });
+        });*/
+        return new Promise((resolve) => {
+            const isDone = () => {
+                if (this.loadingSchema === false) {
+                    resolve(schema);
+                } else {
+                    setTimeout(isDone, 5);
+                }
+            }
+            isDone();
         });
     }
     loadingSchema = true;
-    return new Promise((resolve, reject) => {
-        dynamicTypeDefs(dataAPI).then(dynamicTypeDefs => {
+    return dynamicTypeDefs(dataAPI).then(dynamicTypeDefs => {
             schema = makeExecutableSchema({typeDefs: mergeTypeDefs([typeDefs, dynamicTypeDefs]), resolvers: resolvers});
             loadingSchema = false;
-            schemaEvents.emit('loaded');
-            resolve(schema);
+            //schemaEvents.emit('loaded');
+            return schema;
         }).catch(error => {
             loadingSchema = false;
-            reject(error);
+            return Promise.reject(error);
         });
-    });
 }
 
 addEventListener('fetch', event => {
@@ -100,6 +109,7 @@ async function graphqlHandler(event, graphQLOptions) {
         }
     } */
 
+    await dataAPI.init();
     const result = await graphql(await getSchema(), query, {}, {data: dataAPI, util: graphqlUtil}, variables);
     const body = JSON.stringify(result);
 
@@ -208,4 +218,5 @@ const handleRequest = async event => {
 
 (async () => {
     initSchema();
+    dataAPI.init();
 })();

@@ -1,60 +1,75 @@
 const AmmoAPI = require('./ammo');
-const ammoAPI = new AmmoAPI();
-
 const BartersAPI = require('./barters');
-const bartersAPI = new BartersAPI();
-
 const CraftsAPI = require('./crafts');
-const craftsAPI = new CraftsAPI();
-
 const HideoutLegacyAPI = require('./hideout-legacy');
-const hideoutLegacyAPI = new HideoutLegacyAPI();
-
 const HideoutAPI = require('./hideout');
-const hideoutAPI = new HideoutAPI();
-
 const HistoricalPricesAPI = require('./historical-prices');
-const historicalPricesAPI = new HistoricalPricesAPI();
-
 const ItemsAPI = require('./items');
-const itemsAPI = new ItemsAPI();
-
 const QuestsAPI = require('./quests');
-const questsAPI = new QuestsAPI();
-
 const status = require('./status');
-
 const TraderInventoryAPI = require('./trader-inventory');
-const traderInventoryAPI = new TraderInventoryAPI();
-
 const TradersAPI = require('./traders');
-const tradersAPI = new TradersAPI();
-
 const TasksAPI = require('./tasks');
-const tasksAPI = new TasksAPI();
-
 const MapAPI = require('./maps');
-const mapAPI = new MapAPI();
 
-module.exports = {
-    init: async () => {
+class DataSource {
+    constructor(){
+        this.ammo = new AmmoAPI();
+        this.barter = new BartersAPI();
+        this.craft = new CraftsAPI();
+        this.hideoutLegacy = new HideoutLegacyAPI();
+        this.hideout = new HideoutAPI();
+        this.historicalPrice = new HistoricalPricesAPI();
+        this.item = new ItemsAPI();
+        this.quest = new QuestsAPI();
+        this.traderInventory = new TraderInventoryAPI();
+        this.trader = new TradersAPI();
+        this.task = new TasksAPI();
+        this.status = status,
+        this.map = new MapAPI();
+
+        this.initialized = false;
+        this.loading = false;
+    }
+
+    async init() {
         try {
-            await Promise.all([itemsAPI.init(), tradersAPI.init(), bartersAPI.init(), ammoAPI.init()]);
+            if (this.initialized) return;
+            if (this.loading) {
+                return new Promise((resolve) => {
+                    const isDone = () => {
+                        if (this.loading === false) {
+                            resolve();
+                        } else {
+                            try {
+                                setTimeout(isDone, 5);
+                            } catch (error) {
+                                console.log(error.stack);
+                                resolve();
+                            }
+                        }
+                    }
+                    isDone();
+                });
+            }
+            this.loading = true;
+            return Promise.all([
+                this.barter.init(), 
+                this.craft.init(),
+                this.hideout.init(),
+                this.item.init(),
+                this.map.init(),
+                this.task.init(),
+                this.trader.init(),
+                this.traderInventory.init(),
+            ]).then(() => {
+                this.initialized = true;
+                this.loading = false;
+            });
         } catch (error) {
             console.error('error initializing data api', error.stack);
         }
-    },
-    ammo: ammoAPI,
-    barter: bartersAPI,
-    craft: craftsAPI,
-    hideoutLegacy: hideoutLegacyAPI,
-    hideout: hideoutAPI,
-    historicalPrice: historicalPricesAPI,
-    item: itemsAPI,
-    quest: questsAPI,
-    traderInventory: traderInventoryAPI,
-    trader: tradersAPI,
-    task: tasksAPI,
-    status: status,
-    map: mapAPI
-};
+    }
+}
+
+module.exports = DataSource;
