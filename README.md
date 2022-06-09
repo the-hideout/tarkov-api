@@ -48,7 +48,7 @@ Example Query:
 
 ```graphql
 query {
-  itemsByType(type: any) {
+  items {
       id
       name
       shortName
