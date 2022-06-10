@@ -45,7 +45,7 @@ class WorkerKV {
         }
         this.loading = true;
         return new Promise((resolve, reject) => {
-            ITEM_DATA.get(this.kvName, 'json').then(data => {
+            DATA_CACHE.get(this.kvName, 'json').then(data => {
                 this.cache = data;
                 this.loading = false;
                 //console.log(this.kvName, 'listeners', this.events.listenerCount('loaded'));

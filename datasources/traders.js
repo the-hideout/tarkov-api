@@ -38,7 +38,7 @@ const traderNameIdMap = {
 
 class TradersAPI extends WorkerKV {
     constructor() {
-        super('TRADER_DATA_V2');
+        super('trader_data');
     }
 
     async getList() {

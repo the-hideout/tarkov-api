@@ -1,13 +1,13 @@
 class QuestsAPI {
     async getList() {
-        const quests = await ITEM_DATA.get('QUEST_DATA', 'json');
+        const quests = await DATA_CACHE.get('quest_data', 'json');
 
         if(!quests){
             return {};
         }
         const returnData = [];
 
-        for(const quest of quests){
+        for(const quest of quests.data){
             const parsedQuestData = {
                 ...quest,
                 requirements: quest.require,

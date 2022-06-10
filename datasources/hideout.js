@@ -2,7 +2,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class HideoutAPI extends WorkerKV {
     constructor() {
-        super('HIDEOUT_DATA_V3');
+        super('hideout_data');
     }
 
     async getList(){

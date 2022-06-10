@@ -2,7 +2,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class TasksAPI extends WorkerKV {
     constructor() {
-        super('TASK_DATA_V2');
+        super('task_data');
     }
 
     async getList() {

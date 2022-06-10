@@ -3,7 +3,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class AmmoAPI extends WorkerKV {
     constructor() {
-        super('AMMO_DATA');
+        super('ammo_data');
     }
 
     async getList() {

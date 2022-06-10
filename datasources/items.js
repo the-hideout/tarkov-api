@@ -2,7 +2,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class ItemsAPI extends WorkerKV {
     constructor() {
-        super('ITEM_CACHE_V4');
+        super('item_data');
     }
 
     formatItem(rawItem) {

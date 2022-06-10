@@ -2,7 +2,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class TraderInventoryAPI extends WorkerKV {
     constructor() {
-        super('TRADER_ITEMS_V2');
+        super('trader_price_data');
         this.traderCache = false;
     }
 
@@ -14,8 +14,7 @@ class TraderInventoryAPI extends WorkerKV {
 
         try {
             const traderCache = {};
-            for (const id in this.cache) {
-                const itemOffers = this.cache[id];
+            for (const itemOffers of Object.values(this.cache.data)) {
                 for (const offer of itemOffers) {
                     if (!traderCache[offer.vendor.trader_id]) traderCache[offer.vendor.trader_id] = [];
                     traderCache[offer.vendor.trader_id].push(offer);
@@ -29,10 +28,10 @@ class TraderInventoryAPI extends WorkerKV {
 
     async getByItemId(itemId) {
         await this.init();
-        if(!this.cache[itemId]){
+        if(!this.cache.data[itemId]){
             return [];
         }
-        return this.cache[itemId];
+        return this.cache.data[itemId];
     }
 
     async getPricesForTrader(traderId) {

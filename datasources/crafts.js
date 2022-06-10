@@ -3,7 +3,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class CraftsAPI extends WorkerKV {
     constructor(){
-        super('CRAFT_DATA_V2');
+        super('craft_data');
     }
 
     async getList() {

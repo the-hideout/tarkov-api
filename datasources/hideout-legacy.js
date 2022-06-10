@@ -8,7 +8,7 @@ class HideoutLegacyAPI {
             return this.moduleList;
         }
 
-        const hideoutData = await ITEM_DATA.get('HIDEOUT_DATA', 'json');
+        const hideoutData = await DATA_CACHE.get('hideout_legacy_data', 'json');
         const returnData = [];
 
         for(const hideoutModule of hideoutData.data){
