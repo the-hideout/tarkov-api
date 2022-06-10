@@ -1,4 +1,4 @@
-# The Hideout API (Escape from Tarkov) 💻
+# Tarkov API (Escape from Tarkov) 💻
 
 [![deploy](https://github.com/the-hideout/tarkov-data-api/actions/workflows/deploy.yml/badge.svg)](https://github.com/the-hideout/tarkov-data-api/actions/workflows/deploy.yml) [![Discord](https://img.shields.io/discord/956236955815907388?color=7388DA&label=Discord)](https://discord.gg/XPAsKGHSzH)
 
@@ -23,6 +23,21 @@ A community made GraphQL API for Escape from Tarkov
 - ⚡ Ultra fast
 - ⏰ Data is constantly updated in real-time
 
+## What can I do with this API? ⭐
+
+- View the prices of items
+- Get detailed ammo, armor, and weapon information
+- Fetch flea market data
+- View item weight, slots, etc
+- Calculate barter and hideout profit
+- Determine ergo, armor class, durability, etc for an item
+- Fetch detailed quest information and unlocks
+- View info about crafts and their requirements
+- Detailed info on medicines, stims, and in-game healing
+- So much more (it would take up this entire page to list everything 😸)
+
+> This [API](https://api.tarkov.dev/___graphql) does almost everything you would ever want for EFT!
+
 ## API Playground 🎾
 
 There is a GraphQL playground for you to use and test out
@@ -33,7 +48,7 @@ Example Query:
 
 ```graphql
 query {
-  itemsByType(type: any) {
+  items {
       id
       name
       shortName
