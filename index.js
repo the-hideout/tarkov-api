@@ -124,6 +124,7 @@ async function graphqlHandler(event, graphQLOptions) {
     const body = JSON.stringify(result);
 
     // Update the cache with the results of the query
+    // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
     event.waitUntil(cacheMachine.put(query, body));
 
     /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
