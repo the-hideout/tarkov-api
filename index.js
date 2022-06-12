@@ -48,7 +48,6 @@ async function hash(string) {
         .map((bytes) => bytes.toString(16).padStart(2, '0'))
         .join('');
 
-    console.log(hashHex);
     return hashHex;
 }
 
