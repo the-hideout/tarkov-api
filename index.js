@@ -176,6 +176,7 @@ const handleRequest = async event => {
 
     // Check for empty /graphql query
     if (url.pathname === "/graphql" && request.method === 'POST') {
+        const json = await request.clone().json();
         if (json.query.trim() === "") {
             // Clone the response so that it's no longer immutable
             const response = new Response('GraphQL requires a query in the body of the request', { status: 200 });
