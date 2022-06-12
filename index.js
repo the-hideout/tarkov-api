@@ -96,7 +96,7 @@ async function checkCache(json) {
 
         const response = await fetch(`${cacheUrl}/api/cache?key=${cacheKey}`, headers);
         if (response.status === 200) {
-            const results = JSON.stringify(await response.json());
+            const results = await response.json();
             return results
         }
 
