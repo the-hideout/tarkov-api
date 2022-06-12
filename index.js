@@ -62,7 +62,7 @@ addEventListener('fetch', event => {
     event.respondWith(handleRequest(event));
 });
 
-async function graphqlHandler(event, graphQLOptions, json) {
+async function graphqlHandler(event, graphQLOptions) {
     const request = event.request;
     const url = new URL(request.url);
     let query = false;
@@ -172,7 +172,6 @@ const graphQLOptions = {
 const handleRequest = async event => {
     const request = event.request;
     const url = new URL(request.url);
-    const json = await request.clone().json();
 
     // Check for empty /graphql query
     if (url.pathname === "/graphql" && request.method === 'POST') {
@@ -208,7 +207,7 @@ const handleRequest = async event => {
         }
 
         if (url.pathname === graphQLOptions.baseEndpoint) {
-            const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(event, graphQLOptions, json);
+            const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(event, graphQLOptions);
             if (graphQLOptions.cors) {
                 setCors(response, graphQLOptions.cors);
             }
