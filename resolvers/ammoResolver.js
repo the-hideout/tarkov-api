@@ -1,7 +1,7 @@
 module.exports = {
     Query: {
         ammo(obj, args, context, info) {
-            return context.data.ammo.getList();
+            return context.data.item.getAmmoList();
         }
     },
     Ammo: {

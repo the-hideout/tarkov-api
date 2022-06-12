@@ -42,6 +42,21 @@ class HideoutAPI extends WorkerKV {
         }
         return Promise.reject(new Error(`No hideout station found with id ${id}`));
     }
+
+    async getLegacyList() {
+        await this.init();
+        return this.cache.legacy;
+    }
+
+    async getLegacyModule(name, level) {
+        await this.init();
+        for (const module of this.cache.legacy) {
+            if (module.name === name && module.quantity === level) {
+                return module;
+            }
+        }
+        return Promise.reject(new Error(`No hideout module with id ${id} found`));
+    }
 }
 
 module.exports = HideoutAPI;

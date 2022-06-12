@@ -1,32 +1,32 @@
-const AmmoAPI = require('./ammo');
+//const AmmoAPI = require('./ammo');
 const BartersAPI = require('./barters');
 const CraftsAPI = require('./crafts');
-const HideoutLegacyAPI = require('./hideout-legacy');
+//const HideoutLegacyAPI = require('./hideout-legacy');
 const HideoutAPI = require('./hideout');
 const HistoricalPricesAPI = require('./historical-prices');
 const ItemsAPI = require('./items');
-const QuestsAPI = require('./quests');
+const MapAPI = require('./maps');
+//const QuestsAPI = require('./quests');
 const status = require('./status');
+const TasksAPI = require('./tasks');
 const TraderInventoryAPI = require('./trader-inventory');
 const TradersAPI = require('./traders');
-const TasksAPI = require('./tasks');
-const MapAPI = require('./maps');
 
 class DataSource {
     constructor(){
-        this.ammo = new AmmoAPI();
+        //this.ammo = new AmmoAPI();
         this.barter = new BartersAPI();
         this.craft = new CraftsAPI();
-        this.hideoutLegacy = new HideoutLegacyAPI();
+        //this.hideoutLegacy = new HideoutLegacyAPI();
         this.hideout = new HideoutAPI();
         this.historicalPrice = new HistoricalPricesAPI();
         this.item = new ItemsAPI();
-        this.quest = new QuestsAPI();
+        this.map = new MapAPI();
+        //this.quest = new QuestsAPI();
+        this.status = status;
         this.traderInventory = new TraderInventoryAPI();
         this.trader = new TradersAPI();
         this.task = new TasksAPI();
-        this.status = status,
-        this.map = new MapAPI();
 
         this.initialized = false;
         this.loading = false;
@@ -65,6 +65,9 @@ class DataSource {
             ]).then(() => {
                 this.initialized = true;
                 this.loading = false;
+            }).catch(error => {
+                this.loading = false;
+                return Promise.reject(error);
             });
         } catch (error) {
             console.error('error initializing data api', error.stack);

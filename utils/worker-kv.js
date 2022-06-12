@@ -12,7 +12,7 @@ class WorkerKV {
     async init(){
         if (this.cache){
             //console.log('already loaded', this.kvName);
-            return true;
+            return;
         }
         if (this.loading) {
             //console.log('waiting for load', this.kvName);

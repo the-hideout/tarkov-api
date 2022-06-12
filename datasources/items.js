@@ -348,6 +348,19 @@ class ItemsAPI extends WorkerKV {
         await this.init();
         return this.cache.armorMats[matKey];
     }
+
+    async getAmmoList() {
+        const allAmmo = await this.getItemsByBsgCategoryId('5485a8684bdc2da71d8b4567').then(ammoItems => {
+            // ignore bb
+            return ammoItems.filter(item => item.id !== '6241c316234b593b5676b637');
+        });
+        return allAmmo.map(item => {
+            return {
+                ...item,
+                ...item.properties
+            };
+        });
+    }
 }
 
 module.exports = ItemsAPI;

@@ -28,7 +28,7 @@ let loadingSchema = false;
  * Example of how router can be used in an application
  *  */
 
-async function getSchema() {
+async function getSchema(data) {
     if (schema){
         return schema;
     }
@@ -50,7 +50,7 @@ async function getSchema() {
         });
     }
     loadingSchema = true;
-    return dynamicTypeDefs(dataAPI).then(dynamicTypeDefs => {
+    return dynamicTypeDefs(data).then(dynamicTypeDefs => {
             schema = makeExecutableSchema({typeDefs: mergeTypeDefs([typeDefs, dynamicTypeDefs]), resolvers: resolvers});
             loadingSchema = false;
             //schemaEvents.emit('loaded');
@@ -110,7 +110,7 @@ async function graphqlHandler(event, graphQLOptions) {
     } */
 
     await dataAPI.init();
-    const result = await graphql(await getSchema(), query, {}, {data: dataAPI, util: graphqlUtil}, variables);
+    const result = await graphql(await getSchema(dataAPI), query, {}, {data: dataAPI, util: graphqlUtil}, variables);
     const body = JSON.stringify(result);
 
     /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
@@ -215,8 +215,3 @@ const handleRequest = async event => {
         return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
     }
 };
-
-(async () => {
-    initSchema();
-    dataAPI.init();
-})();
