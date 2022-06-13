@@ -60,7 +60,13 @@ async function checkCache(query) {
         query = query.trim();
         const cacheKey = await hash(query);
 
-        const response = await fetch(`${cacheUrl}/api/cache?key=${cacheKey}`, headers);
+        // GET headers
+        const headersGet = {
+            method: 'GET',
+            headers: headers
+        };
+
+        const response = await fetch(`${cacheUrl}/api/cache?key=${cacheKey}`, headersGet);
         if (response.status === 200) {
             const results = await response.json();
 
