@@ -33,10 +33,7 @@ async function updateCache(query, body) {
         const headersPost = {
             body: JSON.stringify({ key: cacheKey, value: body }),
             method: 'POST',
-            headers: {
-                'content-type': 'application/json;charset=UTF-8',
-                'Authorization': `Basic ${CACHE_BASIC_AUTH}`
-            },
+            headers: headers
         };
 
         // Update the cache
