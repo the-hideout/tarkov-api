@@ -2,8 +2,7 @@
 const cacheUrl = 'https://cache.tarkov.dev'
 const headers = {
     'content-type': 'application/json;charset=UTF-8',
-    'Authorization': `Basic ${CACHE_BASIC_AUTH}`,
-    'Accept-Encoding': 'gzip, deflate, br'
+    'Authorization': `Basic ${CACHE_BASIC_AUTH}`
 };
 
 // Helper function to create a hash from a string
@@ -61,17 +60,9 @@ async function checkCache(query) {
         query = query.trim();
         const cacheKey = await hash(query);
 
-        // GET headers
-        const headersGet = {
-            method: 'GET',
-            headers: headers
-        };
-
-        const response = await fetch(`${cacheUrl}/api/cache?key=${cacheKey}`, headersGet);
+        const response = await fetch(`${cacheUrl}/api/cache?key=${cacheKey}`, {headers: headers});
         if (response.status === 200) {
-            const results = await response.json();
-
-            return results
+            return await response.json();
         }
 
         return false
