@@ -97,7 +97,12 @@ async function graphqlHandler(event, graphQLOptions) {
     // Check the cache service for data first - If cached data exists, return it
     const cachedResponse = await cacheMachine.get(query);
     if (cachedResponse) {
-        return new Response(cachedResponse, headers);
+        // Construct a new response with the cached data
+        const newResponse = new Response(cachedResponse, headers);
+        // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
+        newResponse.headers.append('X-CACHE', 'HIT');
+        // Return the new cached response
+        return newResponse;
     }
 
     /* const queryHashString = JSON.stringify({
