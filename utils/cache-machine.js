@@ -2,6 +2,7 @@
 const cacheUrl = 'https://cache.tarkov.dev'
 const headers = {
     'content-type': 'application/json;charset=UTF-8',
+    'Authorization': `Basic ${CACHE_BASIC_AUTH}`
 };
 
 // Helper function to create a hash from a string
@@ -34,6 +35,7 @@ async function updateCache(query, body) {
             method: 'POST',
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
+                'Authorization': `Basic ${CACHE_BASIC_AUTH}`
             },
         };
 
