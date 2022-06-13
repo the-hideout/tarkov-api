@@ -2,7 +2,8 @@
 const cacheUrl = 'https://cache.tarkov.dev'
 const headers = {
     'content-type': 'application/json;charset=UTF-8',
-    'Authorization': `Basic ${CACHE_BASIC_AUTH}`
+    'Authorization': `Basic ${CACHE_BASIC_AUTH}`,
+    'Accept-Encoding': 'gzip, deflate, br'
 };
 
 // Helper function to create a hash from a string
