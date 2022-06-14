@@ -1,4 +1,5 @@
 const {EventEmitter} = require('events');
+const zlib = require('zlib');
 
 class WorkerKV {
     constructor(kvName){
@@ -44,15 +45,25 @@ class WorkerKV {
             });*/
         }
         this.loading = true;
+        console.time('kv load '+this.kvName);
         return new Promise((resolve, reject) => {
-            DATA_CACHE.get(this.kvName, 'json').then(data => {
-                this.cache = data;
+            DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
+                const data = response.value;
+                const metadata = response.metadata;
+                console.timeEnd('kv load '+this.kvName);
+                if (metadata && metadata.compression) {
+                    if (metadata.compression = 'gzip') {
+                        this.cache = JSON.parse(zlib.gunzipSync(Buffer.from(data, metadata.encoding)).toString());
+                    } else {
+                        return reject(new Error(`${metadata.compression} is not a recognized compression type`));
+                    }
+                } else {
+                    this.cache = JSON.parse(data);
+                }
                 this.loading = false;
                 //console.log(this.kvName, 'listeners', this.events.listenerCount('loaded'));
                 try {
-                    //console.time(this.kvName+' emit');
                     this.events.emit('loaded');
-                    //console.timeEnd(this.kvName+' emit');
                 } catch (error) {
                     console.log(error);
                 }

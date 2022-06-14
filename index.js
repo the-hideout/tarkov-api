@@ -62,18 +62,24 @@ async function getSchema(data) {
 }
 
 addEventListener('fetch', event => {
+    console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' total response');
+    console.log('environment', ENVIRONMENT);
     event.respondWith(handleRequest(event));
 });
 
 async function graphqlHandler(event, graphQLOptions) {
+    //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' checkPoint');
     const request = event.request;
     const url = new URL(request.url);
     let query = false;
     let variables = false;
 
-    if(request.method === 'POST'){
+    if (request.method === 'POST') {
         try {
+            //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' checkPoint');
+            console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' request.json');
             const requestBody = await request.json();
+            console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' request.json');
             query = requestBody.query;
             variables = requestBody.variables;
         } catch (jsonError){
@@ -83,11 +89,22 @@ async function graphqlHandler(event, graphQLOptions) {
                 status: 503,
             });
         }
-    }
-
-    if(request.method === 'GET'){
+    } else if (request.method === 'GET') {
         query = url.searchParams.get('query');
         variables = url.searchParams.get('variables');
+    } else {
+        return new Response(null, {
+            status: 501,
+        });
+    }
+    // Check for empty /graphql query
+    if (!query || query.trim() === "") {
+        return new Response('GraphQL requires a query in the body of the request', 
+            { 
+                status: 200,
+                headers: { 'cache-control': 'public, max-age=2592000' }
+            }
+        );
     }
 
     /* const queryHashString = JSON.stringify({
@@ -109,14 +126,20 @@ async function graphqlHandler(event, graphQLOptions) {
         }
     } */
 
-    await dataAPI.init();
+    console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
+    try {
+        await dataAPI.init();
+    } catch (error) {
+        console.log('init error', error, error.stack);
+    }
+    console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
     const result = await graphql(await getSchema(dataAPI), query, {}, {data: dataAPI, util: graphqlUtil}, variables);
     const body = JSON.stringify(result);
 
     /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
         await QUERY_CACHE.put(queryHash, body, {expirationTtl: 300});
     } */
-
+    console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' total response')
     return new Response(body, {
         headers: {
             'content-type': 'application/json',
@@ -159,18 +182,6 @@ const graphQLOptions = {
 const handleRequest = async event => {
     const request = event.request;
     const url = new URL(request.url);
-
-    // Check for empty /graphql query
-    if (url.pathname === "/graphql" && request.method === 'POST') {
-        const json = await request.clone().json();
-        if (json.query.trim() === "") {
-            // Clone the response so that it's no longer immutable
-            const response = new Response('GraphQL requires a query in the body of the request', { status: 200 });
-            // Add a cache control header
-            response.headers.append('cache-control', 'public, max-age=2592000');
-            return response;
-        }
-    }
 
     try {
         if(url.pathname === '/webhook/nightbot'){

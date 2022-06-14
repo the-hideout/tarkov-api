@@ -30,7 +30,7 @@ jobs:
         uses: cloudflare/wrangler-action@3424d15af26edad39d5276be3cc0cc9ffec22b55 # pin@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          environment: "development"
+          environment: "staging"
 
       # Post comment on PR with development deploy info
       - uses: actions/github-script@5d03ada4b0a753e9460b312e61cc4f8fdeacf163 # pin@0.9.0
