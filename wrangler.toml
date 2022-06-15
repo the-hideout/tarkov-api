@@ -20,3 +20,6 @@ kv-namespaces = [
     { binding = "QUERY_CACHE", id = "7ae67967cff24ceaa31ca58c5a6da798", preview_id = "7ae67967cff24ceaa31ca58c5a6da798" }
 ]
 vars = { ENVIRONMENT = "development" }
+
+# [secrets]
+# CACHE_BASIC_AUTH
