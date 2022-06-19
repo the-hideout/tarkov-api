@@ -22,6 +22,7 @@ const twitch = require('./custom-endpoints/twitch');
 
 let schema = false;
 let loadingSchema = false;
+const skipCache = ENVIRONMENT !== 'production' || false;
 //const schemaEvents = new EventEmitter();
 //schemaEvents.setMaxListeners(0);
 
@@ -116,14 +117,18 @@ async function graphqlHandler(event, graphQLOptions) {
     };
 
     // Check the cache service for data first - If cached data exists, return it
-    const cachedResponse = await cacheMachine.get(query);
-    if (cachedResponse) {
-        // Construct a new response with the cached data
-        const newResponse = new Response(cachedResponse, headers);
-        // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
-        newResponse.headers.append('X-CACHE', 'HIT');
-        // Return the new cached response
-        return newResponse;
+    if (!skipCache) {
+        const cachedResponse = await cacheMachine.get(query);
+        if (cachedResponse) {
+            // Construct a new response with the cached data
+            const newResponse = new Response(cachedResponse, headers);
+            // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
+            newResponse.headers.append('X-CACHE', 'HIT');
+            // Return the new cached response
+            return newResponse;
+        }
+    } else {
+        console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
     /* const queryHashString = JSON.stringify({
@@ -156,8 +161,10 @@ async function graphqlHandler(event, graphQLOptions) {
     const body = JSON.stringify(result);
 
     // Update the cache with the results of the query
-    // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-    event.waitUntil(cacheMachine.put(query, body));
+    if (!skipCache) {
+        // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
+        event.waitUntil(cacheMachine.put(query, body));
+    }
 
     /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
         await QUERY_CACHE.put(queryHash, body, {expirationTtl: 300});

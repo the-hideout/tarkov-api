@@ -1,4 +1,4 @@
-const {EventEmitter} = require('events');
+//const {EventEmitter} = require('events');
 const zlib = require('zlib');
 
 class WorkerKV {
@@ -6,8 +6,8 @@ class WorkerKV {
         this.cache = false;
         this.loading = false;
         this.kvName = kvName;
-        this.events = new EventEmitter();
-        this.events.setMaxListeners(0);
+        //this.events = new EventEmitter();
+        //this.events.setMaxListeners(0);
     }
 
     async init(){
@@ -17,7 +17,7 @@ class WorkerKV {
         }
         if (this.loading) {
             //console.log('waiting for load', this.kvName);
-            return new Promise((resolve, reject) => {
+            /*return new Promise((resolve, reject) => {
                 try {
                     this.events.once('loaded', () => {
                         //console.log(this.kvName, 'loaded event handled');
@@ -27,8 +27,8 @@ class WorkerKV {
                     console.log(error);
                     reject(error);
                 }
-            });
-            /*return new Promise((resolve) => {
+            });*/
+            return new Promise((resolve) => {
                 const isDone = () => {
                     if (this.loading === false) {
                         resolve();
@@ -42,7 +42,7 @@ class WorkerKV {
                     }
                 }
                 isDone();
-            });*/
+            });
         }
         this.loading = true;
         console.time('kv load '+this.kvName);
@@ -63,7 +63,7 @@ class WorkerKV {
                 this.loading = false;
                 //console.log(this.kvName, 'listeners', this.events.listenerCount('loaded'));
                 try {
-                    this.events.emit('loaded');
+                    //this.events.emit('loaded');
                 } catch (error) {
                     console.log(error);
                 }

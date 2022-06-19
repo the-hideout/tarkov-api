@@ -57,6 +57,7 @@ class DataSource {
                 this.barter.init(), 
                 this.craft.init(),
                 this.hideout.init(),
+                this.historicalPrice.init(),
                 this.item.init(),
                 this.map.init(),
                 this.task.init(),
