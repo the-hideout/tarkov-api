@@ -1,12 +1,8 @@
 // cache url
 const cacheUrl = 'https://cache.tarkov.dev'
-let authToken = '';
-if (ENVIRONMENT === 'production') {
-    authToken = CACHE_BASIC_AUTH;
-}
 const headers = {
     'content-type': 'application/json;charset=UTF-8',
-    'Authorization': `Basic ${authToken}`
+    'Authorization': `Basic ${CACHE_BASIC_AUTH}`
 };
 
 // Helper function to create a hash from a string

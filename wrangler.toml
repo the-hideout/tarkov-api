@@ -20,7 +20,7 @@ kv-namespaces = [
     { binding = "DATA_CACHE", id = "17fd725f04984e408d4a70b37c817171", preview_id = "17fd725f04984e408d4a70b37c817171" },
     { binding = "QUERY_CACHE", id = "cf717460f7eb40299a0f8f844d157051", preview_id = "cf717460f7eb40299a0f8f844d157051" }
 ]
-#vars = { ENVIRONMENT = "staging" }
+vars = { ENVIRONMENT = "staging" }
 
 [env.development]
 kv-namespaces = [
