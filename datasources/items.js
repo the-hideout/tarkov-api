@@ -16,6 +16,7 @@ class ItemsAPI extends WorkerKV {
                 return {
                     price: traderPrice.price,
                     currency: traderPrice.currency,
+                    currencyItem: traderPrice.currencyItem,
                     priceRUB: traderPrice.priceRUB,
                     vendor: {
                         trader: traderPrice.trader,
