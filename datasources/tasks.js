@@ -78,7 +78,7 @@ class TasksAPI extends WorkerKV {
     async getTasksProvidingItem(itemId) {
         await this.init();
         const tasks = this.cache.data.filter(rawTask => {
-            for (const reward of rawTask.startRewards.item) {
+            for (const reward of rawTask.startRewards.items) {
                 if (reward.item === itemId) {
                     return true
                 }
@@ -88,7 +88,7 @@ class TasksAPI extends WorkerKV {
                     }
                 }
             }
-            for (const reward of rawTask.finishRewards.item) {
+            for (const reward of rawTask.finishRewards.items) {
                 if (reward.item === itemId) {
                     return true;
                 }
