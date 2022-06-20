@@ -64,8 +64,8 @@ async function getSchema(data) {
 }
 
 addEventListener('fetch', event => {
-    console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' total response');
-    console.log('environment', ENVIRONMENT);
+    //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' total response');
+    //console.log('environment', ENVIRONMENT);
     event.respondWith(handleRequest(event));
 });
 
@@ -79,9 +79,9 @@ async function graphqlHandler(event, graphQLOptions) {
     if (request.method === 'POST') {
         try {
             //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' checkPoint');
-            console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' request.json');
+            //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' request.json');
             const requestBody = await request.json();
-            console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' request.json');
+            //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' request.json');
             query = requestBody.query;
             variables = requestBody.variables;
         } catch (jsonError) {
@@ -150,13 +150,13 @@ async function graphqlHandler(event, graphQLOptions) {
         }
     } */
 
-    console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
+    //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
     try {
         await dataAPI.init();
     } catch (error) {
         console.log('init error', error, error.stack);
     }
-    console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
+    //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
     const result = await graphql(await getSchema(dataAPI), query, {}, {data: dataAPI, util: graphqlUtil}, variables);
     const body = JSON.stringify(result);
 
@@ -169,7 +169,7 @@ async function graphqlHandler(event, graphQLOptions) {
     /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
         await QUERY_CACHE.put(queryHash, body, {expirationTtl: 300});
     } */
-    console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' total response')
+    //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' total response')
     return new Response(body, {
         headers: {
             'content-type': 'application/json',

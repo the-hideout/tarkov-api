@@ -45,12 +45,12 @@ class WorkerKV {
             });
         }
         this.loading = true;
-        console.time('kv load '+this.kvName);
+        //console.time('kv load '+this.kvName);
         return new Promise((resolve, reject) => {
             DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
                 const data = response.value;
                 const metadata = response.metadata;
-                console.timeEnd('kv load '+this.kvName);
+                //console.timeEnd('kv load '+this.kvName);
                 if (metadata && metadata.compression) {
                     if (metadata.compression = 'gzip') {
                         this.cache = JSON.parse(zlib.gunzipSync(Buffer.from(data, metadata.encoding)).toString());
