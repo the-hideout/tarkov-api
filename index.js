@@ -1,5 +1,4 @@
 //const crypto = require('crypto');
-const { EventEmitter } = require('events');
 
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { mergeTypeDefs } = require('@graphql-tools/merge');
@@ -23,8 +22,6 @@ const twitch = require('./custom-endpoints/twitch');
 let schema = false;
 let loadingSchema = false;
 const skipCache = ENVIRONMENT !== 'production' || false;
-//const schemaEvents = new EventEmitter();
-//schemaEvents.setMaxListeners(0);
 
 /**
  * Example of how router can be used in an application
@@ -35,11 +32,6 @@ async function getSchema(data) {
         return schema;
     }
     if (loadingSchema) {
-        /*return new Promise((resolve) => {
-            schemaEvents.once('loaded', () => {
-                resolve(schema);
-            });
-        });*/
         return new Promise((resolve) => {
             const isDone = () => {
                 if (this.loadingSchema === false) {
@@ -55,7 +47,6 @@ async function getSchema(data) {
     return dynamicTypeDefs(data).then(dynamicTypeDefs => {
         schema = makeExecutableSchema({typeDefs: mergeTypeDefs([typeDefs, dynamicTypeDefs]), resolvers: resolvers});
         loadingSchema = false;
-        //schemaEvents.emit('loaded');
         return schema;
     }).catch(error => {
         loadingSchema = false;
@@ -151,11 +142,11 @@ async function graphqlHandler(event, graphQLOptions) {
     } */
 
     //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
-    try {
-        //await dataAPI.init();
+    /*try {
+        await dataAPI.init();
     } catch (error) {
         console.log('init error', error, error.stack);
-    }
+    }*/
     //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
     const result = await graphql(await getSchema(dataAPI), query, {}, {data: dataAPI, util: graphqlUtil}, variables);
     const body = JSON.stringify(result);
