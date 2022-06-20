@@ -1,7 +1,5 @@
-//const AmmoAPI = require('./ammo');
 const BartersAPI = require('./barters');
 const CraftsAPI = require('./crafts');
-//const HideoutLegacyAPI = require('./hideout-legacy');
 const HideoutAPI = require('./hideout');
 const HistoricalPricesAPI = require('./historical-prices');
 const ItemsAPI = require('./items');
@@ -14,15 +12,12 @@ const TradersAPI = require('./traders');
 
 class DataSource {
     constructor(){
-        //this.ammo = new AmmoAPI();
         this.barter = new BartersAPI();
         this.craft = new CraftsAPI();
-        //this.hideoutLegacy = new HideoutLegacyAPI();
         this.hideout = new HideoutAPI();
         this.historicalPrice = new HistoricalPricesAPI();
         this.item = new ItemsAPI();
         this.map = new MapAPI();
-        //this.quest = new QuestsAPI();
         this.status = status;
         this.traderInventory = new TraderInventoryAPI();
         this.trader = new TradersAPI();
