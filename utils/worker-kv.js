@@ -6,6 +6,8 @@ class WorkerKV {
         this.cache = false;
         this.loading = false;
         this.kvName = kvName;
+        this.loadingPromises = [];
+        this.loadingInterval = false;
         //this.events = new EventEmitter();
         //this.events.setMaxListeners(0);
     }
@@ -29,7 +31,7 @@ class WorkerKV {
                 }
             });*/
             return new Promise((resolve) => {
-                const isDone = () => {
+                /*const isDone = () => {
                     if (this.loading === false) {
                         resolve();
                     } else {
@@ -41,10 +43,19 @@ class WorkerKV {
                         }
                     }
                 }
-                isDone();
+                isDone();*/
+                this.loadingPromises.push(resolve);
             });
         }
         this.loading = true;
+        this.loadingInterval = setInterval(() => {
+            if (this.loading) return;
+            let resolve = false;
+            while (resolve = this.loadingPromises.shift()) {
+                resolve();
+            }
+            clearInterval(this.loadingInterval);
+        }, 5);
         //console.time('kv load '+this.kvName);
         return new Promise((resolve, reject) => {
             DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {

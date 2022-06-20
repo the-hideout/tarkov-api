@@ -152,7 +152,7 @@ async function graphqlHandler(event, graphQLOptions) {
 
     //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
     try {
-        await dataAPI.init();
+        //await dataAPI.init();
     } catch (error) {
         console.log('init error', error, error.stack);
     }
