@@ -16,7 +16,7 @@ module.exports = {
             return context.data.task.get(args.id);
         },
         quests(obj, args, context, info) {
-            return context.data.quest.getList();
+            return context.data.task.getQuests();
         }
     },
     Task: {
@@ -287,9 +287,18 @@ module.exports = {
             return context.data.item.getItem(data.targetItem)
         }
     },
+    QuestRequirement: {
+        prerequisiteQuests(data, args, context) {
+            return data.prerequisiteQuests.map(questArray => {
+                return questArray.map(questId => {
+                    return context.data.task.getQuest(questId);
+                });
+            });      
+        }
+    },
     QuestRewardReputation: {
         async trader(data, args, context) {
-            return context.data.trader.getByName(data.trader);
+            return context.data.trader.get(context.data.trader.getDataIdMap()[data.trader]);
         }
     }
 };

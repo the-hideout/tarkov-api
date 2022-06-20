@@ -1,7 +1,7 @@
 module.exports = {
     Query: {
         hideoutModules(obj, args, context, info) {
-            return context.data.hideoutLegacy.getList();
+            return context.data.hideout.getLegacyList();
         },
         hideoutStations(obj, args, context, info) {
             return context.data.hideout.getList();
@@ -28,6 +28,13 @@ module.exports = {
     RequirementHideoutStationLevel: {
         station(data, args, context) {
             return context.data.hideout.getStation(data.station);
+        }
+    },
+    HideoutModule: {
+        moduleRequirements(data, args, context) {
+            return data.moduleRequirements.map(req => {
+                return context.data.hideout.getLegacyModule(req.name, req.quantity);
+            });
         }
     }
 };

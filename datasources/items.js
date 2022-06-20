@@ -2,7 +2,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class ItemsAPI extends WorkerKV {
     constructor() {
-        super('ITEM_CACHE_V4');
+        super('item_data');
     }
 
     formatItem(rawItem) {
@@ -16,6 +16,7 @@ class ItemsAPI extends WorkerKV {
                 return {
                     price: traderPrice.price,
                     currency: traderPrice.currency,
+                    currencyItem: traderPrice.currencyItem,
                     priceRUB: traderPrice.priceRUB,
                     vendor: {
                         trader: traderPrice.trader,
@@ -347,6 +348,19 @@ class ItemsAPI extends WorkerKV {
     async getArmorMaterial(matKey) {
         await this.init();
         return this.cache.armorMats[matKey];
+    }
+
+    async getAmmoList() {
+        const allAmmo = await this.getItemsByBsgCategoryId('5485a8684bdc2da71d8b4567').then(ammoItems => {
+            // ignore bb
+            return ammoItems.filter(item => item.id !== '6241c316234b593b5676b637');
+        });
+        return allAmmo.map(item => {
+            return {
+                ...item,
+                ...item.properties
+            };
+        });
     }
 }
 

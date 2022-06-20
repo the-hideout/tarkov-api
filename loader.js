@@ -21,8 +21,8 @@ if (typeof QUERY_CACHE === 'undefined') {
     }
 }
 
-if (typeof ITEM_DATA === 'undefined') {
-    global.ITEM_DATA = {
+if (typeof DATA_CACHE === 'undefined') {
+    global.DATA_CACHE = {
         get: async (what) => {
             console.log(`trying to get ${what}`)
 

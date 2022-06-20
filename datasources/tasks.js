@@ -2,7 +2,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class TasksAPI extends WorkerKV {
     constructor() {
-        super('TASK_DATA_V2');
+        super('quest_data');
     }
 
     async getList() {
@@ -103,6 +103,22 @@ class TasksAPI extends WorkerKV {
         return tasks.map(rawTask => {
             return rawTask;
         });
+    }
+
+    async getQuests() {
+        await this.init();
+        return this.cache.legacy;
+    }
+
+    async getQuest(id) {
+        await this.init();
+        const quests = await this.getQuests();
+        for (const quest of quests) {
+            if (quest.id === id) {
+                return quest;
+            }
+        }
+        return Promise.reject(new Error(`No quest with id ${id} found`));
     }
 }
 

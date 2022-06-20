@@ -2,7 +2,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class MapAPI extends WorkerKV {
     constructor() {
-        super('MAP_DATA_V2');
+        super('map_data');
     }
 
     async getList() {

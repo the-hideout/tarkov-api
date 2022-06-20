@@ -2,7 +2,7 @@ const WorkerKV = require('../utils/worker-kv');
 
 class BartersAPI extends WorkerKV {
     constructor() {
-        super('BARTER_DATA_V2');
+        super('barter_data');
     }
 
     async getList() {
