@@ -238,6 +238,14 @@ module.exports = {
             return data.count;
         }
     },
+    StimEffect: {
+        type(data, args, context, info) {
+            return context.util.getLocale(data, 'type', info);
+        },
+        skillName(data, args, context, info) {
+            return context.util.getLocale(data, 'skillName', info);
+        }
+    },
     Vendor: {
         __resolveType(data, args, context) {
             if (data.trader) return 'TraderOffer';
