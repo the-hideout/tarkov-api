@@ -352,6 +352,12 @@ type ItemPropertiesScope {
   zoomLevels: [[Float]]
 }
 
+type ItemPropertiesStim {
+  useTime: Int
+  cures: [String]
+  stimEffects: [StimEffect]!
+}
+
 type ItemPropertiesSurgicalKit {
   uses: Int
   useTime: Int
@@ -390,7 +396,8 @@ union ItemProperties =
   ItemPropertiesScope | 
   ItemPropertiesSurgicalKit | 
   ItemPropertiesWeapon | 
-  ItemPropertiesWeaponMod
+  ItemPropertiesWeaponMod |
+  ItemPropertiesStim
 
 enum ItemSourceName {
   prapor
@@ -560,6 +567,16 @@ type StatusMessage {
   type: Int!
   solveTime: String
   statusCode: String!
+}
+
+type StimEffect {
+  type: String!
+  chance: Float!
+  delay: Int!
+  duration: Int!
+  value: Float!
+  percent: Boolean!
+  skillName: String
 }
 
 type Task {
