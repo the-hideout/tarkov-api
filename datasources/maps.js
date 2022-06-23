@@ -15,7 +15,7 @@ class MapAPI extends WorkerKV {
         for (const map of this.cache.data) {
             if (map.id === id || map.tarkovDataId === id) return map;
         }
-        return Promise.reject(new Error(`:( No map found with id ${id}`));
+        return Promise.reject(new Error(`Noooooooo map found with id ${id}`));
     }
 }
 
