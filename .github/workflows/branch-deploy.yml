@@ -40,6 +40,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install dependencies
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
+        run: npm ci
+
       - name: Test
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
         env:
