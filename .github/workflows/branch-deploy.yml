@@ -28,11 +28,17 @@ jobs:
         if: ${{ steps.branch-deploy-dev.outputs.triggered != 'true' }}
         id: branch-deploy
 
-      - name: Checkout
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
+      - name: Checkout - prod
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
         with:
           ref: ${{ steps.branch-deploy.outputs.ref }}
+
+      - name: Checkout - dev
+        if: ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+        with:
+          ref: ${{ steps.branch-deploy-dev.outputs.ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
@@ -49,7 +55,6 @@ jobs:
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: script/test
-
 
       - name: Publish - Development
         if: ${{ steps.branch-deploy-dev.outputs.continue == 'true' && steps.branch-deploy-dev.outputs.noop != 'true' }}
