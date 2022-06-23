@@ -18,7 +18,9 @@ jobs:
 
     steps:
 
+      # this action could fail due to a bad command but the second check for 'dev' should work
       - uses: github/branch-deploy@30278bad08157ca078a7ae2599ac8d284c9a4297 # pin@v2.0.4
+        continue-on-error: true # only let this one pass to get to the next branch-deploy step
         id: branch-deploy
 
       - uses: github/branch-deploy@30278bad08157ca078a7ae2599ac8d284c9a4297 # pin@v2.0.4
