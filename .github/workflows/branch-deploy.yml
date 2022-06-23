@@ -21,20 +21,84 @@ jobs:
       - uses: github/branch-deploy@30278bad08157ca078a7ae2599ac8d284c9a4297 # pin@v2.0.4
         id: branch-deploy
 
+      - uses: github/branch-deploy@30278bad08157ca078a7ae2599ac8d284c9a4297 # pin@v2.0.4
+        id: branch-deploy-dev
+        with:
+          trigger: ".deploy dev"
+          environment: "development"
+
       - name: Checkout
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
         uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
         with:
           ref: ${{ steps.branch-deploy.outputs.ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
         uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # pin@v1
         with:
           node-version: ${{ matrix.node-version }}
+
+      - name: Test
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: script/test
+
+
+      - name: Publish - Development
+        if: ${{ steps.branch-deploy-dev.outputs.continue == 'true' && steps.branch-deploy-dev.outputs.noop != 'true' }}
+        uses: cloudflare/wrangler-action@3424d15af26edad39d5276be3cc0cc9ffec22b55 # pin@1.3.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          environment: "development"
+
+      # Post comment on PR with development deploy info
+      - uses: actions/github-script@5d03ada4b0a753e9460b312e61cc4f8fdeacf163 # pin@0.9.0
+        if: ${{ steps.branch-deploy-dev.outputs.continue == 'true' && steps.branch-deploy-dev.outputs.noop != 'true' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `### API Deployment - Development 🪐
+
+            The API has been **deployed** to the **development** environment 🚀
+
+            - Endpoint: \`dev-api.tarkov.dev\`
+            - Playground: [dev-api.tarkov.dev/___graphql](https://dev-api.tarkov.dev/___graphql)
+
+            > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\``;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
 
       - name: Publish - Production
         if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
         uses: cloudflare/wrangler-action@3424d15af26edad39d5276be3cc0cc9ffec22b55 # pin@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
+
+      # Post comment on PR with production deploy info
+      - uses: actions/github-script@5d03ada4b0a753e9460b312e61cc4f8fdeacf163 # pin@0.9.0
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `### API Deployment - Production 🌔
+
+            The API has been **deployed** to the **production** environment 🚀
+
+            - Endpoint: \`api.tarkov.dev\`
+            - Playground: [api.tarkov.dev/___graphql](https://api.tarkov.dev/___graphql)
+
+            > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\``;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
