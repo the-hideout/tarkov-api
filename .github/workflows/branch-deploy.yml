@@ -41,17 +41,17 @@ jobs:
           ref: ${{ steps.branch-deploy-dev.outputs.ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' || steps.branch-deploy-dev.outputs.continue == 'true' }}
         uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # pin@v1
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' || steps.branch-deploy-dev.outputs.continue == 'true' }}
         run: npm ci
 
       - name: Test
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' }} || ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' || steps.branch-deploy-dev.outputs.continue == 'true' }}
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: script/test
