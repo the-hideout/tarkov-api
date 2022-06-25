@@ -1,5 +1,13 @@
 const WorkerKV = require('../utils/worker-kv');
 
+const isAnyDogtag = id => {
+    return id === '59f32bb586f774757e1e8442' || id === '59f32c3b86f77472a31742f0' || id === '5b9b9020e7ef6f5716480215';
+};
+
+const isBothDogtags = id  => {
+    return id === '5b9b9020e7ef6f5716480215';
+};
+
 class BartersAPI extends WorkerKV {
     constructor() {
         super('barter_data');
@@ -25,6 +33,12 @@ class BartersAPI extends WorkerKV {
         return this.cache.data.filter(barter => {
             for (const item of barter.requiredItems) {
                 if (item.item === id) return true;
+                if (isBothDogtags(id) && isAnyDogtag(item.item)) {
+                    return true;
+                }
+                if (isBothDogtags(item.item) && isAnyDogtag(id)) {
+                    return true;
+                }
             }
             return false;
         });
