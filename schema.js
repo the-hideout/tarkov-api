@@ -487,6 +487,11 @@ type OfferUnlock {
   item: Item!
 }
 
+type PlayerLevel {
+  level: Int!
+  exp: Int!
+}
+
 type PriceRequirement {
   type: RequirementType!
   value: Int
@@ -851,6 +856,7 @@ type Query {
   traders(lang: LanguageCode): [Trader]!
   fleaMarket(lang: LanguageCode): FleaMarket!
   armorMaterials(lang: LanguageCode): [ArmorMaterial]!
+  playerLevels: [PlayerLevel]!
   hideoutModules: [HideoutModule] @deprecated(reason: "Use hideoutStations instead.")
   itemsByIDs(ids: [ID]!): [Item] @deprecated(reason: "Use items instead.")
   itemsByType(type: ItemType!): [Item]! @deprecated(reason: "Use items instead.")
