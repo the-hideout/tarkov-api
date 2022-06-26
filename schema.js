@@ -348,6 +348,10 @@ type ItemPropertiesPainkiller {
   hydrationImpact: Int
 }
 
+type ItemPropertiesPreset {
+  baseItem: Item!
+}
+
 type ItemPropertiesScope {
   ergonomics: Float
   recoil: Float
@@ -395,6 +399,7 @@ union ItemProperties =
   ItemPropertiesMedKit | 
   ItemPropertiesNightVision | 
   ItemPropertiesPainkiller | 
+  ItemPropertiesPreset |
   ItemPropertiesScope | 
   ItemPropertiesSurgicalKit | 
   ItemPropertiesWeapon | 

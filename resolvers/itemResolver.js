@@ -209,6 +209,11 @@ module.exports = {
             return context.util.getLocale(data, 'headZones', info);
         }
     },
+    ItemPropertiesPreset: {
+        baseItem(data, args, context) {
+            return context.data.item.getItem(data.base_item_id);
+        }
+    },
     ItemPropertiesWeapon: {
         defaultAmmo(data, args, context) {
             return context.data.item.getItem(data.default_ammo_id);
