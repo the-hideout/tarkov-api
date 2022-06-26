@@ -362,6 +362,11 @@ class ItemsAPI extends WorkerKV {
             };
         });
     }
+
+    async getPlayerLevels() {
+        await this.init();
+        return this.cache.playerLevels;
+    }
 }
 
 module.exports = ItemsAPI;

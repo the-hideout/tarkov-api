@@ -77,6 +77,9 @@ module.exports = {
         },
         fleaMarket(obj, args, context) {
             return context.data.item.getFleaMarket();
+        },
+        playerLevels(obj, args, context) {
+            return context.data.item.getPlayerLevels();
         }
     },
     Item: {
