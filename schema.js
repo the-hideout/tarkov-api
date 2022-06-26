@@ -61,6 +61,7 @@ type AttributeThreshold {
 }
 
 type Barter {
+  id: ID!
   trader: Trader!
   level: Int!
   taskUnlock: Task
