@@ -23,7 +23,6 @@ class BartersAPI extends WorkerKV {
         return this.cache.data.filter(barter => {
             for (const item of barter.rewardItems) {
                 if (item.item === id) return true;
-                if (item.baseId === id) return true;
             }
             return false;
         });
