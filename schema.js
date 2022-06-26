@@ -61,6 +61,7 @@ type AttributeThreshold {
 }
 
 type Barter {
+  id: ID!
   trader: Trader!
   level: Int!
   taskUnlock: Task
@@ -157,6 +158,7 @@ type Item {
   updated: String
   width: Int!
   height: Int!
+  backgroundColor: String!
   iconLink: String
   iconLinkFallback: String!
   wikiLink: String
@@ -346,6 +348,10 @@ type ItemPropertiesPainkiller {
   hydrationImpact: Int
 }
 
+type ItemPropertiesPreset {
+  baseItem: Item!
+}
+
 type ItemPropertiesScope {
   ergonomics: Float
   recoil: Float
@@ -393,6 +399,7 @@ union ItemProperties =
   ItemPropertiesMedKit | 
   ItemPropertiesNightVision | 
   ItemPropertiesPainkiller | 
+  ItemPropertiesPreset |
   ItemPropertiesScope | 
   ItemPropertiesSurgicalKit | 
   ItemPropertiesWeapon | 
