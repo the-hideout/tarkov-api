@@ -158,6 +158,7 @@ type Item {
   updated: String
   width: Int!
   height: Int!
+  backgroundColor: String!
   iconLink: String
   iconLinkFallback: String!
   wikiLink: String
