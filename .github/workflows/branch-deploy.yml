@@ -18,51 +18,38 @@ jobs:
 
     steps:
 
-      - uses: github/branch-deploy@01c7896b53789cbdc4d42eb748169bb17749540b # pin@v2.0.5
-        id: branch-deploy-dev
-        with:
-          trigger: ".deploy dev"
-          environment: "development"
-          admins: the-hideout/core-contributors
-          admins_pat: ${{ secrets.BRANCH_DEPLOY_ADMINS_PAT }}
-
-      - uses: github/branch-deploy@01c7896b53789cbdc4d42eb748169bb17749540b # pin@v2.0.5
-        if: ${{ steps.branch-deploy-dev.outputs.triggered != 'true' }}
+      - uses: github/branch-deploy@fff347cc00128663fe97047b732ee92e7bd828ca # pin@v2.1.0
         id: branch-deploy
         with:
           admins: the-hideout/core-contributors
           admins_pat: ${{ secrets.BRANCH_DEPLOY_ADMINS_PAT }}
 
-      - name: Checkout - prod
+      - name: Checkout
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
         with:
           ref: ${{ steps.branch-deploy.outputs.ref }}
 
-      - name: Checkout - dev
-        if: ${{ steps.branch-deploy-dev.outputs.continue == 'true' }}
-        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
-        with:
-          ref: ${{ steps.branch-deploy-dev.outputs.ref }}
-
       - name: Use Node.js ${{ matrix.node-version }}
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' || steps.branch-deploy-dev.outputs.continue == 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # pin@v1
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' || steps.branch-deploy-dev.outputs.continue == 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         run: npm ci
 
       - name: Test
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' || steps.branch-deploy-dev.outputs.continue == 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: script/test
 
       - name: Publish - Development
-        if: ${{ steps.branch-deploy-dev.outputs.continue == 'true' && steps.branch-deploy-dev.outputs.noop != 'true' }}
+        if: ${{ steps.branch-deploy.outputs.environment == 'development' &&
+          steps.branch-deploy.outputs.noop != 'true' &&
+          steps.branch-deploy.outputs.continue == 'true' }}
         uses: cloudflare/wrangler-action@3424d15af26edad39d5276be3cc0cc9ffec22b55 # pin@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
@@ -70,7 +57,9 @@ jobs:
 
       # Post comment on PR with development deploy info
       - uses: actions/github-script@5d03ada4b0a753e9460b312e61cc4f8fdeacf163 # pin@0.9.0
-        if: ${{ steps.branch-deploy-dev.outputs.continue == 'true' && steps.branch-deploy-dev.outputs.noop != 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
+          steps.branch-deploy.outputs.noop != 'true' &&
+          steps.branch-deploy.outputs.environment == 'development' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -91,14 +80,18 @@ jobs:
             })
 
       - name: Publish - Production
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
+          steps.branch-deploy.outputs.noop != 'true' &&
+          steps.branch-deploy.outputs.environment == 'production' }}
         uses: cloudflare/wrangler-action@3424d15af26edad39d5276be3cc0cc9ffec22b55 # pin@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
 
       # Post comment on PR with production deploy info
       - uses: actions/github-script@5d03ada4b0a753e9460b312e61cc4f8fdeacf163 # pin@0.9.0
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
+          steps.branch-deploy.outputs.noop != 'true' &&
+          steps.branch-deploy.outputs.environment == 'production' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
