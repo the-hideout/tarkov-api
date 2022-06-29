@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "28edd5a5-9149-48f9-bd18-ab13278455e8",
+		"_postman_id": "0560f777-4fe7-40f9-a77c-8938222698c6",
 		"name": "Tarkov.dev",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -360,6 +360,182 @@
 					"mode": "graphql",
 					"graphql": {
 						"query": "query($id: ID!) {\r\n    item(id: $id) {\r\n        ...itemFragment\r\n    }\r\n}\r\n{{itemFragment}}",
+						"variables": "{\r\n    \"id\": \"5b7c710788a4506dec015957\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "receivedFromTasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// If the quests ever change, this test needs to as well\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"    pm.expect(pm.response.json().data.items[0].receivedFromTasks[1].trader.name).to.eq(\"Mechanic\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\r\n  items(ids: \"59faff1d86f7746c51718c9c\") {\r\n    id\r\n    name\r\n    receivedFromTasks {\r\n      trader {\r\n          name\r\n      }\r\n    }\r\n  }\r\n}\r\n",
+						"variables": "{\r\n    \"id\": \"5b7c710788a4506dec015957\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Global Query - itemsByType - any",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"    pm.expect(pm.response.json().data.itemsByType).to.be.a(\"array\");\r",
+							"    pm.expect(pm.response.json().data.itemsByType.length).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\r\n    itemsByType(type:any) {\r\n        id\r\n        bsgCategoryId\r\n        name\r\n        shortName\r\n        basePrice\r\n        normalizedName\r\n        types\r\n        width\r\n        height\r\n        avg24hPrice\r\n        wikiLink\r\n        changeLast48h\r\n        low24hPrice\r\n        high24hPrice\r\n        lastLowPrice\r\n        gridImageLink\r\n        iconLink\r\n        updated\r\n        traderPrices {\r\n            price\r\n            currency\r\n            priceRUB\r\n        trader {\r\n            name\r\n        }\r\n    }\r\n        sellFor {\r\n            source\r\n            price\r\n            priceRUB\r\n        requirements {\r\n                type\r\n            value\r\n        }\r\n        currency\r\n    }\r\n    buyFor {\r\n            source\r\n        price\r\n        priceRUB\r\n        currency\r\n        requirements {\r\n                type\r\n            value\r\n        }\r\n    }\r\n    containsItems {\r\n            count\r\n        item {\r\n                id\r\n        }\r\n    }\r\n}\r\n}\r\n",
+						"variables": "{\r\n    \"id\": \"5b7c710788a4506dec015957\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Global Query - barters",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"    pm.expect(pm.response.json().data.barters).to.be.a(\"array\");\r",
+							"    pm.expect(pm.response.json().data.barters.length).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\r\n  barters {\r\n    rewardItems {\r\n      item {\r\n        id\r\n        name\r\n        normalizedName\r\n        iconLink\r\n        imageLink\r\n        wikiLink\r\n        avg24hPrice\r\n        lastLowPrice\r\n        traderPrices {\r\n          priceRUB\r\n          price\r\n          currency\r\n          trader {\r\n            name\r\n          }\r\n        }\r\n        buyFor {\r\n          source\r\n          priceRUB\r\n          price\r\n          currency\r\n        }\r\n        sellFor {\r\n          source\r\n          priceRUB\r\n          price\r\n          currency\r\n        }\r\n        containsItems {\r\n          item {\r\n            id\r\n          }\r\n        }\r\n      }\r\n      count\r\n    }\r\n    requiredItems {\r\n      item {\r\n        id\r\n        name\r\n        normalizedName\r\n        iconLink\r\n        imageLink\r\n        wikiLink\r\n        avg24hPrice\r\n        lastLowPrice\r\n        traderPrices {\r\n          priceRUB\r\n          price\r\n          currency\r\n          trader {\r\n            name\r\n          }\r\n        }\r\n        buyFor {\r\n          source\r\n          priceRUB\r\n          price\r\n          currency\r\n        }\r\n        sellFor {\r\n          source\r\n          priceRUB\r\n          price\r\n          currency\r\n        }\r\n      }\r\n      count\r\n      attributes {\r\n        name\r\n        value\r\n      }\r\n    }\r\n    source\r\n  }\r\n}\r\n",
+						"variables": "{\r\n    \"id\": \"5b7c710788a4506dec015957\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{tarko.dev.api}}",
+					"host": [
+						"{{tarko.dev.api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Historical Prices",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status correct\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has correct data\", function () {\r",
+							"    pm.expect(pm.response.json().data.historicalItemPrices).to.be.a(\"array\");\r",
+							"    pm.expect(pm.response.json().data.historicalItemPrices.length).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No errors\", function () {\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"errors\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\r\n  historicalItemPrices(id: \"5710c24ad2720bc3458b45a3\") {\r\n    price\r\n    timestamp\r\n  }\r\n}\r\n",
 						"variables": "{\r\n    \"id\": \"5b7c710788a4506dec015957\"\r\n}"
 					}
 				},
