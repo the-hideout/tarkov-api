@@ -374,11 +374,16 @@ type ItemPropertiesSurgicalKit {
 
 type ItemPropertiesWeapon {
   caliber: String
+  defaultAmmo: Item
+  effectiveDistance: Int
   ergonomics: Float
+  fireModes: [String]
+  fireRate: Int
+  maxDurability: Int
   recoilVertical: Int
   recoilHorizontal: Int
   repairCost: Int
-  defaultAmmo: Item
+  sightingRange: Int
 }
 
 type ItemPropertiesWeaponMod {

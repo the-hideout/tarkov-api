@@ -218,6 +218,9 @@ module.exports = {
         defaultAmmo(data, args, context) {
             return context.data.item.getItem(data.default_ammo_id);
         },
+        fireModes(data, args, context, info) {
+            return context.util.getLocale(data, 'fireModes', info);
+        },
     },
     ContainedItem: {
         item(data, args, context) {
