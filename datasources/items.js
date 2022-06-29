@@ -317,7 +317,7 @@ class ItemsAPI extends WorkerKV {
     async getTopCategory(id) {
         await this.init();
         const cat = await this.getCategory(id);
-        if (cat.parent_id) return this.getTopCategory(cat.parent_id);
+        if (cat && cat.parent_id) return this.getTopCategory(cat.parent_id);
         return cat;
     }
 
