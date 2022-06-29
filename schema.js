@@ -185,6 +185,7 @@ type Item {
   buyFor: [ItemPrice!]
   containsItems: [ContainedItem]
   category: ItemCategory
+  categoryTop: ItemCategory.
   bsgCategoryId: String
   weight: Float
   velocity: Float
