@@ -104,6 +104,10 @@ module.exports = {
             if (data.bsgCategoryId) return context.data.item.getCategory(data.bsgCategoryId);
             return null;
         },
+        categoryTop(data, args, context) {
+            if (data.bsgCategoryId) return context.data.item.getTopCategory(data.bsgCategoryId);
+            return null;
+        },
         usedInTasks(data, args, context) {
             return context.data.task.getTasksRequiringItem(data.id);
         },
