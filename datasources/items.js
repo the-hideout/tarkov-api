@@ -374,6 +374,16 @@ class ItemsAPI extends WorkerKV {
         await this.init();
         return this.cache.playerLevels;
     }
+
+    async getTypes() {
+        await this.init();
+        return this.cache.types;
+    }
+
+    async getLanguageCodes() {
+        await this.init();
+        return this.cache.languageCodes;
+    }
 }
 
 module.exports = ItemsAPI;
