@@ -94,7 +94,8 @@ type BossEscortAmount {
 }
 
 """
-The chances of spawning in a given location are very rough estimates and may be incaccurate
+The chances of spawning in a given location are 
+very rough estimates and may be incaccurate
 """
 type BossSpawnLocation {
   name: String!
