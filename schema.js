@@ -93,6 +93,9 @@ type BossEscortAmount {
   chance: Float!
 }
 
+"""
+The chances of spawning in a given location are very rough estimates and may be incaccurate
+"""
 type BossSpawnLocation {
   name: String!
   chance: Float!
