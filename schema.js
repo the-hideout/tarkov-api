@@ -309,6 +309,10 @@ type ItemPropertiesHelmet {
   deafening: String
 }
 
+type ItemPropertiesKey {
+  uses: Int
+}
+
 type ItemPropertiesMagazine {
   ergonomics: Float
   recoil: Float
@@ -400,6 +404,7 @@ union ItemProperties =
   ItemPropertiesFoodDrink | 
   ItemPropertiesGrenade | 
   ItemPropertiesHelmet | 
+  ItemPropertiesKey | 
   ItemPropertiesMagazine | 
   ItemPropertiesMedicalItem | 
   ItemPropertiesMedKit | 
