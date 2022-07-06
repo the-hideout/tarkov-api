@@ -8,8 +8,21 @@ module.exports = {
         name(data, args, context, info) {
             return context.util.getLocale(data, 'name', info);
         },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
+        },
         enemies(data, args, context, info) {
             return context.util.getLocale(data, 'enemies', info);
+        }
+    },
+    BossSpawn: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        }
+    },
+    BossEscort: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
         }
     }
 };

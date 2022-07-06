@@ -72,6 +72,35 @@ type Barter {
   requirements: [PriceRequirement]! @deprecated(reason: "Use level instead.")
 }
 
+type BossSpawn {
+  name: String!
+  spawnChance: Float!
+  spawnLocations: [BossSpawnLocation]!
+  escorts: [BossEscort]!
+  spawnTime: Int
+  spawnTimeRandom: Boolean
+  spawnTrigger: String
+}
+
+type BossEscort {
+  name: String!
+  amount: [BossEscortAmount]
+}
+
+type BossEscortAmount {
+  count: Int!
+  chance: Float!
+}
+
+"""
+The chances of spawning in a given location are 
+very rough estimates and may be incaccurate
+"""
+type BossSpawnLocation {
+  name: String!
+  chance: Float!
+}
+
 type ContainedItem {
   item: Item!
   count: Float!
@@ -443,6 +472,7 @@ type Map {
   enemies: [String]
   raidDuration: Int
   players: String
+  bosses: [BossSpawn]!
   #svg: MapSvg
 }
 

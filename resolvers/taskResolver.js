@@ -282,9 +282,14 @@ module.exports = {
         }
     },
     QuestObjective: {
-        targetItem(data, args, context) {
+        async targetItem(data, args, context) {
             if (!data.targetItem) return null;
-            return context.data.item.getItem(data.targetItem)
+            try {
+                return await context.data.item.getItem(data.targetItem)
+            } catch (error) {
+                if (error.message.includes('No item found with id')) return null;
+                return Promise.reject(error);
+            }
         }
     },
     QuestRequirement: {
