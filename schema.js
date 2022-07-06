@@ -76,8 +76,7 @@ type BossSpawn {
   name: String!
   spawnChance: Float!
   spawnLocations: [BossSpawnLocation]!
-  escort: BossEscort
-  supports: [BossEscort]!
+  escorts: [BossEscort]!
   spawnTime: Int
   spawnTimeRandom: Boolean
   spawnTrigger: String
