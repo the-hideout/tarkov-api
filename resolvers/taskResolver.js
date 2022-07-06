@@ -282,10 +282,10 @@ module.exports = {
         }
     },
     QuestObjective: {
-        targetItem(data, args, context) {
+        async targetItem(data, args, context) {
             if (!data.targetItem) return null;
             try {
-                return context.data.item.getItem(data.targetItem)
+                return await context.data.item.getItem(data.targetItem)
             } catch (error) {
                 if (error.message.includes('No item found with id')) return null;
                 return Promise.reject(error);
