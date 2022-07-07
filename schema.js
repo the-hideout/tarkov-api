@@ -791,6 +791,7 @@ type TaskStatusRequirement {
 type Trader {
   id: ID!
   name: String!
+  normalizedName: String!
   resetTime: String
   currency: Item!
   discount: Float!
