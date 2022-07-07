@@ -384,6 +384,9 @@ type ItemPropertiesPainkiller {
 
 type ItemPropertiesPreset {
   baseItem: Item!
+  ergonomics: Float
+  recoilVertical: Int
+  recoilHorizontal: Int
 }
 
 type ItemPropertiesScope {
@@ -418,6 +421,12 @@ type ItemPropertiesWeapon {
   recoilHorizontal: Int
   repairCost: Int
   sightingRange: Int
+  defaultWidth: Int
+  defaultHeight: Int
+  defaultErgonomics: Float,
+  defaultRecoilVertical: Int
+  defaultRecoilHorizontal: Int
+  defaultWeight: Float
 }
 
 type ItemPropertiesWeaponMod {
