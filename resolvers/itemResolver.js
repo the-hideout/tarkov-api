@@ -108,6 +108,11 @@ module.exports = {
             if (data.bsgCategoryId) return context.data.item.getTopCategory(data.bsgCategoryId);
             return null;
         },
+        categories(data, args, context) {
+            return data.categories.map(id => {
+                return context.data.item.getCategory(id);
+            });
+        },
         usedInTasks(data, args, context) {
             return context.data.task.getTasksRequiringItem(data.id);
         },
