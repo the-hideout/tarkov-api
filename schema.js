@@ -130,6 +130,7 @@ type GameProperty {
 
 type FleaMarket implements Vendor {
   name: String!
+  normalizedName: String!
   minPlayerLevel: Int!
   enabled: Boolean!
   sellOfferFeeRate: Float!
