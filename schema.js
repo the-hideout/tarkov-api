@@ -216,6 +216,7 @@ type Item {
   containsItems: [ContainedItem]
   category: ItemCategory
   categoryTop: ItemCategory
+  categories: [ItemCategory]!
   bsgCategoryId: String
   weight: Float
   velocity: Float
