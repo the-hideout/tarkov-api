@@ -484,6 +484,7 @@ type Map {
   raidDuration: Int
   players: String
   bosses: [BossSpawn]!
+  internalName: String
   #svg: MapSvg
 }
 
