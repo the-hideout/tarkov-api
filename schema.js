@@ -300,6 +300,11 @@ type ItemPropertiesArmorAttachment {
   material: ArmorMaterial
 }
 
+type ItemPropertiesBackpack {
+  capacity: Int
+  pouches: [ItemStorageGrid]
+}
+
 type ItemPropertiesChestRig {
   class: Int
   durability: Int
@@ -440,6 +445,7 @@ union ItemProperties =
   ItemPropertiesAmmo | 
   ItemPropertiesArmor | 
   ItemPropertiesArmorAttachment | 
+  ItemPropertiesBackpack | 
   ItemPropertiesChestRig | 
   ItemPropertiesFoodDrink | 
   ItemPropertiesGrenade | 
