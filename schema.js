@@ -318,10 +318,26 @@ type ItemPropertiesChestRig {
   pouches: [ItemStorageGrid]
 }
 
+type ItemPropertiesContainer {
+  capacity: Int
+  #grids: [ItemStorageGrid]
+}
+
 type ItemPropertiesFoodDrink {
   energy: Int
   hydration: Int
   units: Int
+}
+
+type ItemPropertiesGlasses {
+  class: Int
+  durability: Int
+  repairCost: Int
+  blindnessProtection: Float
+  #speedPenalty: Float
+  #turnPenalty: Float
+  #ergoPenalty: Int
+  material: ArmorMaterial
 }
 
 type ItemPropertiesGrenade {
@@ -447,7 +463,9 @@ union ItemProperties =
   ItemPropertiesArmorAttachment | 
   ItemPropertiesBackpack | 
   ItemPropertiesChestRig | 
+  ItemPropertiesContainer | 
   ItemPropertiesFoodDrink | 
+  ItemPropertiesGlasses | 
   ItemPropertiesGrenade | 
   ItemPropertiesHelmet | 
   ItemPropertiesKey | 
