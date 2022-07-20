@@ -300,6 +300,11 @@ type ItemPropertiesArmorAttachment {
   material: ArmorMaterial
 }
 
+type ItemPropertiesBackpack {
+  capacity: Int
+  pouches: [ItemStorageGrid]
+}
+
 type ItemPropertiesChestRig {
   class: Int
   durability: Int
@@ -313,10 +318,26 @@ type ItemPropertiesChestRig {
   pouches: [ItemStorageGrid]
 }
 
+type ItemPropertiesContainer {
+  capacity: Int
+  #grids: [ItemStorageGrid]
+}
+
 type ItemPropertiesFoodDrink {
   energy: Int
   hydration: Int
   units: Int
+}
+
+type ItemPropertiesGlasses {
+  class: Int
+  durability: Int
+  repairCost: Int
+  blindnessProtection: Float
+  #speedPenalty: Float
+  #turnPenalty: Float
+  #ergoPenalty: Int
+  material: ArmorMaterial
 }
 
 type ItemPropertiesGrenade {
@@ -440,8 +461,11 @@ union ItemProperties =
   ItemPropertiesAmmo | 
   ItemPropertiesArmor | 
   ItemPropertiesArmorAttachment | 
+  ItemPropertiesBackpack | 
   ItemPropertiesChestRig | 
+  ItemPropertiesContainer | 
   ItemPropertiesFoodDrink | 
+  ItemPropertiesGlasses | 
   ItemPropertiesGrenade | 
   ItemPropertiesHelmet | 
   ItemPropertiesKey | 
@@ -484,6 +508,7 @@ type Map {
   raidDuration: Int
   players: String
   bosses: [BossSpawn]!
+  nameId: String
   #svg: MapSvg
 }
 
@@ -619,6 +644,9 @@ type Task {
   finishRewards: TaskRewards
   factionName: String
   neededKeys: [TaskKey]
+  startMessageId: String
+  successMessageId: String
+  failMessageId: String
 }
 
 type TaskKey {
