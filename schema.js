@@ -644,6 +644,7 @@ type Task {
   finishRewards: TaskRewards
   factionName: String
   neededKeys: [TaskKey]
+  descriptionMessageId: String
   startMessageId: String
   successMessageId: String
   failMessageId: String
