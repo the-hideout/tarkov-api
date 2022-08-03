@@ -8,6 +8,7 @@ It's a simple [GraphQL](https://graphql.org/) API running on [Cloudflare workers
 
 This API powers all of tarkov.dev and other notable projects as well:
 
+- [stash](https://github.com/the-hideout/stash)
 - [ratscanner](https://github.com/RatScanner/RatScanner)
 - [errbot](https://github.com/GrantBirki/errbot)
 - [thehideout](https://play.google.com/store/apps/details?id=com.austinhodak.thehideout&hl=en_US&gl=US)
@@ -33,6 +34,7 @@ A community made GraphQL API for Escape from Tarkov
 - Determine ergo, armor class, durability, etc for an item
 - Fetch detailed quest information and unlocks
 - View info about crafts and their requirements
+- Find information about in-game bosses
 - Detailed info on medicines, stims, and in-game healing
 - So much more (it would take up this entire page to list everything 😸)
 
@@ -59,7 +61,9 @@ query {
 }
 ```
 
-> More examples can be found in our [graphql example docs](./docs/graphql-examples.md) 📚
+More examples can be found in our [graphql example docs](./docs/graphql-examples.md) 📚
+
+> Even more examples can be found on our [api](https://tarkov.dev/api/) page on tarkov.dev (includes many programming languages too)
 
 ## Development 🔨
 
