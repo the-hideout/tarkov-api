@@ -28,7 +28,7 @@ A community made GraphQL API for Escape from Tarkov
 
 - View the prices of items
 - Get detailed ammo, armor, and weapon information
-- Fetch real-time flea market data
+- Fetch flea market data
 - View item weight, slots, etc
 - Calculate barter and hideout profit
 - Determine ergo, armor class, durability, etc for an item
