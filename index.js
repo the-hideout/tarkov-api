@@ -44,13 +44,31 @@ async function getSchema(data) {
         });
     }
     loadingSchema = true;
-    return dynamicTypeDefs(data).then(dynamicTypeDefs => {
-        schema = makeExecutableSchema({typeDefs: mergeTypeDefs([typeDefs, dynamicTypeDefs]), resolvers: resolvers});
+    return dynamicTypeDefs(data).catch(error => {
         loadingSchema = false;
-        return schema;
-    }).catch(error => {
-        loadingSchema = false;
+        console.log('Error loading dynamic type definitions', error);
         return Promise.reject(error);
+    }).then(dynamicTypeDefs => {
+        let mergedDefs;
+        try {
+            mergedDefs = mergeTypeDefs([typeDefs, dynamicTypeDefs]);
+        } catch (error) {
+            console.log('Error merging type defs', error);
+            return Promise.reject(error);
+        }
+        try {
+            schema = makeExecutableSchema({typeDefs: mergedDefs, resolvers: resolvers});
+            loadingSchema = false;
+            return schema;
+        } catch (error) {
+            console.log('Error making schema executable');
+            if (!error.message) {
+                console.log('Check type names in resolvers');
+            } else {
+                console.log(error.message);
+            }
+            return Promise.reject(error);
+        }
     });
 }
 
