@@ -202,6 +202,14 @@ module.exports = {
             return context.util.getLocale(data, 'zones', info);
         }
     },
+    ItemPropertiesArmorAttachment: {
+        material(data, args, context) {
+            return context.data.item.getArmorMaterial(data.armor_material_id);
+        },
+        headZones(data, args, context, info) {
+            return context.util.getLocale(data, 'headZones', info);
+        }
+    },
     ItemPropertiesChestRig: {
         material(data, args, context) {
             return context.data.item.getArmorMaterial(data.armor_material_id);

@@ -14,8 +14,10 @@ type Ammo {
   ricochetChance: Float!
   penetrationChance: Float!
   penetrationPower: Int!
-  accuracy: Int!
-  recoil: Int
+  accuracy: Int @deprecated(reason: "Use accuracyModifier instead.")
+  accuracyModifier: Float
+  recoil: Int @deprecated(reason: "Use recoilModifier instead.")
+  recoilModifier: Float
   initialSpeed: Int!
   lightBleedModifier: Float!
   heavyBleedModifier: Float!
@@ -271,11 +273,15 @@ type ItemPropertiesAmmo {
   ricochetChance: Float
   penetrationChance: Float
   penetrationPower: Int
-  accuracy: Int
-  recoil: Float
+  accuracy: Int @deprecated(reason: "Use accuracyModifier instead.")
+  accuracyModifier: Float
+  recoil: Float @deprecated(reason: "Use recoilModifier instead.")
+  recoilModifier: Float
   initialSpeed: Int
   lightBleedModifier: Float
   heavyBleedModifier: Float
+  durabilityBurnFactor: Float
+  heatFactor: Float
 }
 
 type ItemPropertiesArmor {
@@ -298,6 +304,7 @@ type ItemPropertiesArmorAttachment {
   ergoPenalty: Int
   headZones: [String]
   material: ArmorMaterial
+  blindnessProtection: Float
 }
 
 type ItemPropertiesBackpack {
@@ -367,7 +374,8 @@ type ItemPropertiesKey {
 
 type ItemPropertiesMagazine {
   ergonomics: Float
-  recoil: Float
+  recoil: Float @deprecated(reason: "Use recoilModifier instead.")
+  recoilModifier: Float
   capacity: Int
   loadModifier: Float
   ammoCheckModifier: Float
@@ -387,6 +395,12 @@ type ItemPropertiesMedKit {
   cures: [String]
   hpCostLightBleeding: Int
   hpCostHeavyBleeding: Int
+}
+
+type ItemPropertiesMelee {
+  slashDamage: Int
+  stabDamage: Int
+  hitRadius: Float
 }
 
 type ItemPropertiesNightVision {
@@ -414,7 +428,8 @@ type ItemPropertiesPreset {
 
 type ItemPropertiesScope {
   ergonomics: Float
-  recoil: Float
+  recoil: Float @deprecated(reason: "Use recoilModifier instead.")
+  recoilModifier: Float
   zoomLevels: [[Float]]
 }
 
@@ -454,7 +469,9 @@ type ItemPropertiesWeapon {
 
 type ItemPropertiesWeaponMod {
   ergonomics: Float
-  recoil: Float
+  recoil: Float @deprecated(reason: "Use recoilModifier instead.")
+  recoilModifier: Float
+  accuracyModifier: Float
 }
 
 union ItemProperties = 
@@ -471,6 +488,7 @@ union ItemProperties =
   ItemPropertiesKey | 
   ItemPropertiesMagazine | 
   ItemPropertiesMedicalItem | 
+  ItemPropertiesMelee | 
   ItemPropertiesMedKit | 
   ItemPropertiesNightVision | 
   ItemPropertiesPainkiller | 
