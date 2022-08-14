@@ -890,6 +890,7 @@ enum TraderName {
 
 type TraderOffer implements Vendor {
   name: String!
+  normalizedName: String!
   trader: Trader!
   #traderLevel: TraderLevel!
   minTraderLevel: Int
@@ -903,6 +904,7 @@ type TraderStanding {
 
 interface Vendor {
   name: String!
+  normalizedName: String!
 }
 #union Vendor = TraderOffer | FleaMarket
 
