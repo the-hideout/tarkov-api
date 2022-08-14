@@ -52,6 +52,9 @@ module.exports = {
         async name(data, args, context, info) {
             return context.util.getLocale(await context.data.trader.get(data.trader_id), 'name', info);
         },
+        async normalizedName(data, args, context) {
+            return (await context.data.trader.get(data.trader_id)).normalizedName;
+        },
         trader(data, args, context) {
             return context.data.trader.get(data.trader_id);
         },
