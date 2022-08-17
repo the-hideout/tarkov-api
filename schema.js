@@ -217,7 +217,6 @@ type Item {
   buyFor: [ItemPrice!]
   containsItems: [ContainedItem]
   category: ItemCategory
-  categoryTop: ItemCategory
   categories: [ItemCategory]!
   bsgCategoryId: String
   weight: Float
@@ -233,6 +232,7 @@ type Item {
   "historicalPrices is only available via the item and items queries."
   historicalPrices: [historicalPricePoint]
   fleaMarketFee(price: Int, intelCenterLevel: Int, hideoutManagementLevel: Int, count: Int, requireAll: Boolean): Int
+  categoryTop: ItemCategory @deprecated(reason: "No longer meaningful with inclusion of Item category.")
   translation(languageCode: LanguageCode): ItemTranslation @deprecated(reason: "Use the lang argument on queries instead.")
   traderPrices: [TraderPrice]! @deprecated(reason: "Use sellFor instead.")
   bsgCategory: ItemCategory @deprecated(reason: "Use category instead.")
@@ -375,6 +375,7 @@ type ItemPropertiesHelmet {
   headZones: [String]
   material: ArmorMaterial
   deafening: String
+  blocksHeadset: BooleanS
   blindnessProtection: Float
   slots: [ItemSlot]
 }
