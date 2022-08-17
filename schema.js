@@ -250,6 +250,13 @@ type ItemCategory {
   parent: ItemCategory
 }
 
+type ItemFilters {
+  allowedCategories: [ItemCategory]!
+  allowedItems: [Item]!
+  excludedCategories: [ItemCategory]!
+  excludedItems: [Item]!
+}
+
 type ItemPrice {
   vendor: Vendor!
   price: Int
@@ -309,7 +316,8 @@ type ItemPropertiesArmorAttachment {
 
 type ItemPropertiesBackpack {
   capacity: Int
-  pouches: [ItemStorageGrid]
+  grids: [ItemStorageGrid]
+  pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
 }
 
 type ItemPropertiesChestRig {
@@ -322,12 +330,13 @@ type ItemPropertiesChestRig {
   zones: [String]
   material: ArmorMaterial
   capacity: Int
-  pouches: [ItemStorageGrid]
+  grids: [ItemStorageGrid]
+  pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
 }
 
 type ItemPropertiesContainer {
   capacity: Int
-  #grids: [ItemStorageGrid]
+  grids: [ItemStorageGrid]
 }
 
 type ItemPropertiesFoodDrink {
@@ -366,6 +375,8 @@ type ItemPropertiesHelmet {
   headZones: [String]
   material: ArmorMaterial
   deafening: String
+  blindnessProtection: Float
+  slots: [ItemSlot]
 }
 
 type ItemPropertiesKey {
@@ -380,6 +391,8 @@ type ItemPropertiesMagazine {
   loadModifier: Float
   ammoCheckModifier: Float
   malfunctionChance: Float
+  slots: [ItemSlot]
+  allowedAmmo: [Item]
 }
 
 type ItemPropertiesMedicalItem {
@@ -431,6 +444,7 @@ type ItemPropertiesScope {
   recoil: Float @deprecated(reason: "Use recoilModifier instead.")
   recoilModifier: Float
   zoomLevels: [[Float]]
+  slots: [ItemSlot]
 }
 
 type ItemPropertiesStim {
@@ -465,6 +479,8 @@ type ItemPropertiesWeapon {
   defaultRecoilVertical: Int
   defaultRecoilHorizontal: Int
   defaultWeight: Float
+  slots: [ItemSlot]
+  allowedAmmo: [Item]
 }
 
 type ItemPropertiesWeaponMod {
@@ -472,6 +488,7 @@ type ItemPropertiesWeaponMod {
   recoil: Float @deprecated(reason: "Use recoilModifier instead.")
   recoilModifier: Float
   accuracyModifier: Float
+  slots: [ItemSlot]
 }
 
 union ItemProperties = 
@@ -499,6 +516,11 @@ union ItemProperties =
   ItemPropertiesWeaponMod |
   ItemPropertiesStim
 
+type ItemSlot {
+  name: String
+  filters: ItemFilters
+}
+
 enum ItemSourceName {
   prapor
   therapist
@@ -514,6 +536,7 @@ enum ItemSourceName {
 type ItemStorageGrid {
   width: Int!
   height: Int!
+  filters: ItemFilters!
 }
 
 type Map {
