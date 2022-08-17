@@ -375,7 +375,7 @@ type ItemPropertiesHelmet {
   headZones: [String]
   material: ArmorMaterial
   deafening: String
-  blocksHeadset: BooleanS
+  blocksHeadset: Boolean
   blindnessProtection: Float
   slots: [ItemSlot]
 }
