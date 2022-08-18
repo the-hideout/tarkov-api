@@ -183,6 +183,20 @@ module.exports = {
             return null;
         }
     },
+    ItemFilters: {
+        allowedCategories(data, args, context) {
+            return data.allowedCategories.map(id => context.data.item.getCategory(id));
+        },
+        allowedItems(data, args, context) {
+            return data.allowedItems.map(id => context.data.item.getItem(id));
+        },
+        excludedCategories(data, args, context) {
+            return data.excludedCategories.map(id => context.data.item.getCategory(id));
+        },
+        excludedItems(data, args, context) {
+            return data.excludedItems.map(id => context.data.item.getItem(id));
+        },
+    },
     ItemPrice: {
         currencyItem(data, args, context) {
             return context.data.item.getItem(data.currencyItem);
@@ -210,12 +224,20 @@ module.exports = {
             return context.util.getLocale(data, 'headZones', info);
         }
     },
+    ItemPropertiesBackpack: {
+        pouches(data) {
+            return data.grids;
+        }
+    },
     ItemPropertiesChestRig: {
         material(data, args, context) {
             return context.data.item.getArmorMaterial(data.armor_material_id);
         },
         zones(data, args, context, info) {
             return context.util.getLocale(data, 'zones', info);
+        },
+        pouches(data) {
+            return data.grids;
         }
     },
     ItemPropertiesHelmet: {
@@ -224,6 +246,11 @@ module.exports = {
         },
         headZones(data, args, context, info) {
             return context.util.getLocale(data, 'headZones', info);
+        }
+    },
+    ItemPropertiesMagazine: {
+        allowedAmmo(data, args, context) {
+            return data.allowedAmmo.map(id => context.data.item.getItem(id));
         }
     },
     ItemPropertiesPreset: {
@@ -238,6 +265,9 @@ module.exports = {
         fireModes(data, args, context, info) {
             return context.util.getLocale(data, 'fireModes', info);
         },
+        allowedAmmo(data, args, context) {
+            return data.allowedAmmo.map(id => context.data.item.getItem(id));
+        }
     },
     ContainedItem: {
         item(data, args, context) {
