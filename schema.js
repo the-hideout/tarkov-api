@@ -247,6 +247,7 @@ type ItemAttribute {
 type ItemCategory {
   id: ID!
   name: String!
+  normalizedName: String!
   parent: ItemCategory
 }
 
