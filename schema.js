@@ -379,6 +379,9 @@ type ItemPropertiesHelmet {
   blocksHeadset: Boolean
   blindnessProtection: Float
   slots: [ItemSlot]
+  ricochetX: Float
+  ricochetY: Float
+  ricochetZ: Float
 }
 
 type ItemPropertiesKey {
