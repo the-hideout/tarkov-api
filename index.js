@@ -170,7 +170,8 @@ async function graphqlHandler(event, graphQLOptions) {
     const body = JSON.stringify(result);
 
     // Update the cache with the results of the query
-    if (!skipCache) {
+    // don't update cache if result contained errors
+    if (!skipCache && (!result.errors || result.errors.length === 0)) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
         event.waitUntil(cacheMachine.put(query, body));
     }
