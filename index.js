@@ -127,7 +127,7 @@ async function graphqlHandler(event, graphQLOptions) {
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
-        const cachedResponse = await cacheMachine.get(query);
+        const cachedResponse = await cacheMachine.get(query, variables);
         if (cachedResponse) {
             // Construct a new response with the cached data
             const newResponse = new Response(cachedResponse, headers);
@@ -173,7 +173,7 @@ async function graphqlHandler(event, graphQLOptions) {
     // don't update cache if result contained errors
     if (!skipCache && (!result.errors || result.errors.length === 0)) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-        event.waitUntil(cacheMachine.put(query, body));
+        event.waitUntil(cacheMachine.put(query, variables, body));
     }
 
     /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){

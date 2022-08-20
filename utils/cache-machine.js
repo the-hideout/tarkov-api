@@ -23,11 +23,11 @@ async function hash(string) {
 // :param json: the incoming request in json
 // :param body: the body to cache
 // :return: true if successful, false if not
-async function updateCache(query, body) {
+async function updateCache(query, variables, body) {
     try {
         // Get the cacheKey from the request
         query = query.trim();
-        const cacheKey = await hash(query);
+        const cacheKey = await hash(query+JSON.stringify(variables));
 
         // headers and POST body
         const headersPost = {
@@ -55,10 +55,10 @@ async function updateCache(query, body) {
 // Checks the caching service to see if a request has been cached
 // :param json: the json payload of the incoming worker request
 // :return: json results of the item found in the cache or false if not found
-async function checkCache(query) {
+async function checkCache(query, variables) {
     try {
         query = query.trim();
-        const cacheKey = await hash(query);
+        const cacheKey = await hash(query+JSON.stringify(variables));
 
         const response = await fetch(`${cacheUrl}/api/cache?key=${cacheKey}`, {headers: headers});
         if (response.status === 200) {
