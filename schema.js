@@ -76,6 +76,7 @@ type Barter {
 
 type BossSpawn {
   name: String!
+  normalizedName: String!
   spawnChance: Float!
   spawnLocations: [BossSpawnLocation]!
   escorts: [BossEscort]!
@@ -86,6 +87,7 @@ type BossSpawn {
 
 type BossEscort {
   name: String!
+  normalizedName: String!
   amount: [BossEscortAmount]
 }
 
@@ -550,7 +552,8 @@ type ItemStorageGrid {
 type Map {
   id: ID!
   tarkovDataId: ID
-  name: String
+  name: String!
+  normalizedName: String!
   wiki: String
   description: String
   enemies: [String]
