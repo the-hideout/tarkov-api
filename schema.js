@@ -524,7 +524,8 @@ union ItemProperties =
   ItemPropertiesStim
 
 type ItemSlot {
-  name: String
+  name: String!
+  nameId: String!
   filters: ItemFilters
 }
 

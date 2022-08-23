@@ -272,6 +272,11 @@ module.exports = {
             return data.allowedAmmo.map(id => context.data.item.getItem(id));
         }
     },
+    ItemSlot: {
+        name(data, ags, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        }
+    },
     ContainedItem: {
         item(data, args, context) {
             if (data.contains) return context.data.item.getItem(data.item, data.contains);
