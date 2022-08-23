@@ -181,6 +181,9 @@ module.exports = {
         parent(data, args, context) {
             if (data.parent_id) return context.data.item.getCategory(data.parent_id);
             return null;
+        },
+        children(data, args, context) {
+            return data.child_ids.map(id => context.data.item.getCategory(id));
         }
     },
     ItemFilters: {

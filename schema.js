@@ -250,6 +250,7 @@ type ItemCategory {
   name: String!
   normalizedName: String!
   parent: ItemCategory
+  children: [ItemCategory]
 }
 
 type ItemFilters {
