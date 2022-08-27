@@ -41,18 +41,19 @@ module.exports = {
                 },*/
             }
             //if (Object.keys(args).length === 0) return context.data.item.getAllItems();
+            const nonFilterArgs = ['lang', 'limit', 'offset'];
             for (const argName in args) {
-                if (argName === 'lang') continue;
+                if (nonFilterArgs.includes(argName)) continue;
                 if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
                 items = await filters[argName](args[argName], items);
             }
             if (!items) {
                 items = context.data.item.getAllItems();
             }
-            return items;
+            return context.util.paginate(items, args);
         },
         itemCategories(obj, args, context) {
-            return context.data.item.getCategories();
+            return context.util.paginate(context.data.item.getCategories(), args);
         },
         itemsByIDs(obj, args, context, info) {
             return context.data.item.getItemsByIDs(args.ids);
@@ -70,7 +71,7 @@ module.exports = {
             return context.data.item.getItemsByBsgCategoryId(args.bsgCategoryId);
         },
         historicalItemPrices(obj, args, context, info) {
-            return context.data.historicalPrice.getByItemId(args.id);
+            return context.util.paginate(context.data.historicalPrice.getByItemId(args.id), args);
         },
         armorMaterials(obj, args, context) {
             return context.data.item.getArmorMaterials();

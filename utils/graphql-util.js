@@ -31,5 +31,17 @@ module.exports = {
         const lang = module.exports.getLang(info);
         if (data.locale && lang in data.locale && field in data.locale[lang]) return data.locale[lang][field];
         return data[field];
+    },
+    paginate: async (data, args) => {
+        data = await data;
+        if (!Array.isArray(data)) return data;
+        let limit = args.limit;
+        let offset = args.offset;
+        if (!limit && !offset) return data;
+        if (typeof limit === 'undefined') return data.slice(offset);
+        if (typeof offset === 'undefined') offset = 0;
+        let end = Math.abs(limit)+offset;
+        if (offset < 0) end = data.length-Math.abs(offset)+limit;
+        return data.slice(offset, end);
     }
 };

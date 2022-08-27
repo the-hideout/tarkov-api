@@ -1,7 +1,7 @@
 module.exports = {
     Query: {
         crafts(obj, args, context, info) {
-            return context.data.craft.getList();
+            return context.util.paginate(context.data.craft.getList(), args);
         }
     },
     Craft: {

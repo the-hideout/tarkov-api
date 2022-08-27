@@ -1,7 +1,7 @@
 module.exports = {
     Query: {
         barters(obj, args, context, info) {
-            return context.data.barter.getList();
+            return context.util.paginate(context.data.barter.getList(), args);
         }
     },
     Barter: {

@@ -4,7 +4,7 @@ module.exports = {
             return context.data.hideout.getLegacyList();
         },
         hideoutStations(obj, args, context, info) {
-            return context.data.hideout.getList();
+            return context.util.paginate(context.data.hideout.getList(), args);
         },
     },
     HideoutStation: {
