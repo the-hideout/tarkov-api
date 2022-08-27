@@ -263,6 +263,7 @@ module.exports = {
     },
     ItemPropertiesWeapon: {
         defaultAmmo(data, args, context) {
+            if (!data.default_ammo_id) return null;
             return context.data.item.getItem(data.default_ammo_id);
         },
         fireModes(data, args, context, info) {
