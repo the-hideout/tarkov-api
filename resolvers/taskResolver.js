@@ -10,7 +10,7 @@ module.exports = {
                     return taskFaction === 'any' || taskFaction === filterFaction;
                 });
             }
-            return tasks;
+            return context.util.paginate(tasks, args);
         },
         task(obj, args, context) {
             return context.data.task.get(args.id);

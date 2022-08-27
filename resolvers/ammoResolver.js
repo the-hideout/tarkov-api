@@ -1,7 +1,7 @@
 module.exports = {
     Query: {
         ammo(obj, args, context, info) {
-            return context.data.item.getAmmoList();
+            return context.util.paginate(context.data.item.getAmmoList(), args);
         }
     },
     Ammo: {

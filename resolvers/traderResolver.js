@@ -1,7 +1,7 @@
 module.exports = {
     Query: {
         traders(obj, args, context, info) {
-            return context.data.trader.getList();
+            return context.util.paginate(context.data.trader.getList(), args);
         },
         traderResetTimes: (obj, args, context) => {
             return context.data.trader.getTraderResets();

@@ -943,19 +943,19 @@ interface Vendor {
 #union Vendor = TraderOffer | FleaMarket
 
 type Query {
-  ammo(lang: LanguageCode): [Ammo]  
-  barters(lang: LanguageCode): [Barter]
-  crafts(lang: LanguageCode): [Craft]
-  hideoutStations(lang: LanguageCode): [HideoutStation]!
-  historicalItemPrices(id: ID!, lang: LanguageCode): [historicalPricePoint]!
+  ammo(lang: LanguageCode, limit: Int, offset: Int): [Ammo]  
+  barters(lang: LanguageCode, limit: Int, offset: Int): [Barter]
+  crafts(lang: LanguageCode, limit: Int, offset: Int): [Craft]
+  hideoutStations(lang: LanguageCode, limit: Int, offset: Int): [HideoutStation]!
+  historicalItemPrices(id: ID!, lang: LanguageCode, limit: Int, offset: Int): [historicalPricePoint]!
   item(id: ID, normalizedName: String, lang: LanguageCode): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode): [Item]!
-  itemCategories(lang: LanguageCode): [ItemCategory]!
-  maps(lang: LanguageCode): [Map]!
+  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
+  itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
+  maps(lang: LanguageCode, limit: Int, offset: Int): [Map]!
   status: ServerStatus!
   task(id: ID!, lang: LanguageCode): Task
-  tasks(faction: String, lang: LanguageCode): [Task]!
-  traders(lang: LanguageCode): [Trader]!
+  tasks(faction: String, lang: LanguageCode, limit: Int, offset: Int): [Task]!
+  traders(lang: LanguageCode, limit: Int, offset: Int): [Trader]!
   fleaMarket(lang: LanguageCode): FleaMarket!
   armorMaterials(lang: LanguageCode): [ArmorMaterial]!
   playerLevels: [PlayerLevel]!
