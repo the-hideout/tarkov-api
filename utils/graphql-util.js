@@ -40,8 +40,8 @@ module.exports = {
         if (!limit && !offset) return data;
         if (typeof limit === 'undefined') return data.slice(offset);
         if (typeof offset === 'undefined') offset = 0;
-        let end = Math.abs(limit)+offset;
-        if (offset < 0) end = data.length-Math.abs(offset)+limit;
+        let end = Math.abs(limit) + offset;
+        if (offset < 0) end = data.length - Math.abs(offset) + limit;
         return data.slice(offset, end);
     }
 };
