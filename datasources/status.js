@@ -93,9 +93,15 @@ module.exports = async () => {
         console.log('outer request error');
     }
 
+    // Check if the message is 'Access denied' - This is likely an EFT API issue so we suppress the message
+    var globalStatusMessage = globalStatus.message;
+    if (globalStatusMessage === 'Access denied' && globalStatus.status !== null && globalStatus.status !== undefined) {
+        globalStatusMessage = ''
+    }
+
     const generalStatus = {
         name: 'Global',
-        message: globalStatus.message,
+        message: globalStatusMessage,
         status: globalStatus.status,
         statusCode: statusMap[globalStatus.status],
     };
