@@ -21,7 +21,8 @@ module.exports = {
         }
         for (const selection of info.operation.selectionSet.selections) {
             let selectionRoot = selection.name.value;
-            if (selection.alias) selectionRoot = selection.alias.value;
+            if (selection.alias)
+                selectionRoot = selection.alias.value;
             if (selectionRoot !== myRoot) continue;
             for (const arg of selection.arguments) {
                 if (arg.name.value === 'lang') {
