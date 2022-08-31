@@ -15,7 +15,16 @@ module.exports = {
     getLang: (info) => {
         let lang = 'en';
         let langFound = false;
+        let myRoot = info.path.key;
+        for (let currentNode = info.path.prev; currentNode; currentNode = currentNode.prev) {
+            myRoot = currentNode.key;
+        }
         for (const selection of info.operation.selectionSet.selections) {
+            let selectionRoot = selection.name.value;
+            if (selection.alias)
+                selectionRoot = selection.alias.value;
+            if (selectionRoot !== myRoot)
+                continue;
             for (const arg of selection.arguments) {
                 if (arg.name.value === 'lang') {
                     lang = arg.value.value;
