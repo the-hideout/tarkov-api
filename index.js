@@ -17,6 +17,8 @@ const twitch = require('./custom-endpoints/twitch');
 
 let schema = false;
 let loadingSchema = false;
+
+// If the environment is not production, skip using the caching service
 const skipCache = ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
