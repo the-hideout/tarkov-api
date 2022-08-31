@@ -27,7 +27,7 @@ async function updateCache(query, variables, body) {
     try {
         // Get the cacheKey from the request
         query = query.trim();
-        const cacheKey = await hash(query+JSON.stringify(variables));
+        const cacheKey = await hash(query + JSON.stringify(variables));
 
         // headers and POST body
         const headersPost = {
@@ -58,9 +58,9 @@ async function updateCache(query, variables, body) {
 async function checkCache(query, variables) {
     try {
         query = query.trim();
-        const cacheKey = await hash(query+JSON.stringify(variables));
+        const cacheKey = await hash(query + JSON.stringify(variables));
 
-        const response = await fetch(`${cacheUrl}/api/cache?key=${cacheKey}`, {headers: headers});
+        const response = await fetch(`${cacheUrl}/api/cache?key=${cacheKey}`, { headers: headers });
         if (response.status === 200) {
             return await response.json();
         }

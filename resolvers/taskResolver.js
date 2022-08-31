@@ -298,7 +298,7 @@ module.exports = {
                 return questArray.map(questId => {
                     return context.data.task.getQuest(questId);
                 });
-            });      
+            });
         }
     },
     QuestRewardReputation: {

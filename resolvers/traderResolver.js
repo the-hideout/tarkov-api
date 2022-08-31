@@ -67,9 +67,7 @@ module.exports = {
         async trader(data, args, context) {
             try {
                 return await context.data.trader.get(data.trader);
-            }catch (error) {
-                //console.log('error getting trader ', error);
-                //console.log(JSON.stringify(error.stack, null, 4));
+            } catch (error) {
                 console.log('error was thrown', error);
             }
         }

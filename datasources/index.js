@@ -4,14 +4,13 @@ const HideoutAPI = require('./hideout');
 const HistoricalPricesAPI = require('./historical-prices');
 const ItemsAPI = require('./items');
 const MapAPI = require('./maps');
-//const QuestsAPI = require('./quests');
 const status = require('./status');
 const TasksAPI = require('./tasks');
 const TraderInventoryAPI = require('./trader-inventory');
 const TradersAPI = require('./traders');
 
 class DataSource {
-    constructor(){
+    constructor() {
         this.barter = new BartersAPI();
         this.craft = new CraftsAPI();
         this.hideout = new HideoutAPI();
@@ -49,7 +48,7 @@ class DataSource {
             }
             this.loading = true;
             return Promise.all([
-                this.barter.init(), 
+                this.barter.init(),
                 this.craft.init(),
                 this.hideout.init(),
                 this.historicalPrice.init(),

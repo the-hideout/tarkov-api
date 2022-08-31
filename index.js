@@ -1,5 +1,3 @@
-//const crypto = require('crypto');
-
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { mergeTypeDefs } = require('@graphql-tools/merge');
 const { graphql } = require('graphql');
@@ -14,21 +12,18 @@ const resolvers = require('./resolvers');
 const graphqlUtil = require('./utils/graphql-util');
 const cacheMachine = require('./utils/cache-machine');
 
-//require('./loader');
-
 const nightbot = require('./custom-endpoints/nightbot');
 const twitch = require('./custom-endpoints/twitch');
 
 let schema = false;
 let loadingSchema = false;
+
+// If the environment is not production, skip using the caching service
 const skipCache = ENVIRONMENT !== 'production' || false;
 
-/**
- * Example of how router can be used in an application
- *  */
-
+// Example of how router can be used in an application
 async function getSchema(data) {
-    if (schema){
+    if (schema) {
         return schema;
     }
     if (loadingSchema) {
@@ -57,7 +52,7 @@ async function getSchema(data) {
             return Promise.reject(error);
         }
         try {
-            schema = makeExecutableSchema({typeDefs: mergedDefs, resolvers: resolvers});
+            schema = makeExecutableSchema({ typeDefs: mergedDefs, resolvers: resolvers });
             loadingSchema = false;
             return schema;
         } catch (error) {
@@ -73,13 +68,10 @@ async function getSchema(data) {
 }
 
 addEventListener('fetch', event => {
-    //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' total response');
-    //console.log('environment', ENVIRONMENT);
     event.respondWith(handleRequest(event));
 });
 
 async function graphqlHandler(event, graphQLOptions) {
-    //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' checkPoint');
     const request = event.request;
     const url = new URL(request.url);
     let query = false;
@@ -87,10 +79,7 @@ async function graphqlHandler(event, graphQLOptions) {
 
     if (request.method === 'POST') {
         try {
-            //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' checkPoint');
-            //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' request.json');
             const requestBody = await request.json();
-            //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' request.json');
             query = requestBody.query;
             variables = requestBody.variables;
         } catch (jsonError) {
@@ -110,8 +99,8 @@ async function graphqlHandler(event, graphQLOptions) {
     }
     // Check for empty /graphql query
     if (!query || query.trim() === "") {
-        return new Response('GraphQL requires a query in the body of the request', 
-            { 
+        return new Response('GraphQL requires a query in the body of the request',
+            {
                 status: 200,
                 headers: { 'cache-control': 'public, max-age=2592000' }
             }
@@ -140,33 +129,7 @@ async function graphqlHandler(event, graphQLOptions) {
         console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    /* const queryHashString = JSON.stringify({
-        query: query,
-        variables: variables,
-    });
-
-    const queryHash = crypto.createHash('md5').update(queryHashString).digest('hex');
-
-    if(!url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
-        const cachedResponse = await QUERY_CACHE.get(queryHash, 'json');
-
-        if(cachedResponse){
-            return new Response(JSON.stringify(cachedResponse), {
-                headers: {
-                    'content-type': 'application/json',
-                },
-            });
-        }
-    } */
-
-    //console.time(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
-    /*try {
-        await dataAPI.init();
-    } catch (error) {
-        console.log('init error', error, error.stack);
-    }*/
-    //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' init')
-    const result = await graphql(await getSchema(dataAPI), query, {}, {data: dataAPI, util: graphqlUtil}, variables);
+    const result = await graphql(await getSchema(dataAPI), query, {}, { data: dataAPI, util: graphqlUtil }, variables);
     const body = JSON.stringify(result);
 
     // Update the cache with the results of the query
@@ -176,10 +139,6 @@ async function graphqlHandler(event, graphQLOptions) {
         event.waitUntil(cacheMachine.put(query, variables, body));
     }
 
-    /* if(!result.errors && !url.hostname.includes('localhost') && !url.hostname.includes('tutorial.cloudflareworkers.com')){
-        await QUERY_CACHE.put(queryHash, body, {expirationTtl: 300});
-    } */
-    //console.timeEnd(event.request.cf.tlsExportedAuthenticator.clientFinished+' total response')
     return new Response(body, {
         headers: {
             'content-type': 'application/json',

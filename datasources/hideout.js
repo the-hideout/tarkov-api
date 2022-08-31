@@ -5,7 +5,7 @@ class HideoutAPI extends WorkerKV {
         super('hideout_data');
     }
 
-    async getList(){
+    async getList() {
         await this.init();
         return this.cache.data;
     }

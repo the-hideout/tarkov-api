@@ -9,7 +9,7 @@ class ItemsAPI extends WorkerKV {
         const item = {
             ...rawItem,
         };
-        
+
         // add trader prices to sellFor
         item.sellFor = [
             ...item.traderPrices.map((traderPrice) => {
@@ -34,7 +34,7 @@ class ItemsAPI extends WorkerKV {
         item.buyFor = [];
 
         // add flea prices to sellFor and buyFor
-        if(!item.types.includes('noFlea') && !item.types.includes('preset')){
+        if (!item.types.includes('noFlea') && !item.types.includes('preset')) {
             item.sellFor.push({
                 price: item.lastLowPrice || 0,
                 currency: 'RUB',
@@ -68,7 +68,7 @@ class ItemsAPI extends WorkerKV {
     async getItem(id, contains) {
         await this.init();
         let item = this.cache.data[id];
-        if(!item){
+        if (!item) {
             return Promise.reject(new Error(`No item found with id ${id}`));
         }
 

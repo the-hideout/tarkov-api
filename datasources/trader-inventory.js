@@ -21,14 +21,14 @@ class TraderInventoryAPI extends WorkerKV {
                 }
             }
             this.traderCache = traderCache;
-        } catch (error){
+        } catch (error) {
             return Promise.reject(error);
         }
     }
 
     async getByItemId(itemId) {
         await this.init();
-        if(!this.cache.data[itemId]){
+        if (!this.cache.data[itemId]) {
             return [];
         }
         return this.cache.data[itemId];
