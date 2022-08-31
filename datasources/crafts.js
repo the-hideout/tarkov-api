@@ -2,7 +2,7 @@
 const WorkerKV = require('../utils/worker-kv');
 
 class CraftsAPI extends WorkerKV {
-    constructor(){
+    constructor() {
         super('craft_data');
     }
 

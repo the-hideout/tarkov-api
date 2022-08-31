@@ -15,31 +15,11 @@ async function gatherResponse(response) {
         const responseData = await response.json();
 
         responseOutput = responseData;
-    } catch (jsonError){
+    } catch (jsonError) {
         console.log('json error');
     }
 
     return responseOutput;
-
-    /* It's the wrong content-type so this doesn't apply */
-
-    // const { headers } = response;
-
-    // const contentType = headers.get("content-type") || "";
-
-    // if (contentType.includes("application/json")) {
-    //     console.log('is json');
-    // }
-
-    // if (contentType.includes("application/text")) {
-    //     return response.text();
-    // }
-
-    // if (contentType.includes("text/html")) {
-    //     return response.text();
-    // }
-
-    // return response.text();
 };
 
 async function handleRequest(url) {
@@ -68,7 +48,7 @@ module.exports = async () => {
             handleRequest(globalStatusUrl),
         ]);
 
-        if(servicesResponse && servicesResponse.status && servicesResponse.status === 'fulfilled' && servicesResponse.value){
+        if (servicesResponse && servicesResponse.status && servicesResponse.status === 'fulfilled' && servicesResponse.value) {
             services = servicesResponse.value.map((serviceStatus) => {
                 return {
                     ...serviceStatus,
@@ -77,7 +57,7 @@ module.exports = async () => {
             });
         }
 
-        if(messagesResponse && messagesResponse.status && messagesResponse.status === 'fulfilled' && messagesResponse.value){
+        if (messagesResponse && messagesResponse.status && messagesResponse.status === 'fulfilled' && messagesResponse.value) {
             messages = messagesResponse.value.map((message) => {
                 return {
                     ...message,
@@ -86,10 +66,10 @@ module.exports = async () => {
             });
         }
 
-        if(globalStatusResponse && globalStatusResponse.status && globalStatusResponse.status === 'fulfilled' && globalStatusResponse.value){
+        if (globalStatusResponse && globalStatusResponse.status && globalStatusResponse.status === 'fulfilled' && globalStatusResponse.value) {
             globalStatus = globalStatusResponse.value;
         }
-    } catch (requestError){
+    } catch (requestError) {
         console.log('outer request error');
     }
 
