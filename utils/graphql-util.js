@@ -23,7 +23,8 @@ module.exports = {
             let selectionRoot = selection.name.value;
             if (selection.alias)
                 selectionRoot = selection.alias.value;
-            if (selectionRoot !== myRoot) continue;
+            if (selectionRoot !== myRoot)
+                continue;
             for (const arg of selection.arguments) {
                 if (arg.name.value === 'lang') {
                     lang = arg.value.value;
