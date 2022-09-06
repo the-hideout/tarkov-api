@@ -197,8 +197,8 @@ type Item {
   iconLink: String
   iconLinkFallback: String!
   wikiLink: String
-  imageLink: String
-  imageLinkFallback: String!
+  inspectImageLink: String
+  inspectImageLinkFallback: String!
   gridImageLink: String
   gridImageLinkFallback: String!
   types: [ItemType]!
@@ -239,6 +239,8 @@ type Item {
   translation(languageCode: LanguageCode): ItemTranslation @deprecated(reason: "Use the lang argument on queries instead.")
   traderPrices: [TraderPrice]! @deprecated(reason: "Use sellFor instead.")
   bsgCategory: ItemCategory @deprecated(reason: "Use category instead.")
+  imageLink: String @deprecated(reason: "Use inspectImageLink instead.")
+  imageLinkFallback: String! @deprecated(reason: "Use inspectImageLinkFallback instead.")
 }
 
 type ItemAttribute {
