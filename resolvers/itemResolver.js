@@ -165,10 +165,10 @@ module.exports = {
             return context.data.historicalPrice.getByItemId(data.id);
         },
         imageLink(data) {
-            return data.handbookImageLink;
+            return data.inspectImageLink;
         },
         imageLinkFallback(data) {
-            return data.handbookImageLinkFallback;
+            return data.inspectImageLinkFallback;
         }
     },
     ItemAttribute: {
