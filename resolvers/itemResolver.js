@@ -87,7 +87,7 @@ module.exports = {
         name(data, args, context, info) {
             return context.util.getLocale(data, 'name', info);
         },
-        shortName(data,args, context, info) {
+        shortName(data, args, context, info) {
             return context.util.getLocale(data, 'shortName', info);
         },
         async buyFor(data, args, context) {
@@ -144,7 +144,7 @@ module.exports = {
             };
             const flea = await context.data.item.getFleaMarket();
             const q = options.requireAll ? 1 : options.count;
-            const vo = data.basePrice*(options.count/q);
+            const vo = data.basePrice * (options.count / q);
             const vr = options.price;
             let po = Math.log10(vo / vr);
             if (vr < vo) po = Math.pow(po, 1.08);
@@ -152,11 +152,11 @@ module.exports = {
             if (vr >= vo) pr = Math.pow(pr, 1.08);
             const ti = flea.sellOfferFeeRate;
             const tr = flea.sellRequirementFeeRate;
-            let fee = (vo*ti*Math.pow(4.0,po)*q)+(vr*tr*Math.pow(4.0,pr)*q);
+            let fee = (vo * ti * Math.pow(4.0, po) * q) + (vr * tr * Math.pow(4.0, pr) * q);
             if (options.intelCenterLevel >= 3) {
                 let discount = 0.3;
-                discount = discount+(discount*options.hideoutManagementLevel*0.01);
-                fee = fee-(fee*discount);
+                discount = discount + (discount * options.hideoutManagementLevel * 0.01);
+                fee = fee - (fee * discount);
             }
             return Math.round(fee);
         },

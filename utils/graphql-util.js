@@ -21,8 +21,10 @@ module.exports = {
         }
         for (const selection of info.operation.selectionSet.selections) {
             let selectionRoot = selection.name.value;
-            if (selection.alias) selectionRoot = selection.alias.value;
-            if (selectionRoot !== myRoot) continue;
+            if (selection.alias)
+                selectionRoot = selection.alias.value;
+            if (selectionRoot !== myRoot)
+                continue;
             for (const arg of selection.arguments) {
                 if (arg.name.value === 'lang') {
                     lang = arg.value.value;
@@ -47,8 +49,8 @@ module.exports = {
         if (!limit && !offset) return data;
         if (typeof limit === 'undefined') return data.slice(offset);
         if (typeof offset === 'undefined') offset = 0;
-        let end = Math.abs(limit)+offset;
-        if (offset < 0) end = data.length-Math.abs(offset)+limit;
+        let end = Math.abs(limit) + offset;
+        if (offset < 0) end = data.length - Math.abs(offset) + limit;
         return data.slice(offset, end);
     }
 };

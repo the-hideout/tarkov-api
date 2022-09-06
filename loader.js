@@ -1,7 +1,5 @@
-/**
- * This is used in DEV environments where we don't actually connect to the KV stores
- * so we stub the implementations and download everything locally instead.
- */
+// This is used in DEV environments where we don't actually connect to the KV stores...
+// ...so we stub the implementations and download everything locally instead
 
 const _get = async (url) => {
     const response = await fetch(url, {})
@@ -30,7 +28,7 @@ if (typeof DATA_CACHE === 'undefined') {
                 console.log('getting trader items');
 
                 return _get(
-                    'https://tarkov-data-manager.herokuapp.com/data/trader-items.json'
+                    'https://manager.tarkov.dev/data/trader-items.json'
                 );
             }
 
@@ -38,7 +36,7 @@ if (typeof DATA_CACHE === 'undefined') {
                 console.log('getting item cache');
 
                 return _get(
-                    'https://tarkov-data-manager.herokuapp.com/data/item-data.json'
+                    'https://manager.tarkov.dev/data/item-data.json'
                 );
             }
 
@@ -46,7 +44,7 @@ if (typeof DATA_CACHE === 'undefined') {
                 console.log('getting barter data');
 
                 return _get(
-                    'https://tarkov-data-manager.herokuapp.com/data/barter-data.json'
+                    'https://manager.tarkov.dev/data/barter-data.json'
                 );
             }
 
@@ -54,7 +52,7 @@ if (typeof DATA_CACHE === 'undefined') {
                 console.log('getting craft data');
 
                 return _get(
-                    'https://tarkov-data-manager.herokuapp.com/data/craft-data.json'
+                    'https://manager.tarkov.dev/data/craft-data.json'
                 );
             }
 
@@ -62,7 +60,7 @@ if (typeof DATA_CACHE === 'undefined') {
                 console.log('getting hideout data');
 
                 return _get(
-                    'https://tarkov-data-manager.herokuapp.com/data/hideout-data.json'
+                    'https://manager.tarkov.dev/data/hideout-data.json'
                 );
             }
 
@@ -70,7 +68,7 @@ if (typeof DATA_CACHE === 'undefined') {
                 console.log('getting quest data');
 
                 return _get(
-                    'https://tarkov-data-manager.herokuapp.com/data/quest-data.json'
+                    'https://manager.tarkov.dev/data/quest-data.json'
                 );
             }
 

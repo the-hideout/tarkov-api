@@ -1,7 +1,7 @@
 const zlib = require('zlib');
 
 class WorkerKV {
-    constructor(kvName){
+    constructor(kvName) {
         this.cache = false;
         this.loading = false;
         this.kvName = kvName;
@@ -9,9 +9,8 @@ class WorkerKV {
         this.loadingInterval = false;
     }
 
-    async init(){
-        if (this.cache){
-            //console.log('already loaded', this.kvName);
+    async init() {
+        if (this.cache) {
             return;
         }
         if (this.loading) {
@@ -28,12 +27,10 @@ class WorkerKV {
             }
             clearInterval(this.loadingInterval);
         }, 5);
-        //console.time('kv load '+this.kvName);
         return new Promise((resolve, reject) => {
             DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
                 const data = response.value;
                 const metadata = response.metadata;
-                //console.timeEnd('kv load '+this.kvName);
                 if (metadata && metadata.compression) {
                     if (metadata.compression = 'gzip') {
                         this.cache = JSON.parse(zlib.gunzipSync(Buffer.from(data, metadata.encoding)).toString());
@@ -44,7 +41,6 @@ class WorkerKV {
                     this.cache = JSON.parse(data);
                 }
                 this.loading = false;
-                //console.log(this.kvName, 'listeners', this.events.listenerCount('loaded'));
                 resolve();
             }).catch(error => {
                 this.loading = false;

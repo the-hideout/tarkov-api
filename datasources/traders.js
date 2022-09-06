@@ -48,8 +48,8 @@ class TradersAPI extends WorkerKV {
 
     async get(id) {
         await this.init();
-        for (const trader of this.cache.data){
-            if(trader.id === id){
+        for (const trader of this.cache.data) {
+            if (trader.id === id) {
                 return trader;
             }
         }
@@ -59,8 +59,8 @@ class TradersAPI extends WorkerKV {
 
     async getByName(name) {
         await this.init();
-        for(const trader of this.cache.data){
-            if(trader.name.toLowerCase() === name.toLowerCase()){
+        for (const trader of this.cache.data) {
+            if (trader.name.toLowerCase() === name.toLowerCase()) {
                 return trader;
             }
         }
