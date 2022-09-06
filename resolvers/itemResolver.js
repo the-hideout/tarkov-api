@@ -167,8 +167,17 @@ module.exports = {
         imageLink(data) {
             return data.inspectImageLink;
         },
+        iconLinkFallback(data) {
+            return data.iconLink
+        },
+        gridImageLinkFallback(data) {
+            return data.gridImageLink
+        },
+        inspectImageLinkFallback(data) {
+            return data.inspectImageLink;
+        },
         imageLinkFallback(data) {
-            return data.inspectImageLinkFallback;
+            return data.inspectImageLink;
         }
     },
     ItemAttribute: {

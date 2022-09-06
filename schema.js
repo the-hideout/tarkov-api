@@ -195,12 +195,9 @@ type Item {
   height: Int!
   backgroundColor: String!
   iconLink: String
-  iconLinkFallback: String!
-  wikiLink: String
-  inspectImageLink: String
-  inspectImageLinkFallback: String!
   gridImageLink: String
-  gridImageLinkFallback: String!
+  inspectImageLink: String
+  wikiLink: String
   types: [ItemType]!
   avg24hPrice: Int
   properties: ItemProperties
@@ -240,7 +237,9 @@ type Item {
   traderPrices: [TraderPrice]! @deprecated(reason: "Use sellFor instead.")
   bsgCategory: ItemCategory @deprecated(reason: "Use category instead.")
   imageLink: String @deprecated(reason: "Use inspectImageLink instead.")
-  imageLinkFallback: String! @deprecated(reason: "Use inspectImageLinkFallback instead.")
+  imageLinkFallback: String! @deprecated(reason: "Fallback handled automatically by inspectImageLink.")
+  iconLinkFallback: String! @deprecated(reason: "Fallback handled automatically by iconLink.")
+  gridImageLinkFallback: String! @deprecated(reason: "Fallback handled automatically by gridImageLink.")
 }
 
 type ItemAttribute {
