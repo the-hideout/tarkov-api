@@ -163,6 +163,18 @@ module.exports = {
         async historicalPrices(data, args, context, info) {
             context.util.testDepthLimit(info, 1);
             return context.data.historicalPrice.getByItemId(data.id);
+        },
+        imageLink(data) {
+            return data.inspectImageLink;
+        },
+        iconLinkFallback(data) {
+            return data.iconLink
+        },
+        gridImageLinkFallback(data) {
+            return data.gridImageLink
+        },
+        imageLinkFallback(data) {
+            return data.inspectImageLink;
         }
     },
     ItemAttribute: {
