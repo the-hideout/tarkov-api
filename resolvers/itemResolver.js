@@ -173,9 +173,6 @@ module.exports = {
         gridImageLinkFallback(data) {
             return data.gridImageLink
         },
-        inspectImageLinkFallback(data) {
-            return data.inspectImageLink;
-        },
         imageLinkFallback(data) {
             return data.inspectImageLink;
         }
