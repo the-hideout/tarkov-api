@@ -197,6 +197,8 @@ type Item {
   iconLink: String
   gridImageLink: String
   inspectImageLink: String
+  image512pxLink: String
+  image8xLink: String
   wikiLink: String
   types: [ItemType]!
   avg24hPrice: Int
