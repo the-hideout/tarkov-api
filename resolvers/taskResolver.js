@@ -17,6 +17,9 @@ module.exports = {
         },
         quests(obj, args, context, info) {
             return context.data.task.getQuests();
+        },
+        questItems(obj, args, context) {
+            return context.data.task.getQuestItems();
         }
     },
     Task: {

@@ -602,6 +602,7 @@ type QuestItem {
   name: String!
   shortName: String
   description: String
+  normalizedName: String
   width: Int
   height: Int
   iconLink: String
@@ -965,6 +966,7 @@ type Query {
   items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   maps(lang: LanguageCode, limit: Int, offset: Int): [Map]!
+  questItems(lang: LanguageCode): [QuestItem]
   status: ServerStatus!
   task(id: ID!, lang: LanguageCode): Task
   tasks(faction: String, lang: LanguageCode, limit: Int, offset: Int): [Task]!
