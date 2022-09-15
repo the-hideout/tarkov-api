@@ -120,6 +120,11 @@ class TasksAPI extends WorkerKV {
         }
         return Promise.reject(new Error(`No quest with id ${id} found`));
     }
+
+    async getQuestItem(id) {
+        await this.init();
+        return this.cache.items[id];
+    }
 }
 
 module.exports = TasksAPI;

@@ -189,6 +189,7 @@ type Item {
   name: String
   normalizedName: String
   shortName: String
+  description: String
   basePrice: Int!
   updated: String
   width: Int!
@@ -599,6 +600,15 @@ type PriceRequirement {
 type QuestItem {
   id: ID
   name: String!
+  shortName: String
+  description: String
+  width: Int
+  height: Int
+  iconLink: String
+  gridImageLink: String
+  inspectImageLink: String
+  image512pxLink: String
+  image8xLink: String
 }
 
 type RequirementHideoutStationLevel {

@@ -165,6 +165,9 @@ module.exports = {
         }
     },
     TaskObjectiveQuestItem: {
+        async questItem(data, args, context) {
+            return context.data.task.getQuestItem(data.item_id);
+        },
         maps(data, args, context) {
             return data.map_ids.map(id => {
                 return context.data.map.get(id);
@@ -250,6 +253,12 @@ module.exports = {
     QuestItem: {
         name(data, args, context, info) {
             return context.util.getLocale(data, 'name', info);
+        },
+        shortName(data, args, context, info) {
+            return context.util.getLocale(data, 'shortName', info);
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
         },
     },
     TaskRewards: {
