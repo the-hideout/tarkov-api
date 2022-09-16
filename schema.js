@@ -189,6 +189,7 @@ type Item {
   name: String
   normalizedName: String
   shortName: String
+  description: String
   basePrice: Int!
   updated: String
   width: Int!
@@ -599,6 +600,16 @@ type PriceRequirement {
 type QuestItem {
   id: ID
   name: String!
+  shortName: String
+  description: String
+  normalizedName: String
+  width: Int
+  height: Int
+  iconLink: String
+  gridImageLink: String
+  inspectImageLink: String
+  image512pxLink: String
+  image8xLink: String
 }
 
 type RequirementHideoutStationLevel {
@@ -955,6 +966,7 @@ type Query {
   items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   maps(lang: LanguageCode, limit: Int, offset: Int): [Map]!
+  questItems(lang: LanguageCode): [QuestItem]
   status: ServerStatus!
   task(id: ID!, lang: LanguageCode): Task
   tasks(faction: String, lang: LanguageCode, limit: Int, offset: Int): [Task]!

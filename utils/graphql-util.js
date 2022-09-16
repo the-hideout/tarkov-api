@@ -38,7 +38,10 @@ module.exports = {
     },
     getLocale: (data, field, info) => {
         const lang = module.exports.getLang(info);
-        if (data.locale && lang in data.locale && field in data.locale[lang]) return data.locale[lang][field];
+        if (data.locale && lang in data.locale && field in data.locale[lang]) 
+            return data.locale[lang][field];
+        if (data.locale && data.locale.en && field in data.locale.en)
+            return data.locale.en[field];
         return data[field];
     },
     paginate: async (data, args) => {

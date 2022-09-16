@@ -90,6 +90,9 @@ module.exports = {
         shortName(data, args, context, info) {
             return context.util.getLocale(data, 'shortName', info);
         },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
+        },
         async buyFor(data, args, context) {
             if (!data.buyFor) data.buyFor = [];
             return [
