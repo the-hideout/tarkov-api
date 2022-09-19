@@ -197,6 +197,7 @@ type Item {
   backgroundColor: String!
   iconLink: String
   gridImageLink: String
+  baseImageLink: String
   inspectImageLink: String
   image512pxLink: String
   image8xLink: String
@@ -533,6 +534,7 @@ type ItemSlot {
   name: String!
   nameId: String!
   filters: ItemFilters
+  required: Boolean
 }
 
 enum ItemSourceName {
@@ -607,6 +609,7 @@ type QuestItem {
   height: Int
   iconLink: String
   gridImageLink: String
+  baseImageLink: String
   inspectImageLink: String
   image512pxLink: String
   image8xLink: String
