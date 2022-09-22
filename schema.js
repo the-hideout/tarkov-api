@@ -493,6 +493,7 @@ type ItemPropertiesWeapon {
   defaultRecoilVertical: Int
   defaultRecoilHorizontal: Int
   defaultWeight: Float
+  defaultPreset: Item
   slots: [ItemSlot]
   allowedAmmo: [Item]
 }

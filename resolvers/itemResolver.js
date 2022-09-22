@@ -287,6 +287,10 @@ module.exports = {
         },
         allowedAmmo(data, args, context) {
             return data.allowedAmmo.map(id => context.data.item.getItem(id));
+        },
+        defaultPreset(data, args, context) {
+            if (!data.defaultPreset) return null;
+            return context.data.item.getItem(data.defaultPreset);
         }
     },
     ItemSlot: {
