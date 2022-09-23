@@ -205,6 +205,8 @@ type Item {
   types: [ItemType]!
   avg24hPrice: Int
   properties: ItemProperties
+  conflictingItems: [Item]
+  conflictingSlotIds: [String]
   accuracyModifier: Float
   recoilModifier: Float
   ergonomicsModifier: Float
@@ -532,6 +534,7 @@ union ItemProperties =
   ItemPropertiesStim
 
 type ItemSlot {
+  id: ID!
   name: String!
   nameId: String!
   filters: ItemFilters

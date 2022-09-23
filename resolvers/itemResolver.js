@@ -117,6 +117,16 @@ module.exports = {
                 return context.data.item.getCategory(id);
             });
         },
+        async conflictingItems(data, args, context) {
+            return Promise.all(data.conflictingItems.map(async id => {
+                const item = await context.data.item.getItem(id).catch(error => {
+                    console.log(`item ${id} not found`);
+                    return null;
+                });
+
+                return item;
+            }));
+        },
         usedInTasks(data, args, context) {
             return context.data.task.getTasksRequiringItem(data.id);
         },
