@@ -457,10 +457,12 @@ type ItemPropertiesPreset {
 
 type ItemPropertiesScope {
   ergonomics: Float
+  sightModes: [Int]
   recoil: Float @deprecated(reason: "Use recoilModifier instead.")
+  sightingRange: Int
   recoilModifier: Float
-  zoomLevels: [[Float]]
   slots: [ItemSlot]
+  zoomLevels: [[Float]]
 }
 
 type ItemPropertiesStim {
@@ -496,6 +498,7 @@ type ItemPropertiesWeapon {
   defaultRecoilHorizontal: Int
   defaultWeight: Float
   defaultPreset: Item
+  presets: [Item]
   slots: [ItemSlot]
   allowedAmmo: [Item]
 }
@@ -704,6 +707,7 @@ type Task {
   id: ID
   tarkovDataId: Int
   name: String!
+  normalizedName: String!
   trader: Trader!
   #locationName: String!
   map: Map
