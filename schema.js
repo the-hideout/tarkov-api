@@ -900,6 +900,7 @@ type Trader {
   id: ID!
   name: String!
   normalizedName: String!
+  description: String
   resetTime: String
   currency: Item!
   discount: Float!
