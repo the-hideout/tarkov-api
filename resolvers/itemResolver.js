@@ -301,6 +301,9 @@ module.exports = {
         defaultPreset(data, args, context) {
             if (!data.defaultPreset) return null;
             return context.data.item.getItem(data.defaultPreset);
+        },
+        presets(data, args, context) {
+            return Promise.all(data.presets.map(id => context.data.item.getItem(id)));
         }
     },
     ItemSlot: {
