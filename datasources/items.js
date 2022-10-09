@@ -215,12 +215,7 @@ class ItemsAPI extends WorkerKV {
             format = true;
         }
         return items.filter((rawItem) => {
-            for (const bsgCategoryId of bsgCategoryIds) {
-                if (rawItem.bsgCategoryId === bsgCategoryId) {
-                    return true;
-                }
-            }
-            return false;
+            return bsgCategoryIds.some(catId => catId === rawItem.bsgCategoryId);
         }).map((rawItem) => {
             if (!format) return rawItem;
             return this.formatItem(rawItem)
@@ -234,18 +229,25 @@ class ItemsAPI extends WorkerKV {
             items = Object.values(this.cache.data);
             format = true;
         }
-        const categories = await this.getCategoriesEnum();
+        const categories = (await this.getCategories()).filter(cat => names.includes(cat.enumName));
         return items.filter((rawItem) => {
-            for (const name of names) {
-                const includedCats = [
-                    categories[name].id,
-                    ...this.getSubCategories(categories[name].id)
-                ];
-                if (includedCats.includes(rawItem.bsgCategoryId)) {
-                    return true;
-                }
-            }
-            return false;
+            return rawItem.categories.some(catId => categories.some(cat => cat.id === catId));
+        }).map((rawItem) => {
+            if (!format) return rawItem;
+            return this.formatItem(rawItem)
+        });
+    }
+
+    async getItemsByHandbookCategoryEnums(names, items = false) {
+        await this.init();
+        let format = false;
+        if (!items) {
+            items = Object.values(this.cache.data);
+            format = true;
+        }
+        const categories = (await this.getHandbookCategories()).filter(cat => names.includes(cat.enumName));
+        return items.filter((rawItem) => {
+            return rawItem.categories.some(catId => categories.some(cat => cat.id === catId));
         }).map((rawItem) => {
             if (!format) return rawItem;
             return this.formatItem(rawItem)
@@ -259,28 +261,12 @@ class ItemsAPI extends WorkerKV {
             items = Object.values(this.cache.data);
             format = true;
         }
-        const categories = [
-            bsgCategoryId,
-            ...this.getSubCategories(bsgCategoryId)
-        ];
         return items.filter(item => {
-            return categories.includes(item.bsgCategoryId);
+            return item.categories.includes(bsgCategoryId);
         }).map(item => {
             if (!format) return item;
             return this.formatItem(item);
         });
-    }
-
-    getSubCategories(id) {
-        const subCats = [];
-        for (const catId in this.cache.categories) {
-            const cat = this.cache.categories[catId];
-            if (cat.parent_id === id) {
-                subCats.push(cat.id);
-                subCats.push(...this.getSubCategories(cat.id));
-            }
-        }
-        return subCats;
     }
 
     async getItemByNormalizedName(normalizedName) {
@@ -311,7 +297,7 @@ class ItemsAPI extends WorkerKV {
 
     async getCategory(id) {
         await this.init();
-        return this.cache.categories[id];
+        return this.cache.categories[id] || this.cache.handbookCategories[id];
     }
 
     async getTopCategory(id) {
@@ -340,6 +326,19 @@ class ItemsAPI extends WorkerKV {
             map[cats[id].enumName] = cats[id];
         }
         return map;
+    }
+
+    async getHandbookCategory(id) {
+        await this.init();
+        return this.cache.handbookCategories[id];
+    }
+
+    async getHandbookCategories() {
+        await this.init();
+        if (!this.cache) {
+            return Promise.reject(new Error('Item cache is empty'));
+        }
+        return Object.values(this.cache.handbookCategories);
     }
 
     async getFleaMarket() {
