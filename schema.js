@@ -465,6 +465,7 @@ type ItemPropertiesPreset {
   ergonomics: Float
   recoilVertical: Int
   recoilHorizontal: Int
+  moa: Float
 }
 
 type ItemPropertiesScope {
