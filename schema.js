@@ -333,6 +333,17 @@ type ItemPropertiesBackpack {
   pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
 }
 
+type ItemPropertiesBarrel {
+  ergonomics: Float
+  recoil: Float @deprecated(reason: "Use recoilModifier instead.")
+  recoilModifier: Float
+  accuracyModifier: Float @deprecated(reason: "Use centerOfImpact, deviationCurve, and deviationMax instead.")
+  centerOfImpact: Float
+  deviationCurve: Float
+  deviationMax: Float
+  slots: [ItemSlot]
+}
+
 type ItemPropertiesChestRig {
   class: Int
   durability: Int
@@ -492,6 +503,9 @@ type ItemPropertiesWeapon {
   recoilHorizontal: Int
   repairCost: Int
   sightingRange: Int
+  centerOfImpact: Float
+  deviationCurve: Float
+  deviationMax: Float
   defaultWidth: Int
   defaultHeight: Int
   defaultErgonomics: Float,
@@ -517,6 +531,7 @@ union ItemProperties =
   ItemPropertiesArmor | 
   ItemPropertiesArmorAttachment | 
   ItemPropertiesBackpack | 
+  ItemPropertiesBarrel | 
   ItemPropertiesChestRig | 
   ItemPropertiesContainer | 
   ItemPropertiesFoodDrink | 
