@@ -225,6 +225,7 @@ type Item {
   category: ItemCategory
   categories: [ItemCategory]!
   bsgCategoryId: String
+  handbookCategories: [ItemCategory]!
   weight: Float
   velocity: Float
   loudness: Int
@@ -330,6 +331,17 @@ type ItemPropertiesBackpack {
   capacity: Int
   grids: [ItemStorageGrid]
   pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
+}
+
+type ItemPropertiesBarrel {
+  ergonomics: Float
+  recoil: Float @deprecated(reason: "Use recoilModifier instead.")
+  recoilModifier: Float
+  accuracyModifier: Float @deprecated(reason: "Use centerOfImpact, deviationCurve, and deviationMax instead.")
+  centerOfImpact: Float
+  deviationCurve: Float
+  deviationMax: Float
+  slots: [ItemSlot]
 }
 
 type ItemPropertiesChestRig {
@@ -453,6 +465,7 @@ type ItemPropertiesPreset {
   ergonomics: Float
   recoilVertical: Int
   recoilHorizontal: Int
+  moa: Float
 }
 
 type ItemPropertiesScope {
@@ -491,6 +504,9 @@ type ItemPropertiesWeapon {
   recoilHorizontal: Int
   repairCost: Int
   sightingRange: Int
+  centerOfImpact: Float
+  deviationCurve: Float
+  deviationMax: Float
   defaultWidth: Int
   defaultHeight: Int
   defaultErgonomics: Float,
@@ -516,6 +532,7 @@ union ItemProperties =
   ItemPropertiesArmor | 
   ItemPropertiesArmorAttachment | 
   ItemPropertiesBackpack | 
+  ItemPropertiesBarrel | 
   ItemPropertiesChestRig | 
   ItemPropertiesContainer | 
   ItemPropertiesFoodDrink | 
@@ -975,8 +992,9 @@ type Query {
   hideoutStations(lang: LanguageCode, limit: Int, offset: Int): [HideoutStation]!
   historicalItemPrices(id: ID!, lang: LanguageCode, limit: Int, offset: Int): [historicalPricePoint]!
   item(id: ID, normalizedName: String, lang: LanguageCode): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
+  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], handbookCategoryNames: [HandbookCategoryName] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
+  handbookCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   maps(lang: LanguageCode, limit: Int, offset: Int): [Map]!
   questItems(lang: LanguageCode): [QuestItem]
   status: ServerStatus!

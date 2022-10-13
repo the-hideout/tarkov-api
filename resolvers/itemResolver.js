@@ -27,6 +27,9 @@ module.exports = {
                 categoryNames: async bsgcats => {
                     return context.data.item.getItemsByCategoryEnums(bsgcats, items);
                 },
+                handbookCategoryNames: async handbookcats => {
+                    return context.data.item.getItemsByHandbookCategoryEnums(handbookcats, items);
+                },
                 bsgCategoryId: async bsgcat => {
                     return context.data.item.getItemsByBsgCategoryId(bsgcat, items);
                 },
@@ -54,6 +57,9 @@ module.exports = {
         },
         itemCategories(obj, args, context) {
             return context.util.paginate(context.data.item.getCategories(), args);
+        },
+        handbookCategories(obj, args, context) {
+            return context.util.paginate(context.data.item.getHandbookCategories(), args);
         },
         itemsByIDs(obj, args, context, info) {
             return context.data.item.getItemsByIDs(args.ids);
@@ -114,6 +120,11 @@ module.exports = {
         },
         categories(data, args, context) {
             return data.categories.map(id => {
+                return context.data.item.getCategory(id);
+            });
+        },
+        handbookCategories(data, args, context) {
+            return data.handbookCategories.map(id => {
                 return context.data.item.getCategory(id);
             });
         },
