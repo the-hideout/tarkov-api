@@ -7,11 +7,15 @@ class WorkerKV {
         this.kvName = kvName;
         this.loadingPromises = [];
         this.loadingInterval = false;
+        this.retrieveDate = new Date (0);
     }
 
     async init() {
-        if (this.cache) {
+        if (this.cache && new Date() - this.retrieveDate < 1000 * 60 * 5) {
             return;
+        }
+        if (this.cache) {
+            this.cache = false;
         }
         if (this.loading) {
             return new Promise((resolve) => {
@@ -40,6 +44,7 @@ class WorkerKV {
                 } else {
                     this.cache = JSON.parse(data);
                 }
+                this.retrieveDate = new Date();
                 this.loading = false;
                 resolve();
             }).catch(error => {
