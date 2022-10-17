@@ -16,7 +16,6 @@ class WorkerKV {
             return;
         }
         if (this.cache) {
-            console.log('getting new data')
             this.cache = false;
         }
         if (this.loading) {
