@@ -3,6 +3,7 @@ const WorkerKV = require('../utils/worker-kv');
 class TasksAPI extends WorkerKV {
     constructor() {
         super('quest_data');
+        this.refreshInterval = 1000 * 60 * 10;
     }
 
     async getList() {
