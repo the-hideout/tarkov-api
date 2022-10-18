@@ -4,6 +4,7 @@ class TraderInventoryAPI extends WorkerKV {
     constructor() {
         super('trader_price_data');
         this.traderCache = false;
+        this.refreshInterval = 1000 * 60 * 60 * 12;
     }
 
     async initTraderCache() {

@@ -7,11 +7,16 @@ class WorkerKV {
         this.kvName = kvName;
         this.loadingPromises = [];
         this.loadingInterval = false;
+        this.dataUpdated = new Date (0);
+        this.refreshInterval = 1000 * 60 * 5;
     }
 
     async init() {
-        if (this.cache) {
+        if (this.cache && new Date() - this.dataUpdated < this.refreshInterval + 60000) {
             return;
+        }
+        if (this.cache) {
+            this.cache = false;
         }
         if (this.loading) {
             return new Promise((resolve) => {
@@ -39,6 +44,10 @@ class WorkerKV {
                     }
                 } else {
                     this.cache = JSON.parse(data);
+                }
+                this.dataUpdated = new Date();
+                if (this.cache.updated) {
+                    this.dataUpdated = new Date(this.cache.updated);
                 }
                 this.loading = false;
                 resolve();
