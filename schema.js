@@ -367,6 +367,7 @@ type ItemPropertiesFoodDrink {
   energy: Int
   hydration: Int
   units: Int
+  stimEffects: [StimEffect]!
 }
 
 type ItemPropertiesGlasses {
