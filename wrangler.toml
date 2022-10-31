@@ -1,5 +1,6 @@
 compatibility_date = "2021-12-14"
 name = "api"
+main = "dist/worker.js"
 type = "webpack"
 account_id = "424ad63426a1ae47d559873f929eb9fc"
 zone_id = "777d475095752ccbe5d1d49e690a305b"
