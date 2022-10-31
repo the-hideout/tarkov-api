@@ -1,7 +1,7 @@
 {
-    "name": "tarkov-data-api",
+    "name": "tarkov-api",
     "version": "1.0.0",
-    "description": "package for creating workers templates",
+    "description": "Community made GraphQL API with real-time data for everything in the Escape from Tarkov game!",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\"",
@@ -10,7 +10,7 @@
         "ci": "wrangler --env development dev",
         "local": "wrangler dev"
     },
-    "author": "Oskar Risberg <oskar.risberg@stendahls.se>",
+    "author": "Oskar Risberg <oskar.risberg@stendahls.se> + the-hideout team + contributors",
     "license": "ISC",
     "devDependencies": {
         "@cloudflare/wrangler": "^1.19.11",
