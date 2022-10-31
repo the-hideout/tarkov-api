@@ -1,12 +1,15 @@
-compatibility_date = "2021-12-14"
+compatibility_date = "2022-07-12"
 name = "api"
+main = "index.js"
 type = "webpack"
-account_id = "424ad63426a1ae47d559873f929eb9fc"
-zone_id = "777d475095752ccbe5d1d49e690a305b"
-workers_dev = true
+node_compat = true
 webpack_config = "webpack.config.js"
+
+account_id = "424ad63426a1ae47d559873f929eb9fc"
+workers_dev = true
+
 routes = ["api.tarkov.dev/graphql", "api.tarkov.dev/graphql*", "api.tarkov.dev/___graphql", "api.tarkov.dev/webhook*"]
-kv-namespaces = [
+kv_namespaces = [
     { binding = "DATA_CACHE", id = "2e6feba88a9e4097b6d2209191ed4ae5", preview_id = "17fd725f04984e408d4a70b37c817171" },
     { binding = "QUERY_CACHE", id = "cf717460f7eb40299a0f8f844d157051", preview_id = "cf717460f7eb40299a0f8f844d157051" }
 ]
@@ -16,7 +19,7 @@ vars = { ENVIRONMENT = "production" }
 [env.development]
 webpack_config = "webpack.dev.js"
 routes = []
-kv-namespaces = [
+kv_namespaces = [
     { binding = "DATA_CACHE", id = "17fd725f04984e408d4a70b37c817171", preview_id = "17fd725f04984e408d4a70b37c817171" },
     { binding = "QUERY_CACHE", id = "cf717460f7eb40299a0f8f844d157051", preview_id = "cf717460f7eb40299a0f8f844d157051" }
 ]
