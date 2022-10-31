@@ -12,12 +12,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # pin@v2
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # pin@v1
+      - name: Setup NodeJS
+        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # pin@v3.5.1
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
