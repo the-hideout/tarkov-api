@@ -1,10 +1,12 @@
-compatibility_date = "2021-12-14"
+compatibility_date = "2022-07-12"
 name = "api"
-main = "dist/worker.js"
+main = "index.js"
 type = "webpack"
+
 account_id = "424ad63426a1ae47d559873f929eb9fc"
 workers_dev = true
 webpack_config = "webpack.config.js"
+
 routes = ["api.tarkov.dev/graphql", "api.tarkov.dev/graphql*", "api.tarkov.dev/___graphql", "api.tarkov.dev/webhook*"]
 kv_namespaces = [
     { binding = "DATA_CACHE", id = "2e6feba88a9e4097b6d2209191ed4ae5", preview_id = "17fd725f04984e408d4a70b37c817171" },
