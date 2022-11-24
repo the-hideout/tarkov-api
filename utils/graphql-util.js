@@ -44,6 +44,60 @@ module.exports = {
             return data.locale.en[field];
         return data[field];
     },
+    getLocales: (data, args) => {
+        const locales = [];
+        let en;
+        if (Array.isArray(args.fields) && args.fields.length < 1) {
+            throw new Error(`You must provide at least one value for the "fields" argument to the "locales" field`)
+        }
+        if (Array.isArray(args.languages) && args.languages.length < 1) {
+            throw new Error(`You must provide at least one value for the "languages" argument to the "locales" field`)
+        }
+        for (const langCode in data.locale) {
+            const locale = {
+                language: langCode,
+                fields: []
+            };
+            for (const fieldName in data.locale[langCode]) {
+                if (!args.fields.includes(fieldName)) {
+                    continue;
+                }
+                locale.fields.push({
+                    name: fieldName,
+                    value: data.locale[langCode][fieldName]
+                });
+            }
+            if (langCode === 'en') {
+                en = locale;
+            }
+            if (!args.languages.includes(langCode)) {
+                continue;
+            }
+            locales.push(locale);
+        }
+        for (const locale of locales) {
+            if (locale.language === 'en') {
+                continue;
+            }
+            for (const field of en.fields) {
+                const found = locale.fields.some(f => f.name === field.name);
+                if (!found) {
+                    locale.fields.push(field);
+                }
+            }
+        }
+
+        for (const langCode of args.languages) {
+            const found = locales.some(loc => loc.language === langCode);
+            if (!found) {
+                locales.push({
+                    language: langCode,
+                    fields: en.fields
+                });
+            }
+        }
+        return locales;
+    },
     paginate: async (data, args) => {
         data = await data;
         if (!Array.isArray(data)) return data;
