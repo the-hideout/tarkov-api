@@ -17,13 +17,16 @@ const twitch = require('./custom-endpoints/twitch');
 
 let schema = false;
 let loadingSchema = false;
+let lastSchemaRefresh = 0;
+
+const schemaRefreshInterval = 1000 * 60 * 10;
 
 // If the environment is not production, skip using the caching service
 const skipCache = ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
 async function getSchema(data) {
-    if (schema) {
+    if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
         return schema;
     }
     if (loadingSchema) {
