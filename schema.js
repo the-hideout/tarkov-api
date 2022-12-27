@@ -18,7 +18,7 @@ type Ammo {
   accuracyModifier: Float
   recoil: Int @deprecated(reason: "Use recoilModifier instead.")
   recoilModifier: Float
-  initialSpeed: Int!
+  initialSpeed: Float
   lightBleedModifier: Float!
   heavyBleedModifier: Float!
   #attributes: AttributeCollection!
@@ -297,7 +297,7 @@ type ItemPropertiesAmmo {
   accuracyModifier: Float
   recoil: Float @deprecated(reason: "Use recoilModifier instead.")
   recoilModifier: Float
-  initialSpeed: Int
+  initialSpeed: Float
   lightBleedModifier: Float
   heavyBleedModifier: Float
   durabilityBurnFactor: Float
