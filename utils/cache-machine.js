@@ -5,6 +5,19 @@ const headers = {
     'Authorization': `Basic ${CACHE_BASIC_AUTH}`
 };
 
+async function fetchWithTimeout(resource, options = {}) {
+    const { timeout = 1000 } = options;
+    
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    const response = await fetch(resource, {
+      ...options,
+      signal: controller.signal  
+    });
+    clearTimeout(id);
+    return response;
+  }
+
 // Helper function to create a hash from a string
 // :param string: string to hash
 // :return: SHA-256 hash of string
@@ -37,7 +50,7 @@ async function updateCache(query, variables, body) {
         };
 
         // Update the cache
-        const response = await fetch(`${cacheUrl}/api/cache`, headersPost);
+        const response = await fetchWithTimeout(`${cacheUrl}/api/cache`, headersPost);
 
         // Log non-200 responses
         if (response.status !== 200) {
@@ -60,7 +73,7 @@ async function checkCache(query, variables) {
         query = query.trim();
         const cacheKey = await hash(query + JSON.stringify(variables));
 
-        const response = await fetch(`${cacheUrl}/api/cache?key=${cacheKey}`, { headers: headers });
+        const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${cacheKey}`, { headers: headers });
         if (response.status === 200) {
             return await response.json();
         }
