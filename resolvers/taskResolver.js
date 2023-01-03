@@ -129,6 +129,9 @@ module.exports = {
         },
         description(data, args, context, info) {
             return context.util.getLocale(data, 'description', info);
+        },
+        exitName(data, args, context, info) {
+            return context.util.getLocale(data, 'exitName', info);
         }
     },
     TaskObjectiveItem: {
@@ -268,6 +271,11 @@ module.exports = {
         traderUnlock(data, args, context) {
             return Promise.all(data.traderUnlock.map(unlock => {
                 return context.data.trader.get(unlock.trader_id);
+            }));
+        },
+        craftUnlock(data, args, context) {
+            return Promise.all(data.craftUnlock.map(unlock => {
+                return context.data.craft.get(unlock.craft_id);
             }));
         }
     },

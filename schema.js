@@ -116,8 +116,10 @@ type Craft {
   id: ID!
   station: HideoutStation!
   level: Int!
+  taskUnlock: Task
   duration: Int!
   requiredItems: [ContainedItem]!
+  requiredQuestItems: [QuestItem]!
   rewardItems: [ContainedItem]!
   source: String! @deprecated(reason: "Use stationLevel instead.")
   sourceName: String! @deprecated(reason: "Use stationLevel instead.")
@@ -799,6 +801,7 @@ type TaskObjectiveExtract implements TaskObjective {
   maps: [Map]!
   optional: Boolean!
   exitStatus: [String]!
+  exitName: String
   zoneNames: [String]!
 }
 
@@ -907,6 +910,7 @@ type TaskRewards {
   offerUnlock: [OfferUnlock]!
   skillLevelReward: [SkillLevel]!
   traderUnlock: [Trader]!
+  craftUnlock: [Craft]!
 }
 
 type TaskStatusRequirement {
