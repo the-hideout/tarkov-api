@@ -277,6 +277,9 @@ module.exports = {
             if (!data.craftUnlock) {
                 return [];
             }
+            if (data.craftUnlock.length === 0) {
+                return [];
+            }
             const crafts = await context.data.craft.getList();
             return data.craftUnlock.map(unlock => {
                 return crafts.find(c => {
