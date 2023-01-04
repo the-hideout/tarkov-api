@@ -273,10 +273,19 @@ module.exports = {
                 return context.data.trader.get(unlock.trader_id);
             }));
         },
-        craftUnlock(data, args, context) {
-            return Promise.all(data.craftUnlock.map(unlock => {
-                return context.data.craft.get(unlock.craft_id);
-            }));
+        async craftUnlock(data, args, context) {
+            const crafts = await context.data.craft.getList();
+            return data.craftUnlock.map(unlock => {
+                return crafts.find(c => {
+                    if (c.station.id !== unlock.station_id || c.level !== unlock.level) {
+                        return false;
+                    }
+                    if (c.rewardItems[0].item !== unlock.items[0].id) {
+                        return false;
+                    }
+                    return true;
+                });
+            }).filter(Boolean);
         }
     },
     TaskStatusRequirement: {
