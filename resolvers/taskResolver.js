@@ -274,6 +274,9 @@ module.exports = {
             }));
         },
         async craftUnlock(data, args, context) {
+            if (!data.craftUnlock) {
+                return [];
+            }
             const crafts = await context.data.craft.getList();
             return data.craftUnlock.map(unlock => {
                 return crafts.find(c => {
