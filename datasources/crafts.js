@@ -11,6 +11,11 @@ class CraftsAPI extends WorkerKV {
         return this.cache.data;
     }
 
+    async get(id) {
+        await this.init();
+        return this.cache.data.filter(c => c.id === id);
+    }
+
     async getCraftsForItem(id) {
         await this.init();
         return this.cache.data.filter(craft => {

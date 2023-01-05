@@ -129,6 +129,9 @@ module.exports = {
         },
         description(data, args, context, info) {
             return context.util.getLocale(data, 'description', info);
+        },
+        exitName(data, args, context, info) {
+            return context.util.getLocale(data, 'exitName', info);
         }
     },
     TaskObjectiveItem: {
@@ -269,6 +272,26 @@ module.exports = {
             return Promise.all(data.traderUnlock.map(unlock => {
                 return context.data.trader.get(unlock.trader_id);
             }));
+        },
+        async craftUnlock(data, args, context) {
+            if (!data.craftUnlock) {
+                return [];
+            }
+            if (data.craftUnlock.length === 0) {
+                return [];
+            }
+            const crafts = await context.data.craft.getList();
+            return data.craftUnlock.map(unlock => {
+                return crafts.find(c => {
+                    if (c.station !== unlock.station_id || c.level !== unlock.level) {
+                        return false;
+                    }
+                    if (c.rewardItems[0].item !== unlock.items[0].id) {
+                        return false;
+                    }
+                    return true;
+                });
+            }).filter(Boolean);
         }
     },
     TaskStatusRequirement: {
