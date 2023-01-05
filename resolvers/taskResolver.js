@@ -283,7 +283,7 @@ module.exports = {
             const crafts = await context.data.craft.getList();
             return data.craftUnlock.map(unlock => {
                 return crafts.find(c => {
-                    if (c.station.id !== unlock.station_id || c.level !== unlock.level) {
+                    if (c.station !== unlock.station_id || c.level !== unlock.level) {
                         return false;
                     }
                     if (c.rewardItems[0].item !== unlock.items[0].id) {
