@@ -97,6 +97,11 @@ module.exports = {
                 return context.data.item.getItem(item.id);
             });
         },
+        containsCategory(data, args,context) {
+            return data.containsCategory.map((cat) => {
+                return context.data.item.getCategory(cat.id);
+            });
+        },
         containsOne(data, args, context) {
             return data.containsOne.map((item) => {
                 return context.data.item.getItem(item.id);

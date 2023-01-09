@@ -779,8 +779,9 @@ type TaskObjectiveBuildItem implements TaskObjective {
   optional: Boolean!
   item: Item!
   containsAll: [Item]!
-  containsOne: [Item]!
+  containsCategory: [ItemCategory]!
   attributes: [AttributeThreshold]!
+  containsOne: [Item]! @deprecated(reason: "Use containsCategory instead.")
 }
 
 type TaskObjectiveExperience implements TaskObjective {
