@@ -182,6 +182,12 @@ module.exports = {
                 discount = discount + (discount * options.hideoutManagementLevel * 0.01);
                 fee = fee - (fee * discount);
             }
+            if (fee > Number.MAX_SAFE_INTEGER) {
+                fee = Number.MAX_SAFE_INTEGER;
+            }
+            if (fee < Number.MIN_SAFE_INTEGER) {
+                fee = Number.MIN_SAFE_INTEGER;
+            }
             return Math.round(fee);
         },
         async historicalPrices(data, args, context, info) {
