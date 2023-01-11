@@ -75,20 +75,22 @@ type Barter {
 }
 
 type BossSpawn {
-  name: String!
-  normalizedName: String!
+  boss: MobInfo!
   spawnChance: Float!
   spawnLocations: [BossSpawnLocation]!
   escorts: [BossEscort]!
   spawnTime: Int
   spawnTimeRandom: Boolean
   spawnTrigger: String
+  name: String! @deprecated(reason: "Use boss.name instead.")
+  normalizedName: String! @deprecated(reason: "Use boss.normalizedName instead.")
 }
 
 type BossEscort {
-  name: String!
-  normalizedName: String!
+  boss: MobInfo!
   amount: [BossEscortAmount]
+  name: String! @deprecated(reason: "Use boss.name instead.")
+  normalizedName: String! @deprecated(reason: "Use boss.normalizedName instead.")
 }
 
 type BossEscortAmount {
@@ -154,6 +156,12 @@ type HealthEffect {
   bodyParts: [String]!
   effects: [String]!
   time: NumberCompare
+}
+
+type HealthPart {
+  id: ID!
+  max: Int!
+  bodyPart: String!
 }
 
 type HideoutStation {
@@ -603,6 +611,14 @@ type Map {
 #  defaultFloor: String
 #}
 
+type MobInfo {
+  name: String!
+  normalizedName: String!
+  health: [HealthPart]
+  equipment: [ContainedItem]!
+  items: [Item]!
+}
+
 type NumberCompare {
   compareMethod: String!
   value: Float!
@@ -1001,7 +1017,7 @@ type Query {
   items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], handbookCategoryNames: [HandbookCategoryName] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   handbookCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
-  maps(lang: LanguageCode, limit: Int, offset: Int): [Map]!
+  maps(lang: LanguageCode, name: [String!], enemies: [String!], limit: Int, offset: Int): [Map]!
   questItems(lang: LanguageCode): [QuestItem]
   status: ServerStatus!
   task(id: ID!, lang: LanguageCode): Task

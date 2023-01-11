@@ -174,7 +174,6 @@ class ItemsAPI extends WorkerKV {
             if (name === '') throw new Error('Searched item name cannot be blank');
             return name.toLowerCase();
         });
-        console.log(lang);
         return items.filter((rawItem) => {
             if (!rawItem.locale || !rawItem.locale[lang]) return false;
             for (const search of searchStrings) {
