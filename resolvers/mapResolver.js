@@ -1,11 +1,29 @@
 module.exports = {
     Query: {
+        async bosses(obj, args, context, info) {
+            let bosses = false;
+            const lang = context.util.getLang(info);
+            let filters = {
+                name: async names => {
+                    return context.data.map.getBossesByNames(names, bosses, lang);
+                },
+            }
+            const nonFilterArgs = ['lang', 'limit', 'offset'];
+            for (const argName in args) {
+                if (nonFilterArgs.includes(argName)) continue;
+                if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
+                bosses = await filters[argName](args[argName], bosses);
+            }
+            if (!bosses) {
+                bosses = context.data.map.getAllBosses();
+            }
+            return context.util.paginate(bosses, args);
+        },
         async maps(obj, args, context, info) {
-            //return context.util.paginate(context.data.map.getList(), args);
             let maps = false;
             const lang = context.util.getLang(info);
             let filters = {
-                names: async names => {
+                name: async names => {
                     return context.data.map.getMapsByNames(names, maps, lang);
                 },
                 enemies: async enemies => {

@@ -61,9 +61,35 @@ class MapAPI extends WorkerKV {
         });
     }
 
+    async getAllBosses() {
+        await this.init();
+        return Object.values(this.cache.mobs);
+    }
+
     async getMobInfo(mobId) {
         await this.init();
         return this.cache.mobs[mobId];
+    }
+
+    async getBossesByNames(names, bosses = false, lang = 'en') {
+        await this.init();
+        if (!bosses) {
+            bosses = Object.values(this.cache.mobs);
+        }
+        const searchStrings = names.map(name => {
+            if (name === '') throw new Error('Searched boss name cannot be blank');
+            return name.toLowerCase();
+        });
+
+        return bosses.filter((boss) => {
+            if (!boss.locale || !boss.locale[lang]) return false;
+            for (const search of searchStrings) {
+                if (boss.locale[lang].name && boss.locale[lang].name.toString().toLowerCase().includes(search)) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 }
 

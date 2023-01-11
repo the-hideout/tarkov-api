@@ -615,6 +615,7 @@ type MobInfo {
   name: String!
   normalizedName: String!
   health: [HealthPart]
+  "equipment and items are estimates and may be inaccurate."
   equipment: [ContainedItem]!
   items: [Item]!
 }
@@ -1010,6 +1011,7 @@ interface Vendor {
 type Query {
   ammo(lang: LanguageCode, limit: Int, offset: Int): [Ammo]  
   barters(lang: LanguageCode, limit: Int, offset: Int): [Barter]
+  bosses(lang: LanguageCode, name: [String!], limit: Int, offset: Int): [MobInfo]
   crafts(lang: LanguageCode, limit: Int, offset: Int): [Craft]
   hideoutStations(lang: LanguageCode, limit: Int, offset: Int): [HideoutStation]!
   historicalItemPrices(id: ID!, lang: LanguageCode, limit: Int, offset: Int): [historicalPricePoint]!
