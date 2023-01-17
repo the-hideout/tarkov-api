@@ -1,26 +1,26 @@
 const WorkerKV = require('../utils/worker-kv');
 
 class TasksAPI extends WorkerKV {
-    constructor() {
-        super('quest_data');
+    constructor(dataSource) {
+        super('quest_data', dataSource);
         this.refreshInterval = 1000 * 60 * 10;
     }
 
-    async getList() {
-        await this.init();
+    async getList(requestId) {
+        await this.init(requestId);
         return this.cache.data;
     }
 
-    async get(id) {
-        await this.init();
+    async get(requestId, id) {
+        await this.init(requestId);
         for (const task of this.cache.data) {
             if (task.id === id || task.tarkovDataId === id) return task;
         }
         return Promise.reject(new Error(`No task found with id ${id}`));
     }
 
-    async getTasksRequiringItem(itemId) {
-        await this.init();
+    async getTasksRequiringItem(requestId, itemId) {
+        await this.init(requestId);
         const tasks = this.cache.data.filter(rawTask => {
             for (const obj of rawTask.objectives) {
                 if (obj.item === itemId) {
@@ -76,8 +76,8 @@ class TasksAPI extends WorkerKV {
         });
     }
 
-    async getTasksProvidingItem(itemId) {
-        await this.init();
+    async getTasksProvidingItem(requestId, itemId) {
+        await this.init(requestId);
         const tasks = this.cache.data.filter(rawTask => {
             for (const reward of rawTask.startRewards.items) {
                 if (reward.item === itemId) {
@@ -106,14 +106,14 @@ class TasksAPI extends WorkerKV {
         });
     }
 
-    async getQuests() {
-        await this.init();
+    async getQuests(requestId) {
+        await this.init(requestId);
         return this.cache.legacy;
     }
 
-    async getQuest(id) {
-        await this.init();
-        const quests = await this.getQuests();
+    async getQuest(requestId, id) {
+        await this.init(requestId);
+        const quests = await this.getQuests(requestId);
         for (const quest of quests) {
             if (quest.id === id) {
                 return quest;
@@ -122,13 +122,13 @@ class TasksAPI extends WorkerKV {
         return Promise.reject(new Error(`No quest with id ${id} found`));
     }
 
-    async getQuestItems() {
-        await this.init();
+    async getQuestItems(requestId) {
+        await this.init(requestId);
         return Object.values(this.cache.items);
     }
 
-    async getQuestItem(id) {
-        await this.init();
+    async getQuestItem(requestId, id) {
+        await this.init(requestId);
         return this.cache.items[id];
     }
 }

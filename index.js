@@ -1,6 +1,7 @@
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { mergeTypeDefs } = require('@graphql-tools/merge');
 const { graphql } = require('graphql');
+const { v4: uuidv4 } = require('uuid');
 
 const DataSource = require('./datasources');
 const dataAPI = new DataSource();
@@ -25,7 +26,10 @@ const schemaRefreshInterval = 1000 * 60 * 10;
 const skipCache = ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
-async function getSchema(data) {
+async function getSchema(data, requestId) {
+    data.requests[requestId] = {
+        kvLoaded: [],
+    };
     if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
         return schema;
     }
@@ -42,7 +46,7 @@ async function getSchema(data) {
         });
     }
     loadingSchema = true;
-    return dynamicTypeDefs(data).catch(error => {
+    return dynamicTypeDefs(data, requestId).catch(error => {
         loadingSchema = false;
         console.log('Error loading dynamic type definitions', error);
         return Promise.reject(error);
@@ -132,8 +136,10 @@ async function graphqlHandler(event, graphQLOptions) {
         console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const result = await graphql(await getSchema(dataAPI), query, {}, { data: dataAPI, util: graphqlUtil }, variables);
+    const requestId = uuidv4();
+    const result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
     const body = JSON.stringify(result);
+    delete dataAPI.requests[requestId];
 
     // Update the cache with the results of the query
     // don't update cache if result contained errors

@@ -2,22 +2,22 @@
 const WorkerKV = require('../utils/worker-kv');
 
 class CraftsAPI extends WorkerKV {
-    constructor() {
-        super('craft_data');
+    constructor(dataSource) {
+        super('craft_data', dataSource);
     }
 
-    async getList() {
-        await this.init();
+    async getList(requestId) {
+        await this.init(requestId);
         return this.cache.data;
     }
 
-    async get(id) {
-        await this.init();
+    async get(requestId, id) {
+        await this.init(requestId);
         return this.cache.data.filter(c => c.id === id);
     }
 
-    async getCraftsForItem(id) {
-        await this.init();
+    async getCraftsForItem(requestId, id) {
+        await this.init(requestId);
         return this.cache.data.filter(craft => {
             for (const item of craft.rewardItems) {
                 if (item.item === id) return true;
@@ -26,8 +26,8 @@ class CraftsAPI extends WorkerKV {
         });
     }
 
-    async getCraftsUsingItem(id) {
-        await this.init();
+    async getCraftsUsingItem(requestId, id) {
+        await this.init(requestId);
         return this.cache.data.filter(craft => {
             for (const item of craft.requiredItems) {
                 if (item.item === id) return true;
@@ -36,16 +36,16 @@ class CraftsAPI extends WorkerKV {
         });
     }
 
-    async getCraftsForStation(id) {
-        await this.init();
+    async getCraftsForStation(requestId, id) {
+        await this.init(requestId);
         return this.cache.data.filter(craft => {
             if (craft.station_id === id) return true;
             return false;
         });
     }
 
-    async getCraftsForStationLevel(id, level) {
-        await this.init();
+    async getCraftsForStationLevel(requestId, id, level) {
+        await this.init(requestId);
         return this.cache.data.filter(craft => {
             if (craft.station_id === id && craft.level === level) return true;
             return false;

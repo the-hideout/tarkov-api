@@ -37,17 +37,17 @@ const traderNameIdMap = {
 };
 
 class TradersAPI extends WorkerKV {
-    constructor() {
-        super('trader_data');
+    constructor(dataSource) {
+        super('trader_data', dataSource);
     }
 
-    async getList() {
-        await this.init();
+    async getList(requestId) {
+        await this.init(requestId);
         return this.cache.data;
     }
 
-    async get(id) {
-        await this.init();
+    async get(requestId, id) {
+        await this.init(requestId);
         for (const trader of this.cache.data) {
             if (trader.id === id) {
                 return trader;
@@ -57,8 +57,8 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with id ${id}`));
     }
 
-    async getByName(name) {
-        await this.init();
+    async getByName(requestId, name) {
+        await this.init(requestId);
         for (const trader of this.cache.data) {
             if (trader.name.toLowerCase() === name.toLowerCase()) {
                 return trader;
@@ -68,8 +68,8 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with name ${name}`));
     }
 
-    async getByLevel(traderId, level) {
-        await this.init();
+    async getByLevel(requestId, traderId, level) {
+        await this.init(requestId);
         for (const trader of this.cache.data) {
             if (trader.id !== traderId) continue;
             for (const rawLevel of trader.levels) {
@@ -81,12 +81,12 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with id ${traderId} and level ${level}`));
     }
 
-    getByDataId(dataId) {
-        return this.get(dataIdMap[dataId]);
+    getByDataId(requestId, dataId) {
+        return this.get(requestId, dataIdMap[dataId]);
     }
 
-    async getTraderResets() {
-        await this.init();
+    async getTraderResets(requestId) {
+        await this.init(requestId);
         return this.cache.data.map(trader => {
             return {
                 name: trader.name.toLowerCase(),

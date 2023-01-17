@@ -1,21 +1,28 @@
 const zlib = require('zlib');
 
 class WorkerKV {
-    constructor(kvName) {
+    constructor(kvName, dataSource) {
         this.cache = false;
         this.loading = false;
         this.kvName = kvName;
         this.loadingPromises = [];
         this.loadingInterval = false;
-        this.dataUpdated = new Date (0);
+        this.dataUpdated = new Date(0);
         this.refreshInterval = 1000 * 60 * 5;
+        this.dataSource = dataSource;
     }
 
-    async init() {
-        if (this.cache && new Date() - this.dataUpdated < this.refreshInterval + 60000) {
+    async init(requestId) {
+        if (this.cache && Date.now() - this.dataUpdated < this.refreshInterval + 60000) {
+            //console.log(`${this.kvName} is fresh; not refreshing`);
             return;
         }
+        if (this.dataSource.kvLoadedForRequest(this.kvName, requestId)) {
+            //console.log(`${this.kvName} already loaded for request ${requestId}; not refreshing`);
+            return
+        }
         if (this.cache) {
+            //console.log(`${this.kvName} is stale; refreshing`);
             this.cache = false;
         }
         if (this.loading) {
@@ -33,8 +40,10 @@ class WorkerKV {
             clearInterval(this.loadingInterval);
         }, 5);
         return new Promise((resolve, reject) => {
+            console.time(`${requestId} ${this.kvName} load`);
             DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
                 const data = response.value;
+                console.timeEnd(`${requestId} ${this.kvName} load`);
                 const metadata = response.metadata;
                 if (metadata && metadata.compression) {
                     if (metadata.compression = 'gzip') {
@@ -45,10 +54,11 @@ class WorkerKV {
                 } else {
                     this.cache = JSON.parse(data);
                 }
-                this.dataUpdated = new Date();
+                this.dataUpdated = Date.now();
                 if (this.cache.updated) {
-                    this.dataUpdated = new Date(this.cache.updated);
+                    this.dataUpdated = new Date(this.cache.updated).valueOf();
                 }
+                this.dataSource.setKvLoadedForRequest(this.kvName, requestId);
                 this.loading = false;
                 resolve();
             }).catch(error => {

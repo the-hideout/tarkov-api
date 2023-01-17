@@ -20,6 +20,7 @@
     "dependencies": {
         "graphql": "^15.8.0",
         "@graphql-tools/merge": "6.2.14",
-        "@graphql-tools/schema": "8.1.2"
+        "@graphql-tools/schema": "8.1.2",
+        "uuid": "9.0.0"
     }
 }

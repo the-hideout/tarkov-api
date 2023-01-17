@@ -5,7 +5,7 @@ module.exports = {
             const lang = context.util.getLang(info);
             let filters = {
                 name: async names => {
-                    return context.data.map.getBossesByNames(names, bosses, lang);
+                    return context.data.map.getBossesByNames(context.requestId, names, bosses, lang);
                 },
             }
             const nonFilterArgs = ['lang', 'limit', 'offset'];
@@ -15,7 +15,7 @@ module.exports = {
                 bosses = await filters[argName](args[argName], bosses);
             }
             if (!bosses) {
-                bosses = context.data.map.getAllBosses();
+                bosses = context.data.map.getAllBosses(context.requestId);
             }
             return context.util.paginate(bosses, args);
         },
@@ -24,10 +24,10 @@ module.exports = {
             const lang = context.util.getLang(info);
             let filters = {
                 name: async names => {
-                    return context.data.map.getMapsByNames(names, maps, lang);
+                    return context.data.map.getMapsByNames(context.requestId, names, maps, lang);
                 },
                 enemies: async enemies => {
-                    return context.data.map.getMapsByEnemies(enemies, maps, lang);
+                    return context.data.map.getMapsByEnemies(context.requestId, enemies, maps, lang);
                 },
             }
             const nonFilterArgs = ['lang', 'limit', 'offset'];
@@ -37,7 +37,7 @@ module.exports = {
                 maps = await filters[argName](args[argName], maps);
             }
             if (!maps) {
-                maps = context.data.map.getList();
+                maps = context.data.map.getList(context.requestId);
             }
             return context.util.paginate(maps, args);
         }
@@ -65,27 +65,27 @@ module.exports = {
     },
     BossSpawn: {
         boss(data, args, context, info) {
-            return context.data.map.getMobInfo(data.id);
+            return context.data.map.getMobInfo(context.requestId, data.id);
         },
         async name(data, args, context, info) {
-            const boss = await context.data.map.getMobInfo(data.id);
+            const boss = await context.data.map.getMobInfo(context.requestId, data.id);
             return context.util.getLocale(boss, 'name', info);
         },
         async normalizedName(data, args, context, info) {
-            const boss = await context.data.map.getMobInfo(data.id);
+            const boss = await context.data.map.getMobInfo(context.requestId, data.id);
             return boss.normalizedName;
         }
     },
     BossEscort: {
         boss(data, args, context, info) {
-            return context.data.map.getMobInfo(data.id);
+            return context.data.map.getMobInfo(context.requestId, data.id);
         },
         async name(data, args, context, info) {
-            const boss = await context.data.map.getMobInfo(data.id);
+            const boss = await context.data.map.getMobInfo(context.requestId, data.id);
             return context.util.getLocale(boss, 'name', info);
         },
         async normalizedName(data, args, context, info) {
-            const boss = await context.data.map.getMobInfo(data.id);
+            const boss = await context.data.map.getMobInfo(context.requestId, data.id);
             return boss.normalizedName;
         }
     }
