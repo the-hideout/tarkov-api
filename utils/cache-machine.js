@@ -81,7 +81,7 @@ async function checkCache(query, variables) {
 
         return false
     } catch (error) {
-        console.log('checkCache error: ' + error.message);
+        console.error('checkCache error: ' + error.message);
         return false;
     }
 }

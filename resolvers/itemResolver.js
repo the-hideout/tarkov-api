@@ -131,7 +131,7 @@ module.exports = {
         async conflictingItems(data, args, context) {
             return Promise.all(data.conflictingItems.map(async id => {
                 const item = await context.data.item.getItem(context.requestId, id).catch(error => {
-                    console.log(`item ${id} not found`);
+                    console.warn(`item ${id} not found for conflictingItems`);
                     return null;
                 });
 

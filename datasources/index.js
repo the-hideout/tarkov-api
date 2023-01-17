@@ -41,7 +41,7 @@ class DataSource {
                             try {
                                 setTimeout(isDone, 5);
                             } catch (error) {
-                                console.log(error.stack);
+                                console.error(error.stack);
                                 resolve();
                             }
                         }

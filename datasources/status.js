@@ -16,7 +16,7 @@ async function gatherResponse(response) {
 
         responseOutput = responseData;
     } catch (jsonError) {
-        console.log('json error');
+        console.error('Error processing JSON for status request', jsonError);
     }
 
     return responseOutput;
@@ -70,7 +70,7 @@ module.exports = async () => {
             globalStatus = globalStatusResponse.value;
         }
     } catch (requestError) {
-        console.log('outer request error');
+        console.error('Error responding to status request', requestError);
     }
 
     // Check if the message is 'Access denied' - This is likely an EFT API issue so we suppress the message

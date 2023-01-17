@@ -67,12 +67,8 @@ module.exports = {
         },
     },
     TraderPrice: {
-        async trader(data, args, context) {
-            try {
-                return await context.data.trader.get(context.requestId, data.trader);
-            } catch (error) {
-                console.log('error was thrown', error);
-            }
+        trader(data, args, context) {
+            return context.data.trader.get(context.requestId, data.trader);
         }
     },
     RequirementTrader: {
