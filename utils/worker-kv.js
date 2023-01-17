@@ -40,10 +40,10 @@ class WorkerKV {
             clearInterval(this.loadingInterval);
         }, 5);
         return new Promise((resolve, reject) => {
-            console.time(`${requestId} ${this.kvName} load`);
+            const startLoad = Date.now();
             DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
                 const data = response.value;
-                console.timeEnd(`${requestId} ${this.kvName} load`);
+                console.log(`${requestId} ${this.kvName} load: ${Date.now() - startLoad} ms`);
                 const metadata = response.metadata;
                 if (metadata && metadata.compression) {
                     if (metadata.compression = 'gzip') {
