@@ -77,7 +77,7 @@ class DataSource {
         if (!requestId) {
             return false;
         }
-        return this.requests[requestId].kvLoaded.includes(kvName);
+        return this.requests[requestId]?.kvLoaded.includes(kvName);
     }
 
     setKvLoadedForRequest(kvName, requestId) {

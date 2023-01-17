@@ -356,7 +356,7 @@ class ItemsAPI extends WorkerKV {
     }
 
     async getAmmoList(requestId) {
-        const allAmmo = await this.getItemsByBsgCategoryId('5485a8684bdc2da71d8b4567', false, requestId).then(ammoItems => {
+        const allAmmo = await this.getItemsByBsgCategoryId(requestId, '5485a8684bdc2da71d8b4567').then(ammoItems => {
             // ignore bb
             return ammoItems.filter(item => item.id !== '6241c316234b593b5676b637');
         });

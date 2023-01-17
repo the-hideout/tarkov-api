@@ -77,7 +77,7 @@ module.exports = {
             return context.data.item.getItemsByBsgCategoryId(context.requestId, args.bsgCategoryId, undefined);
         },
         historicalItemPrices(obj, args, context, info) {
-            return context.util.paginate(context.requestId, context.data.historicalPrice.getByItemId(args.id), args);
+            return context.util.paginate(context.data.historicalPrice.getByItemId(context.requestId, args.id), args);
         },
         armorMaterials(obj, args, context) {
             return context.data.item.getArmorMaterials(context.requestId);
