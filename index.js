@@ -150,7 +150,6 @@ async function graphqlHandler(event, graphQLOptions) {
     }
 
     console.log(`${requestId} response time: ${Date.now() - requestStart} ms`);
-    console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
     delete dataAPI.requests[requestId];
     return new Response(body, {
         headers: {
