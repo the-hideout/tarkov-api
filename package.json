@@ -8,7 +8,9 @@
         "format": "prettier --write '**/*.{js,css,json,md}'",
         "dev": "wrangler --env development dev",
         "ci": "wrangler --env development dev",
-        "local": "wrangler dev"
+        "local": "wrangler dev",
+        "tail": "node tail.js",
+        "tail-dev": "node tail.js development"
     },
     "author": "Oskar Risberg <oskar.risberg@stendahls.se>",
     "license": "ISC",

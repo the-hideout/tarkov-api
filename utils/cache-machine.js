@@ -46,7 +46,8 @@ async function updateCache(query, variables, body) {
         const headersPost = {
             body: JSON.stringify({ key: cacheKey, value: body }),
             method: 'POST',
-            headers: headers
+            headers: headers,
+            timeout: 3000,
         };
 
         // Update the cache
@@ -54,13 +55,13 @@ async function updateCache(query, variables, body) {
 
         // Log non-200 responses
         if (response.status !== 200) {
-            console.log(`failed to write to cache: ${response.status}`);
+            console.error(`failed to write to cache: ${response.status}`);
             return false
         }
 
         return true
     } catch (error) {
-        console.log('updateCache error: ' + error.message);
+        console.error('updateCache error: ' + error.message);
         return false;
     }
 }

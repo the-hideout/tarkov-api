@@ -48,14 +48,14 @@ async function getSchema(data, requestId) {
     loadingSchema = true;
     return dynamicTypeDefs(data, requestId).catch(error => {
         loadingSchema = false;
-        console.log('Error loading dynamic type definitions', error);
+        console.error('Error loading dynamic type definitions', error);
         return Promise.reject(error);
     }).then(dynamicTypeDefs => {
         let mergedDefs;
         try {
             mergedDefs = mergeTypeDefs([typeDefs, dynamicTypeDefs]);
         } catch (error) {
-            console.log('Error merging type defs', error);
+            console.error('Error merging type defs', error);
             return Promise.reject(error);
         }
         try {
@@ -63,11 +63,11 @@ async function getSchema(data, requestId) {
             loadingSchema = false;
             return schema;
         } catch (error) {
-            console.log('Error making schema executable');
+            console.error('Error making schema executable');
             if (!error.message) {
-                console.log('Check type names in resolvers');
+                console.error('Check type names in resolvers');
             } else {
-                console.log(error.message);
+                console.error(error.message);
             }
             return Promise.reject(error);
         }
@@ -83,6 +83,7 @@ async function graphqlHandler(event, graphQLOptions) {
     const url = new URL(request.url);
     let query = false;
     let variables = false;
+    const requestStart = Date.now();
 
     if (request.method === 'POST') {
         try {
@@ -129,17 +130,17 @@ async function graphqlHandler(event, graphQLOptions) {
             const newResponse = new Response(cachedResponse, headers);
             // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
             newResponse.headers.append('X-CACHE', 'HIT');
+            console.log(`Request served from cache: ${Date.now() - requestStart} ms`);
             // Return the new cached response
             return newResponse;
         }
     } else {
-        console.log(`Skipping cache in ${ENVIRONMENT} environment`);
+        //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
     const requestId = uuidv4();
     const result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
     const body = JSON.stringify(result);
-    delete dataAPI.requests[requestId];
 
     // Update the cache with the results of the query
     // don't update cache if result contained errors
@@ -148,6 +149,9 @@ async function graphqlHandler(event, graphQLOptions) {
         event.waitUntil(cacheMachine.put(query, variables, body));
     }
 
+    console.log(`${requestId} response time: ${Date.now() - requestStart} ms`);
+    console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
+    delete dataAPI.requests[requestId];
     return new Response(body, {
         headers: {
             'content-type': 'application/json',
