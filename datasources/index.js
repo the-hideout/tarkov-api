@@ -51,7 +51,7 @@ class DataSource {
             }
             this.loading = true;
             return Promise.all([
-                this.barter.init(),
+                /*this.barter.init(),
                 this.craft.init(),
                 this.hideout.init(),
                 this.historicalPrice.init(),
@@ -59,7 +59,7 @@ class DataSource {
                 this.map.init(),
                 this.task.init(),
                 this.trader.init(),
-                this.traderInventory.init(),
+                this.traderInventory.init(),*/
                 this.schema.init(),
             ]).then(() => {
                 this.initialized = true;
