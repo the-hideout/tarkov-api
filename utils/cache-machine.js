@@ -47,7 +47,7 @@ async function updateCache(query, variables, body) {
             body: JSON.stringify({ key: cacheKey, value: body }),
             method: 'POST',
             headers: headers,
-            timeout: 6000,
+            timeout: 10000,
         };
 
         // Update the cache

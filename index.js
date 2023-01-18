@@ -121,6 +121,7 @@ async function graphqlHandler(event, graphQLOptions) {
             'content-type': 'application/json;charset=UTF-8',
         }
     };
+    const requestId = uuidv4();
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
@@ -130,7 +131,7 @@ async function graphqlHandler(event, graphQLOptions) {
             const newResponse = new Response(cachedResponse, headers);
             // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
             newResponse.headers.append('X-CACHE', 'HIT');
-            console.log(`Request served from cache: ${Date.now() - requestStart} ms`);
+            console.log(`${requestId} Request served from cache: ${Date.now() - requestStart} ms`);
             // Return the new cached response
             return newResponse;
         }
@@ -138,7 +139,6 @@ async function graphqlHandler(event, graphQLOptions) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const requestId = uuidv4();
     const result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
     const body = JSON.stringify(result);
 
