@@ -27,6 +27,7 @@ class DataSource {
         this.initialized = false;
         this.loading = false;
         this.requests = {};
+        this.kvLoaded = [];
     }
 
     async init() {
@@ -81,6 +82,9 @@ class DataSource {
     }
 
     setKvLoadedForRequest(kvName, requestId) {
+        if (!this.kvLoaded.includes(kvName)) {
+            this.kvLoaded.push(kvName);
+        }
         if (!this.requests[requestId]) {
             return;
         }
