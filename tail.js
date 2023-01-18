@@ -8,6 +8,9 @@ const outputLog = (rawLog) => {
     try {
         const json = JSON.parse(rawLog);
         if (json.outcome !== 'ok') {
+            if (json.outcome === 'canceled') {
+                return;
+            }
             const errorDesc = json.exceptions.map(ex => ex.message).join('; ') || json.outcome;
             console.error(`\x1b[${logColors.error}mError: ${errorDesc}\x1b[0m`);
             console.error(`\x1b[${logColors.error}mUrl: ${json.event.request.url}\x1b[0m`);
@@ -15,6 +18,8 @@ const outputLog = (rawLog) => {
                 console.error(`\x1b[${logColors.error}mOrigin: ${json.event.request.headers.origin}\x1b[0m`);
             }
             //console.log(rawLog);
+        } else {
+            return;
         }
         for (const logMessage of json.logs) {
             const level = json.outcome === 'ok' ? logMessage.level : 'error';
