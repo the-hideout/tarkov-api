@@ -17,11 +17,12 @@ const outputLog = (rawLog) => {
             //console.log(rawLog);
         }
         for (const logMessage of json.logs) {
+            const level = json.outcome === 'ok' ? logMessage.level : 'error';
             let message = logMessage.message.join('\n');
-            if (logColors[logMessage.level]) {
-                message = `\x1b[${logColors[logMessage.level]}m${message}\x1b[0m`;
+            if (logColors[level]) {
+                message = `\x1b[${logColors[level]}m${message}\x1b[0m`;
             }
-            console[logMessage.level](message);
+            console[level](message);
         }
     } catch (error) {
         console.log('Error processing wrangler output', error);

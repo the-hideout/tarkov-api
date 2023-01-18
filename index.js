@@ -122,6 +122,7 @@ async function graphqlHandler(event, graphQLOptions) {
         }
     };
     const requestId = uuidv4();
+    console.log(requestId);
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
