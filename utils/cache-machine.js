@@ -62,7 +62,8 @@ async function updateCache(query, variables, body) {
         return true
     } catch (error) {
         console.error('updateCache error: ' + error.message);
-        console.error('cached response size: ' + headersPost.body.length);
+        console.error('cache key: '+ cacheKey);
+        console.error('response size: ' + body.length);
         return false;
     }
 }
