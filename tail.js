@@ -13,7 +13,7 @@ const outputLog = (rawLog) => {
             }
             const errorDesc = json.exceptions.map(ex => ex.message).join('; ') || json.outcome;
             console.error(`\x1b[${logColors.error}mError: ${errorDesc}\x1b[0m`);
-            console.error(`\x1b[${logColors.error}mUrl: ${json.event.request.url}\x1b[0m`);
+            //console.error(`\x1b[${logColors.error}mUrl: ${json.event.request.url}\x1b[0m`);
             if (json.event.request.headers.origin) {
                 console.error(`\x1b[${logColors.error}mOrigin: ${json.event.request.headers.origin}\x1b[0m`);
             }

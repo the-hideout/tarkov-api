@@ -61,6 +61,7 @@ async function getSchema(data, requestId) {
         try {
             schema = makeExecutableSchema({ typeDefs: mergedDefs, resolvers: resolvers });
             loadingSchema = false;
+            console.log('schema loaded');
             return schema;
         } catch (error) {
             console.error('Error making schema executable');
