@@ -13,7 +13,7 @@ class WorkerKV {
     }
 
     async init(requestId) {
-        if (this.cache && Date.now() - this.dataUpdated < this.refreshInterval + 60000) {
+        if (this.cache && new Date() - this.dataUpdated < this.refreshInterval + 60000) {
             //console.log(`${this.kvName} is fresh; not refreshing`);
             return;
         }
@@ -40,10 +40,10 @@ class WorkerKV {
             clearInterval(this.loadingInterval);
         }, 5);
         return new Promise((resolve, reject) => {
-            const startLoad = Date.now();
+            const startLoad = new Date();
             DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
                 const data = response.value;
-                console.log(`${requestId} ${this.kvName} load: ${Date.now() - startLoad} ms`);
+                console.log(`${requestId} ${this.kvName} load: ${new Date() - startLoad} ms`);
                 const metadata = response.metadata;
                 if (metadata && metadata.compression) {
                     if (metadata.compression = 'gzip') {
@@ -54,7 +54,7 @@ class WorkerKV {
                 } else {
                     this.cache = JSON.parse(data);
                 }
-                this.dataUpdated = Date.now();
+                this.dataUpdated = new Date().valueOf();
                 if (this.cache.updated) {
                     this.dataUpdated = new Date(this.cache.updated).valueOf();
                 }
