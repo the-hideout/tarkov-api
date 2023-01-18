@@ -26,10 +26,12 @@ class WorkerKV {
             this.cache = false;
         }
         if (this.loading) {
+            console.log(`${this.kvName} already loading; awaiting load`);
             return new Promise((resolve) => {
                 this.loadingPromises.push(resolve);
             });
         }
+        console.log(`${this.kvName} loading`);
         this.loading = true;
         this.loadingInterval = setInterval(() => {
             if (this.loading) return;
