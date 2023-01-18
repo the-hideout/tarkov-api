@@ -7,6 +7,10 @@ const logColors = {
 const outputLog = (rawLog) => {
     try {
         const json = JSON.parse(rawLog);
+        if (json.outcome !== 'ok') {
+            console.error(`\x1b[${logColors.error}mError:\x1b[0m`, json.exceptions.map(ex => ex.message).join('; '));
+            console.log(json.event.request.headers);
+        }
         for (const logMessage of json.logs) {
             let message = logMessage.message.join('\n');
             if (logColors[logMessage.level]) {
@@ -67,7 +71,24 @@ const startTail = (envArg, ac) => {
         env = 'development';
         envArg = ` --env ${env}`;
     }
-    startTail(envArg, ac);
-    spawn('wrangler', ['tail'])
+    //startTail(envArg, ac);
+    const wrangler = spawn('cmd', ['/c', `wrangler tail${envArg}`], {
+        signal: ac.signal,
+    });
+    wrangler.stdout.on('data', (data) => {
+        try {
+            String(data).trim().split('\n').forEach(json => {
+                if (!json) {
+                    return;
+                }
+                outputLog(json);
+            });        
+        } catch (error) {
+            console.error('Error processing wrangler output', error);
+        }
+    });
+    wrangler.on('close', (code) => {
+        console.log(`wranger exited with code ${code}`);
+    });
     console.log(`Listening to worker logs for ${env} environment`);
 })();
