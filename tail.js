@@ -1,15 +1,53 @@
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 
-function outputMessage(message, level) {
-    const colors = {
-        error: 31,
-        warn: 33,
-    };
-    if (colors[level]) {
-        message = `\x1b[${colors[level]}m${message}\x1b[0m`;
+const logColors = {
+    error: 31,
+    warn: 33,
+};
+const outputLog = (rawLog) => {
+    try {
+        const json = JSON.parse(rawLog);
+        for (const logMessage of json.logs) {
+            let message = logMessage.message.join('\n');
+            if (logColors[logMessage.level]) {
+                message = `\x1b[${logColors[logMessage.level]}m${message}\x1b[0m`;
+            }
+            console[logMessage.level](message);
+        }
+    } catch (error) {
+        console.log('Error processing wrangler output', error);
     }
-    console[level](message);
-}
+};
+
+const startTail = (envArg, ac) => {
+    const wrangler = exec(`wrangler tail${envArg}`, {
+        signal: ac.signal,
+        maxBuffer: 1024 * 4096,
+    }, (error, stdout, stderr) => {
+        if (error) {
+          console.error('wrangler error', error);
+        }
+        /*if (stderr) {
+            console.error(stderr);
+        }
+        console.log(stdout);*/
+    });
+    wrangler.stdout.on('data', (data) => {
+        try {
+            data.trim().split('\n').forEach(json => {
+                if (!json) {
+                    return;
+                }
+                outputLog(json);
+            });        
+        } catch (error) {
+            console.error('Error processing wrangler output', error);
+        }
+    });
+    wrangler.on('close', (code) => {
+        console.log(`wranger exited with code ${code}`);
+    });
+};
 
 (async () => {
     const ac = new AbortController();
@@ -22,37 +60,14 @@ function outputMessage(message, level) {
     process.on( 'SIGBREAK', shutdown);
     //try to gracefully shutdown on terminal closed
     process.on( 'SIGHUP', shutdown);
-    
+
     let envArg = '';
     let env = 'production';
     if (process.argv[2] == 'development') {
         env = 'development';
         envArg = ` --env ${env}`;
     }
-    const wrangler = exec(`wrangler tail${envArg}`, {
-        signal: ac.signal,
-    });
-    const outputLog = (rawLog) => {
-        try {
-            const json = JSON.parse(rawLog);
-            for (const logMessage of json.logs) {
-                outputMessage(logMessage.message.join('\n'), logMessage.level);
-            }
-        } catch (error) {
-            console.log('Error processing wrangler output', error);
-        }
-    };
-    wrangler.stdout.on('data', (data) => {
-        try {
-            data.trim().split('\n').forEach(json => {
-                if (!json) {
-                    return;
-                }
-                outputLog(json);
-            });        
-        } catch (error) {
-            console.log('Error processing wrangler output', error);
-        }
-    });
+    startTail(envArg, ac);
+    spawn('wrangler', ['tail'])
     console.log(`Listening to worker logs for ${env} environment`);
 })();

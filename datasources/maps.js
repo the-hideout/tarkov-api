@@ -6,7 +6,7 @@ class MapAPI extends WorkerKV {
         this.refreshInterval = 1000 * 60 * 20;
     }
 
-    async getListrequestId() {
+    async getList(requestId) {
         await this.init(requestId);
         return this.cache.data;
     }

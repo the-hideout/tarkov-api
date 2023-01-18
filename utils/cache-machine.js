@@ -47,7 +47,7 @@ async function updateCache(query, variables, body) {
             body: JSON.stringify({ key: cacheKey, value: body }),
             method: 'POST',
             headers: headers,
-            timeout: 3000,
+            timeout: 6000,
         };
 
         // Update the cache
@@ -62,6 +62,7 @@ async function updateCache(query, variables, body) {
         return true
     } catch (error) {
         console.error('updateCache error: ' + error.message);
+        console.error('cached response size:', headersPost.body.length);
         return false;
     }
 }
