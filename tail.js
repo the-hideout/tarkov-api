@@ -1,9 +1,14 @@
-const { exec, spawn } = require('child_process');
+const { spawn } = require('child_process');
 
 const logColors = {
     error: 31,
     warn: 33,
 };
+
+const ac = new AbortController();
+let logOnlyError = false;
+let shuttingDown = false;
+
 const outputLog = (rawLog) => {
     try {
         const json = JSON.parse(rawLog);
@@ -18,7 +23,7 @@ const outputLog = (rawLog) => {
                 console.error(`\x1b[${logColors.error}mOrigin: ${json.event.request.headers.origin}\x1b[0m`);
             }
             //console.log(rawLog);
-        } else {
+        } else if (logOnlyError) {
             return;
         }
         for (const logMessage of json.logs) {
@@ -34,39 +39,9 @@ const outputLog = (rawLog) => {
     }
 };
 
-const startTail = (envArg, ac) => {
-    const wrangler = exec(`wrangler tail${envArg}`, {
-        signal: ac.signal,
-        maxBuffer: 1024 * 4096,
-    }, (error, stdout, stderr) => {
-        if (error) {
-          console.error('wrangler error', error);
-        }
-        /*if (stderr) {
-            console.error(stderr);
-        }
-        console.log(stdout);*/
-    });
-    wrangler.stdout.on('data', (data) => {
-        try {
-            data.trim().split('\n').forEach(json => {
-                if (!json) {
-                    return;
-                }
-                outputLog(json);
-            });        
-        } catch (error) {
-            console.error('Error processing wrangler output', error);
-        }
-    });
-    wrangler.on('close', (code) => {
-        console.log(`wranger exited with code ${code}`);
-    });
-};
-
 (async () => {
-    const ac = new AbortController();
     const shutdown = () => {
+        shuttingDown = true;
         ac.abort();
     };
     //gracefully shutdown on Ctrl+C
@@ -78,9 +53,12 @@ const startTail = (envArg, ac) => {
 
     let envArg = '';
     let env = 'production';
-    if (process.argv[2] == 'development') {
+    if (process.argv.includes('development')) {
         env = 'development';
         envArg = ` --env ${env}`;
+    }
+    if (process.argv.includes('error')) {
+        logOnlyError = true;
     }
     //startTail(envArg, ac);
     const wrangler = spawn('cmd', ['/c', `wrangler tail${envArg}`], {
@@ -98,8 +76,17 @@ const startTail = (envArg, ac) => {
             console.error('Error processing wrangler output', error);
         }
     });
-    wrangler.on('close', (code) => {
-        console.log(`wranger exited with code ${code}`);
+    wrangler.on('error', (error) => {
+        if (error.code === 'ABORT_ERR') {
+            return;
+        }
+        console.log('wrangler process error', error);
     });
-    console.log(`Listening to worker logs for ${env} environment`);
+    wrangler.on('close', () => {
+        //console.log(`wranger closed with code ${code}`);
+        if (!shuttingDown) {
+            console.log('Wrangler closed unexpectedly');
+        }
+    });
+    console.log(`Listening to worker logs for ${env} environment${logOnlyError ? ' (errors only)' : ''}`);
 })();
