@@ -135,7 +135,7 @@ async function graphqlHandler(event, graphQLOptions) {
             const newResponse = new Response(cachedResponse, headers);
             // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
             newResponse.headers.append('X-CACHE', 'HIT');
-            console.log(`${requestId} Request served from cache: ${new Date() - requestStart} ms`);
+            console.log(`Request served from cache: ${new Date() - requestStart} ms`);
             // Return the new cached response
             return newResponse;
         }
@@ -153,7 +153,7 @@ async function graphqlHandler(event, graphQLOptions) {
         event.waitUntil(cacheMachine.put(query, variables, body));
     }
 
-    console.log(`${requestId} response time: ${new Date() - requestStart} ms`);
+    console.log(`Response time: ${new Date() - requestStart} ms`);
     //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
     delete dataAPI.requests[requestId];
     return new Response(body, {
