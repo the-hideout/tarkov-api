@@ -13,7 +13,7 @@ class WorkerKV {
         this.dataSource = dataSource;
     }
 
-    async init(requestId, forceLoad = false) {
+    async init(requestId) {
         if (this.cache && new Date() - this.dataUpdated < this.refreshInterval + 60000) {
             //console.log(`${this.kvName} is fresh; not refreshing`);
             return;
@@ -26,7 +26,7 @@ class WorkerKV {
             console.log(`${this.kvName} is stale; refreshing`);
             this.cache = false;
         }
-        if (this.loading && !forceLoad) {
+        if (this.loading) {
             if (this.loadingPromises[requestId]) {
                 return this.loadingPromises[requestId];
             }
@@ -40,7 +40,8 @@ class WorkerKV {
                     if (loadingTimedOut) {
                         console.log(`${this.kvName} loading timed out; forcing load`);
                         clearInterval(loadingInterval);
-                        return resolve(this.init(requestId, true));
+                        this.loading = false;
+                        return resolve(this.init(requestId));
                     }
                     if (this.loading === false) {
                         clearTimeout(loadingTimeout);
