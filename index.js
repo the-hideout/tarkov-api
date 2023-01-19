@@ -2,7 +2,6 @@ const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { mergeTypeDefs } = require('@graphql-tools/merge');
 const { graphql } = require('graphql');
 const { v4: uuidv4 } = require('uuid');
-const { gql } = require('graphql-request')
 
 const DataSource = require('./datasources');
 const dataAPI = new DataSource();
@@ -126,13 +125,11 @@ async function graphqlHandler(event, graphQLOptions) {
     const requestId = uuidv4();
     console.log(requestId);
     console.log('KVs pre-loaded: ' + dataAPI.kvLoaded.join(', '));
-    const formattedQuery = gql`${query}`;
-    console.log(formattedQuery);
     //console.log(query);
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
-        const cachedResponse = await cacheMachine.get(formattedQuery, variables);
+        const cachedResponse = await cacheMachine.get(query, variables);
         if (cachedResponse) {
             // Construct a new response with the cached data
             const newResponse = new Response(cachedResponse, headers);
@@ -146,14 +143,14 @@ async function graphqlHandler(event, graphQLOptions) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const result = await graphql(await getSchema(dataAPI, requestId), formattedQuery, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
+    const result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
     const body = JSON.stringify(result);
 
     // Update the cache with the results of the query
     // don't update cache if result contained errors
     if (!skipCache && (!result.errors || result.errors.length === 0)) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-        event.waitUntil(cacheMachine.put(formattedQuery, variables, body));
+        event.waitUntil(cacheMachine.put(query, variables, body));
     }
 
     console.log(`Response time: ${new Date() - requestStart} ms`);
