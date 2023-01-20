@@ -41,10 +41,6 @@ async function updateCache(query, variables, body) {
         // Get the cacheKey from the request
         query = query.trim();
         const cacheKey = await hash(query + JSON.stringify(variables));
-        if (!cacheKey) {
-            console.warn('Skipping cache update; key is empty');
-            return false;
-        }
 
         // headers and POST body
         const headersPost = {
@@ -65,9 +61,11 @@ async function updateCache(query, variables, body) {
 
         return true
     } catch (error) {
+        if (error.code === 'ABORT_ERR') {
+            console.warn('Updating cache timed out');
+            return false;
+        }
         console.error('updateCache error: ' + error.message);
-        console.error('cache key: '+ cacheKey);
-        console.error('response size: ' + body.length);
         return false;
     }
 }
@@ -91,6 +89,10 @@ async function checkCache(query, variables) {
 
         return false
     } catch (error) {
+        if (error.code === 'ABORT_ERR') {
+            console.warn('Checking cache timed out');
+            return false;
+        }
         console.error('checkCache error: ' + error.message);
         return false;
     }
