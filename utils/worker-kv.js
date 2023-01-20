@@ -23,8 +23,10 @@ class WorkerKV {
             return
         }
         if (this.cache) {
-            console.log(`${this.kvName} is stale; refreshing`);
+            console.log(`${this.kvName} is stale; re-loading`);
             this.cache = false;
+        } else {
+            //console.log(`${this.kvName} loading`);
         }
         if (this.loading) {
             if (this.loadingPromises[requestId]) {
@@ -54,7 +56,6 @@ class WorkerKV {
             });
             return this.loadingPromises[requestId];
         }
-        //console.log(`${this.kvName} loading`);
         this.loading = true;
         /*this.loadingInterval = setInterval(() => {
             if (this.loading) return;
