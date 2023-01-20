@@ -32,6 +32,7 @@ class WorkerKV {
             }
             console.log(`${this.kvName} already loading; awaiting load`);
             this.loadingPromises[requestId] = new Promise((resolve) => {
+                const startLoad = new Date();
                 let loadingTimedOut = false;
                 const loadingTimeout = setTimeout(() => {
                     loadingTimedOut = true;
@@ -46,13 +47,14 @@ class WorkerKV {
                     if (this.loading === false) {
                         clearTimeout(loadingTimeout);
                         clearInterval(loadingInterval);
+                        console.log(`${this.kvName} load: ${new Date() - startLoad} ms (secondary)`);
                         resolve();
                     }
                 }, 5);
             });
             return this.loadingPromises[requestId];
         }
-        console.log(`${this.kvName} loading`);
+        //console.log(`${this.kvName} loading`);
         this.loading = true;
         /*this.loadingInterval = setInterval(() => {
             if (this.loading) return;
