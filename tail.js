@@ -2,6 +2,7 @@ const { spawn } = require('child_process');
 
 const logColors = {
     error: 31,
+    info: 34,
     warn: 33,
 };
 
@@ -13,28 +14,29 @@ let shuttingDown = false;
 const outputLog = (rawLog) => {
     try {
         const json = JSON.parse(rawLog);
-        if (json.outcome !== 'ok') {
-            if (json.outcome === 'canceled') {
-                return;
-            }
-            const errorDesc = json.exceptions.map(ex => ex.message).join('; ') || json.outcome;
-            console.error(`\x1b[${logColors.error}mError: ${errorDesc}\x1b[0m`);
-            //console.error(`\x1b[${logColors.error}mUrl: ${json.event.request.url}\x1b[0m`);
-            if (json.event.request.headers.origin) {
-                console.error(`\x1b[${logColors.error}mOrigin: ${json.event.request.headers.origin}\x1b[0m`);
-            }
-            //console.log(rawLog);
-        } else if (logOnlyError) {
+        if (logOnlyError && json.outcome === 'ok') {
             return;
-        }
+        } 
         for (const logMessage of json.logs) {
-            const level = json.outcome === 'ok' ? logMessage.level : 'error';
+            const level = logMessage.level;//json.outcome === 'ok' ? logMessage.level : 'error';
             let message = logMessage.message.join('\n');
             if (logColors[level]) {
                 message = `\x1b[${logColors[level]}m${message}\x1b[0m`;
             }
             console[level](message);
         }
+        if (json.outcome !== 'ok') {
+            if (json.outcome === 'canceled') {
+                //return;
+            }
+            const errorDesc = json.exceptions.map(ex => ex.message).join('; ') || json.outcome;
+            console.error(`\x1b[${logColors.error}mFatal Error: ${errorDesc}\x1b[0m`);
+            //console.error(`\x1b[${logColors.error}mUrl: ${json.event.request.url}\x1b[0m`);
+            if (json.event.request.headers.origin) {
+                console.error(`\x1b[${logColors.error}mOrigin: ${json.event.request.headers.origin}\x1b[0m`);
+            }
+            //console.log(rawLog);
+        } 
     } catch (error) {
         console.log('Error processing wrangler output', error);
     }

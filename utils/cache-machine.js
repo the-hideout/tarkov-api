@@ -41,6 +41,10 @@ async function updateCache(query, variables, body) {
         // Get the cacheKey from the request
         query = query.trim();
         const cacheKey = await hash(query + JSON.stringify(variables));
+        if (!cacheKey) {
+            console.warn('Skipping cache update; key is empty');
+            return false;
+        }
 
         // headers and POST body
         const headersPost = {
@@ -75,6 +79,10 @@ async function checkCache(query, variables) {
     try {
         query = query.trim();
         const cacheKey = await hash(query + JSON.stringify(variables));
+        if (!cacheKey) {
+            console.warn('Skipping cache check; key is empty');
+            return false;
+        }
 
         const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${cacheKey}`, { headers: headers });
         if (response.status === 200) {

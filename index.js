@@ -132,7 +132,7 @@ async function graphqlHandler(event, graphQLOptions) {
         }
     };
     const requestId = uuidv4();
-    console.log(requestId);
+    console.info(requestId);
     console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
     //console.log(query);
 
