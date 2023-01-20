@@ -30,7 +30,7 @@ class WorkerKV {
             if (this.loadingPromises[requestId]) {
                 return this.loadingPromises[requestId];
             }
-            console.log(`${this.kvName} already loading; awaiting load`);
+            //console.log(`${this.kvName} already loading; awaiting load`);
             this.loadingPromises[requestId] = new Promise((resolve) => {
                 const startLoad = new Date();
                 let loadingTimedOut = false;
