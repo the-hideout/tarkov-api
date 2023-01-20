@@ -75,6 +75,7 @@ async function updateCache(query, variables, body) {
     } catch (error) {
         if (error.message === 'The operation was aborted') {
             console.warn('Updating cache timed out');
+            pauseCache();
             return false;
         }
         console.error('updateCache error: ' + error.message);
@@ -106,6 +107,7 @@ async function checkCache(query, variables) {
     } catch (error) {
         if (error.message === 'The operation was aborted') {
             console.warn('Checking cache timed out');
+            pauseCache();
             return false;
         }
         console.error('checkCache error: ' + error.message);
