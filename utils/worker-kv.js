@@ -77,10 +77,14 @@ class WorkerKV {
                 } else {
                     this.cache = JSON.parse(data);
                 }
-                this.dataUpdated = new Date().valueOf();
+                let newDataUpdated = new Date().valueOf();
                 if (this.cache.updated) {
-                    this.dataUpdated = new Date(this.cache.updated).valueOf();
+                    newDataUpdated = new Date(this.cache.updated).valueOf();
                 }
+                if (this.dataUpdated === newDataUpdated) {
+                    console.log(`${this.kvName} is still stale after re-load`);
+                }
+                this.dataUpdated = newDataUpdated;
                 this.dataSource.setKvLoadedForRequest(this.kvName, requestId);
                 this.loading = false;
                 resolve();
