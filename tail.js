@@ -6,6 +6,7 @@ const logColors = {
 };
 
 const ac = new AbortController();
+let envArg = '';
 let logOnlyError = false;
 let shuttingDown = false;
 
@@ -39,28 +40,7 @@ const outputLog = (rawLog) => {
     }
 };
 
-(async () => {
-    const shutdown = () => {
-        shuttingDown = true;
-        ac.abort();
-    };
-    //gracefully shutdown on Ctrl+C
-    process.on( 'SIGINT', shutdown);
-    //gracefully shutdown on Ctrl+Break
-    process.on( 'SIGBREAK', shutdown);
-    //try to gracefully shutdown on terminal closed
-    process.on( 'SIGHUP', shutdown);
-
-    let envArg = '';
-    let env = 'production';
-    if (process.argv.includes('development')) {
-        env = 'development';
-        envArg = ` --env ${env}`;
-    }
-    if (process.argv.includes('error')) {
-        logOnlyError = true;
-    }
-    //startTail(envArg, ac);
+const startTail = () => {
     const wrangler = spawn('cmd', ['/c', `wrangler tail${envArg}`], {
         signal: ac.signal,
     });
@@ -85,8 +65,33 @@ const outputLog = (rawLog) => {
     wrangler.on('close', () => {
         //console.log(`wranger closed with code ${code}`);
         if (!shuttingDown) {
-            console.log('Wrangler closed unexpectedly');
+            console.log('Wrangler closed unexpectedly; restarting');
+            startTail();
         }
     });
+}
+
+(async () => {
+    const shutdown = () => {
+        shuttingDown = true;
+        ac.abort();
+    };
+    //gracefully shutdown on Ctrl+C
+    process.on( 'SIGINT', shutdown);
+    //gracefully shutdown on Ctrl+Break
+    process.on( 'SIGBREAK', shutdown);
+    //try to gracefully shutdown on terminal closed
+    process.on( 'SIGHUP', shutdown);
+
+    
+    let env = 'production';
+    if (process.argv.includes('development')) {
+        env = 'development';
+        envArg = ` --env ${env}`;
+    }
+    if (process.argv.includes('error')) {
+        logOnlyError = true;
+    }
+    startTail();
     console.log(`Listening to worker logs for ${env} environment${logOnlyError ? ' (errors only)' : ''}`);
 })();

@@ -35,14 +35,23 @@ async function getSchema(data, requestId) {
     }
     if (loadingSchema) {
         return new Promise((resolve) => {
-            const isDone = () => {
-                if (this.loadingSchema === false) {
-                    resolve(schema);
-                } else {
-                    setTimeout(isDone, 5);
+            let loadingTimedOut = false;
+            const loadingTimeout = setTimeout(() => {
+                loadingTimedOut = true;
+            }, 1000);
+            const loadingInterval = setInterval(() => {
+                if (loadingTimedOut) {
+                    console.log(`Schema loading timed out; forcing load`);
+                    clearInterval(loadingInterval);
+                    loadingSchema = false;
+                    return resolve(getSchema(data, requestId));
                 }
-            }
-            isDone();
+                if (loadingSchema === false) {
+                    clearTimeout(loadingTimeout);
+                    clearInterval(loadingInterval);
+                    resolve(schema);
+                }
+            }, 5);
         });
     }
     loadingSchema = true;
