@@ -5,6 +5,15 @@ const headers = {
     'Authorization': `Basic ${CACHE_BASIC_AUTH}`
 };
 
+let cachePaused = false;
+
+function pauseCache() {
+    cachePaused = true;
+    setTimeout(() => {
+        cachePaused = false;
+    }, 60000);
+}
+
 async function fetchWithTimeout(resource, options = {}) {
     const { timeout = 1000 } = options;
     
@@ -38,6 +47,9 @@ async function hash(string) {
 // :return: true if successful, false if not
 async function updateCache(query, variables, body) {
     try {
+        if (cachePaused) {
+            return false;
+        }
         // Get the cacheKey from the request
         query = query.trim();
         const cacheKey = await hash(query + JSON.stringify(variables));
@@ -75,6 +87,9 @@ async function updateCache(query, variables, body) {
 // :return: json results of the item found in the cache or false if not found
 async function checkCache(query, variables) {
     try {
+        if (cachePaused) {
+            return false;
+        }
         query = query.trim();
         const cacheKey = await hash(query + JSON.stringify(variables));
         if (!cacheKey) {
