@@ -64,7 +64,7 @@ class WorkerKV {
             }
             clearInterval(this.loadingInterval);
         }, 5);*/
-        return new Promise((resolve, reject) => {
+        this.loadingPromises[requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
             DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
                 const data = response.value;
@@ -95,6 +95,7 @@ class WorkerKV {
                 reject(error);
             });
         });
+        return this.loadingPromises[requestId];
     }
 }
 
