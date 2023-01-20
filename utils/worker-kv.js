@@ -44,12 +44,14 @@ class WorkerKV {
                         console.log(`${this.kvName} loading timed out; forcing load`);
                         clearInterval(loadingInterval);
                         this.loading = false;
+                        delete this.loadingPromises[requestId];
                         return resolve(this.init(requestId));
                     }
                     if (this.loading === false) {
                         clearTimeout(loadingTimeout);
                         clearInterval(loadingInterval);
                         console.log(`${this.kvName} load: ${new Date() - startLoad} ms (secondary)`);
+                        delete this.loadingPromises[requestId];
                         resolve();
                     }
                 }, 5);
@@ -90,6 +92,7 @@ class WorkerKV {
                 this.dataUpdated = newDataUpdated;
                 this.dataSource.setKvLoadedForRequest(this.kvName, requestId);
                 this.loading = false;
+                delete this.loadingPromises[requestId];
                 resolve();
             }).catch(error => {
                 this.loading = false;
