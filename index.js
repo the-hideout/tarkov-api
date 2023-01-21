@@ -133,6 +133,7 @@ async function graphqlHandler(event, graphQLOptions) {
     };
     const requestId = uuidv4();
     console.info(requestId);
+    console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
     console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
     //console.log(query);
 
