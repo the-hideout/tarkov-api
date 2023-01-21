@@ -1,5 +1,7 @@
 const { spawn } = require('child_process');
 
+const skipCanceled = true;
+
 const logColors = {
     error: 31,
     info: 34,
@@ -17,6 +19,9 @@ const outputLog = (rawLog) => {
         if (logOnlyError && json.outcome === 'ok') {
             return;
         } 
+        if (skipCanceled && json.outcome === 'canceled') {
+            return;
+        }
         for (const logMessage of json.logs) {
             const level = logMessage.level;//json.outcome === 'ok' ? logMessage.level : 'error';
             let message = logMessage.message.join('\n');
@@ -26,9 +31,6 @@ const outputLog = (rawLog) => {
             console[level](message);
         }
         if (json.outcome !== 'ok') {
-            if (json.outcome === 'canceled') {
-                //return;
-            }
             const errorDesc = json.exceptions.map(ex => ex.message).join('; ') || json.outcome;
             console.error(`\x1b[${logColors.error}mFatal Error: ${errorDesc}\x1b[0m`);
             //console.error(`\x1b[${logColors.error}mUrl: ${json.event.request.url}\x1b[0m`);
