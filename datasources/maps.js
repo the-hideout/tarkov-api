@@ -8,12 +8,12 @@ class MapAPI extends WorkerKV {
 
     async getList(requestId) {
         await this.init(requestId);
-        return this.cache.data;
+        return this.cache.Map;
     }
 
     async get(requestId, id) {
         await this.init(requestId);
-        for (const map of this.cache.data) {
+        for (const map of this.cache.Map) {
             if (map.id === id || map.tarkovDataId === id) return map;
         }
         return Promise.reject(new Error(`No map found with id ${id}`));
@@ -22,7 +22,7 @@ class MapAPI extends WorkerKV {
     async getMapsByNames(requestId, names, maps = false, lang = 'en') {
         await this.init(requestId);
         if (!maps) {
-            maps = this.cache.data;
+            maps = this.cache.Map;
         }
         const searchStrings = names.map(name => {
             if (name === '') throw new Error('Searched map name cannot be blank');
@@ -43,7 +43,7 @@ class MapAPI extends WorkerKV {
     async getMapsByEnemies(requestId, enemies, maps = false, lang = 'en') {
         await this.init(requestId);
         if (!maps) {
-            maps = this.cache.data;
+            maps = this.cache.Map;
         }
         const searchStrings = enemies.map(name => {
             if (name === '') throw new Error('Searched enemy name cannot be blank');
@@ -63,18 +63,18 @@ class MapAPI extends WorkerKV {
 
     async getAllBosses(requestId) {
         await this.init(requestId);
-        return Object.values(this.cache.mobs);
+        return Object.values(this.cache.MobInfo);
     }
 
     async getMobInfo(requestId, mobId) {
         await this.init(requestId);
-        return this.cache.mobs[mobId];
+        return this.cache.MobInfo[mobId];
     }
 
     async getBossesByNames(requestId, names, bosses = false, lang = 'en') {
         await this.init(requestId);
         if (!bosses) {
-            bosses = Object.values(this.cache.mobs);
+            bosses = Object.values(this.cache.MobInfo);
         }
         const searchStrings = names.map(name => {
             if (name === '') throw new Error('Searched boss name cannot be blank');

@@ -8,12 +8,12 @@ class HideoutAPI extends WorkerKV {
 
     async getList(requestId) {
         await this.init(requestId);
-        return this.cache.data;
+        return this.cache.HideoutStation;
     }
 
     async getModuleById(requestId, id) {
         await this.init(requestId);
-        for (const hideoutStation of this.cache.data) {
+        for (const hideoutStation of this.cache.HideoutStation) {
             for (const stage of hideoutStation.levels) {
                 if (stage.id === id) {
                     return stage;
@@ -25,7 +25,7 @@ class HideoutAPI extends WorkerKV {
 
     async getModuleByLevel(requestId, stationId, level) {
         await this.init(requestId);
-        for (const hideoutStation of this.cache.data) {
+        for (const hideoutStation of this.cache.HideoutStation) {
             if (hideoutStation.id !== stationId) continue;
             for (const stage of hideoutStation.levels) {
                 if (stage.level === level) {
@@ -38,7 +38,7 @@ class HideoutAPI extends WorkerKV {
 
     async getStation(requestId, id) {
         await this.init(requestId);
-        for (const station of this.cache.data) {
+        for (const station of this.cache.HideoutStation) {
             if (station.id === id) return station;
         }
         return Promise.reject(new Error(`No hideout station found with id ${id}`));
@@ -46,12 +46,12 @@ class HideoutAPI extends WorkerKV {
 
     async getLegacyList(requestId) {
         await this.init(requestId);
-        return this.cache.legacy;
+        return this.cache.HideoutModule;
     }
 
     async getLegacyModule(requestId, name, level) {
         await this.init(requestId);
-        for (const module of this.cache.legacy) {
+        for (const module of this.cache.HideoutModule) {
             if (module.name === name && module.quantity === level) {
                 return module;
             }

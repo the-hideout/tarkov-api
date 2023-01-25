@@ -11,8 +11,8 @@ class historicalPricesAPI extends WorkerKV {
         if (!this.cache) {
             return Promise.reject(new Error('Historical prices cache is empty'));
         }
-        if (!this.cache.data[itemId]) return [];
-        return this.cache.data[itemId];
+        if (!this.cache.historicalPricePoint[itemId]) return [];
+        return this.cache.historicalPricePoint[itemId];
     }
 }
 

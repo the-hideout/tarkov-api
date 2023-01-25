@@ -15,12 +15,12 @@ class BartersAPI extends WorkerKV {
 
     async getList(requestId) {
         await this.init(requestId);
-        return this.cache.data;
+        return this.cache.Barter;
     }
 
     async getBartersForItem(requestId, id) {
         await this.init(requestId);
-        return this.cache.data.filter(barter => {
+        return this.cache.Barter.filter(barter => {
             for (const item of barter.rewardItems) {
                 if (item.item === id) return true;
                 if (item.baseId === id) return true;
@@ -31,7 +31,7 @@ class BartersAPI extends WorkerKV {
 
     async getBartersUsingItem(requestId, id) {
         await this.init(requestId);
-        return this.cache.data.filter(barter => {
+        return this.cache.Barter.filter(barter => {
             for (const item of barter.requiredItems) {
                 if (item.item === id) return true;
                 if (isBothDogtags(id) && isAnyDogtag(item.item)) {
@@ -47,7 +47,7 @@ class BartersAPI extends WorkerKV {
 
     async getBartersForTrader(requestId, id) {
         await this.init(requestId);
-        return this.cache.data.filter(barter => {
+        return this.cache.Barter.filter(barter => {
             if (barter.trader_id === id) return true;
             return false;
         });

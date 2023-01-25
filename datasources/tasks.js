@@ -8,12 +8,12 @@ class TasksAPI extends WorkerKV {
 
     async getList(requestId) {
         await this.init(requestId);
-        return this.cache.data;
+        return this.cache.Task;
     }
 
     async get(requestId, id) {
         await this.init(requestId);
-        for (const task of this.cache.data) {
+        for (const task of this.cache.Task) {
             if (task.id === id || task.tarkovDataId === id) return task;
         }
         return Promise.reject(new Error(`No task found with id ${id}`));
@@ -21,7 +21,7 @@ class TasksAPI extends WorkerKV {
 
     async getTasksRequiringItem(requestId, itemId) {
         await this.init(requestId);
-        const tasks = this.cache.data.filter(rawTask => {
+        const tasks = this.cache.Task.filter(rawTask => {
             for (const obj of rawTask.objectives) {
                 if (obj.item === itemId) {
                     return true;
@@ -78,7 +78,7 @@ class TasksAPI extends WorkerKV {
 
     async getTasksProvidingItem(requestId, itemId) {
         await this.init(requestId);
-        const tasks = this.cache.data.filter(rawTask => {
+        const tasks = this.cache.Task.filter(rawTask => {
             for (const reward of rawTask.startRewards.items) {
                 if (reward.item === itemId) {
                     return true
@@ -108,7 +108,7 @@ class TasksAPI extends WorkerKV {
 
     async getQuests(requestId) {
         await this.init(requestId);
-        return this.cache.legacy;
+        return this.cache.Quest;
     }
 
     async getQuest(requestId, id) {
@@ -124,12 +124,12 @@ class TasksAPI extends WorkerKV {
 
     async getQuestItems(requestId) {
         await this.init(requestId);
-        return Object.values(this.cache.items);
+        return Object.values(this.cache.QuestItem);
     }
 
     async getQuestItem(requestId, id) {
         await this.init(requestId);
-        return this.cache.items[id];
+        return this.cache.QuestItem[id];
     }
 }
 

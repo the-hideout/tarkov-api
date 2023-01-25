@@ -59,14 +59,6 @@ class WorkerKV {
             return this.loadingPromises[requestId];
         }
         this.loading = true;
-        /*this.loadingInterval = setInterval(() => {
-            if (this.loading) return;
-            for (const reqId of Object.keys(this.loadingPromises)) {
-                this.loadingPromies[reqId]();
-                delete this.loadingPromies[reqId];
-            }
-            clearInterval(this.loadingInterval);
-        }, 5);*/
         this.loadingPromises[requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
             DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {

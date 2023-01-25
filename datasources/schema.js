@@ -10,7 +10,7 @@ class SchemaAPI extends WorkerKV {
         if (!this.cache) {
             return Promise.reject(new Error('Schema cache is empty'));
         }
-        return this.cache.itemCategories
+        return this.cache.ItemCategory;
     }
 
     async getHandbookCategories(requestId) {
@@ -18,7 +18,7 @@ class SchemaAPI extends WorkerKV {
         if (!this.cache) {
             return Promise.reject(new Error('Schema cache is empty'));
         }
-        return this.cache.handbookCategories;
+        return this.cache.HandbookCategory;
     }
 
     async getItemTypes(requestId) {
@@ -26,7 +26,7 @@ class SchemaAPI extends WorkerKV {
         if (!this.cache) {
             return Promise.reject(new Error('Schema cache is empty'));
         }
-        return this.cache.itemTypes;
+        return this.cache.ItemType;
     }
 
     async getLanguageCodes(requestId) {
@@ -34,7 +34,7 @@ class SchemaAPI extends WorkerKV {
         if (!this.cache) {
             return Promise.reject(new Error('Schema cache is empty'));
         }
-        return this.cache.languageCodes;
+        return this.cache.LanguageCode;
     }
 }
 

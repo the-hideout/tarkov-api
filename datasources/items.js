@@ -40,11 +40,11 @@ class ItemsAPI extends WorkerKV {
                 currency: 'RUB',
                 currencyItem: '5449016a4bdc2d6f028b456f',
                 priceRUB: item.lastLowPrice || 0,
-                vendor: this.cache.flea,
+                vendor: this.cache.FleaMarket,
                 source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
-                    value: this.cache.flea.minPlayerLevel,
+                    value: this.cache.FleaMarket.minPlayerLevel,
                 }],
             });
 
@@ -53,11 +53,11 @@ class ItemsAPI extends WorkerKV {
                 currency: 'RUB',
                 currencyItem: '5449016a4bdc2d6f028b456f',
                 priceRUB: item.avg24hPrice || item.lastLowPrice || 0,
-                vendor: this.cache.flea,
+                vendor: this.cache.FleaMarket,
                 source: 'fleaMarket',
                 requirements: [{
                     type: 'playerLevel',
-                    value: this.cache.flea.minPlayerLevel,
+                    value: this.cache.FleaMarket.minPlayerLevel,
                 }],
             });
         }
@@ -67,7 +67,7 @@ class ItemsAPI extends WorkerKV {
 
     async getItem(requestId, id, contains) {
         await this.init(requestId);
-        let item = this.cache.data[id];
+        let item = this.cache.Item[id];
         if (!item) {
             return Promise.reject(new Error(`No item found with id ${id}`));
         }
@@ -85,7 +85,7 @@ class ItemsAPI extends WorkerKV {
 
     async getAllItems(requestId) {
         await this.init(requestId);
-        return Object.values(this.cache.data).map((rawItem) => {
+        return Object.values(this.cache.Item).map((rawItem) => {
             return this.formatItem(rawItem);
         });
     }
@@ -94,7 +94,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -109,7 +109,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -124,7 +124,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -142,7 +142,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         const searchString = name.toLowerCase();
@@ -167,7 +167,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         const searchStrings = names.map(name => {
@@ -195,7 +195,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -210,7 +210,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         return items.filter((rawItem) => {
@@ -225,7 +225,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         const categories = (await this.getCategories()).filter(cat => names.includes(cat.enumName));
@@ -241,7 +241,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         const categories = (await this.getHandbookCategories()).filter(cat => names.includes(cat.enumName));
@@ -257,7 +257,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         return items.filter(item => {
@@ -270,7 +270,7 @@ class ItemsAPI extends WorkerKV {
 
     async getItemByNormalizedName(requestId, normalizedName) {
         await this.init(requestId);
-        const item = Object.values(this.cache.data).find((item) => item.normalized_name === normalizedName);
+        const item = Object.values(this.cache.Item).find((item) => item.normalized_name === normalizedName);
 
         if (!item) {
             return null;
@@ -283,7 +283,7 @@ class ItemsAPI extends WorkerKV {
         await this.init(requestId);
         let format = false;
         if (!items) {
-            items = Object.values(this.cache.data);
+            items = Object.values(this.cache.Item);
             format = true;
         }
         return items.filter(item => {
@@ -296,7 +296,7 @@ class ItemsAPI extends WorkerKV {
 
     async getCategory(requestId, id) {
         await this.init(requestId);
-        return this.cache.categories[id] || this.cache.handbookCategories[id];
+        return this.cache.ItemCategory[id] || this.cache.HandbookCategory[id];
     }
 
     async getTopCategory(requestId, id) {
@@ -312,8 +312,8 @@ class ItemsAPI extends WorkerKV {
             return Promise.reject(new Error('Item cache is empty'));
         }
         const categories = [];
-        for (const id in this.cache.categories) {
-            categories.push(this.cache.categories[id]);
+        for (const id in this.cache.ItemCategory) {
+            categories.push(this.cache.ItemCategory[id]);
         }
         return categories;
     }
@@ -329,7 +329,7 @@ class ItemsAPI extends WorkerKV {
 
     async getHandbookCategory(requestId, id) {
         await this.init(requestId);
-        return this.cache.handbookCategories[id];
+        return this.cache.HandbookCategory[id];
     }
 
     async getHandbookCategories(requestId) {
@@ -337,22 +337,22 @@ class ItemsAPI extends WorkerKV {
         if (!this.cache) {
             return Promise.reject(new Error('Item cache is empty'));
         }
-        return Object.values(this.cache.handbookCategories);
+        return Object.values(this.cache.HandbookCategory);
     }
 
     async getFleaMarket(requestId) {
         await this.init(requestId);
-        return this.cache.flea;
+        return this.cache.FleaMarket;
     }
 
     async getArmorMaterials(requestId) {
         await this.init(requestId);
-        return Object.values(this.cache.armorMats).sort();
+        return Object.values(this.cache.ArmorMaterial).sort();
     }
 
     async getArmorMaterial(requestId, matKey) {
         await this.init(requestId);
-        return this.cache.armorMats[matKey];
+        return this.cache.ArmorMaterial[matKey];
     }
 
     async getAmmoList(requestId) {
@@ -370,17 +370,17 @@ class ItemsAPI extends WorkerKV {
 
     async getPlayerLevels(requestId) {
         await this.init(requestId);
-        return this.cache.playerLevels;
+        return this.cache.PlayerLevel;
     }
 
     async getTypes(requestId) {
         await this.init(requestId);
-        return this.cache.types;
+        return this.cache.ItemType;
     }
 
     async getLanguageCodes(requestId) {
         await this.init(requestId);
-        return this.cache.languageCodes;
+        return this.cache.LanguageCode;
     }
 }
 

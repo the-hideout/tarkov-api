@@ -43,12 +43,12 @@ class TradersAPI extends WorkerKV {
 
     async getList(requestId) {
         await this.init(requestId);
-        return this.cache.data;
+        return this.cache.Trader;
     }
 
     async get(requestId, id) {
         await this.init(requestId);
-        for (const trader of this.cache.data) {
+        for (const trader of this.cache.Trader) {
             if (trader.id === id) {
                 return trader;
             }
@@ -59,7 +59,7 @@ class TradersAPI extends WorkerKV {
 
     async getByName(requestId, name) {
         await this.init(requestId);
-        for (const trader of this.cache.data) {
+        for (const trader of this.cache.Trader) {
             if (trader.name.toLowerCase() === name.toLowerCase()) {
                 return trader;
             }
@@ -70,7 +70,7 @@ class TradersAPI extends WorkerKV {
 
     async getByLevel(requestId, traderId, level) {
         await this.init(requestId);
-        for (const trader of this.cache.data) {
+        for (const trader of this.cache.Trader) {
             if (trader.id !== traderId) continue;
             for (const rawLevel of trader.levels) {
                 if (rawLevel.level === level) {
@@ -87,7 +87,7 @@ class TradersAPI extends WorkerKV {
 
     async getTraderResets(requestId) {
         await this.init(requestId);
-        return this.cache.data.map(trader => {
+        return this.cache.Trader.map(trader => {
             return {
                 name: trader.name.toLowerCase(),
                 resetTimestamp: trader.resetTime,

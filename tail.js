@@ -40,7 +40,11 @@ const outputLog = (rawLog) => {
             //console.log(rawLog);
         } 
     } catch (error) {
-        console.log('Error processing wrangler output', error);
+        if (error.message.includes('Unexpected token')) {
+            console.error(`\x1b[${logColors.error}mJSON parsing error. Raw log:\x1b[0m`, JSON.stringify(rawLog));
+            return;
+        }
+        console.error(`\x1b[${logColors.error}mError processing wrangler output\x1b[0m`, error);
     }
 };
 
@@ -57,7 +61,8 @@ const startTail = () => {
                 outputLog(json);
             });        
         } catch (error) {
-            console.error('Error processing wrangler output', error);
+            console.error('Error processing wrangler output', error.message);
+            console.error(data);
         }
     });
     wrangler.on('error', (error) => {
