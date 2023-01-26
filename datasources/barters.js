@@ -55,7 +55,7 @@ class BartersAPI extends WorkerKV {
 
     async getBartersForTraderLevel(requestId, id, level) {
         await this.init(requestId);
-        return this.cache.data.filter(barter => {
+        return this.cache.Barter.filter(barter => {
             if (barter.trader_id === id && barter.level === level) return true;
             return false;
         });
