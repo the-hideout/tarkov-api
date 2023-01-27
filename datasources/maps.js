@@ -3,7 +3,6 @@ const WorkerKV = require('../utils/worker-kv');
 class MapAPI extends WorkerKV {
     constructor(dataSource) {
         super('map_data', dataSource);
-        this.refreshInterval = 1000 * 60 * 20;
     }
 
     async getList(requestId) {

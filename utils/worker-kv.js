@@ -1,4 +1,3 @@
-const { request } = require('http');
 const zlib = require('zlib');
 
 class WorkerKV {
@@ -8,13 +7,12 @@ class WorkerKV {
         this.kvName = kvName;
         this.loadingPromises = {};
         this.loadingInterval = false;
-        this.dataUpdated = new Date(0);
-        this.refreshInterval = 1000 * 60 * 5;
+        this.dataExpires = false;
         this.dataSource = dataSource;
     }
 
     async init(requestId) {
-        if (this.cache && new Date() - this.dataUpdated < this.refreshInterval + 60000) {
+        if (this.cache && (!this.dataExpires || new Date() < this.dataExpires)) {
             //console.log(`${this.kvName} is fresh; not refreshing`);
             return;
         }
@@ -74,14 +72,14 @@ class WorkerKV {
                 } else {
                     this.cache = JSON.parse(data);
                 }
-                let newDataUpdated = new Date().valueOf();
-                if (this.cache.updated) {
-                    newDataUpdated = new Date(this.cache.updated).valueOf();
+                let newDataExpires = false;
+                if (this.cache.expiration) {
+                    newDataExpires = new Date(this.cache.expiration).valueOf();
                 }
-                if (this.dataUpdated === newDataUpdated) {
+                if (newDataExpires && this.dataExpires === newDataExpires) {
                     console.log(`${this.kvName} is still stale after re-load`);
                 }
-                this.dataUpdated = newDataUpdated;
+                this.dataExpires = newDataExpires;
                 this.dataSource.setKvLoadedForRequest(this.kvName, requestId);
                 this.loading = false;
                 delete this.loadingPromises[requestId];

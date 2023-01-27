@@ -3,7 +3,6 @@ const WorkerKV = require('../utils/worker-kv');
 class historicalPricesAPI extends WorkerKV {
     constructor(dataSource) {
         super('historical_price_data', dataSource);
-        this.refreshInterval = 1000 * 60 * 30;
     }
 
     async getByItemId(requestId, itemId) {
