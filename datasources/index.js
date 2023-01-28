@@ -116,12 +116,15 @@ class DataSource {
     }
 
     getRequestTtl(requestId) {
-        if (!this.requests[requestId]) {
-            return '';
+        if (!this.requests[requestId] || !this.requests[requestId].kvUsed) {
+            return 0;
         }
         let lowestExpire = Number.MAX_SAFE_INTEGER;
         let schemaExpire = Number.MAX_SAFE_INTEGER;
         for (const worker of Object.values(this.kvWorkers)) {
+            if (!this.requests[requestId].kvUsed.includes(worker.kvName)) {
+                continue;
+            }
             if (worker.kvName === 'schema_data') {
                 schemaExpire = worker.dataExpires;
                 continue;
@@ -132,6 +135,9 @@ class DataSource {
         }
         if (!lowestExpire) {
             lowestExpire = schemaExpire;
+        }
+        if (lowestExpire === Number.MAX_SAFE_INTEGER) {
+            return 0;
         }
         return Math.round((lowestExpire - new Date().valueOf()) / 1000);
     }

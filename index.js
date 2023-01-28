@@ -156,13 +156,11 @@ async function graphqlHandler(event, graphQLOptions) {
     const result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
     const body = JSON.stringify(result);
 
+    let ttl = dataAPI.getRequestTtl(requestId);
+
     // Update the cache with the results of the query
     // don't update cache if result contained errors
-    if (!skipCache && (!result.errors || result.errors.length === 0)) {
-        let ttl = dataAPI.getRequestTtl(requestId);
-        if (ttl < 30) {
-            ttl = '';
-        }
+    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl >= 30) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
         event.waitUntil(cacheMachine.put(query, variables, body, String(ttl)));
     }
