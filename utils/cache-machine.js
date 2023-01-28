@@ -45,18 +45,19 @@ async function hash(string) {
 // :param json: the incoming request in json
 // :param body: the body to cache
 // :return: true if successful, false if not
-async function updateCache(query, variables, body) {
+async function updateCache(query, variables, body, ttl = '') {
     try {
         if (cachePaused) {
             return false;
         }
         // Get the cacheKey from the request
         query = query.trim();
-        const cacheKey = await hash(query + JSON.stringify(variables));
+        console.log('caching for environment', ENVIRONMENT);
+        const cacheKey = await hash(ENVIRONMENT + query + JSON.stringify(variables));
 
         // headers and POST body
         const headersPost = {
-            body: JSON.stringify({ key: cacheKey, value: body }),
+            body: JSON.stringify({ key: cacheKey, value: body, ttl }),
             method: 'POST',
             headers: headers,
             timeout: 10000,
@@ -92,7 +93,7 @@ async function checkCache(query, variables) {
             return false;
         }
         query = query.trim();
-        const cacheKey = await hash(query + JSON.stringify(variables));
+        const cacheKey = await hash(ENVIRONMENT + query + JSON.stringify(variables));
         if (!cacheKey) {
             console.warn('Skipping cache check; key is empty');
             return false;

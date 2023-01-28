@@ -23,7 +23,7 @@ let lastSchemaRefresh = 0;
 const schemaRefreshInterval = 1000 * 60 * 10;
 
 // If the environment is not production, skip using the caching service
-const skipCache = true; //ENVIRONMENT !== 'production' || false;
+const skipCache = false; //ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
 async function getSchema(data, requestId) {
@@ -159,8 +159,12 @@ async function graphqlHandler(event, graphQLOptions) {
     // Update the cache with the results of the query
     // don't update cache if result contained errors
     if (!skipCache && (!result.errors || result.errors.length === 0)) {
+        let ttl = dataAPI.getRequestTtl(requestId);
+        if (ttl < 30) {
+            ttl = '';
+        }
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-        event.waitUntil(cacheMachine.put(query, variables, body));
+        event.waitUntil(cacheMachine.put(query, variables, body, String(ttl)));
     }
 
     console.log(`Response time: ${new Date() - requestStart} ms`);

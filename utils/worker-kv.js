@@ -50,6 +50,7 @@ class WorkerKV {
                         clearInterval(loadingInterval);
                         console.log(`${this.kvName} load: ${new Date() - startLoad} ms (secondary)`);
                         delete this.loadingPromises[requestId];
+                        this.dataSource.setKvUsedForRequest(this.kvName, requestId);
                         resolve();
                     }
                 }, 5);
