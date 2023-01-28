@@ -37,18 +37,18 @@ const traderNameIdMap = {
 };
 
 class TradersAPI extends WorkerKV {
-    constructor() {
-        super('trader_data');
+    constructor(dataSource) {
+        super('trader_data', dataSource);
     }
 
-    async getList() {
-        await this.init();
-        return this.cache.data;
+    async getList(requestId) {
+        await this.init(requestId);
+        return this.cache.Trader;
     }
 
-    async get(id) {
-        await this.init();
-        for (const trader of this.cache.data) {
+    async get(requestId, id) {
+        await this.init(requestId);
+        for (const trader of this.cache.Trader) {
             if (trader.id === id) {
                 return trader;
             }
@@ -57,9 +57,9 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with id ${id}`));
     }
 
-    async getByName(name) {
-        await this.init();
-        for (const trader of this.cache.data) {
+    async getByName(requestId, name) {
+        await this.init(requestId);
+        for (const trader of this.cache.Trader) {
             if (trader.name.toLowerCase() === name.toLowerCase()) {
                 return trader;
             }
@@ -68,9 +68,9 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with name ${name}`));
     }
 
-    async getByLevel(traderId, level) {
-        await this.init();
-        for (const trader of this.cache.data) {
+    async getByLevel(requestId, traderId, level) {
+        await this.init(requestId);
+        for (const trader of this.cache.Trader) {
             if (trader.id !== traderId) continue;
             for (const rawLevel of trader.levels) {
                 if (rawLevel.level === level) {
@@ -81,13 +81,13 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with id ${traderId} and level ${level}`));
     }
 
-    getByDataId(dataId) {
-        return this.get(dataIdMap[dataId]);
+    getByDataId(requestId, dataId) {
+        return this.get(requestId, dataIdMap[dataId]);
     }
 
-    async getTraderResets() {
-        await this.init();
-        return this.cache.data.map(trader => {
+    async getTraderResets(requestId) {
+        await this.init(requestId);
+        return this.cache.Trader.map(trader => {
             return {
                 name: trader.name.toLowerCase(),
                 resetTimestamp: trader.resetTime,

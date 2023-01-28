@@ -1,20 +1,20 @@
-module.exports = async (data) => {
-    const itemTypes = await data.item.getTypes();
-    const categories = await data.item.getCategories();
-    const handbookCategories = await data.item.getHandbookCategories();
-    const languageCodes = await data.item.getLanguageCodes();
+module.exports = async (data, requestId) => {
+    const itemTypes = await data.schema.getItemTypes(requestId);
+    const categories = await data.schema.getCategories(requestId);
+    const handbookCategories = await data.schema.getHandbookCategories(requestId);
+    const languageCodes = await data.schema.getLanguageCodes(requestId);
     return `
 enum ItemType {
-    ${itemTypes.join('\n ')}
+    ${itemTypes}
 }
 enum ItemCategoryName {
-    ${categories.map(cat => cat.enumName).sort().join('\n  ')}
+    ${categories}
 }
 enum HandbookCategoryName {
-    ${handbookCategories.map(cat => cat.enumName).sort().join('\n  ')}
+    ${handbookCategories}
 }
 enum LanguageCode {
-	${languageCodes.join('\n ')}
+	${languageCodes}
 }
     `;
 };

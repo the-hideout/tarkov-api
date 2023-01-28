@@ -1,40 +1,67 @@
 const zlib = require('zlib');
 
 class WorkerKV {
-    constructor(kvName) {
+    constructor(kvName, dataSource) {
         this.cache = false;
         this.loading = false;
         this.kvName = kvName;
-        this.loadingPromises = [];
+        this.loadingPromises = {};
         this.loadingInterval = false;
-        this.dataUpdated = new Date (0);
-        this.refreshInterval = 1000 * 60 * 5;
+        this.dataExpires = false;
+        this.dataSource = dataSource;
     }
 
-    async init() {
-        if (this.cache && new Date() - this.dataUpdated < this.refreshInterval + 60000) {
+    async init(requestId) {
+        if (this.cache && (!this.dataExpires || new Date() < this.dataExpires)) {
+            //console.log(`${this.kvName} is fresh; not refreshing`);
             return;
         }
+        if (this.dataSource.kvLoadedForRequest(this.kvName, requestId)) {
+            //console.log(`${this.kvName} already loaded for request ${requestId}; not refreshing`);
+            return
+        }
         if (this.cache) {
+            console.log(`${this.kvName} is stale; re-loading`);
             this.cache = false;
+        } else {
+            //console.log(`${this.kvName} loading`);
         }
         if (this.loading) {
-            return new Promise((resolve) => {
-                this.loadingPromises.push(resolve);
+            if (this.loadingPromises[requestId]) {
+                return this.loadingPromises[requestId];
+            }
+            //console.log(`${this.kvName} already loading; awaiting load`);
+            this.loadingPromises[requestId] = new Promise((resolve) => {
+                const startLoad = new Date();
+                let loadingTimedOut = false;
+                const loadingTimeout = setTimeout(() => {
+                    loadingTimedOut = true;
+                }, 3000);
+                const loadingInterval = setInterval(() => {
+                    if (loadingTimedOut) {
+                        console.log(`${this.kvName} loading timed out; forcing load`);
+                        clearInterval(loadingInterval);
+                        this.loading = false;
+                        delete this.loadingPromises[requestId];
+                        return resolve(this.init(requestId));
+                    }
+                    if (this.loading === false) {
+                        clearTimeout(loadingTimeout);
+                        clearInterval(loadingInterval);
+                        console.log(`${this.kvName} load: ${new Date() - startLoad} ms (secondary)`);
+                        delete this.loadingPromises[requestId];
+                        resolve();
+                    }
+                }, 5);
             });
+            return this.loadingPromises[requestId];
         }
         this.loading = true;
-        this.loadingInterval = setInterval(() => {
-            if (this.loading) return;
-            let resolve = false;
-            while (resolve = this.loadingPromises.shift()) {
-                resolve();
-            }
-            clearInterval(this.loadingInterval);
-        }, 5);
-        return new Promise((resolve, reject) => {
+        this.loadingPromises[requestId] = new Promise((resolve, reject) => {
+            const startLoad = new Date();
             DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
                 const data = response.value;
+                console.log(`${this.kvName} load: ${new Date() - startLoad} ms`);
                 const metadata = response.metadata;
                 if (metadata && metadata.compression) {
                     if (metadata.compression = 'gzip') {
@@ -45,17 +72,24 @@ class WorkerKV {
                 } else {
                     this.cache = JSON.parse(data);
                 }
-                this.dataUpdated = new Date();
-                if (this.cache.updated) {
-                    this.dataUpdated = new Date(this.cache.updated);
+                let newDataExpires = false;
+                if (this.cache.expiration) {
+                    newDataExpires = new Date(this.cache.expiration).valueOf();
                 }
+                if (newDataExpires && this.dataExpires === newDataExpires) {
+                    console.log(`${this.kvName} is still stale after re-load`);
+                }
+                this.dataExpires = newDataExpires;
+                this.dataSource.setKvLoadedForRequest(this.kvName, requestId);
                 this.loading = false;
+                delete this.loadingPromises[requestId];
                 resolve();
             }).catch(error => {
                 this.loading = false;
                 reject(error);
             });
         });
+        return this.loadingPromises[requestId];
     }
 }
 

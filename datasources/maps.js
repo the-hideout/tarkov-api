@@ -1,28 +1,27 @@
 const WorkerKV = require('../utils/worker-kv');
 
 class MapAPI extends WorkerKV {
-    constructor() {
-        super('map_data');
-        this.refreshInterval = 1000 * 60 * 20;
+    constructor(dataSource) {
+        super('map_data', dataSource);
     }
 
-    async getList() {
-        await this.init();
-        return this.cache.data;
+    async getList(requestId) {
+        await this.init(requestId);
+        return this.cache.Map;
     }
 
-    async get(id) {
-        await this.init();
-        for (const map of this.cache.data) {
+    async get(requestId, id) {
+        await this.init(requestId);
+        for (const map of this.cache.Map) {
             if (map.id === id || map.tarkovDataId === id) return map;
         }
         return Promise.reject(new Error(`No map found with id ${id}`));
     }
 
-    async getMapsByNames(names, maps = false, lang = 'en') {
-        await this.init();
+    async getMapsByNames(requestId, names, maps = false, lang = 'en') {
+        await this.init(requestId);
         if (!maps) {
-            maps = this.cache.data;
+            maps = this.cache.Map;
         }
         const searchStrings = names.map(name => {
             if (name === '') throw new Error('Searched map name cannot be blank');
@@ -40,10 +39,10 @@ class MapAPI extends WorkerKV {
         });
     }
 
-    async getMapsByEnemies(enemies, maps = false, lang = 'en') {
-        await this.init();
+    async getMapsByEnemies(requestId, enemies, maps = false, lang = 'en') {
+        await this.init(requestId);
         if (!maps) {
-            maps = this.cache.data;
+            maps = this.cache.Map;
         }
         const searchStrings = enemies.map(name => {
             if (name === '') throw new Error('Searched enemy name cannot be blank');
@@ -61,20 +60,20 @@ class MapAPI extends WorkerKV {
         });
     }
 
-    async getAllBosses() {
-        await this.init();
-        return Object.values(this.cache.mobs);
+    async getAllBosses(requestId) {
+        await this.init(requestId);
+        return Object.values(this.cache.MobInfo);
     }
 
-    async getMobInfo(mobId) {
-        await this.init();
-        return this.cache.mobs[mobId];
+    async getMobInfo(requestId, mobId) {
+        await this.init(requestId);
+        return this.cache.MobInfo[mobId];
     }
 
-    async getBossesByNames(names, bosses = false, lang = 'en') {
-        await this.init();
+    async getBossesByNames(requestId, names, bosses = false, lang = 'en') {
+        await this.init(requestId);
         if (!bosses) {
-            bosses = Object.values(this.cache.mobs);
+            bosses = Object.values(this.cache.MobInfo);
         }
         const searchStrings = names.map(name => {
             if (name === '') throw new Error('Searched boss name cannot be blank');

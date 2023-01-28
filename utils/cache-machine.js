@@ -5,6 +5,15 @@ const headers = {
     'Authorization': `Basic ${CACHE_BASIC_AUTH}`
 };
 
+let cachePaused = false;
+
+function pauseCache() {
+    cachePaused = true;
+    setTimeout(() => {
+        cachePaused = false;
+    }, 60000);
+}
+
 async function fetchWithTimeout(resource, options = {}) {
     const { timeout = 1000 } = options;
     
@@ -38,6 +47,9 @@ async function hash(string) {
 // :return: true if successful, false if not
 async function updateCache(query, variables, body) {
     try {
+        if (cachePaused) {
+            return false;
+        }
         // Get the cacheKey from the request
         query = query.trim();
         const cacheKey = await hash(query + JSON.stringify(variables));
@@ -46,7 +58,8 @@ async function updateCache(query, variables, body) {
         const headersPost = {
             body: JSON.stringify({ key: cacheKey, value: body }),
             method: 'POST',
-            headers: headers
+            headers: headers,
+            timeout: 10000,
         };
 
         // Update the cache
@@ -54,13 +67,18 @@ async function updateCache(query, variables, body) {
 
         // Log non-200 responses
         if (response.status !== 200) {
-            console.log(`failed to write to cache: ${response.status}`);
+            console.error(`failed to write to cache: ${response.status}`);
             return false
         }
 
         return true
     } catch (error) {
-        console.log('updateCache error: ' + error.message);
+        if (error.message === 'The operation was aborted') {
+            console.warn('Updating cache timed out');
+            pauseCache();
+            return false;
+        }
+        console.error('updateCache error: ' + error.message);
         return false;
     }
 }
@@ -70,8 +88,15 @@ async function updateCache(query, variables, body) {
 // :return: json results of the item found in the cache or false if not found
 async function checkCache(query, variables) {
     try {
+        if (cachePaused) {
+            return false;
+        }
         query = query.trim();
         const cacheKey = await hash(query + JSON.stringify(variables));
+        if (!cacheKey) {
+            console.warn('Skipping cache check; key is empty');
+            return false;
+        }
 
         const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${cacheKey}`, { headers: headers });
         if (response.status === 200) {
@@ -80,7 +105,12 @@ async function checkCache(query, variables) {
 
         return false
     } catch (error) {
-        console.log('checkCache error: ' + error.message);
+        if (error.message === 'The operation was aborted') {
+            console.warn('Checking cache timed out');
+            pauseCache();
+            return false;
+        }
+        console.error('checkCache error: ' + error.message);
         return false;
     }
 }

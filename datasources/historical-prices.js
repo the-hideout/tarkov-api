@@ -1,18 +1,17 @@
 const WorkerKV = require('../utils/worker-kv');
 
 class historicalPricesAPI extends WorkerKV {
-    constructor() {
-        super('historical_price_data');
-        this.refreshInterval = 1000 * 60 * 30;
+    constructor(dataSource) {
+        super('historical_price_data', dataSource);
     }
 
-    async getByItemId(itemId) {
-        await this.init();
+    async getByItemId(requestId, itemId) {
+        await this.init(requestId);
         if (!this.cache) {
             return Promise.reject(new Error('Historical prices cache is empty'));
         }
-        if (!this.cache.data[itemId]) return [];
-        return this.cache.data[itemId];
+        if (!this.cache.historicalPricePoint[itemId]) return [];
+        return this.cache.historicalPricePoint[itemId];
     }
 }
 

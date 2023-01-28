@@ -1,19 +1,18 @@
 const WorkerKV = require('../utils/worker-kv');
 
 class HideoutAPI extends WorkerKV {
-    constructor() {
-        super('hideout_data');
-        this.refreshInterval = 1000 * 60 * 10;
+    constructor(dataSource) {
+        super('hideout_data', dataSource);
     }
 
-    async getList() {
-        await this.init();
-        return this.cache.data;
+    async getList(requestId) {
+        await this.init(requestId);
+        return this.cache.HideoutStation;
     }
 
-    async getModuleById(id) {
-        await this.init();
-        for (const hideoutStation of this.cache.data) {
+    async getModuleById(requestId, id) {
+        await this.init(requestId);
+        for (const hideoutStation of this.cache.HideoutStation) {
             for (const stage of hideoutStation.levels) {
                 if (stage.id === id) {
                     return stage;
@@ -23,9 +22,9 @@ class HideoutAPI extends WorkerKV {
         return Promise.reject(new Error(`No hideout station level found with id ${id}`));
     }
 
-    async getModuleByLevel(stationId, level) {
-        await this.init();
-        for (const hideoutStation of this.cache.data) {
+    async getModuleByLevel(requestId, stationId, level) {
+        await this.init(requestId);
+        for (const hideoutStation of this.cache.HideoutStation) {
             if (hideoutStation.id !== stationId) continue;
             for (const stage of hideoutStation.levels) {
                 if (stage.level === level) {
@@ -36,22 +35,22 @@ class HideoutAPI extends WorkerKV {
         return Promise.reject(new Error(`No hideout station level found with id ${stationId} and level ${level}`));
     }
 
-    async getStation(id) {
-        await this.init();
-        for (const station of this.cache.data) {
+    async getStation(requestId, id) {
+        await this.init(requestId);
+        for (const station of this.cache.HideoutStation) {
             if (station.id === id) return station;
         }
         return Promise.reject(new Error(`No hideout station found with id ${id}`));
     }
 
-    async getLegacyList() {
-        await this.init();
-        return this.cache.legacy;
+    async getLegacyList(requestId) {
+        await this.init(requestId);
+        return this.cache.HideoutModule;
     }
 
-    async getLegacyModule(name, level) {
-        await this.init();
-        for (const module of this.cache.legacy) {
+    async getLegacyModule(requestId, name, level) {
+        await this.init(requestId);
+        for (const module of this.cache.HideoutModule) {
             if (module.name === name && module.quantity === level) {
                 return module;
             }

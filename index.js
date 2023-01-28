@@ -1,6 +1,7 @@
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { mergeTypeDefs } = require('@graphql-tools/merge');
 const { graphql } = require('graphql');
+const { v4: uuidv4 } = require('uuid');
 
 const DataSource = require('./datasources');
 const dataAPI = new DataSource();
@@ -22,48 +23,61 @@ let lastSchemaRefresh = 0;
 const schemaRefreshInterval = 1000 * 60 * 10;
 
 // If the environment is not production, skip using the caching service
-const skipCache = ENVIRONMENT !== 'production' || false;
+const skipCache = true; //ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
-async function getSchema(data) {
+async function getSchema(data, requestId) {
+    data.requests[requestId] = {
+        kvLoaded: [],
+    };
     if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
         return schema;
     }
     if (loadingSchema) {
         return new Promise((resolve) => {
-            const isDone = () => {
-                if (this.loadingSchema === false) {
-                    resolve(schema);
-                } else {
-                    setTimeout(isDone, 5);
+            let loadingTimedOut = false;
+            const loadingTimeout = setTimeout(() => {
+                loadingTimedOut = true;
+            }, 1000);
+            const loadingInterval = setInterval(() => {
+                if (loadingTimedOut) {
+                    console.log(`Schema loading timed out; forcing load`);
+                    clearInterval(loadingInterval);
+                    loadingSchema = false;
+                    return resolve(getSchema(data, requestId));
                 }
-            }
-            isDone();
+                if (loadingSchema === false) {
+                    clearTimeout(loadingTimeout);
+                    clearInterval(loadingInterval);
+                    resolve(schema);
+                }
+            }, 5);
         });
     }
     loadingSchema = true;
-    return dynamicTypeDefs(data).catch(error => {
+    return dynamicTypeDefs(data, requestId).catch(error => {
         loadingSchema = false;
-        console.log('Error loading dynamic type definitions', error);
+        console.error('Error loading dynamic type definitions', error);
         return Promise.reject(error);
     }).then(dynamicTypeDefs => {
         let mergedDefs;
         try {
             mergedDefs = mergeTypeDefs([typeDefs, dynamicTypeDefs]);
         } catch (error) {
-            console.log('Error merging type defs', error);
+            console.error('Error merging type defs', error);
             return Promise.reject(error);
         }
         try {
             schema = makeExecutableSchema({ typeDefs: mergedDefs, resolvers: resolvers });
             loadingSchema = false;
+            //console.log('schema loaded');
             return schema;
         } catch (error) {
-            console.log('Error making schema executable');
+            console.error('Error making schema executable');
             if (!error.message) {
-                console.log('Check type names in resolvers');
+                console.error('Check type names in resolvers');
             } else {
-                console.log(error.message);
+                console.error(error.message);
             }
             return Promise.reject(error);
         }
@@ -79,6 +93,7 @@ async function graphqlHandler(event, graphQLOptions) {
     const url = new URL(request.url);
     let query = false;
     let variables = false;
+    const requestStart = new Date();
 
     if (request.method === 'POST') {
         try {
@@ -116,6 +131,11 @@ async function graphqlHandler(event, graphQLOptions) {
             'content-type': 'application/json;charset=UTF-8',
         }
     };
+    const requestId = uuidv4();
+    console.info(requestId);
+    console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
+    console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
+    //console.log(query);
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
@@ -125,14 +145,15 @@ async function graphqlHandler(event, graphQLOptions) {
             const newResponse = new Response(cachedResponse, headers);
             // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
             newResponse.headers.append('X-CACHE', 'HIT');
+            console.log(`Request served from cache: ${new Date() - requestStart} ms`);
             // Return the new cached response
             return newResponse;
         }
     } else {
-        console.log(`Skipping cache in ${ENVIRONMENT} environment`);
+        //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const result = await graphql(await getSchema(dataAPI), query, {}, { data: dataAPI, util: graphqlUtil }, variables);
+    const result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
     const body = JSON.stringify(result);
 
     // Update the cache with the results of the query
@@ -142,6 +163,9 @@ async function graphqlHandler(event, graphQLOptions) {
         event.waitUntil(cacheMachine.put(query, variables, body));
     }
 
+    console.log(`Response time: ${new Date() - requestStart} ms`);
+    //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
+    delete dataAPI.requests[requestId];
     return new Response(body, {
         headers: {
             'content-type': 'application/json',
