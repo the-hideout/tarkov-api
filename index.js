@@ -27,9 +27,6 @@ const skipCache = false; //ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
 async function getSchema(data, requestId) {
-    data.requests[requestId] = {
-        kvLoaded: [],
-    };
     if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
         return schema;
     }

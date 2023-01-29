@@ -91,12 +91,18 @@ class DataSource {
         if (!requestId) {
             return false;
         }
+        if (!this.requests[requestId]) {
+            this.requests[requestId] = {};
+        }
+        if (!this.requests[requestId].kvLoaded) {
+            this.requests[requestId].kvLoaded = [];
+        }
         return this.requests[requestId].kvLoaded.includes(kvName);
     }
 
     setKvUsedForRequest(kvName, requestId) {
         if (!this.requests[requestId]) {
-            return;
+            this.requests[requestId] = {};
         }
         if (!this.requests[requestId].kvUsed) {
             this.requests[requestId].kvUsed = [];
@@ -109,7 +115,10 @@ class DataSource {
             this.kvLoaded.push(kvName);
         }
         if (!this.requests[requestId]) {
-            return;
+            this.requests[requestId] = {};
+        }
+        if (!this.requests[requestId].kvLoaded) {
+            this.requests[requestId].kvLoaded = [];
         }
         this.requests[requestId].kvLoaded.push(kvName);
         this.setKvUsedForRequest(kvName, requestId);
