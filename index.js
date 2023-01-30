@@ -210,15 +210,15 @@ const handleRequest = async event => {
 
     try {
         if (url.pathname === '/webhook/nightbot') {
-            return nightbot(request, dataAPI);
+            return nightbot(request, dataAPI, event);
         }
 
         if (url.pathname === '/webhook/stream-elements') {
-            return nightbot(request, dataAPI);
+            return nightbot(request, dataAPI, event);
         }
 
         if (url.pathname === '/webhook/moobot') {
-            return nightbot(request, dataAPI);
+            return nightbot(request, dataAPI, event);
         }
 
         if (url.pathname === '/twitch') {
