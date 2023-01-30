@@ -155,6 +155,12 @@ module.exports = {
         exitStatus(data, args, context, info) {
             return context.util.getLocale(data, 'exitStatus', info);
         },
+        zoneNames(data, args, context, info) {
+            if (data.zoneNames.length === 0) {
+                return [];
+            }
+            return context.util.getLocale(data, 'zoneNames', info);
+        },
     },
     TaskObjectiveItem: {
         item(data, args, context) {
@@ -254,7 +260,13 @@ module.exports = {
         },
         description(data, args, context, info) {
             return context.util.getLocale(data, 'description', info);
-        }
+        },
+        zoneNames(data, args, context, info) {
+            if (data.zoneNames.length === 0) {
+                return [];
+            }
+            return context.util.getLocale(data, 'zoneNames', info);
+        },
     },
     TaskObjectiveTaskStatus: {
         task(data, args, context) {
