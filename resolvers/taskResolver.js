@@ -22,6 +22,20 @@ module.exports = {
             return context.data.task.getQuestItems(context.requestId);
         }
     },
+    HealthEffect: {
+        bodyParts(data, args, context, info) {
+            if (data.bodyParts.length === 0) {
+                return [];
+            }
+            return context.util.getLocale(data, 'bodyParts', info);
+        },
+        effects(data, args, context, info) {
+            if (data.effects.length === 0) {
+                return [];
+            }
+            return context.util.getLocale(data, 'effects', info);
+        },
+    },
     Task: {
         name(data, args, context, info) {
             return context.util.getLocale(data, 'name', info);
@@ -137,7 +151,10 @@ module.exports = {
         },
         exitName(data, args, context, info) {
             return context.util.getLocale(data, 'exitName', info);
-        }
+        },
+        exitStatus(data, args, context, info) {
+            return context.util.getLocale(data, 'exitStatus', info);
+        },
     },
     TaskObjectiveItem: {
         item(data, args, context) {
@@ -199,6 +216,10 @@ module.exports = {
         }
     },
     TaskObjectiveShoot: {
+        bodyParts(data, args, context, info) {
+            if (!data.bodyParts || data.bodyParts.length === 0) return [];
+            return context.util.getLocale(data, 'bodyParts', info);
+        },
         target(data, args, context, info) {
             return context.util.getLocale(data, 'target', info);
         },
