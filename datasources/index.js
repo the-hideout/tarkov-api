@@ -28,6 +28,19 @@ class DataSource {
         this.loading = false;
         this.requests = {};
         this.kvLoaded = [];
+
+        this.kvWorkers = {
+            barter: this.barter,
+            craft: this.craft,
+            hideout: this.hideout,
+            historicalPrice: this.historicalPrice,
+            item: this.item,
+            map: this.map,
+            schema: this.schema,
+            task: this.task,
+            trader: this.trader,
+            traderInventory: this.traderInventory,
+        };
     }
 
     async init() {
@@ -78,7 +91,23 @@ class DataSource {
         if (!requestId) {
             return false;
         }
+        if (!this.requests[requestId]) {
+            this.requests[requestId] = {};
+        }
+        if (!this.requests[requestId].kvLoaded) {
+            this.requests[requestId].kvLoaded = [];
+        }
         return this.requests[requestId].kvLoaded.includes(kvName);
+    }
+
+    setKvUsedForRequest(kvName, requestId) {
+        if (!this.requests[requestId]) {
+            this.requests[requestId] = {};
+        }
+        if (!this.requests[requestId].kvUsed) {
+            this.requests[requestId].kvUsed = [];
+        }
+        this.requests[requestId].kvUsed.push(kvName);
     }
 
     setKvLoadedForRequest(kvName, requestId) {
@@ -86,9 +115,40 @@ class DataSource {
             this.kvLoaded.push(kvName);
         }
         if (!this.requests[requestId]) {
-            return;
+            this.requests[requestId] = {};
+        }
+        if (!this.requests[requestId].kvLoaded) {
+            this.requests[requestId].kvLoaded = [];
         }
         this.requests[requestId].kvLoaded.push(kvName);
+        this.setKvUsedForRequest(kvName, requestId);
+    }
+
+    getRequestTtl(requestId) {
+        if (!this.requests[requestId] || !this.requests[requestId].kvUsed) {
+            return 0;
+        }
+        let lowestExpire = Number.MAX_SAFE_INTEGER;
+        let schemaExpire = Number.MAX_SAFE_INTEGER;
+        for (const worker of Object.values(this.kvWorkers)) {
+            if (!this.requests[requestId].kvUsed.includes(worker.kvName)) {
+                continue;
+            }
+            if (worker.kvName === 'schema_data') {
+                schemaExpire = worker.dataExpires;
+                continue;
+            }
+            if (typeof worker.dataExpires !== 'boolean' && worker.dataExpires < lowestExpire) {
+                lowestExpire = worker.dataExpires;
+            }
+        }
+        if (!lowestExpire) {
+            lowestExpire = schemaExpire;
+        }
+        if (lowestExpire === Number.MAX_SAFE_INTEGER) {
+            return 0;
+        }
+        return Math.round((lowestExpire - new Date().valueOf()) / 1000);
     }
 }
 

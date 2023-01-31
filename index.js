@@ -23,13 +23,10 @@ let lastSchemaRefresh = 0;
 const schemaRefreshInterval = 1000 * 60 * 10;
 
 // If the environment is not production, skip using the caching service
-const skipCache = true; //ENVIRONMENT !== 'production' || false;
+const skipCache = false; //ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
 async function getSchema(data, requestId) {
-    data.requests[requestId] = {
-        kvLoaded: [],
-    };
     if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
         return schema;
     }
@@ -156,11 +153,13 @@ async function graphqlHandler(event, graphQLOptions) {
     const result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
     const body = JSON.stringify(result);
 
+    let ttl = dataAPI.getRequestTtl(requestId);
+
     // Update the cache with the results of the query
     // don't update cache if result contained errors
-    if (!skipCache && (!result.errors || result.errors.length === 0)) {
+    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl >= 30) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-        event.waitUntil(cacheMachine.put(query, variables, body));
+        event.waitUntil(cacheMachine.put(query, variables, body, String(ttl)));
     }
 
     console.log(`Response time: ${new Date() - requestStart} ms`);
@@ -211,15 +210,15 @@ const handleRequest = async event => {
 
     try {
         if (url.pathname === '/webhook/nightbot') {
-            return nightbot(request, dataAPI);
+            return nightbot(request, dataAPI, event);
         }
 
         if (url.pathname === '/webhook/stream-elements') {
-            return nightbot(request, dataAPI);
+            return nightbot(request, dataAPI, event);
         }
 
         if (url.pathname === '/webhook/moobot') {
-            return nightbot(request, dataAPI);
+            return nightbot(request, dataAPI, event);
         }
 
         if (url.pathname === '/twitch') {
