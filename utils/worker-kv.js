@@ -1,5 +1,7 @@
 const zlib = require('zlib');
 
+const graphqlUtil = require('../utils/graphql-util');
+
 class WorkerKV {
     constructor(kvName, dataSource) {
         this.cache = false;
@@ -91,6 +93,38 @@ class WorkerKV {
             });
         });
         return this.loadingPromises[requestId];
+    }
+
+    async getLocale(requestId, data, info) {
+        await this.init(requestId);
+        console.log(JSON.stringify(info, null ,4))
+        const fieldName = typeof info === 'string' ? info : info.fieldName;
+        const lang = graphqlUtil.getLang(info);
+        if (!this.cache.locale) {
+            return data.locale[fieldName];
+        }
+        if (!data.locale || !data.locale[fieldName]) {
+            return undefined;
+        }
+        if (Array.isArray(data.locale[fieldName])) {
+            return data.locale[fieldName].map(key => {
+                if (this.cache.locale[key]) {
+                    if (this.cache.locale[key][lang]) {
+                        return this.cache.locale[key][lang];
+                    }
+                    return this.cache.locale[key].en;
+                }
+                return key;
+            });
+        }
+        const key = data.locale[fieldName];
+        if (this.cache.locale[key]) {
+            if (this.cache.locale[key][lang]) {
+                return this.cache.locale[key][lang];
+            }
+            return this.cache.locale[key].en;
+        }
+        return key;
     }
 }
 

@@ -13,7 +13,7 @@ module.exports = {
             return context.data.craft.getCraftsForStation(context.requestId, data.id);
         },
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.hideout.getLocale(context.requestId, data, info);
         }
     },
     HideoutStationLevel: {
@@ -22,7 +22,7 @@ module.exports = {
             return context.data.craft.getCraftsForStationLevel(context.requestId, data.id.substring(0, data.id.indexOf('-')), data.level);
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.hideout.getLocale(context.requestId, data, info);
         }
     },
     RequirementHideoutStationLevel: {

@@ -91,13 +91,13 @@ module.exports = {
     },
     Item: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         },
         shortName(data, args, context, info) {
-            return context.util.getLocale(data, 'shortName', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         },
         async buyFor(data, args, context) {
             if (!data.buyFor) data.buyFor = [];
@@ -219,7 +219,7 @@ module.exports = {
     },
     ItemCategory: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         },
         parent(data, args, context) {
             if (data.parent_id) return context.data.item.getCategory(context.requestId, data.parent_id);
@@ -259,7 +259,7 @@ module.exports = {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
         zones(data, args, context, info) {
-            return context.util.getLocale(data, 'zones', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         }
     },
     ItemPropertiesArmorAttachment: {
@@ -267,7 +267,7 @@ module.exports = {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
         headZones(data, args, context, info) {
-            return context.util.getLocale(data, 'headZones', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         }
     },
     ItemPropertiesBackpack: {
@@ -280,7 +280,7 @@ module.exports = {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
         zones(data, args, context, info) {
-            return context.util.getLocale(data, 'zones', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         },
         pouches(data) {
             return data.grids;
@@ -291,7 +291,7 @@ module.exports = {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
         headZones(data, args, context, info) {
-            return context.util.getLocale(data, 'headZones', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         }
     },
     ItemPropertiesMagazine: {
@@ -310,7 +310,7 @@ module.exports = {
             return context.data.item.getItem(context.requestId, data.default_ammo_id);
         },
         fireModes(data, args, context, info) {
-            return context.util.getLocale(data, 'fireModes', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         },
         allowedAmmo(data, args, context) {
             return data.allowedAmmo.map(id => context.data.item.getItem(context.requestId, id));
@@ -325,7 +325,7 @@ module.exports = {
     },
     ItemSlot: {
         name(data, ags, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         }
     },
     ContainedItem: {
@@ -339,12 +339,12 @@ module.exports = {
     },
     ArmorMaterial: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         }
     },
     FleaMarket: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         }
     },
     RequirementItem: {
@@ -357,10 +357,10 @@ module.exports = {
     },
     StimEffect: {
         type(data, args, context, info) {
-            return context.util.getLocale(data, 'type', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         },
         skillName(data, args, context, info) {
-            return context.util.getLocale(data, 'skillName', info);
+            return context.data.item.getLocale(context.requestId, data, info);
         }
     },
     Vendor: {
