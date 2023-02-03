@@ -21,6 +21,7 @@ type Ammo {
   initialSpeed: Float
   lightBleedModifier: Float!
   heavyBleedModifier: Float!
+  staminaBurnPerDamage: Float
   #attributes: AttributeCollection!
 }
 
@@ -312,6 +313,7 @@ type ItemPropertiesAmmo {
   heavyBleedModifier: Float
   durabilityBurnFactor: Float
   heatFactor: Float
+  staminaBurnPerDamage: Float
 }
 
 type ItemPropertiesArmor {
