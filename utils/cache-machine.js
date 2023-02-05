@@ -52,7 +52,7 @@ async function updateCache(query, variables, body, ttl = '') {
         }
         // Get the cacheKey from the request
         query = query.trim();
-        console.log('caching for environment', ENVIRONMENT);
+        console.log(`caching for environment: ${ENVIRONMENT}`);
         const cacheKey = await hash(ENVIRONMENT + query + JSON.stringify(variables));
 
         // headers and POST body
