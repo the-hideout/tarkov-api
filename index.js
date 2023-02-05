@@ -142,7 +142,7 @@ async function graphqlHandler(event, graphQLOptions) {
             const newResponse = new Response(cachedResponse, headers);
             // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
             newResponse.headers.append('X-CACHE', 'HIT');
-            newResponse.headers.append('Cache-Control', 'max-age=0');
+            newResponse.headers.append('Cache-Control', 'no-cache, max-age=0');
             console.log(`Request served from cache: ${new Date() - requestStart} ms`);
             // Return the new cached response
             return newResponse;
@@ -169,7 +169,7 @@ async function graphqlHandler(event, graphQLOptions) {
     return new Response(body, {
         headers: {
             'content-type': 'application/json',
-            'Cache-Control': `max-age=${0}`,
+            'Cache-Control': `no-cache, max-age=${0}`,
         },
     });
 }
