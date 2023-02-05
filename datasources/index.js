@@ -145,10 +145,14 @@ class DataSource {
         if (!lowestExpire) {
             lowestExpire = schemaExpire;
         }
-        if (lowestExpire === Number.MAX_SAFE_INTEGER || lowestExpire < 30) {
-            return 30;
+        if (lowestExpire === Number.MAX_SAFE_INTEGER) {
+            lowestExpire = 0;
         }
-        return Math.round((lowestExpire - new Date().valueOf()) / 1000);
+        let ttl = Math.round((lowestExpire - new Date().valueOf()) / 1000);
+        if (ttl < 30) {
+            ttl = 30;
+        }
+        return ttl;
     }
 }
 
