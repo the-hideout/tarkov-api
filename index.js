@@ -168,7 +168,7 @@ async function graphqlHandler(event, graphQLOptions) {
     return new Response(body, {
         headers: {
             'content-type': 'application/json',
-            'Cache-Control': `public, max-age=${ttl}`,
+            'Cache-Control': `public, max-age=${0}`,
         },
     });
 }
