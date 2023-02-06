@@ -57,9 +57,5 @@ module.exports = async (request, data, event) => {
         event.waitUntil(cacheMachine.put('nightbot', {q: url.searchParams.get('q')}, response, String(ttl)));
     }
 
-    return new Response(response, {
-        headers: {
-            'Cache-Control': `public, max-age=${ttl}`,
-        },
-    });
+    return new Response(response);
 };
