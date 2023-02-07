@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+        uses: actions/checkout@v3 # pin@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # pin@v1
+        uses: actions/setup-node@v3 # pin@v3
         with:
           node-version: ${{ matrix.node-version }}
 
