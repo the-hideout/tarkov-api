@@ -286,6 +286,11 @@ module.exports = {
             return data.grids;
         }
     },
+    ItemPropertiesGlasses: {
+        material(data, args, context) {
+            return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
+        },
+    },
     ItemPropertiesHelmet: {
         material(data, args, context) {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
