@@ -18,7 +18,7 @@ jobs:
 
     steps:
 
-      - uses: github/branch-deploy@668add1b55ab3b7aff46668d95c4501aebdf2541 # pin@v3.0.3
+      - uses: github/branch-deploy@59cb87ca11d478e3aefc58737799879d270bd49d # pin@v4+
         id: branch-deploy
         with:
           admins: the-hideout/core-contributors
@@ -26,13 +26,13 @@ jobs:
 
       - name: Checkout
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # pin@v2
+        uses: actions/checkout@v3 # pin@v3
         with:
           ref: ${{ steps.branch-deploy.outputs.ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # pin@v1
+        uses: actions/setup-node@v3 # pin@v3
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -56,28 +56,20 @@ jobs:
           environment: "development"
 
       # Post comment on PR with development deploy info
-      - uses: actions/github-script@5d03ada4b0a753e9460b312e61cc4f8fdeacf163 # pin@0.9.0
+      - uses: thollander/actions-comment-pull-request@v2
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'development' }}
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `### API Deployment - Development 🪐
+          message: |
+            ### API Deployment - Development 🪐
 
             The API has been **deployed** to the **development** environment 🚀
 
             - Endpoint: \`dev-api.tarkov.dev\`
             - Playground: [dev-api.tarkov.dev/___graphql](https://dev-api.tarkov.dev/___graphql)
 
-            > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\``;
-
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
+            > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`;
 
       - name: Publish - Production
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
@@ -88,25 +80,17 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
 
       # Post comment on PR with production deploy info
-      - uses: actions/github-script@5d03ada4b0a753e9460b312e61cc4f8fdeacf163 # pin@0.9.0
+      - uses: thollander/actions-comment-pull-request@v2
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'production' }}
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `### API Deployment - Production 🌔
+          message: |
+            ### API Deployment - Production 🌔
 
             The API has been **deployed** to the **production** environment 🚀
 
             - Endpoint: \`api.tarkov.dev\`
             - Playground: [api.tarkov.dev/___graphql](https://api.tarkov.dev/___graphql)
 
-            > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\``;
-
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
+            > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`;
