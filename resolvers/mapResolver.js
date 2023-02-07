@@ -74,7 +74,10 @@ module.exports = {
         async normalizedName(data, args, context, info) {
             const boss = await context.data.map.getMobInfo(context.requestId, data.id);
             return boss.normalizedName;
-        }
+        },
+        async spawnTrigger(data, args, context, info) {
+            return context.util.getLocale(data, 'spawnTrigger', info);
+        },
     },
     BossEscort: {
         boss(data, args, context, info) {
