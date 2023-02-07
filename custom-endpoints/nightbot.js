@@ -45,6 +45,9 @@ module.exports = async (request, data, event) => {
     }
 
     let ttl = data.getRequestTtl(requestId);
+    if (ttl < 30) {
+        ttl = 30;
+    }
     delete data.requests[requestId];
 
     // Update the cache with the results of the query

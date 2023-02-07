@@ -48,11 +48,12 @@ async function hash(string) {
 async function updateCache(query, variables, body, ttl = '') {
     try {
         if (cachePaused) {
+            console.warn('Cache paused; skipping cache update');
             return false;
         }
         // Get the cacheKey from the request
         query = query.trim();
-        console.log('caching for environment', ENVIRONMENT);
+        console.log(`caching response for ${ENVIRONMENT} environment`);
         const cacheKey = await hash(ENVIRONMENT + query + JSON.stringify(variables));
 
         // headers and POST body
@@ -90,6 +91,7 @@ async function updateCache(query, variables, body, ttl = '') {
 async function checkCache(query, variables) {
     try {
         if (cachePaused) {
+            console.warn('Cache paused; skipping cache check');
             return false;
         }
         query = query.trim();

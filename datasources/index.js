@@ -107,7 +107,9 @@ class DataSource {
         if (!this.requests[requestId].kvUsed) {
             this.requests[requestId].kvUsed = [];
         }
-        this.requests[requestId].kvUsed.push(kvName);
+        if (!this.requests[requestId].kvUsed.includes(kvName)) {
+            this.requests[requestId].kvUsed.push(kvName);
+        }
     }
 
     setKvLoadedForRequest(kvName, requestId) {
@@ -120,7 +122,9 @@ class DataSource {
         if (!this.requests[requestId].kvLoaded) {
             this.requests[requestId].kvLoaded = [];
         }
-        this.requests[requestId].kvLoaded.push(kvName);
+        if (!this.requests[requestId].kvLoaded.includes(kvName)) {
+            this.requests[requestId].kvLoaded.push(kvName);
+        }
         this.setKvUsedForRequest(kvName, requestId);
     }
 
@@ -146,9 +150,13 @@ class DataSource {
             lowestExpire = schemaExpire;
         }
         if (lowestExpire === Number.MAX_SAFE_INTEGER) {
-            return 0;
+            lowestExpire = 0;
         }
-        return Math.round((lowestExpire - new Date().valueOf()) / 1000);
+        let ttl = Math.round((lowestExpire - new Date().valueOf()) / 1000);
+        if (ttl <= 0) {
+            ttl = 0;
+        }
+        return ttl;
     }
 }
 

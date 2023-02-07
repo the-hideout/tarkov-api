@@ -950,6 +950,8 @@ type Trader {
   "barters and cashOffers are only available via the traders query."
   barters: [Barter]!
   cashOffers: [TraderCashOffer]!
+  imageLink: String
+  image4xLink: String
   tarkovDataId: Int
 }
 
@@ -966,6 +968,8 @@ type TraderLevel {
   "barters and cashOffers are only available via the traders query."
   barters: [Barter]!
   cashOffers: [TraderCashOffer]!
+  imageLink: String
+  image4xLink: String
 }
 
 type TraderCashOffer {

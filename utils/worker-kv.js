@@ -14,11 +14,12 @@ class WorkerKV {
     async init(requestId) {
         if (this.cache && (!this.dataExpires || new Date() < this.dataExpires)) {
             //console.log(`${this.kvName} is fresh; not refreshing`);
+            this.dataSource.setKvUsedForRequest(this.kvName, requestId);
             return;
         }
         if (this.dataSource.kvLoadedForRequest(this.kvName, requestId)) {
             //console.log(`${this.kvName} already loaded for request ${requestId}; not refreshing`);
-            return
+            return;
         }
         if (this.cache) {
             console.log(`${this.kvName} is stale; re-loading`);
