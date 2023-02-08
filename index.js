@@ -124,7 +124,7 @@ async function graphqlHandler(event, graphQLOptions) {
     }
 
     // default headers
-    const headers = {
+    const responseOptions = {
         headers: {
             'content-type': 'application/json;charset=UTF-8',
         }
@@ -146,7 +146,7 @@ async function graphqlHandler(event, graphQLOptions) {
         const cachedResponse = await cacheMachine.get(query, variables, specialCache);
         if (cachedResponse) {
             // Construct a new response with the cached data
-            const newResponse = new Response(cachedResponse, headers);
+            const newResponse = new Response(cachedResponse, responseOptions);
             // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
             newResponse.headers.append('X-CACHE', 'HIT');
             console.log(`Request served from cache: ${new Date() - requestStart} ms`);
@@ -181,11 +181,7 @@ async function graphqlHandler(event, graphQLOptions) {
     console.log(`Response time: ${new Date() - requestStart} ms`);
     //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
     delete dataAPI.requests[requestId];
-    return new Response(body, {
-        headers: {
-            'content-type': 'application/json',
-        },
-    });
+    return new Response(body, responseOptions);
 }
 
 const graphQLOptions = {
