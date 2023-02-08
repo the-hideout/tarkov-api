@@ -110,6 +110,7 @@ async function graphqlHandler(event, graphQLOptions) {
     } else {
         return new Response(null, {
             status: 501,
+            headers: { 'cache-control': 'public, max-age=2592000' }
         });
     }
     // Check for empty /graphql query
