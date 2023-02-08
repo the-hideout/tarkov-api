@@ -164,8 +164,8 @@ async function graphqlHandler(event, graphQLOptions) {
         if (!result.errors) {
             result = Object.assign({errors: []}, result);
         }
-        result.errors.push('You must supply a content-type header with your request. Requests missing this header are limited to a request cache that updates every 15 minutes.');
         ttl = String(15 * 60);
+        result.errors.push(`Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to a request cache that updates every ${parseInt(ttl)/60} minutes.`);
     }
 
     const body = JSON.stringify(result);
