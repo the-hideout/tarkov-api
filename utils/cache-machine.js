@@ -56,11 +56,6 @@ async function updateCache(query, variables, body, ttl = '', specialCache = '') 
         console.log(`caching response for ${ENVIRONMENT} environment`);
         const cacheKey = await hash(ENVIRONMENT + query + JSON.stringify(variables) + specialCache);
 
-        //set special cache timers for special caches
-        if (specialCache === 'application/json') {
-            //ttl = '900';
-        }
-
         // headers and POST body
         const headersPost = {
             body: JSON.stringify({ key: cacheKey, value: body, ttl }),

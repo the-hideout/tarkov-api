@@ -133,9 +133,7 @@ async function graphqlHandler(event, graphQLOptions) {
     if (!contentType || !contentType.startsWith('application/json')) {
         specialCache = 'application/json';
     }
-    /*if (!contentType?.startsWith('application/json')) {
 
-    }*/
     const requestId = uuidv4();
     console.info(requestId);
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
