@@ -128,6 +128,14 @@ async function graphqlHandler(event, graphQLOptions) {
             'content-type': 'application/json;charset=UTF-8',
         }
     };
+    let specialCache = '';
+    const contentType = request.headers.get('content-type');
+    if (!contentType || !contentType.startsWith('application/json')) {
+        specialCache = 'application/json';
+    }
+    /*if (!contentType?.startsWith('application/json')) {
+
+    }*/
     const requestId = uuidv4();
     console.info(requestId);
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
@@ -136,7 +144,7 @@ async function graphqlHandler(event, graphQLOptions) {
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
-        const cachedResponse = await cacheMachine.get(query, variables);
+        const cachedResponse = await cacheMachine.get(query, variables, specialCache);
         if (cachedResponse) {
             // Construct a new response with the cached data
             const newResponse = new Response(cachedResponse, headers);
@@ -150,16 +158,32 @@ async function graphqlHandler(event, graphQLOptions) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
-    const body = JSON.stringify(result);
+    let result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
 
     let ttl = dataAPI.getRequestTtl(requestId);
 
+    if (specialCache === 'application/json') {
+        if (!result.errors) {
+            result = Object.assign({errors: []}, result);
+        }
+        result.errors.push('You must supply a content-type header with your request. Requests missing this header are limited to a request cache that updates every 15 minutes.');
+        ttl = String(15 * 60);
+    }
+    if (specialCache) {
+        result.data2 = result.data;
+        delete result.data;
+        result.data = result.data2;
+        delete result.data2;
+    }
+    console.log(JSON.stringify(result.errors, null, 4));
+
+    const body = JSON.stringify(result);
+
     // Update the cache with the results of the query
     // don't update cache if result contained errors
-    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl >= 30) {
+    if (!skipCache && (specialCache || !result.errors || result.errors.length === 0) && ttl >= 30) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-        event.waitUntil(cacheMachine.put(query, variables, body, String(ttl)));
+        event.waitUntil(cacheMachine.put(query, variables, body, String(ttl), specialCache));
     }
 
     console.log(`Response time: ${new Date() - requestStart} ms`);
