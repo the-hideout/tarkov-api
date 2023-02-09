@@ -135,10 +135,10 @@ async function graphqlHandler(event, graphQLOptions) {
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
     console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
     //console.log(query);
-    /*if (request.headers.has('x-newrelic-synthetics')) {
+    if (request.headers.has('x-newrelic-synthetics')) {
         console.log('NewRelic health check');
-        return new Response(JSON.stringify({}), responseOptions);
-    }*/
+        //return new Response(JSON.stringify({}), responseOptions);
+    }
     let specialCache = '';
     const contentType = request.headers.get('content-type');
     if (!contentType || !contentType.startsWith('application/json')) {
