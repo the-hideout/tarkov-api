@@ -129,18 +129,18 @@ async function graphqlHandler(event, graphQLOptions) {
             'content-type': 'application/json;charset=UTF-8',
         }
     };
-    let specialCache = '';
-    const contentType = request.headers.get('content-type');
-    if (!contentType || !contentType.startsWith('application/json')) {
-        specialCache = 'application/json';
-    }
 
     const requestId = uuidv4();
     console.info(requestId);
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
     console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
     //console.log(query);
-    request.header.forEach((value, key) => {
+    let specialCache = '';
+    const contentType = request.headers.get('content-type');
+    if (!contentType || !contentType.startsWith('application/json')) {
+        specialCache = 'application/json';
+    }
+    request.headers.forEach((value, key) => {
         console.log(key, value)
     });
 
