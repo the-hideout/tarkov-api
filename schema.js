@@ -617,6 +617,7 @@ type MobInfo {
   name: String!
   normalizedName: String!
   health: [HealthPart]
+  imagePortraitLink: String
   "equipment and items are estimates and may be inaccurate."
   equipment: [ContainedItem]!
   items: [Item]!
