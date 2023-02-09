@@ -131,6 +131,7 @@ async function graphqlHandler(event, graphQLOptions) {
     };
     let specialCache = '';
     const contentType = request.headers.get('content-type');
+    console.log('content-type', contentType);
     if (!contentType || !contentType.startsWith('application/json')) {
         specialCache = 'application/json';
     }
