@@ -140,6 +140,9 @@ async function graphqlHandler(event, graphQLOptions) {
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
     console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
     //console.log(query);
+    request.header.forEach((value, key) => {
+        console.log(key, value)
+    });
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
@@ -165,8 +168,8 @@ async function graphqlHandler(event, graphQLOptions) {
         if (!result.errors) {
             result = Object.assign({errors: []}, result);
         }
-        ttl = String(15 * 60);
-        result.errors.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${parseInt(ttl)/60} minutes.`});
+        ttl = 15 * 60;
+        result.errors.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl/60} minutes.`});
     }
 
     const body = JSON.stringify(result);
