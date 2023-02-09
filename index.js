@@ -110,6 +110,7 @@ async function graphqlHandler(event, graphQLOptions) {
     } else {
         return new Response(null, {
             status: 501,
+            headers: { 'cache-control': 'public, max-age=2592000' }
         });
     }
     // Check for empty /graphql query
@@ -123,11 +124,17 @@ async function graphqlHandler(event, graphQLOptions) {
     }
 
     // default headers
-    const headers = {
+    const responseOptions = {
         headers: {
             'content-type': 'application/json;charset=UTF-8',
         }
     };
+    let specialCache = '';
+    const contentType = request.headers.get('content-type');
+    if (!contentType || !contentType.startsWith('application/json')) {
+        specialCache = 'application/json';
+    }
+
     const requestId = uuidv4();
     console.info(requestId);
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
@@ -136,10 +143,10 @@ async function graphqlHandler(event, graphQLOptions) {
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
-        const cachedResponse = await cacheMachine.get(query, variables);
+        const cachedResponse = await cacheMachine.get(query, variables, specialCache);
         if (cachedResponse) {
             // Construct a new response with the cached data
-            const newResponse = new Response(cachedResponse, headers);
+            const newResponse = new Response(cachedResponse, responseOptions);
             // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
             newResponse.headers.append('X-CACHE', 'HIT');
             console.log(`Request served from cache: ${new Date() - requestStart} ms`);
@@ -150,26 +157,31 @@ async function graphqlHandler(event, graphQLOptions) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
-    const body = JSON.stringify(result);
+    let result = await graphql(await getSchema(dataAPI, requestId), query, {}, { data: dataAPI, util: graphqlUtil, requestId }, variables);
 
     let ttl = dataAPI.getRequestTtl(requestId);
 
+    if (specialCache === 'application/json') {
+        if (!result.errors) {
+            result = Object.assign({errors: []}, result);
+        }
+        ttl = String(15 * 60);
+        result.errors.push(`Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${parseInt(ttl)/60} minutes.`);
+    }
+
+    const body = JSON.stringify(result);
+
     // Update the cache with the results of the query
     // don't update cache if result contained errors
-    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl >= 30) {
+    if (!skipCache && (specialCache || !result.errors || result.errors.length === 0) && ttl >= 30) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-        event.waitUntil(cacheMachine.put(query, variables, body, String(ttl)));
+        event.waitUntil(cacheMachine.put(query, variables, body, String(ttl), specialCache));
     }
 
     console.log(`Response time: ${new Date() - requestStart} ms`);
     //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
     delete dataAPI.requests[requestId];
-    return new Response(body, {
-        headers: {
-            'content-type': 'application/json',
-        },
-    });
+    return new Response(body, responseOptions);
 }
 
 const graphQLOptions = {
