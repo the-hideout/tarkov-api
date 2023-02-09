@@ -45,7 +45,7 @@ async function hash(string) {
 // :param json: the incoming request in json
 // :param body: the body to cache
 // :return: true if successful, false if not
-async function updateCache(query, variables, body, ttl = '') {
+async function updateCache(query, variables, body, ttl = '', specialCache = '') {
     try {
         if (cachePaused) {
             console.warn('Cache paused; skipping cache update');
@@ -54,7 +54,7 @@ async function updateCache(query, variables, body, ttl = '') {
         // Get the cacheKey from the request
         query = query.trim();
         console.log(`caching response for ${ENVIRONMENT} environment`);
-        const cacheKey = await hash(ENVIRONMENT + query + JSON.stringify(variables));
+        const cacheKey = await hash(ENVIRONMENT + query + JSON.stringify(variables) + specialCache);
 
         // headers and POST body
         const headersPost = {
@@ -88,14 +88,14 @@ async function updateCache(query, variables, body, ttl = '') {
 // Checks the caching service to see if a request has been cached
 // :param json: the json payload of the incoming worker request
 // :return: json results of the item found in the cache or false if not found
-async function checkCache(query, variables) {
+async function checkCache(query, variables, specialCache = '') {
     try {
         if (cachePaused) {
             console.warn('Cache paused; skipping cache check');
             return false;
         }
         query = query.trim();
-        const cacheKey = await hash(ENVIRONMENT + query + JSON.stringify(variables));
+        const cacheKey = await hash(ENVIRONMENT + query + JSON.stringify(variables) + specialCache);
         if (!cacheKey) {
             console.warn('Skipping cache check; key is empty');
             return false;
