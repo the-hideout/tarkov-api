@@ -166,18 +166,18 @@ async function graphqlHandler(event, graphQLOptions) {
     let ttl = dataAPI.getRequestTtl(requestId);
 
     if (specialCache === 'application/json') {
-        if (!result.errors) {
-            result = Object.assign({errors: []}, result);
+        if (!result.warnings) {
+            result = Object.assign({warnings: []}, result);
         }
         ttl = 15 * 60;
-        result.errors.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl/60} minutes.`});
+        result.warnings.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl/60} minutes.`});
     }
 
     const body = JSON.stringify(result);
 
     // Update the cache with the results of the query
     // don't update cache if result contained errors
-    if (!skipCache && (specialCache || !result.errors || result.errors.length === 0) && ttl >= 30) {
+    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl >= 30) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
         event.waitUntil(cacheMachine.put(query, variables, body, String(ttl), specialCache));
     }
