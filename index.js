@@ -129,17 +129,21 @@ async function graphqlHandler(event, graphQLOptions) {
             'content-type': 'application/json;charset=UTF-8',
         }
     };
-    let specialCache = '';
-    const contentType = request.headers.get('content-type');
-    if (!contentType || !contentType.startsWith('application/json')) {
-        specialCache = 'application/json';
-    }
 
     const requestId = uuidv4();
     console.info(requestId);
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
     console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
     //console.log(query);
+    if (request.headers.has('x-newrelic-synthetics')) {
+        console.log('NewRelic health check');
+        //return new Response(JSON.stringify({}), responseOptions);
+    }
+    let specialCache = '';
+    const contentType = request.headers.get('content-type');
+    if (!contentType || !contentType.startsWith('application/json')) {
+        specialCache = 'application/json';
+    }
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
@@ -165,8 +169,8 @@ async function graphqlHandler(event, graphQLOptions) {
         if (!result.errors) {
             result = Object.assign({errors: []}, result);
         }
-        ttl = String(15 * 60);
-        result.errors.push(`Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${parseInt(ttl)/60} minutes.`);
+        ttl = 15 * 60;
+        result.errors.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl/60} minutes.`});
     }
 
     const body = JSON.stringify(result);
