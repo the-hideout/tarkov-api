@@ -255,12 +255,15 @@ module.exports = {
         }
     },
     ItemPropertiesArmor: {
+        armorType(data, args, context, info) {
+            return context.util.getLocale(data, 'armorType', info);
+        },
         material(data, args, context) {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
         zones(data, args, context, info) {
             return context.util.getLocale(data, 'zones', info);
-        }
+        },
     },
     ItemPropertiesArmorAttachment: {
         material(data, args, context) {
@@ -276,6 +279,9 @@ module.exports = {
         }
     },
     ItemPropertiesChestRig: {
+        armorType(data, args, context, info) {
+            return context.util.getLocale(data, 'armorType', info);
+        },
         material(data, args, context) {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
@@ -292,6 +298,9 @@ module.exports = {
         },
     },
     ItemPropertiesHelmet: {
+        armorType(data, args, context, info) {
+            return context.util.getLocale(data, 'armorType', info);
+        },
         material(data, args, context) {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
