@@ -192,7 +192,11 @@ module.exports = {
         },
         async historicalPrices(data, args, context, info) {
             context.util.testDepthLimit(info, 1);
-            return context.data.historicalPrice.getByItemId(context.requestId, data.id);
+            const warningMessage = 'Querying historicalPrices on the Item object will return only the 10 most recent prices. For a full list of historical prices, use the historicalItemPrices query.';
+            if (!context.warnings.some(warning => warning.message === warningMessage)) {
+                context.warnings.push({message: warningMessage});
+            }
+            return context.data.historicalPrice.getByItemId(context.requestId, data.id, 10);
         },
         imageLink(data) {
             return data.inspectImageLink;
