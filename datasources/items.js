@@ -34,7 +34,7 @@ class ItemsAPI extends WorkerKV {
         item.buyFor = [];
 
         // add flea prices to sellFor and buyFor
-        if (!item.types.includes('noFlea')) {
+        if (!item.types.includes('noFlea') && item.lastLowPrice) {
             item.sellFor.push({
                 price: item.lastLowPrice || 0,
                 currency: 'RUB',
