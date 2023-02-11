@@ -325,6 +325,7 @@ type ItemPropertiesArmor {
   ergoPenalty: Int
   zones: [String]
   material: ArmorMaterial
+  armorType: String
 }
 
 type ItemPropertiesArmorAttachment {
@@ -368,6 +369,7 @@ type ItemPropertiesChestRig {
   capacity: Int
   grids: [ItemStorageGrid]
   pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
+  armorType: String
 }
 
 type ItemPropertiesContainer {
@@ -418,6 +420,7 @@ type ItemPropertiesHelmet {
   ricochetX: Float
   ricochetY: Float
   ricochetZ: Float
+  armorType: String
 }
 
 type ItemPropertiesKey {
