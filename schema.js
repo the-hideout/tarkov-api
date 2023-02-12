@@ -617,6 +617,7 @@ type Map {
 #}
 
 type MobInfo {
+  id: ID!
   name: String!
   normalizedName: String!
   health: [HealthPart]
