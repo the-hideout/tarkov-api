@@ -766,6 +766,7 @@ type Task {
   finishRewards: TaskRewards
   factionName: String
   neededKeys: [TaskKey]
+  kappaRequired: Boolean
   descriptionMessageId: String
   startMessageId: String
   successMessageId: String
