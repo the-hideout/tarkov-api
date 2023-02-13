@@ -767,6 +767,7 @@ type Task {
   factionName: String
   neededKeys: [TaskKey]
   kappaRequired: Boolean
+  lightkeeperRequired: Boolean
   descriptionMessageId: String
   startMessageId: String
   successMessageId: String
