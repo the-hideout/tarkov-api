@@ -482,6 +482,7 @@ type ItemPropertiesPreset {
   recoilVertical: Int
   recoilHorizontal: Int
   moa: Float
+  default: Boolean
 }
 
 type ItemPropertiesScope {
