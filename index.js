@@ -169,7 +169,7 @@ async function graphqlHandler(event, graphQLOptions) {
         if (!result.warnings) {
             result = Object.assign({warnings: []}, result);
         }
-        ttl = 15 * 60;
+        ttl = 30 * 60;
         result.warnings.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl/60} minutes.`});
     }
 
