@@ -696,7 +696,10 @@ type RequirementTask {
 type RequirementTrader {
   id: ID
   trader: Trader!
-  level: Int!
+  requirementType: String!
+  compareMethod: String!
+  value: Int!
+  level: Int @deprecated(reason: "Use requirement instead.")
 }
 
 enum RequirementType {
@@ -761,7 +764,7 @@ type Task {
   wikiLink: String
   minPlayerLevel: Int
   taskRequirements: [TaskStatusRequirement]!
-  traderLevelRequirements: [RequirementTrader]!
+  traderRequirements: [RequirementTrader]!
   objectives: [TaskObjective]!
   startRewards: TaskRewards
   finishRewards: TaskRewards
@@ -773,6 +776,7 @@ type Task {
   startMessageId: String
   successMessageId: String
   failMessageId: String
+  traderLevelRequirements: [RequirementTrader]! @deprecated(reason: "Use traderRequirements instead.")
 }
 
 type TaskKey {
