@@ -83,6 +83,10 @@ module.exports = {
                 return 'TaskObjectiveShoot';
             } else if (data.type === 'buildWeapon') {
                 return 'TaskObjectiveBuildItem';
+            } else if (data.type === 'traderStanding') {
+                return 'TaskObjectiveTraderStanding';
+            } else if (data.type === 'useItem') {
+                return 'TaskObjectiveUseItem';
             }
             return 'TaskObjectiveBasic';
         },
@@ -293,6 +297,32 @@ module.exports = {
         description(data, args, context, info) {
             return context.util.getLocale(data, 'description', info);
         }
+    },
+    TaskObjectiveTraderStanding: {
+        trader(data, args, context) {
+            return context.data.trader.get(context.requestId, data.trader_id);
+        },
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(context.requestId, id);
+            });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
+        }
+    },
+    TaskObjectiveUseItem: {
+        maps(data, args, context) {
+            return data.map_ids.map(id => {
+                return context.data.map.get(context.requestId, id);
+            });
+        },
+        description(data, args, context, info) {
+            return context.util.getLocale(data, 'description', info);
+        },
+        useAny(data, args, context) {
+            return Promise.all(data.useAny.map(id => context.data.item.getItem(context.requestId, id)));
+        },
     },
     QuestItem: {
         name(data, args, context, info) {

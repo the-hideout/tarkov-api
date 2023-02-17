@@ -768,6 +768,9 @@ type Task {
   objectives: [TaskObjective]!
   startRewards: TaskRewards
   finishRewards: TaskRewards
+  failConditions: [TaskObjective]!
+  failureOutcome: TaskRewards
+  restartable: Boolean
   factionName: String
   neededKeys: [TaskKey]
   kappaRequired: Boolean
@@ -935,6 +938,30 @@ type TaskObjectiveTraderLevel implements TaskObjective {
   optional: Boolean!
   trader: Trader!
   level: Int!
+}
+
+type TaskObjectiveTraderStanding implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  #locationNames: [String]!
+  maps: [Map]!
+  optional: Boolean!
+  trader: Trader!
+  compareMethod: String!
+  value: Int!
+}
+
+type TaskObjectiveUseItem implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  #locationNames: [String]!
+  maps: [Map]!
+  optional: Boolean!
+  useAny: [Item]!
+  compareMethod: String!
+  count: Int!
 }
 
 type TaskRewards {
