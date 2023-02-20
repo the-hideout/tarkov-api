@@ -323,6 +323,9 @@ module.exports = {
         useAny(data, args, context) {
             return Promise.all(data.useAny.map(id => context.data.item.getItem(context.requestId, id)));
         },
+        zoneNames(data, args, context, info) {
+            return context.util.getLocale(data, 'zoneNames', info);
+        },
     },
     QuestItem: {
         name(data, args, context, info) {
