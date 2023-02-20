@@ -960,7 +960,7 @@ type TaskObjectiveUseItem implements TaskObjective {
   maps: [Map]!
   optional: Boolean!
   useAny: [Item]!
-  compareMethod: String
+  compareMethod: String!
   count: Int!
   zoneNames: [String]!
 }
