@@ -15,7 +15,7 @@ const config = {
         ]
     },
     output: {
-        hashFunction: "xxhash64"
+        hashFunction: "sha256"
     },
 };
   
