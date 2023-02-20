@@ -14,10 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3 # pin@v3
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16
         uses: actions/setup-node@v3 # pin@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16
 
       - name: Publish - Production
         uses: cloudflare/wrangler-action@3424d15af26edad39d5276be3cc0cc9ffec22b55 # pin@1.3.0
