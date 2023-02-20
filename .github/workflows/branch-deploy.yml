@@ -30,11 +30,11 @@ jobs:
         with:
           ref: ${{ steps.branch-deploy.outputs.ref }}
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         uses: actions/setup-node@v3 # pin@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16
 
       - name: Install dependencies
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
