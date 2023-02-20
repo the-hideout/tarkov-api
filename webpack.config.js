@@ -13,7 +13,10 @@ const config = {
             type: 'javascript/auto'
             }
         ]
-    }
+    },
+    output: {
+        hashFunction: "xxhash64"
+    },
 };
   
 module.exports = config;
