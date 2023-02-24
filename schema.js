@@ -343,6 +343,9 @@ type ItemPropertiesArmorAttachment {
 type ItemPropertiesBackpack {
   capacity: Int
   grids: [ItemStorageGrid]
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
   pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
 }
 
@@ -523,6 +526,9 @@ type ItemPropertiesWeapon {
   sightingRange: Int
   centerOfImpact: Float
   deviationCurve: Float
+  recoilDispersion: Int
+  cameraRecoil: Float
+  cameraSnap: Float
   deviationMax: Float
   defaultWidth: Int
   defaultHeight: Int
