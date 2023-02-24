@@ -79,6 +79,11 @@ module.exports = {
             return context.util.getLocale(data, 'spawnTrigger', info);
         },
     },
+    BossSpawnLocation: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        },
+    },
     BossEscort: {
         boss(data, args, context, info) {
             return context.data.map.getMobInfo(context.requestId, data.id);

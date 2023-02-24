@@ -13,7 +13,7 @@ const config = {
             type: 'javascript/auto'
             }
         ]
-    }
+    },
 };
   
 module.exports = config;
