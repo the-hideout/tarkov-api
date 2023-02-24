@@ -343,6 +343,9 @@ type ItemPropertiesArmorAttachment {
 type ItemPropertiesBackpack {
   capacity: Int
   grids: [ItemStorageGrid]
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Int
   pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
 }
 
