@@ -523,6 +523,9 @@ type ItemPropertiesWeapon {
   sightingRange: Int
   centerOfImpact: Float
   deviationCurve: Float
+  recoilDispersion: Int
+  cameraRecoil: Float
+  cameraSnap: Float
   deviationMax: Float
   defaultWidth: Int
   defaultHeight: Int
