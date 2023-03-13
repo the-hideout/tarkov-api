@@ -1,0 +1,31 @@
+name: test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 16
+          cache: npm
+
+      - run: npm ci
+
+      - name: test
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: script/test
