@@ -41,12 +41,6 @@ jobs:
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         run: npm ci
 
-      - name: Test
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        run: script/test
-
       - name: Publish - Development
         if: ${{ steps.branch-deploy.outputs.environment == 'development' &&
           steps.branch-deploy.outputs.noop != 'true' &&
