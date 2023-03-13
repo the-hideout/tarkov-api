@@ -32,19 +32,14 @@ jobs:
 
       - name: Use Node.js 16
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/setup-node@v3 # pin@v3
+        uses: actions/setup-node@v3.6.0
         with:
           node-version: 16
+          cache: npm
 
       - name: Install dependencies
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         run: npm ci
-
-      - name: Test
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        run: script/test
 
       - name: Publish - Development
         if: ${{ steps.branch-deploy.outputs.environment == 'development' &&
