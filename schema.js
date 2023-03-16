@@ -530,6 +530,7 @@ type ItemPropertiesWeapon {
   cameraRecoil: Float
   cameraSnap: Float
   deviationMax: Float
+  convergence: Float
   defaultWidth: Int
   defaultHeight: Int
   defaultErgonomics: Float,
