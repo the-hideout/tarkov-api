@@ -3,3 +3,4 @@ worker/
 .cargo-ok
 dist/
 .env
+.vscode/

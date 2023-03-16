@@ -18,33 +18,30 @@ jobs:
 
     steps:
 
-      - uses: github/branch-deploy@e0b8fec9f3b1c48ea3dddeedca59af02e4d69a53 # pin@v4.3.0
+      - uses: github/branch-deploy@v5.1.0
         id: branch-deploy
         with:
           admins: the-hideout/core-contributors
           admins_pat: ${{ secrets.BRANCH_DEPLOY_ADMINS_PAT }}
+          environment_targets: production,development
+          environment_urls: production|https://api.tarkov.dev/graphql,development|https://dev-api.tarkov.dev/graphql
 
       - name: Checkout
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/checkout@v3 # pin@v3
+        uses: actions/checkout@v3.3.0
         with:
           ref: ${{ steps.branch-deploy.outputs.ref }}
 
       - name: Use Node.js 16
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/setup-node@v3 # pin@v3
+        uses: actions/setup-node@v3.6.0
         with:
           node-version: 16
+          cache: npm
 
       - name: Install dependencies
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         run: npm ci
-
-      - name: Test
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        run: script/test
 
       - name: Publish - Development
         if: ${{ steps.branch-deploy.outputs.environment == 'development' &&
@@ -67,7 +64,7 @@ jobs:
             The API has been **deployed** to the **development** environment 🚀
 
             - Endpoint: \`dev-api.tarkov.dev\`
-            - Playground: [dev-api.tarkov.dev/___graphql](https://dev-api.tarkov.dev/___graphql)
+            - Playground: [dev-api.tarkov.dev/___graphql](https://dev-api.tarkov.dev/graphql)
 
             > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`;
 
@@ -91,6 +88,6 @@ jobs:
             The API has been **deployed** to the **production** environment 🚀
 
             - Endpoint: \`api.tarkov.dev\`
-            - Playground: [api.tarkov.dev/___graphql](https://api.tarkov.dev/___graphql)
+            - Playground: [api.tarkov.dev/___graphql](https://api.tarkov.dev/graphql)
 
             > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`;
