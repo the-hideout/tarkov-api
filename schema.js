@@ -527,6 +527,7 @@ type ItemPropertiesWeapon {
   centerOfImpact: Float
   deviationCurve: Float
   recoilDispersion: Int
+  recoilAngle: Int
   cameraRecoil: Float
   cameraSnap: Float
   deviationMax: Float
