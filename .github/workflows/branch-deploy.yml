@@ -18,11 +18,13 @@ jobs:
 
     steps:
 
-      - uses: github/branch-deploy@v5.0.0
+      - uses: github/branch-deploy@v5.1.0
         id: branch-deploy
         with:
           admins: the-hideout/core-contributors
           admins_pat: ${{ secrets.BRANCH_DEPLOY_ADMINS_PAT }}
+          environment_targets: production,development
+          environment_urls: production|https://api.tarkov.dev/graphql,development|https://dev-api.tarkov.dev/graphql
 
       - name: Checkout
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
@@ -62,7 +64,7 @@ jobs:
             The API has been **deployed** to the **development** environment 🚀
 
             - Endpoint: \`dev-api.tarkov.dev\`
-            - Playground: [dev-api.tarkov.dev/___graphql](https://dev-api.tarkov.dev/___graphql)
+            - Playground: [dev-api.tarkov.dev/___graphql](https://dev-api.tarkov.dev/graphql)
 
             > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`;
 
@@ -86,6 +88,6 @@ jobs:
             The API has been **deployed** to the **production** environment 🚀
 
             - Endpoint: \`api.tarkov.dev\`
-            - Playground: [api.tarkov.dev/___graphql](https://api.tarkov.dev/___graphql)
+            - Playground: [api.tarkov.dev/___graphql](https://api.tarkov.dev/graphql)
 
             > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`;
