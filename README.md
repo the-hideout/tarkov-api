@@ -38,13 +38,13 @@ A community made GraphQL API for Escape from Tarkov
 - Detailed info on medicines, stims, and in-game healing
 - So much more (it would take up this entire page to list everything 😸)
 
-> This [API](https://api.tarkov.dev/___graphql) does almost everything you would ever want for EFT!
+> This [API](https://api.tarkov.dev/) does almost everything you would ever want for EFT!
 
 ## API Playground 🎾
 
 There is a GraphQL playground for you to use and test out
 
-**Link:** [api.tarkov.dev/___graphql](https://api.tarkov.dev/___graphql)
+**Link:** [api.tarkov.dev/](https://api.tarkov.dev/)
 
 Example Query:
 
@@ -84,21 +84,3 @@ If you wish to deploy locally and have permissions to do so, run the following c
 ```bash
 wrangler publish
 ```
-
-## Secrets 🔑
-
-This section is about adding secrets to the API
-
-### Twitch
-
-This API also calls the Twitch API to get current stream stats for Escape from Tarkov. Tokens are only valid for 60 days so a new token needs to be added to the cloudflare console for the API every 60 days or so
-
-Steps:
-
-1. Go to the [Twitch API Console](https://dev.twitch.tv/console)
-2. Generate a new secret
-3. Run the following command with the Twitch CLI utility: `twitch token`
-4. Provide your clientId and secret
-5. Upload the new token which the CLI tool returns to the cloudflare console as an encrypted secret for the `TWITCH_TOKEN` variable
-
-> Note: The Twitch token process is tedious and really locked to just one user. This is a process we may remove or replace in the future
