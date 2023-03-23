@@ -11,4 +11,4 @@ If you are new, please check out the trimmed down summary of our deployment proc
 
 1. 🎉 Merge!
 
-> Need help? Type `.help` as a comment or visiting the [usage guide](https://github.com/github/branch-deploy/blob/main/docs/usage.md) for more details
+> Need help? Type `.help` as a comment or visit the [usage guide](https://github.com/github/branch-deploy/blob/main/docs/usage.md) for more details
