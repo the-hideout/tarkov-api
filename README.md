@@ -38,13 +38,13 @@ A community made GraphQL API for Escape from Tarkov
 - Detailed info on medicines, stims, and in-game healing
 - So much more (it would take up this entire page to list everything 😸)
 
-> This [API](https://api.tarkov.dev/graphql) does almost everything you would ever want for EFT!
+> This [API](https://api.tarkov.dev/) does almost everything you would ever want for EFT!
 
 ## API Playground 🎾
 
 There is a GraphQL playground for you to use and test out
 
-**Link:** [api.tarkov.dev/graphql](https://api.tarkov.dev/graphql)
+**Link:** [api.tarkov.dev/](https://api.tarkov.dev/)
 
 Example Query:
 
