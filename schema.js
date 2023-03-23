@@ -914,6 +914,8 @@ type TaskObjectiveShoot implements TaskObjective {
   distance: NumberCompare
   playerHealthEffect: HealthEffect
   enemyHealthEffect: HealthEffect
+  timeFromHour: Int
+  timeUntilHour: Int
 }
 
 type TaskObjectiveSkill implements TaskObjective {
