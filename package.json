@@ -17,7 +17,7 @@
     "devDependencies": {
         "@cloudflare/wrangler": "^1.19.11",
         "newman": "^5.3.2",
-        "prettier": "^2.6.1"
+        "prettier": "^2.8.7"
     },
     "dependencies": {
         "graphql": "^15.8.0",
