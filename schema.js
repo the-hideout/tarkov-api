@@ -499,6 +499,10 @@ type ItemPropertiesPreset {
   default: Boolean
 }
 
+type ItemPropertiesResource {
+  units: Int
+}
+
 type ItemPropertiesScope {
   ergonomics: Float
   sightModes: [Int]
@@ -583,6 +587,7 @@ union ItemProperties =
   ItemPropertiesNightVision | 
   ItemPropertiesPainkiller | 
   ItemPropertiesPreset |
+  ItemPropertiesResource | 
   ItemPropertiesScope | 
   ItemPropertiesSurgicalKit | 
   ItemPropertiesWeapon | 
