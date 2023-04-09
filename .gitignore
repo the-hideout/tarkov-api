@@ -4,3 +4,4 @@ worker/
 dist/
 .env
 .vscode/
+tmp/
