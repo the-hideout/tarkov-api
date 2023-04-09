@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - uses: github/branch-deploy@v5.2.0
         id: branch-deploy
         with:
@@ -65,10 +64,10 @@ jobs:
 
             The API has been **deployed** to the **development** environment 🚀
 
-            - Endpoint: \`dev-api.tarkov.dev\`
+            - Endpoint: `dev-api.tarkov.dev`
             - Playground: [dev-api.tarkov.dev/___graphql](https://dev-api.tarkov.dev/graphql)
 
-            > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`;
+            > Pusher: @${{ github.actor }}, Action: `${{ github.event_name }}`, Workflow: `${{ github.workflow }}`;
 
       - name: Publish - Production
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
@@ -90,7 +89,7 @@ jobs:
 
             The API has been **deployed** to the **production** environment 🚀
 
-            - Endpoint: \`api.tarkov.dev\`
+            - Endpoint: `api.tarkov.dev`
             - Playground: [api.tarkov.dev/___graphql](https://api.tarkov.dev/graphql)
 
-            > Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`;
+            > Pusher: @${{ github.actor }}, Action: `${{ github.event_name }}`, Workflow: `${{ github.workflow }}`;
