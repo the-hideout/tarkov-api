@@ -9,6 +9,7 @@ permissions:
   pull-requests: write
   deployments: write
   contents: write
+  checks: read
 
 jobs:
   deploy:
@@ -26,15 +27,15 @@ jobs:
           environment_targets: production,development
           environment_urls: production|https://api.tarkov.dev/graphql,development|https://dev-api.tarkov.dev/graphql
 
-      - name: Checkout
+      - name: checkout
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/checkout@v3.4.0
+        uses: actions/checkout@v3
         with:
           ref: ${{ steps.branch-deploy.outputs.ref }}
 
-      - name: Use Node.js 16
+      - name: setup node
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: npm
@@ -53,12 +54,12 @@ jobs:
           environment: "development"
 
       # Post comment on PR with development deploy info
-      - uses: thollander/actions-comment-pull-request@v2
+      - uses: GrantBirki/comment@v2.0.3
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'development' }}
         with:
-          message: |
+          body: |
             ### API Deployment - Development 🪐
 
             The API has been **deployed** to the **development** environment 🚀
@@ -77,12 +78,12 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
 
       # Post comment on PR with production deploy info
-      - uses: thollander/actions-comment-pull-request@v2
+      - uses: GrantBirki/comment@v2.0.3
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'production' }}
         with:
-          message: |
+          body: |
             ### API Deployment - Production 🌔
 
             The API has been **deployed** to the **production** environment 🚀
