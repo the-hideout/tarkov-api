@@ -12,3 +12,7 @@ If you are new, please check out the trimmed down summary of our deployment proc
 1. 🎉 Merge!
 
 > Need help? Type `.help` as a comment or visit the [usage guide](https://github.com/github/branch-deploy/blob/main/docs/usage.md) for more details
+
+Please note, if you have a more complex change, it is advised to claim a deployment lock with `.lock <environment> --reason <reason>` to prevent other deployments from happening while you are working on your change.
+
+Once your PR has been merged, you can remove the lock with `.unlock <environment>`.
