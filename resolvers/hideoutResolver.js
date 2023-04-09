@@ -16,6 +16,20 @@ module.exports = {
             return context.util.getLocale(data, 'name', info);
         }
     },
+    HideoutStationBonus: {
+        name(data, args, context, info) {
+            return context.util.getLocale(data, 'name', info);
+        },
+        skillName(data, args, context, info) {
+            return context.util.getLocale(data, 'skillName', info);
+        },
+        slotItems(data, args, context, info) {
+            if (!data.slotItems || data.slotItems.length === 0) {
+                return [];
+            }
+            return context.data.item.getItemsByIDs(context.requestId, data.slotItems);
+        }
+    },
     HideoutStationLevel: {
         crafts(data, args, context, info) {
             context.util.testDepthLimit(info, 2);

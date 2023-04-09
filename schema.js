@@ -175,6 +175,16 @@ type HideoutStation {
   crafts: [Craft]!
 }
 
+type HideoutStationBonus {
+  type: String!
+  name: String!
+  value: Float
+  passive: Boolean
+  production: Boolean
+  slotItems: [Item]
+  skillName: String
+}
+
 type HideoutStationLevel {
   id: ID!
   #name: String!
@@ -188,6 +198,7 @@ type HideoutStationLevel {
   tarkovDataId: Int
   "crafts is only available via the hideoutStations query."
   crafts: [Craft]!
+  bonuses: [HideoutStationBonus]
 }
 
 type historicalPricePoint {
@@ -488,6 +499,10 @@ type ItemPropertiesPreset {
   default: Boolean
 }
 
+type ItemPropertiesResource {
+  units: Int
+}
+
 type ItemPropertiesScope {
   ergonomics: Float
   sightModes: [Int]
@@ -572,6 +587,7 @@ union ItemProperties =
   ItemPropertiesNightVision | 
   ItemPropertiesPainkiller | 
   ItemPropertiesPreset |
+  ItemPropertiesResource | 
   ItemPropertiesScope | 
   ItemPropertiesSurgicalKit | 
   ItemPropertiesWeapon | 
@@ -998,6 +1014,7 @@ type Trader {
   currency: Item!
   discount: Float!
   levels: [TraderLevel!]!
+  reputationLevels: [TraderReputationLevel]!
   "barters and cashOffers are only available via the traders query."
   barters: [Barter]!
   cashOffers: [TraderCashOffer]!
@@ -1052,6 +1069,22 @@ type TraderOffer implements Vendor {
   #traderLevel: TraderLevel!
   minTraderLevel: Int
   taskUnlock: Task
+}
+
+union TraderReputationLevel = TraderReputationLevelFence
+
+type TraderReputationLevelFence {
+  minimumReputation: Int!
+  scavCooldownModifier: Float
+  scavCaseTimeModifier: Float
+  extractPriceModifier: Float
+  scavFollowChance: Float
+  scavEquipmentSpawnChanceModifier: Float
+  priceModifier: Float
+  hostileBosses: Boolean
+  hostileScavs: Boolean
+  scavAttackSupport: Boolean
+  availableScavExtracts: Int
 }
 
 type TraderStanding {
