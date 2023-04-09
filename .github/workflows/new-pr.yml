@@ -7,6 +7,7 @@ on:
 
 permissions:
   pull-requests: write
+  contents: read
 
 jobs:
   comment:
@@ -16,6 +17,7 @@ jobs:
     steps:
       # Comment on new PR requests with deployment instructions
       - uses: actions/checkout@v3
+
       - name: comment
         uses: GrantBirki/comment@v2.0.3
         continue-on-error: true
