@@ -1,4 +1,4 @@
-compatibility_date = "2021-12-14"
+compatibility_date = "2023-03-14"
 name = "api"
 main = "index.js"
 node_compat = true
