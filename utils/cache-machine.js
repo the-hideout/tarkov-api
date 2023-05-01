@@ -76,7 +76,7 @@ async function updateCache(query, variables, body, ttl = '', specialCache = '') 
         cacheFailCount = 0;
         return true
     } catch (error) {
-        if (error.message === 'The operation was aborted') {
+        if (error.message === 'The operation was aborted due to timeout') {
             console.warn('Updating cache timed out');
             pauseCache();
             return false;
@@ -110,7 +110,7 @@ async function checkCache(query, variables, specialCache = '') {
 
         return false
     } catch (error) {
-        if (error.message === 'The operation was aborted') {
+        if (error.message === 'The operation was aborted due to timeout') {
             console.warn('Checking cache timed out');
             pauseCache();
             return false;
