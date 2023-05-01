@@ -3,8 +3,11 @@ const zlib = require('zlib');
 const ungzip = (input, options) => {
     return new Promise(function(resolve, reject) {
         zlib.gunzip(input, options, function (error, result) {
-            if(!error) resolve(result);
-            else reject(Error(error));
+            if (!error) {
+                resolve(String(result));
+            } else {
+                reject(Error(error));
+            }
         });
     });
 };
@@ -75,7 +78,7 @@ class WorkerKV {
                 const metadata = response.metadata;
                 if (metadata && metadata.compression) {
                     if (metadata.compression = 'gzip') {
-                        this.cache = JSON.parse((await ungzip(Buffer.from(response.value, metadata.encoding))).toString());
+                        this.cache = JSON.parse(await ungzip(Buffer.from(response.value, metadata.encoding)));
                     } else {
                         return reject(new Error(`${metadata.compression} is not a recognized compression type`));
                     }
