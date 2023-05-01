@@ -5,12 +5,18 @@ const headers = {
     'Authorization': `Basic ${CACHE_BASIC_AUTH}`
 };
 
+let cacheFailCount = 0;
 let cachePaused = false;
 
 function pauseCache() {
+    cacheFailCount++;
+    if (cacheFailCount <= 2) {
+        return;
+    }
     cachePaused = true;
     setTimeout(() => {
         cachePaused = false;
+        cacheFailCount = 0;
     }, 60000);
 }
 
@@ -67,7 +73,7 @@ async function updateCache(query, variables, body, ttl = '', specialCache = '') 
             console.error(`failed to write to cache: ${response.status}`);
             return false
         }
-
+        cacheFailCount = 0;
         return true
     } catch (error) {
         if (error.message === 'The operation was aborted') {
@@ -97,6 +103,7 @@ async function checkCache(query, variables, specialCache = '') {
         }
 
         const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${cacheKey}`, { headers: headers });
+        cacheFailCount = 0;
         if (response.status === 200) {
             return await response.json();
         }
