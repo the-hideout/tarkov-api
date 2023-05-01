@@ -6,8 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\"",
         "format": "prettier --write '**/*.{js,css,json,md}'",
-        "dev": "wrangler --env development dev",
-        "ci": "wrangler --env development dev",
+        "dev": "wrangler dev --env development",
+        "ci": "wrangler dev --env development",
         "local": "wrangler dev",
         "tail": "node tail.js",
         "tail-dev": "node tail.js development"
