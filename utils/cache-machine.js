@@ -16,16 +16,11 @@ function pauseCache() {
 
 async function fetchWithTimeout(resource, options = {}) {
     const { timeout = 1000 } = options;
-    
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-    const response = await fetch(resource, {
+    return fetch(resource, {
       ...options,
-      signal: controller.signal  
+      signal: AbortSignal.timeout(timeout),
     });
-    clearTimeout(id);
-    return response;
-  }
+}
 
 // Helper function to create a hash from a string
 // :param string: string to hash

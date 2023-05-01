@@ -83,7 +83,6 @@ class WorkerKV {
                 this.dataExpires = newDataExpires;
                 this.dataSource.setKvLoadedForRequest(this.kvName, requestId);
                 this.loading = false;
-                delete this.loadingPromises[requestId];
                 resolve();
             }).catch(error => {
                 this.loading = false;
