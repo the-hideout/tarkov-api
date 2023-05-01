@@ -1,4 +1,4 @@
-const zlib = require('zlib');
+const { ungzip } = require('node-gzip');
 
 class WorkerKV {
     constructor(kvName, dataSource) {
@@ -61,18 +61,17 @@ class WorkerKV {
         this.loading = true;
         this.loadingPromises[requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
-            DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
-                const data = response.value;
+            DATA_CACHE.getWithMetadata(this.kvName, 'text').then(async response => {
                 console.log(`${this.kvName} load: ${new Date() - startLoad} ms`);
                 const metadata = response.metadata;
                 if (metadata && metadata.compression) {
                     if (metadata.compression = 'gzip') {
-                        this.cache = JSON.parse(zlib.gunzipSync(Buffer.from(data, metadata.encoding)).toString());
+                        this.cache = JSON.parse((await ungzip(Buffer.from(response.value, metadata.encoding))).toString());
                     } else {
                         return reject(new Error(`${metadata.compression} is not a recognized compression type`));
                     }
                 } else {
-                    this.cache = JSON.parse(data);
+                    this.cache = JSON.parse(response.value);
                 }
                 let newDataExpires = false;
                 if (this.cache.expiration) {
