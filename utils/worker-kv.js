@@ -1,4 +1,13 @@
-const { ungzip } = require('node-gzip');
+const zlib = require('zlib');
+
+const ungzip = (input, options) => {
+    return new Promise(function(resolve, reject) {
+        zlib.gunzip(input, options, function (error, result) {
+            if(!error) resolve(result);
+            else reject(Error(error));
+        });
+    });
+};
 
 class WorkerKV {
     constructor(kvName, dataSource) {
