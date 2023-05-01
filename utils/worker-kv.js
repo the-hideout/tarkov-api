@@ -36,6 +36,7 @@ class WorkerKV {
         if (this.cache) {
             console.log(`${this.kvName} is stale; re-loading`);
             this.cache = false;
+            this.loading = false;
         } else {
             //console.log(`${this.kvName} loading`);
         }
