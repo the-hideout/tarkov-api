@@ -35,7 +35,7 @@ async function getSchema(data, requestId) {
             let loadingTimedOut = false;
             const loadingTimeout = setTimeout(() => {
                 loadingTimedOut = true;
-            }, 1000);
+            }, 3100);
             const loadingInterval = setInterval(() => {
                 if (loadingSchema === false) {
                     clearTimeout(loadingTimeout);
