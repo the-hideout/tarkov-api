@@ -37,18 +37,18 @@ async function getSchema(data, requestId) {
                 loadingTimedOut = true;
             }, 1000);
             const loadingInterval = setInterval(() => {
+                if (loadingSchema === false) {
+                    clearTimeout(loadingTimeout);
+                    clearInterval(loadingInterval);
+                    return resolve(schema);
+                }
                 if (loadingTimedOut) {
                     console.log(`Schema loading timed out; forcing load`);
                     clearInterval(loadingInterval);
                     loadingSchema = false;
                     return resolve(getSchema(data, requestId));
                 }
-                if (loadingSchema === false) {
-                    clearTimeout(loadingTimeout);
-                    clearInterval(loadingInterval);
-                    resolve(schema);
-                }
-            }, 5);
+            }, 100);
         });
     }
     loadingSchema = true;
