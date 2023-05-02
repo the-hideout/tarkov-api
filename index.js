@@ -56,10 +56,10 @@ async function getSchema(data, requestId) {
         loadingSchema = false;
         console.error('Error loading dynamic type definitions', error);
         return Promise.reject(error);
-    }).then(dynamicTypeDefs => {
+    }).then(dynamicDefs => {
         let mergedDefs;
         try {
-            mergedDefs = mergeTypeDefs([typeDefs, dynamicTypeDefs]);
+            mergedDefs = mergeTypeDefs([typeDefs, dynamicDefs]);
         } catch (error) {
             console.error('Error merging type defs', error);
             return Promise.reject(error);
