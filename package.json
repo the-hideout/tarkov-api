@@ -20,7 +20,7 @@
         "prettier": "^2.6.1"
     },
     "dependencies": {
-        "@graphql-tools/merge": "6.2.14",
+        "@graphql-tools/merge": "8.4.1",
         "@graphql-tools/schema": "8.1.2",
         "graphql": "^15.8.0",
         "uuid": "9.0.0"
