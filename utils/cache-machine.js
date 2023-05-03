@@ -5,27 +5,28 @@ const headers = {
     'Authorization': `Basic ${CACHE_BASIC_AUTH}`
 };
 
+let cacheFailCount = 0;
 let cachePaused = false;
 
 function pauseCache() {
+    cacheFailCount++;
+    if (cacheFailCount <= 2) {
+        return;
+    }
     cachePaused = true;
     setTimeout(() => {
         cachePaused = false;
+        cacheFailCount = 0;
     }, 60000);
 }
 
 async function fetchWithTimeout(resource, options = {}) {
     const { timeout = 1000 } = options;
-    
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-    const response = await fetch(resource, {
+    return fetch(resource, {
       ...options,
-      signal: controller.signal  
+      signal: AbortSignal.timeout(timeout),
     });
-    clearTimeout(id);
-    return response;
-  }
+}
 
 // Helper function to create a hash from a string
 // :param string: string to hash
@@ -72,10 +73,10 @@ async function updateCache(query, variables, body, ttl = '', specialCache = '') 
             console.error(`failed to write to cache: ${response.status}`);
             return false
         }
-
+        cacheFailCount = 0;
         return true
     } catch (error) {
-        if (error.message === 'The operation was aborted') {
+        if (error.message === 'The operation was aborted due to timeout') {
             console.warn('Updating cache timed out');
             pauseCache();
             return false;
@@ -102,13 +103,14 @@ async function checkCache(query, variables, specialCache = '') {
         }
 
         const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${cacheKey}`, { headers: headers });
+        cacheFailCount = 0;
         if (response.status === 200) {
             return await response.json();
         }
 
         return false
     } catch (error) {
-        if (error.message === 'The operation was aborted') {
+        if (error.message === 'The operation was aborted due to timeout') {
             console.warn('Checking cache timed out');
             pauseCache();
             return false;

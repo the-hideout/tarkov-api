@@ -48,19 +48,23 @@ class DataSource {
             if (this.initialized) return;
             if (this.loading) {
                 return new Promise((resolve) => {
-                    const isDone = () => {
+                    let loadingTimedOut = false;
+                    const loadingTimeout = setTimeout(() => {
+                        loadingTimedOut = true;
+                    }, 3000);
+                    const loadingInterval = setInterval(() => {
                         if (this.loading === false) {
-                            resolve();
-                        } else {
-                            try {
-                                setTimeout(isDone, 5);
-                            } catch (error) {
-                                console.error(error.stack);
-                                resolve();
-                            }
+                            clearTimeout(loadingTimeout);
+                            clearInterval(loadingInterval);
+                            return resolve();
                         }
-                    }
-                    isDone();
+                        if (loadingTimedOut) {
+                            console.log(`DataSource init timed out; forcing init`);
+                            clearInterval(loadingInterval);
+                            this.loading = false;
+                            return resolve(this.init());
+                        }
+                    }, 100);
                 });
             }
             this.loading = true;

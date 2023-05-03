@@ -35,20 +35,20 @@ async function getSchema(data, requestId) {
             let loadingTimedOut = false;
             const loadingTimeout = setTimeout(() => {
                 loadingTimedOut = true;
-            }, 1000);
+            }, 3100);
             const loadingInterval = setInterval(() => {
+                if (loadingSchema === false) {
+                    clearTimeout(loadingTimeout);
+                    clearInterval(loadingInterval);
+                    return resolve(schema);
+                }
                 if (loadingTimedOut) {
                     console.log(`Schema loading timed out; forcing load`);
                     clearInterval(loadingInterval);
                     loadingSchema = false;
                     return resolve(getSchema(data, requestId));
                 }
-                if (loadingSchema === false) {
-                    clearTimeout(loadingTimeout);
-                    clearInterval(loadingInterval);
-                    resolve(schema);
-                }
-            }, 5);
+            }, 100);
         });
     }
     loadingSchema = true;
@@ -56,10 +56,10 @@ async function getSchema(data, requestId) {
         loadingSchema = false;
         console.error('Error loading dynamic type definitions', error);
         return Promise.reject(error);
-    }).then(dynamicTypeDefs => {
+    }).then(dynamicDefs => {
         let mergedDefs;
         try {
-            mergedDefs = mergeTypeDefs([typeDefs, dynamicTypeDefs]);
+            mergedDefs = mergeTypeDefs([typeDefs, dynamicDefs]);
         } catch (error) {
             console.error('Error merging type defs', error);
             return Promise.reject(error);

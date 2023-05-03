@@ -54,12 +54,7 @@ const startTail = () => {
     });
     wrangler.stdout.on('data', (data) => {
         try {
-            String(data).trim().split('\n').forEach(json => {
-                if (!json) {
-                    return;
-                }
-                outputLog(json);
-            });        
+            outputLog(String(data));       
         } catch (error) {
             console.error('Error processing wrangler output', error.message);
             console.error(data);

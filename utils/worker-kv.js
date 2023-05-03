@@ -1,5 +1,17 @@
 const zlib = require('zlib');
 
+const ungzip = (input, options) => {
+    return new Promise(function(resolve, reject) {
+        zlib.gunzip(input, options, function (error, result) {
+            if (!error) {
+                resolve(String(result));
+            } else {
+                reject(Error(error));
+            }
+        });
+    });
+};
+
 class WorkerKV {
     constructor(kvName, dataSource) {
         this.cache = false;
@@ -24,6 +36,7 @@ class WorkerKV {
         if (this.cache) {
             console.log(`${this.kvName} is stale; re-loading`);
             this.cache = false;
+            this.loading = false;
         } else {
             //console.log(`${this.kvName} loading`);
         }
@@ -39,6 +52,14 @@ class WorkerKV {
                     loadingTimedOut = true;
                 }, 3000);
                 const loadingInterval = setInterval(() => {
+                    if (this.loading === false) {
+                        clearTimeout(loadingTimeout);
+                        clearInterval(loadingInterval);
+                        console.log(`${this.kvName} load: ${new Date() - startLoad} ms (secondary)`);
+                        delete this.loadingPromises[requestId];
+                        this.dataSource.setKvUsedForRequest(this.kvName, requestId);
+                        return resolve();
+                    }
                     if (loadingTimedOut) {
                         console.log(`${this.kvName} loading timed out; forcing load`);
                         clearInterval(loadingInterval);
@@ -46,33 +67,24 @@ class WorkerKV {
                         delete this.loadingPromises[requestId];
                         return resolve(this.init(requestId));
                     }
-                    if (this.loading === false) {
-                        clearTimeout(loadingTimeout);
-                        clearInterval(loadingInterval);
-                        console.log(`${this.kvName} load: ${new Date() - startLoad} ms (secondary)`);
-                        delete this.loadingPromises[requestId];
-                        this.dataSource.setKvUsedForRequest(this.kvName, requestId);
-                        resolve();
-                    }
-                }, 5);
+                }, 100);
             });
             return this.loadingPromises[requestId];
         }
         this.loading = true;
         this.loadingPromises[requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
-            DATA_CACHE.getWithMetadata(this.kvName, 'text').then(response => {
-                const data = response.value;
+            DATA_CACHE.getWithMetadata(this.kvName, 'text').then(async response => {
                 console.log(`${this.kvName} load: ${new Date() - startLoad} ms`);
                 const metadata = response.metadata;
                 if (metadata && metadata.compression) {
                     if (metadata.compression = 'gzip') {
-                        this.cache = JSON.parse(zlib.gunzipSync(Buffer.from(data, metadata.encoding)).toString());
+                        this.cache = JSON.parse(await ungzip(Buffer.from(response.value, metadata.encoding)));
                     } else {
                         return reject(new Error(`${metadata.compression} is not a recognized compression type`));
                     }
                 } else {
-                    this.cache = JSON.parse(data);
+                    this.cache = JSON.parse(response.value);
                 }
                 let newDataExpires = false;
                 if (this.cache.expiration) {
