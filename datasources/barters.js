@@ -13,13 +13,13 @@ class BartersAPI extends WorkerKV {
         super('barter_data', dataSource);
     }
 
-    async getList(requestId) {
-        await this.init(requestId);
+    async getList() {
+        await this.init();
         return this.cache.Barter;
     }
 
-    async getBartersForItem(requestId, id) {
-        await this.init(requestId);
+    async getBartersForItem(id) {
+        await this.init();
         return this.cache.Barter.filter(barter => {
             for (const item of barter.rewardItems) {
                 if (item.item === id) return true;
@@ -29,8 +29,8 @@ class BartersAPI extends WorkerKV {
         });
     }
 
-    async getBartersUsingItem(requestId, id) {
-        await this.init(requestId);
+    async getBartersUsingItem(id) {
+        await this.init();
         return this.cache.Barter.filter(barter => {
             for (const item of barter.requiredItems) {
                 if (item.item === id) return true;
@@ -45,16 +45,16 @@ class BartersAPI extends WorkerKV {
         });
     }
 
-    async getBartersForTrader(requestId, id) {
-        await this.init(requestId);
+    async getBartersForTrader(id) {
+        await this.init();
         return this.cache.Barter.filter(barter => {
             if (barter.trader_id === id) return true;
             return false;
         });
     }
 
-    async getBartersForTraderLevel(requestId, id, level) {
-        await this.init(requestId);
+    async getBartersForTraderLevel(id, level) {
+        await this.init();
         return this.cache.Barter.filter(barter => {
             if (barter.trader_id === id && barter.level === level) return true;
             return false;

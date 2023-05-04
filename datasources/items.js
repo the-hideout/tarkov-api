@@ -65,8 +65,8 @@ class ItemsAPI extends WorkerKV {
         return item;
     }
 
-    async getItem(requestId, id, contains) {
-        await this.init(requestId);
+    async getItem(id, contains) {
+        await this.init();
         let item = this.cache.Item[id];
         if (!item) {
             return Promise.reject(new Error(`No item found with id ${id}`));
@@ -83,15 +83,15 @@ class ItemsAPI extends WorkerKV {
         return formatted;
     }
 
-    async getAllItems(requestId) {
-        await this.init(requestId);
+    async getAllItems() {
+        await this.init();
         return Object.values(this.cache.Item).map((rawItem) => {
             return this.formatItem(rawItem);
         });
     }
 
-    async getItemsByIDs(requestId, ids, items = false) {
-        await this.init(requestId);
+    async getItemsByIDs(ids, items = false) {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -105,8 +105,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByType(requestId, type, items = false) {
-        await this.init(requestId);
+    async getItemsByType(type, items = false) {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -120,8 +120,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByTypes(requestId, types, items = false) {
-        await this.init(requestId);
+    async getItemsByTypes(types, items = false) {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -138,8 +138,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByName(requestId, name, items = false, lang = 'en') {
-        await this.init(requestId);
+    async getItemsByName(name, items = false, lang = 'en') {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -163,8 +163,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByNames(requestId, names, items = false, lang = 'en') {
-        await this.init(requestId);
+    async getItemsByNames(names, items = false, lang = 'en') {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -191,8 +191,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByBsgCategoryId(requestId, bsgCategoryId, items = false) {
-        await this.init(requestId);
+    async getItemsByBsgCategoryId(bsgCategoryId, items = false) {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -206,8 +206,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByBsgCategoryIds(requestId, bsgCategoryIds, items = false) {
-        await this.init(requestId);
+    async getItemsByBsgCategoryIds(bsgCategoryIds, items = false) {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -221,8 +221,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByCategoryEnums(requestId, names, items = false) {
-        await this.init(requestId);
+    async getItemsByCategoryEnums(names, items = false) {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -237,8 +237,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByHandbookCategoryEnums(requestId, names, items = false) {
-        await this.init(requestId);
+    async getItemsByHandbookCategoryEnums(names, items = false) {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -253,8 +253,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsInBsgCategory(requestId, bsgCategoryId, items = false) {
-        await this.init(requestId);
+    async getItemsInBsgCategory(bsgCategoryId, items = false) {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -268,8 +268,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemByNormalizedName(requestId, normalizedName) {
-        await this.init(requestId);
+    async getItemByNormalizedName(normalizedName) {
+        await this.init();
         const item = Object.values(this.cache.Item).find((item) => item.normalized_name === normalizedName);
 
         if (!item) {
@@ -279,8 +279,8 @@ class ItemsAPI extends WorkerKV {
         return this.formatItem(item);
     }
 
-    async getItemsByDiscardLimitedStatus(requestId, limited, items = false) {
-        await this.init(requestId);
+    async getItemsByDiscardLimitedStatus(limited, items = false) {
+        await this.init();
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -294,20 +294,20 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getCategory(requestId, id) {
-        await this.init(requestId);
+    async getCategory(id) {
+        await this.init();
         return this.cache.ItemCategory[id] || this.cache.HandbookCategory[id];
     }
 
-    async getTopCategory(requestId, id) {
-        await this.init(requestId);
+    async getTopCategory(id) {
+        await this.init();
         const cat = await this.getCategory(id);
         if (cat && cat.parent_id) return this.getTopCategory(cat.parent_id);
         return cat;
     }
 
-    async getCategories(requestId) {
-        await this.init(requestId);
+    async getCategories() {
+        await this.init();
         if (!this.cache) {
             return Promise.reject(new Error('Item cache is empty'));
         }
@@ -318,8 +318,8 @@ class ItemsAPI extends WorkerKV {
         return categories;
     }
 
-    async getCategoriesEnum(requestId) {
-        const cats = await this.getCategories(requestId);
+    async getCategoriesEnum() {
+        const cats = await this.getCategories();
         const map = {};
         for (const id in cats) {
             map[cats[id].enumName] = cats[id];
@@ -327,36 +327,36 @@ class ItemsAPI extends WorkerKV {
         return map;
     }
 
-    async getHandbookCategory(requestId, id) {
-        await this.init(requestId);
+    async getHandbookCategory(id) {
+        await this.init();
         return this.cache.HandbookCategory[id];
     }
 
-    async getHandbookCategories(requestId) {
-        await this.init(requestId);
+    async getHandbookCategories() {
+        await this.init();
         if (!this.cache) {
             return Promise.reject(new Error('Item cache is empty'));
         }
         return Object.values(this.cache.HandbookCategory);
     }
 
-    async getFleaMarket(requestId) {
-        await this.init(requestId);
+    async getFleaMarket() {
+        await this.init();
         return this.cache.FleaMarket;
     }
 
-    async getArmorMaterials(requestId) {
-        await this.init(requestId);
+    async getArmorMaterials() {
+        await this.init();
         return Object.values(this.cache.ArmorMaterial).sort();
     }
 
-    async getArmorMaterial(requestId, matKey) {
-        await this.init(requestId);
+    async getArmorMaterial(matKey) {
+        await this.init();
         return this.cache.ArmorMaterial[matKey];
     }
 
-    async getAmmoList(requestId) {
-        const allAmmo = await this.getItemsByBsgCategoryId(requestId, '5485a8684bdc2da71d8b4567').then(ammoItems => {
+    async getAmmoList() {
+        const allAmmo = await this.getItemsByBsgCategoryId('5485a8684bdc2da71d8b4567').then(ammoItems => {
             // ignore bb
             return ammoItems.filter(item => item.id !== '6241c316234b593b5676b637');
         });
@@ -368,18 +368,18 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getPlayerLevels(requestId) {
-        await this.init(requestId);
+    async getPlayerLevels() {
+        await this.init();
         return this.cache.PlayerLevel;
     }
 
-    async getTypes(requestId) {
-        await this.init(requestId);
+    async getTypes() {
+        await this.init();
         return this.cache.ItemType;
     }
 
-    async getLanguageCodes(requestId) {
-        await this.init(requestId);
+    async getLanguageCodes() {
+        await this.init();
         return this.cache.LanguageCode;
     }
 }

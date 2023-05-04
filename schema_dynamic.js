@@ -1,8 +1,8 @@
-module.exports = async (data, requestId) => {
-    const itemTypes = await data.schema.getItemTypes(requestId);
-    const categories = await data.schema.getCategories(requestId);
-    const handbookCategories = await data.schema.getHandbookCategories(requestId);
-    const languageCodes = await data.schema.getLanguageCodes(requestId);
+module.exports = async (data) => {
+    const itemTypes = await data.schema.getItemTypes();
+    const categories = await data.schema.getCategories();
+    const handbookCategories = await data.schema.getHandbookCategories();
+    const languageCodes = await data.schema.getLanguageCodes();
     return `
 enum ItemType {
     ${itemTypes}

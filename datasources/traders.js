@@ -41,13 +41,13 @@ class TradersAPI extends WorkerKV {
         super('trader_data', dataSource);
     }
 
-    async getList(requestId) {
-        await this.init(requestId);
+    async getList() {
+        await this.init();
         return this.cache.Trader;
     }
 
-    async get(requestId, id) {
-        await this.init(requestId);
+    async get(id) {
+        await this.init();
         for (const trader of this.cache.Trader) {
             if (trader.id === id) {
                 return trader;
@@ -57,8 +57,8 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with id ${id}`));
     }
 
-    async getByName(requestId, name) {
-        await this.init(requestId);
+    async getByName(name) {
+        await this.init();
         for (const trader of this.cache.Trader) {
             if (trader.name.toLowerCase() === name.toLowerCase()) {
                 return trader;
@@ -68,8 +68,8 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with name ${name}`));
     }
 
-    async getByLevel(requestId, traderId, level) {
-        await this.init(requestId);
+    async getByLevel(traderId, level) {
+        await this.init();
         for (const trader of this.cache.Trader) {
             if (trader.id !== traderId) continue;
             for (const rawLevel of trader.levels) {
@@ -81,12 +81,12 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with id ${traderId} and level ${level}`));
     }
 
-    getByDataId(requestId, dataId) {
-        return this.get(requestId, dataIdMap[dataId]);
+    getByDataId(dataId) {
+        return this.get(dataIdMap[dataId]);
     }
 
-    async getTraderResets(requestId) {
-        await this.init(requestId);
+    async getTraderResets() {
+        await this.init();
         return this.cache.Trader.map(trader => {
             return {
                 name: trader.name.toLowerCase(),

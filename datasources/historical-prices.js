@@ -5,8 +5,8 @@ class historicalPricesAPI extends WorkerKV {
         super('historical_price_data', dataSource);
     }
 
-    async getByItemId(requestId, itemId, limit = 0) {
-        await this.init(requestId);
+    async getByItemId(itemId, limit = 0) {
+        await this.init();
         if (!this.cache) {
             return Promise.reject(new Error('Historical prices cache is empty'));
         }

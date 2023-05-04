@@ -6,8 +6,8 @@ class TraderInventoryAPI extends WorkerKV {
         this.traderCache = false;
     }
 
-    async initTraderCache(requestId) {
-        await this.init(requestId);
+    async initTraderCache() {
+        await this.init();
         if (this.traderCache) {
             return true;
         }
@@ -26,22 +26,22 @@ class TraderInventoryAPI extends WorkerKV {
         }
     }
 
-    async getByItemId(requestId, itemId) {
-        await this.init(requestId);
+    async getByItemId(itemId) {
+        await this.init();
         if (!this.cache.TraderCashOffer[itemId]) {
             return [];
         }
         return this.cache.TraderCashOffer[itemId];
     }
 
-    async getPricesForTrader(requestId, traderId) {
-        await this.initTraderCache(requestId);
+    async getPricesForTrader(traderId) {
+        await this.initTraderCache();
         if (!this.traderCache[traderId]) return [];
         return this.traderCache[traderId];
     }
 
-    async getPricesForTraderLevel(requestId, traderId, level) {
-        await this.initTraderCache(requestId);
+    async getPricesForTraderLevel(traderId, level) {
+        await this.initTraderCache();
         if (!this.traderCache[traderId]) return [];
         return this.traderCache[traderId].filter(offer => {
             return offer.vendor.traderLevel === level;

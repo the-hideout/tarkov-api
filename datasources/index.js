@@ -11,7 +11,8 @@ const TraderInventoryAPI = require('./trader-inventory');
 const TradersAPI = require('./traders');
 
 class DataSource {
-    constructor() {
+    constructor(requestId) {
+        this.requestId = requestId;
         this.barter = new BartersAPI(this);
         this.craft = new CraftsAPI(this);
         this.hideout = new HideoutAPI(this);
@@ -26,8 +27,7 @@ class DataSource {
 
         this.initialized = false;
         this.loading = false;
-        this.requests = {};
-        this.kvLoaded = [];
+        this.kvUsed = [];
 
         this.kvWorkers = {
             barter: this.barter,
@@ -47,28 +47,9 @@ class DataSource {
         try {
             if (this.initialized) return;
             if (this.loading) {
-                return new Promise((resolve) => {
-                    let loadingTimedOut = false;
-                    const loadingTimeout = setTimeout(() => {
-                        loadingTimedOut = true;
-                    }, 3000);
-                    const loadingInterval = setInterval(() => {
-                        if (this.loading === false) {
-                            clearTimeout(loadingTimeout);
-                            clearInterval(loadingInterval);
-                            return resolve();
-                        }
-                        if (loadingTimedOut) {
-                            console.log(`DataSource init timed out; forcing init`);
-                            clearInterval(loadingInterval);
-                            this.loading = false;
-                            return resolve(this.init());
-                        }
-                    }, 100);
-                });
+                return this.loading;
             }
-            this.loading = true;
-            return Promise.all([
+            this.loading = Promise.all([
                 /*this.barter.init(),
                 this.craft.init(),
                 this.hideout.init(),
@@ -86,60 +67,27 @@ class DataSource {
                 this.loading = false;
                 return Promise.reject(error);
             });
+            return this.loading;
         } catch (error) {
             console.error('error initializing data api', error.stack);
         }
     }
 
-    kvLoadedForRequest(kvName, requestId) {
-        if (!requestId) {
-            return false;
-        }
-        if (!this.requests[requestId]) {
-            this.requests[requestId] = {};
-        }
-        if (!this.requests[requestId].kvLoaded) {
-            this.requests[requestId].kvLoaded = [];
-        }
-        return this.requests[requestId].kvLoaded.includes(kvName);
+    kvUsed(kvName) {
+        return this.kvUsed.includes(kvName);
     }
 
-    setKvUsedForRequest(kvName, requestId) {
-        if (!this.requests[requestId]) {
-            this.requests[requestId] = {};
-        }
-        if (!this.requests[requestId].kvUsed) {
-            this.requests[requestId].kvUsed = [];
-        }
-        if (!this.requests[requestId].kvUsed.includes(kvName)) {
-            this.requests[requestId].kvUsed.push(kvName);
+    setKvUsed(kvName) {
+        if (!this.kvUsed.includes(kvName)) {
+            this.kvUsed.push(kvName);
         }
     }
 
-    setKvLoadedForRequest(kvName, requestId) {
-        if (!this.kvLoaded.includes(kvName)) {
-            this.kvLoaded.push(kvName);
-        }
-        if (!this.requests[requestId]) {
-            this.requests[requestId] = {};
-        }
-        if (!this.requests[requestId].kvLoaded) {
-            this.requests[requestId].kvLoaded = [];
-        }
-        if (!this.requests[requestId].kvLoaded.includes(kvName)) {
-            this.requests[requestId].kvLoaded.push(kvName);
-        }
-        this.setKvUsedForRequest(kvName, requestId);
-    }
-
-    getRequestTtl(requestId) {
-        if (!this.requests[requestId] || !this.requests[requestId].kvUsed) {
-            return 0;
-        }
+    getRequestTtl() {
         let lowestExpire = Number.MAX_SAFE_INTEGER;
         let schemaExpire = Number.MAX_SAFE_INTEGER;
         for (const worker of Object.values(this.kvWorkers)) {
-            if (!this.requests[requestId].kvUsed.includes(worker.kvName)) {
+            if (!this.kvUsed.includes(worker.kvName)) {
                 continue;
             }
             if (worker.kvName === 'schema_data') {

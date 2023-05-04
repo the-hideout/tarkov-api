@@ -1,7 +1,7 @@
 module.exports = {
     Query: {
         crafts(obj, args, context, info) {
-            return context.util.paginate(context.data.craft.getList(context.requestId), args);
+            return context.util.paginate(context.data.craft.getList(), args);
         }
     },
     Craft: {
@@ -10,15 +10,15 @@ module.exports = {
                 if (qi === null) {
                     return qi;
                 }
-                return context.data.task.getQuestItem(context.requestId, qi.item);
+                return context.data.task.getQuestItem(qi.item);
             }));
         },
         station(data, args, context) {
-            return context.data.hideout.getStation(context.requestId, data.station);
+            return context.data.hideout.getStation(data.station);
         },
         taskUnlock(data, args, context) {
             if (!data || !data.taskUnlock) return null;
-            return context.data.task.get(context.requestId, data.taskUnlock);
+            return context.data.task.get(data.taskUnlock);
         },
     }
 };

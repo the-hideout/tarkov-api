@@ -4,7 +4,6 @@ const { graphql } = require('graphql');
 const { v4: uuidv4 } = require('uuid');
 
 const DataSource = require('./datasources');
-const dataAPI = new DataSource();
 const playground = require('./handlers/playground');
 const setCors = require('./utils/setCors');
 const typeDefs = require('./schema');
@@ -16,44 +15,11 @@ const cacheMachine = require('./utils/cache-machine');
 const nightbot = require('./custom-endpoints/nightbot');
 const twitch = require('./custom-endpoints/twitch');
 
-let schema = false;
-let loadingSchema = false;
-let lastSchemaRefresh = 0;
-
-const schemaRefreshInterval = 1000 * 60 * 10;
-
 // If the environment is not production, skip using the caching service
 const skipCache = false; //ENVIRONMENT !== 'production' || false;
 
-// Example of how router can be used in an application
-async function getSchema(data, requestId) {
-    if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
-        return schema;
-    }
-    if (loadingSchema) {
-        return new Promise((resolve) => {
-            let loadingTimedOut = false;
-            const loadingTimeout = setTimeout(() => {
-                loadingTimedOut = true;
-            }, 3100);
-            const loadingInterval = setInterval(() => {
-                if (loadingSchema === false) {
-                    clearTimeout(loadingTimeout);
-                    clearInterval(loadingInterval);
-                    return resolve(schema);
-                }
-                if (loadingTimedOut) {
-                    console.log(`Schema loading timed out; forcing load`);
-                    clearInterval(loadingInterval);
-                    loadingSchema = false;
-                    return resolve(getSchema(data, requestId));
-                }
-            }, 100);
-        });
-    }
-    loadingSchema = true;
-    return dynamicTypeDefs(data, requestId).catch(error => {
-        loadingSchema = false;
+async function getSchema(data) {
+    return dynamicTypeDefs(data).catch(error => {
         console.error('Error loading dynamic type definitions', error);
         return Promise.reject(error);
     }).then(dynamicDefs => {
@@ -65,10 +31,7 @@ async function getSchema(data, requestId) {
             return Promise.reject(error);
         }
         try {
-            schema = makeExecutableSchema({ typeDefs: mergedDefs, resolvers: resolvers });
-            loadingSchema = false;
-            //console.log('schema loaded');
-            return schema;
+            return makeExecutableSchema({ typeDefs: mergedDefs, resolvers: resolvers });
         } catch (error) {
             console.error('Error making schema executable');
             if (!error.message) {
@@ -133,7 +96,6 @@ async function graphqlHandler(event, graphQLOptions) {
     const requestId = uuidv4();
     console.info(requestId);
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
-    console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
     //console.log(query);
     if (request.headers.has('x-newrelic-synthetics')) {
         console.log('NewRelic health check');
@@ -161,8 +123,8 @@ async function graphqlHandler(event, graphQLOptions) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const context = { data: dataAPI, util: graphqlUtil, requestId, warnings: [] };
-    let result = await graphql(await getSchema(dataAPI, requestId), query, {}, context, variables);
+    const context = { data: new DataSource(requestId), util: graphqlUtil, warnings: [] };
+    let result = await graphql(await getSchema(context.data), query, {}, context, variables);
     if (context.warnings.length > 0) {
         if (!result.warnings) {
             result = Object.assign({warnings: []}, result);
@@ -170,7 +132,7 @@ async function graphqlHandler(event, graphQLOptions) {
         result.warnings.push(...context.warnings);
     }
 
-    let ttl = dataAPI.getRequestTtl(requestId);
+    let ttl = context.data.getRequestTtl();
 
     if (specialCache === 'application/json') {
         if (!result.warnings) {
@@ -192,7 +154,6 @@ async function graphqlHandler(event, graphQLOptions) {
 
     console.log(`Response time: ${new Date() - requestStart} ms`);
     //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
-    delete dataAPI.requests[requestId];
     return new Response(body, responseOptions);
 }
 
@@ -234,15 +195,15 @@ const handleRequest = async event => {
 
     try {
         if (url.pathname === '/webhook/nightbot') {
-            return nightbot(request, dataAPI, event);
+            return nightbot(event);
         }
 
         if (url.pathname === '/webhook/stream-elements') {
-            return nightbot(request, dataAPI, event);
+            return nightbot(event);
         }
 
         if (url.pathname === '/webhook/moobot') {
-            return nightbot(request, dataAPI, event);
+            return nightbot(event);
         }
 
         if (url.pathname === '/twitch') {

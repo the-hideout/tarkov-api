@@ -1,7 +1,7 @@
 module.exports = {
     Query: {
         async tasks(obj, args, context, info) {
-            const tasks = await context.data.task.getList(context.requestId);
+            const tasks = await context.data.task.getList();
             if (args.faction) {
                 const filterFaction = args.faction.toLowerCase();
                 return tasks.filter(task => {
@@ -13,13 +13,13 @@ module.exports = {
             return context.util.paginate(tasks, args);
         },
         task(obj, args, context) {
-            return context.data.task.get(context.requestId, args.id);
+            return context.data.task.get(args.id);
         },
         quests(obj, args, context, info) {
-            return context.data.task.getQuests(context.requestId);
+            return context.data.task.getQuests();
         },
         questItems(obj, args, context) {
-            return context.data.task.getQuestItems(context.requestId);
+            return context.data.task.getQuestItems();
         }
     },
     HealthEffect: {
@@ -41,21 +41,21 @@ module.exports = {
             return context.util.getLocale(data, 'name', info);
         },
         trader(data, args, context) {
-            return context.data.trader.get(context.requestId, data.trader);
+            return context.data.trader.get(data.trader);
         },
         map(data, args, context) {
-            if (data.location_id) return context.data.map.get(context.requestId, data.location_id);
+            if (data.location_id) return context.data.map.get(data.location_id);
             return null;
         }
     },
     TaskKey: {
         keys(data, args, context) {
             return data.key_ids.map(id => {
-                return context.data.item.getItem(context.requestId, id);
+                return context.data.item.getItem(id);
             });
         },
         map(data, args, context) {
-            return context.data.map.get(context.requestId, data.map_id);
+            return context.data.map.get(data.map_id);
         }
     },
     TaskObjective: {
@@ -92,14 +92,14 @@ module.exports = {
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         }
     },
     TaskObjectiveBasic: {
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -108,26 +108,26 @@ module.exports = {
     },
     TaskObjectiveBuildItem: {
         item(data, args, context) {
-            return context.data.item.getItem(context.requestId, data.item);
+            return context.data.item.getItem(data.item);
         },
         containsAll(data, args, context) {
             return data.containsAll.map((item) => {
-                return context.data.item.getItem(context.requestId, item.id);
+                return context.data.item.getItem(item.id);
             });
         },
         containsCategory(data, args,context) {
             return data.containsCategory.map((cat) => {
-                return context.data.item.getCategory(context.requestId, cat.id);
+                return context.data.item.getCategory(cat.id);
             });
         },
         containsOne(data, args, context) {
             return data.containsOne.map((item) => {
-                return context.data.item.getItem(context.requestId, item.id);
+                return context.data.item.getItem(item.id);
             });
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -137,7 +137,7 @@ module.exports = {
     TaskObjectiveExperience: {
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -147,7 +147,7 @@ module.exports = {
     TaskObjectiveExtract: {
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -168,11 +168,11 @@ module.exports = {
     },
     TaskObjectiveItem: {
         item(data, args, context) {
-            return context.data.item.getItem(context.requestId, data.item);
+            return context.data.item.getItem(data.item);
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -181,11 +181,11 @@ module.exports = {
     },
     TaskObjectiveMark: {
         markerItem(data, args, context) {
-            return context.data.item.getItem(context.requestId, data.item_id);
+            return context.data.item.getItem(data.item_id);
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -195,7 +195,7 @@ module.exports = {
     TaskObjectivePlayerLevel: {
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -204,11 +204,11 @@ module.exports = {
     },
     TaskObjectiveQuestItem: {
         async questItem(data, args, context) {
-            return context.data.task.getQuestItem(context.requestId, data.item_id);
+            return context.data.task.getQuestItem(data.item_id);
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -218,7 +218,7 @@ module.exports = {
     TaskObjectiveSkill: {
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -235,31 +235,31 @@ module.exports = {
         },
         usingWeapon(data, args, context) {
             return data.usingWeapon.map(item => {
-                return context.data.item.getItem(context.requestId, item.id);
+                return context.data.item.getItem(item.id);
             });
         },
         usingWeaponMods(data, args, context) {
             return data.usingWeaponMods.map(itemGroup => {
                 return itemGroup.map(item => {
-                    return context.data.item.getItem(context.requestId, item.id);
+                    return context.data.item.getItem(item.id);
                 });
             });
         },
         wearing(data, args, context) {
             return data.wearing.map(itemGroup => {
                 return itemGroup.map(item => {
-                    return context.data.item.getItem(context.requestId, item.id);
+                    return context.data.item.getItem(item.id);
                 });
             });
         },
         notWearing(data, args, context) {
             return data.notWearing.map((item) => {
-                return context.data.item.getItem(context.requestId, item.id);
+                return context.data.item.getItem(item.id);
             });
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -274,11 +274,11 @@ module.exports = {
     },
     TaskObjectiveTaskStatus: {
         task(data, args, context) {
-            return context.data.task.get(context.requestId, data.task);
+            return context.data.task.get(data.task);
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -287,11 +287,11 @@ module.exports = {
     },
     TaskObjectiveTraderLevel: {
         trader(data, args, context) {
-            return context.data.trader.get(context.requestId, data.trader_id);
+            return context.data.trader.get(data.trader_id);
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -300,11 +300,11 @@ module.exports = {
     },
     TaskObjectiveTraderStanding: {
         trader(data, args, context) {
-            return context.data.trader.get(context.requestId, data.trader_id);
+            return context.data.trader.get(data.trader_id);
         },
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
@@ -314,14 +314,14 @@ module.exports = {
     TaskObjectiveUseItem: {
         maps(data, args, context) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context.requestId, id);
+                return context.data.map.get(id);
             });
         },
         description(data, args, context, info) {
             return context.util.getLocale(data, 'description', info);
         },
         useAny(data, args, context) {
-            return Promise.all(data.useAny.map(id => context.data.item.getItem(context.requestId, id)));
+            return Promise.all(data.useAny.map(id => context.data.item.getItem(id)));
         },
         zoneNames(data, args, context, info) {
             return context.util.getLocale(data, 'zoneNames', info);
@@ -341,7 +341,7 @@ module.exports = {
     TaskRewards: {
         traderUnlock(data, args, context) {
             return Promise.all(data.traderUnlock.map(unlock => {
-                return context.data.trader.get(context.requestId, unlock.trader_id);
+                return context.data.trader.get(unlock.trader_id);
             }));
         },
         async craftUnlock(data, args, context) {
@@ -351,7 +351,7 @@ module.exports = {
             if (data.craftUnlock.length === 0) {
                 return [];
             }
-            const crafts = await context.data.craft.getList(context.requestId);
+            const crafts = await context.data.craft.getList();
             return data.craftUnlock.map(unlock => {
                 return crafts.find(c => {
                     if (c.station !== unlock.station_id || c.level !== unlock.level) {
@@ -367,31 +367,31 @@ module.exports = {
     },
     TaskStatusRequirement: {
         task(data, args, context) {
-            return context.data.task.get(context.requestId, data.task);
+            return context.data.task.get(data.task);
         }
     },
     OfferUnlock: {
         item(data, args, context) {
-            if (data.contains && Array.isArray(data.contains) && data.contains.length > 0) return context.data.item.getItem(context.requestId, data.item, data.contains);
-            return context.data.item.getItem(context.requestId, data.item);
+            if (data.contains && Array.isArray(data.contains) && data.contains.length > 0) return context.data.item.getItem(data.item, data.contains);
+            return context.data.item.getItem(data.item);
         },
         trader(data, args, context) {
-            return context.data.trader.get(context.requestId, data.trader_id)
+            return context.data.trader.get(data.trader_id)
         }
     },
     Quest: {
         giver(data, args, context) {
-            return context.data.trader.get(context.requestId, context.data.trader.getDataIdMap()[data.giver]);
+            return context.data.trader.get(context.data.trader.getDataIdMap()[data.giver]);
         },
         turnin(data, args, context) {
-            return context.data.trader.get(context.requestId, context.data.trader.getDataIdMap()[data.turnin]);
+            return context.data.trader.get(context.data.trader.getDataIdMap()[data.turnin]);
         }
     },
     QuestObjective: {
         async targetItem(data, args, context) {
             if (!data.targetItem) return null;
             try {
-                return await context.data.item.getItem(context.requestId, data.targetItem)
+                return await context.data.item.getItem(data.targetItem)
             } catch (error) {
                 if (error.message.includes('No item found with id')) return null;
                 return Promise.reject(error);
@@ -402,14 +402,14 @@ module.exports = {
         prerequisiteQuests(data, args, context) {
             return data.prerequisiteQuests.map(questArray => {
                 return questArray.map(questId => {
-                    return context.data.task.getQuest(context.requestId, questId);
+                    return context.data.task.getQuest(questId);
                 });
             });
         }
     },
     QuestRewardReputation: {
         async trader(data, args, context) {
-            return context.data.trader.get(context.requestId, context.data.trader.getDataIdMap()[data.trader]);
+            return context.data.trader.get(context.data.trader.getDataIdMap()[data.trader]);
         }
     }
 };

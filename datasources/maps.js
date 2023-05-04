@@ -5,21 +5,21 @@ class MapAPI extends WorkerKV {
         super('map_data', dataSource);
     }
 
-    async getList(requestId) {
-        await this.init(requestId);
+    async getList() {
+        await this.init();
         return this.cache.Map;
     }
 
-    async get(requestId, id) {
-        await this.init(requestId);
+    async get(id) {
+        await this.init();
         for (const map of this.cache.Map) {
             if (map.id === id || map.tarkovDataId === id) return map;
         }
         return Promise.reject(new Error(`No map found with id ${id}`));
     }
 
-    async getMapsByNames(requestId, names, maps = false, lang = 'en') {
-        await this.init(requestId);
+    async getMapsByNames(names, maps = false, lang = 'en') {
+        await this.init();
         if (!maps) {
             maps = this.cache.Map;
         }
@@ -39,8 +39,8 @@ class MapAPI extends WorkerKV {
         });
     }
 
-    async getMapsByEnemies(requestId, enemies, maps = false, lang = 'en') {
-        await this.init(requestId);
+    async getMapsByEnemies(enemies, maps = false, lang = 'en') {
+        await this.init();
         if (!maps) {
             maps = this.cache.Map;
         }
@@ -60,18 +60,18 @@ class MapAPI extends WorkerKV {
         });
     }
 
-    async getAllBosses(requestId) {
-        await this.init(requestId);
+    async getAllBosses() {
+        await this.init();
         return Object.values(this.cache.MobInfo);
     }
 
-    async getMobInfo(requestId, mobId) {
-        await this.init(requestId);
+    async getMobInfo(mobId) {
+        await this.init();
         return this.cache.MobInfo[mobId];
     }
 
-    async getBossesByNames(requestId, names, bosses = false, lang = 'en') {
-        await this.init(requestId);
+    async getBossesByNames(names, bosses = false, lang = 'en') {
+        await this.init();
         if (!bosses) {
             bosses = Object.values(this.cache.MobInfo);
         }
