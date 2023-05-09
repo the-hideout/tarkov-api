@@ -105,6 +105,26 @@ class WorkerKV {
         });
         return this.loadingPromises[requestId];
     }
+
+    async getLocale(key, context, info) {
+        if (!key) {
+            return null;
+        }
+        const lang = context.util.getLang(info, context);
+        const getTranslation = (k) => {
+            if (this.cache.locale && this.cache.locale[lang] && this.cache.locale[lang][k]) {
+                return this.cache.locale[lang][k];
+            }
+            if (this.cache.locale && this.cache.locale.en && this.cache.locale.en[k]) {
+                return this.cache.locale.en[k];
+            }
+            return k;
+        };
+        if (Array.isArray(key)) {
+            return key.map(k => getTranslation(k));
+        }
+        return getTranslation(key);
+    }
 }
 
 module.exports = WorkerKV;

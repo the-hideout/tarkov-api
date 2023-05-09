@@ -27,18 +27,23 @@ module.exports = {
             if (data.bodyParts.length === 0) {
                 return [];
             }
-            return context.util.getLocale(data, 'bodyParts', info);
+            return context.data.task.getLocale(data.bodyParts, context, info);
         },
         effects(data, args, context, info) {
             if (data.effects.length === 0) {
                 return [];
             }
-            return context.util.getLocale(data, 'effects', info);
+            return context.data.task.getLocale(data.effects, context, info);
         },
+    },
+    SkillLevel: {
+        name(data, args, context, info) {
+            return context.data.task.getLocale(data.name, context, info);
+        }
     },
     Task: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.task.getLocale(data.name, context, info);
         },
         trader(data, args, context) {
             return context.data.trader.get(context.requestId, data.trader);
@@ -103,7 +108,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveBuildItem: {
@@ -131,7 +136,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveExperience: {
@@ -141,7 +146,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveExtract: {
@@ -151,19 +156,19 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         },
         exitName(data, args, context, info) {
-            return context.util.getLocale(data, 'exitName', info);
+            return context.data.task.getLocale(data.exitName, context, info);
         },
         exitStatus(data, args, context, info) {
-            return context.util.getLocale(data, 'exitStatus', info);
+            return context.data.task.getLocale(data.exitStatus, context, info);
         },
         zoneNames(data, args, context, info) {
             if (data.zoneNames.length === 0) {
                 return [];
             }
-            return context.util.getLocale(data, 'zoneNames', info);
+            return context.data.task.getLocale(data.zoneNames, context, info);
         },
     },
     TaskObjectiveItem: {
@@ -176,7 +181,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveMark: {
@@ -189,7 +194,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectivePlayerLevel: {
@@ -199,7 +204,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveQuestItem: {
@@ -212,7 +217,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveSkill: {
@@ -222,16 +227,16 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveShoot: {
         bodyParts(data, args, context, info) {
             if (!data.bodyParts || data.bodyParts.length === 0) return [];
-            return context.util.getLocale(data, 'bodyParts', info);
+            return context.data.task.getLocale(data.bodyParts, context, info);
         },
         target(data, args, context, info) {
-            return context.util.getLocale(data, 'target', info);
+            return context.data.task.getLocale(data.target, context, info);
         },
         usingWeapon(data, args, context) {
             return data.usingWeapon.map(item => {
@@ -263,13 +268,13 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         },
         zoneNames(data, args, context, info) {
             if (data.zoneNames.length === 0) {
                 return [];
             }
-            return context.util.getLocale(data, 'zoneNames', info);
+            return context.data.task.getLocale(data.zoneNames, context, info);
         },
     },
     TaskObjectiveTaskStatus: {
@@ -282,7 +287,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveTraderLevel: {
@@ -295,7 +300,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveTraderStanding: {
@@ -308,7 +313,7 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         }
     },
     TaskObjectiveUseItem: {
@@ -318,24 +323,24 @@ module.exports = {
             });
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         },
         useAny(data, args, context) {
             return Promise.all(data.useAny.map(id => context.data.item.getItem(context.requestId, id)));
         },
         zoneNames(data, args, context, info) {
-            return context.util.getLocale(data, 'zoneNames', info);
+            return context.data.task.getLocale(data.zoneNames, context, info);
         },
     },
     QuestItem: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.task.getLocale(data.name, context, info);
         },
         shortName(data, args, context, info) {
-            return context.util.getLocale(data, 'shortName', info);
+            return context.data.task.getLocale(data.shortName, context, info);
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.task.getLocale(data.description, context, info);
         },
     },
     TaskRewards: {

@@ -9,10 +9,10 @@ module.exports = {
     },
     Trader: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.trader.getLocale(data.name, context, info);
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.trader.getLocale(data.description, context, info);
         },
         currency(trader, args, context) {
             return context.data.item.getItem(context.requestId, context.data.trader.getCurrencyMap()[trader.currency]);
@@ -53,7 +53,7 @@ module.exports = {
     },
     TraderOffer: {
         async name(data, args, context, info) {
-            return context.util.getLocale(await context.data.trader.get(context.requestId, data.trader_id), 'name', info);
+            return context.data.trader.getLocale(await context.data.trader.get(context.requestId, data.trader_id).name, context, info);
         },
         async normalizedName(data, args, context) {
             return (await context.data.trader.get(context.requestId, data.trader_id)).normalizedName;

@@ -7,7 +7,7 @@ module.exports = {
         },
         async items(obj, args, context, info) {
             let items = false;
-            const lang = context.util.getLang(info);
+            const lang = context.util.getLang(info, context);
             let filters = {
                 ids: async ids => {
                     return context.data.item.getItemsByIDs(context.requestId, ids, items);
@@ -91,13 +91,13 @@ module.exports = {
     },
     Item: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(data.name, context, info);
         },
         shortName(data, args, context, info) {
-            return context.util.getLocale(data, 'shortName', info);
+            return context.data.item.getLocale(data.shortName, context, info);
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.item.getLocale(data.description, context, info);
         },
         async buyFor(data, args, context) {
             if (!data.buyFor) data.buyFor = [];
@@ -223,7 +223,7 @@ module.exports = {
     },
     ItemCategory: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(data.name, context, info);
         },
         parent(data, args, context) {
             if (data.parent_id) return context.data.item.getCategory(context.requestId, data.parent_id);
@@ -260,13 +260,13 @@ module.exports = {
     },
     ItemPropertiesArmor: {
         armorType(data, args, context, info) {
-            return context.util.getLocale(data, 'armorType', info);
+            return context.data.item.getLocale(data.armorType, context, info);
         },
         material(data, args, context) {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
         zones(data, args, context, info) {
-            return context.util.getLocale(data, 'zones', info);
+            return context.data.item.getLocale(data.zones, context, info);
         },
     },
     ItemPropertiesArmorAttachment: {
@@ -274,7 +274,7 @@ module.exports = {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
         headZones(data, args, context, info) {
-            return context.util.getLocale(data, 'headZones', info);
+            return context.data.item.getLocale(data.headZones, context, info);
         }
     },
     ItemPropertiesBackpack: {
@@ -284,13 +284,13 @@ module.exports = {
     },
     ItemPropertiesChestRig: {
         armorType(data, args, context, info) {
-            return context.util.getLocale(data, 'armorType', info);
+            return context.data.item.getLocale(data.armorType, context, info);
         },
         material(data, args, context) {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
         zones(data, args, context, info) {
-            return context.util.getLocale(data, 'zones', info);
+            return context.data.item.getLocale(data.zones, context, info);
         },
         pouches(data) {
             return data.grids;
@@ -303,13 +303,13 @@ module.exports = {
     },
     ItemPropertiesHelmet: {
         armorType(data, args, context, info) {
-            return context.util.getLocale(data, 'armorType', info);
+            return context.data.item.getLocale(data.armorType, context, info);
         },
         material(data, args, context) {
             return context.data.item.getArmorMaterial(context.requestId, data.armor_material_id);
         },
         headZones(data, args, context, info) {
-            return context.util.getLocale(data, 'headZones', info);
+            return context.data.item.getLocale(data.headZones, context, info);
         }
     },
     ItemPropertiesMagazine: {
@@ -328,7 +328,7 @@ module.exports = {
             return context.data.item.getItem(context.requestId, data.default_ammo_id);
         },
         fireModes(data, args, context, info) {
-            return context.util.getLocale(data, 'fireModes', info);
+            return context.data.item.getLocale(data.fireModes, context, info);
         },
         allowedAmmo(data, args, context) {
             return data.allowedAmmo.map(id => context.data.item.getItem(context.requestId, id));
@@ -343,7 +343,7 @@ module.exports = {
     },
     ItemSlot: {
         name(data, ags, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(data.name, context, info);
         }
     },
     ContainedItem: {
@@ -357,12 +357,12 @@ module.exports = {
     },
     ArmorMaterial: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(data.name, context, info);
         }
     },
     FleaMarket: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.item.getLocale(data.name, context, info);
         }
     },
     RequirementItem: {
@@ -375,10 +375,10 @@ module.exports = {
     },
     StimEffect: {
         type(data, args, context, info) {
-            return context.util.getLocale(data, 'type', info);
+            return context.data.item.getLocale(data.type, context, info);
         },
         skillName(data, args, context, info) {
-            return context.util.getLocale(data, 'skillName', info);
+            return context.data.item.getLocale(data.skillName, context, info);
         }
     },
     Vendor: {

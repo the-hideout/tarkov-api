@@ -2,7 +2,7 @@ module.exports = {
     Query: {
         async bosses(obj, args, context, info) {
             let bosses = false;
-            const lang = context.util.getLang(info);
+            const lang = context.util.getLang(info, context);
             let filters = {
                 name: async names => {
                     return context.data.map.getBossesByNames(context.requestId, names, bosses, lang);
@@ -21,7 +21,7 @@ module.exports = {
         },
         async maps(obj, args, context, info) {
             let maps = false;
-            const lang = context.util.getLang(info);
+            const lang = context.util.getLang(info, context);
             let filters = {
                 name: async names => {
                     return context.data.map.getMapsByNames(context.requestId, names, maps, lang);
@@ -44,23 +44,23 @@ module.exports = {
     },
     HealthPart: {
         bodyPart(data, args, context, info) {
-            return context.util.getLocale(data, 'bodyPart', info);
+            return context.data.map.getLocale(data.bodyPart, context, info);
         }
     },
     Map: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.map.getLocale(data.name, context, info);
         },
         description(data, args, context, info) {
-            return context.util.getLocale(data, 'description', info);
+            return context.data.map.getLocale(data.description, context, info);
         },
         enemies(data, args, context, info) {
-            return context.util.getLocale(data, 'enemies', info);
+            return context.data.map.getLocale(data.enemies, context, info);
         }
     },
     MobInfo: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.map.getLocale(data.name, context, info);
         }
     },
     BossSpawn: {
@@ -69,19 +69,19 @@ module.exports = {
         },
         async name(data, args, context, info) {
             const boss = await context.data.map.getMobInfo(context.requestId, data.id);
-            return context.util.getLocale(boss, 'name', info);
+            return context.data.map.getLocale(boss.name, context, info);
         },
         async normalizedName(data, args, context, info) {
             const boss = await context.data.map.getMobInfo(context.requestId, data.id);
             return boss.normalizedName;
         },
         async spawnTrigger(data, args, context, info) {
-            return context.util.getLocale(data, 'spawnTrigger', info);
+            return context.data.map.getLocale(data.spawnTrigger, context, info);
         },
     },
     BossSpawnLocation: {
         name(data, args, context, info) {
-            return context.util.getLocale(data, 'name', info);
+            return context.data.map.getLocale(data.name, context, info);
         },
     },
     BossEscort: {
@@ -90,7 +90,7 @@ module.exports = {
         },
         async name(data, args, context, info) {
             const boss = await context.data.map.getMobInfo(context.requestId, data.id);
-            return context.util.getLocale(boss, 'name', info);
+            return context.data.map.getLocale(boss.name, context, info);
         },
         async normalizedName(data, args, context, info) {
             const boss = await context.data.map.getMobInfo(context.requestId, data.id);
