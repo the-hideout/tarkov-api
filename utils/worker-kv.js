@@ -121,7 +121,7 @@ class WorkerKV {
             return k;
         };
         if (Array.isArray(key)) {
-            return key.map(k => getTranslation(k));
+            return key.map(k => getTranslation(k)).filter(Boolean);
         }
         return getTranslation(key);
     }
