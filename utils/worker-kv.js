@@ -23,7 +23,8 @@ class WorkerKV {
         this.dataSource = dataSource;
     }
 
-    async init(requestId) {
+    async init(context) {
+        const requestId = typeof context === 'object' ? context.requestId : context;
         if (this.cache && (!this.dataExpires || new Date() < this.dataExpires)) {
             //console.log(`${this.kvName} is fresh; not refreshing`);
             this.dataSource.setKvUsedForRequest(this.kvName, requestId);
@@ -106,7 +107,7 @@ class WorkerKV {
         return this.loadingPromises[requestId];
     }
 
-    async getLocale(key, context, info) {
+    getLocale(key, context, info) {
         if (!key) {
             return null;
         }

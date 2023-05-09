@@ -5,21 +5,21 @@ class TasksAPI extends WorkerKV {
         super('quest_data', dataSource);
     }
 
-    async getList(requestId) {
-        await this.init(requestId);
+    async getList(context) {
+        await this.init(context);
         return this.cache.Task;
     }
 
-    async get(requestId, id) {
-        await this.init(requestId);
+    async get(context, id) {
+        await this.init(context);
         for (const task of this.cache.Task) {
             if (task.id === id || task.tarkovDataId === id) return task;
         }
         return Promise.reject(new Error(`No task found with id ${id}`));
     }
 
-    async getTasksRequiringItem(requestId, itemId) {
-        await this.init(requestId);
+    async getTasksRequiringItem(context, itemId) {
+        await this.init(context);
         const tasks = this.cache.Task.filter(rawTask => {
             for (const obj of rawTask.objectives) {
                 if (obj.item === itemId) {
@@ -75,8 +75,8 @@ class TasksAPI extends WorkerKV {
         });
     }
 
-    async getTasksProvidingItem(requestId, itemId) {
-        await this.init(requestId);
+    async getTasksProvidingItem(context, itemId) {
+        await this.init(context);
         const tasks = this.cache.Task.filter(rawTask => {
             for (const reward of rawTask.startRewards.items) {
                 if (reward.item === itemId) {
@@ -105,14 +105,14 @@ class TasksAPI extends WorkerKV {
         });
     }
 
-    async getQuests(requestId) {
-        await this.init(requestId);
+    async getQuests(context) {
+        await this.init(context);
         return this.cache.Quest;
     }
 
-    async getQuest(requestId, id) {
-        await this.init(requestId);
-        const quests = await this.getQuests(requestId);
+    async getQuest(context, id) {
+        await this.init(context);
+        const quests = await this.getQuests(context);
         for (const quest of quests) {
             if (quest.id === id) {
                 return quest;
@@ -121,13 +121,13 @@ class TasksAPI extends WorkerKV {
         return Promise.reject(new Error(`No quest with id ${id} found`));
     }
 
-    async getQuestItems(requestId) {
-        await this.init(requestId);
+    async getQuestItems(context) {
+        await this.init(context);
         return Object.values(this.cache.QuestItem);
     }
 
-    async getQuestItem(requestId, id) {
-        await this.init(requestId);
+    async getQuestItem(context, id) {
+        await this.init(context);
         return this.cache.QuestItem[id];
     }
 }
