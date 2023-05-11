@@ -41,13 +41,13 @@ class TradersAPI extends WorkerKV {
         super('trader_data', dataSource);
     }
 
-    async getList(requestId) {
-        await this.init(requestId);
+    async getList(context) {
+        await this.init(context);
         return this.cache.Trader;
     }
 
-    async get(requestId, id) {
-        await this.init(requestId);
+    async get(context, id) {
+        await this.init(context);
         for (const trader of this.cache.Trader) {
             if (trader.id === id) {
                 return trader;
@@ -57,10 +57,10 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with id ${id}`));
     }
 
-    async getByName(requestId, name) {
-        await this.init(requestId);
+    async getByName(context, info, name) {
+        await this.init(context);
         for (const trader of this.cache.Trader) {
-            if (trader.name.toLowerCase() === name.toLowerCase()) {
+            if (this.getLocale(trader.name, context, info).toLowerCase() === name.toLowerCase()) {
                 return trader;
             }
         }
@@ -68,8 +68,8 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with name ${name}`));
     }
 
-    async getByLevel(requestId, traderId, level) {
-        await this.init(requestId);
+    async getByLevel(context, traderId, level) {
+        await this.init(context);
         for (const trader of this.cache.Trader) {
             if (trader.id !== traderId) continue;
             for (const rawLevel of trader.levels) {
@@ -81,15 +81,15 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with id ${traderId} and level ${level}`));
     }
 
-    getByDataId(requestId, dataId) {
-        return this.get(requestId, dataIdMap[dataId]);
+    getByDataId(context, dataId) {
+        return this.get(context, dataIdMap[dataId]);
     }
 
-    async getTraderResets(requestId) {
-        await this.init(requestId);
+    async getTraderResets(context, info) {
+        await this.init(context);
         return this.cache.Trader.map(trader => {
             return {
-                name: trader.name.toLowerCase(),
+                name: this.getLocale(trader.name, context, info).toLowerCase(),
                 resetTimestamp: trader.resetTime,
             }
         });
