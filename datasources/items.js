@@ -65,8 +65,8 @@ class ItemsAPI extends WorkerKV {
         return item;
     }
 
-    async getItem(requestId, id, contains) {
-        await this.init(requestId);
+    async getItem(context, id, contains) {
+        await this.init(context);
         let item = this.cache.Item[id];
         if (!item) {
             return Promise.reject(new Error(`No item found with id ${id}`));
@@ -83,15 +83,15 @@ class ItemsAPI extends WorkerKV {
         return formatted;
     }
 
-    async getAllItems(requestId) {
-        await this.init(requestId);
+    async getAllItems(context) {
+        await this.init(context);
         return Object.values(this.cache.Item).map((rawItem) => {
             return this.formatItem(rawItem);
         });
     }
 
-    async getItemsByIDs(requestId, ids, items = false) {
-        await this.init(requestId);
+    async getItemsByIDs(context, ids, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -105,8 +105,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByType(requestId, type, items = false) {
-        await this.init(requestId);
+    async getItemsByType(context, type, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -120,8 +120,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByTypes(requestId, types, items = false) {
-        await this.init(requestId);
+    async getItemsByTypes(context, types, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -138,8 +138,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByName(requestId, name, items = false, lang = 'en') {
-        await this.init(requestId);
+    async getItemsByName(context, name, info, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -149,11 +149,10 @@ class ItemsAPI extends WorkerKV {
         if (searchString === '') return Promise.reject(new Error('Searched item name cannot be blank'));
 
         return items.filter((rawItem) => {
-            if (!rawItem.locale || !rawItem.locale[lang]) return false;
-            if (rawItem.locale[lang].name && rawItem.locale[lang].name.toString().toLowerCase().includes(searchString)) {
+            if (this.getLocale(rawItem.name, context, info).toString().toLowerCase().includes(searchString)) {
                 return true;
             }
-            if (rawItem.locale[lang].shortName && rawItem.locale[lang].shortName.toString().toLowerCase().includes(searchString)) {
+            if (this.getLocale(rawItem.shortName, context, info).toString().toLowerCase().includes(searchString)) {
                 return true;
             }
             return false;
@@ -163,8 +162,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByNames(requestId, names, items = false, lang = 'en') {
-        await this.init(requestId);
+    async getItemsByNames(context, names, info, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -175,12 +174,11 @@ class ItemsAPI extends WorkerKV {
             return name.toLowerCase();
         });
         return items.filter((rawItem) => {
-            if (!rawItem.locale || !rawItem.locale[lang]) return false;
             for (const search of searchStrings) {
-                if (rawItem.locale[lang].name && rawItem.locale[lang].name.toString().toLowerCase().includes(search)) {
+                if (this.getLocale(rawItem.name, context, info).toString().toLowerCase().includes(search)) {
                     return true;
                 }
-                if (rawItem.locale[lang].shortName && rawItem.locale[lang].shortName.toString().toLowerCase().includes(search)) {
+                if (this.getLocale(rawItem.shortName, context, info).toString().toLowerCase().includes(search)) {
                     return true;
                 }
             }
@@ -191,8 +189,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByBsgCategoryId(requestId, bsgCategoryId, items = false) {
-        await this.init(requestId);
+    async getItemsByBsgCategoryId(context, bsgCategoryId, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -206,8 +204,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByBsgCategoryIds(requestId, bsgCategoryIds, items = false) {
-        await this.init(requestId);
+    async getItemsByBsgCategoryIds(context, bsgCategoryIds, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -221,8 +219,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByCategoryEnums(requestId, names, items = false) {
-        await this.init(requestId);
+    async getItemsByCategoryEnums(context, names, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -237,8 +235,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsByHandbookCategoryEnums(requestId, names, items = false) {
-        await this.init(requestId);
+    async getItemsByHandbookCategoryEnums(context, names, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -253,8 +251,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemsInBsgCategory(requestId, bsgCategoryId, items = false) {
-        await this.init(requestId);
+    async getItemsInBsgCategory(context, bsgCategoryId, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -268,8 +266,8 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getItemByNormalizedName(requestId, normalizedName) {
-        await this.init(requestId);
+    async getItemByNormalizedName(context, normalizedName) {
+        await this.init(context);
         const item = Object.values(this.cache.Item).find((item) => item.normalized_name === normalizedName);
 
         if (!item) {
@@ -279,8 +277,8 @@ class ItemsAPI extends WorkerKV {
         return this.formatItem(item);
     }
 
-    async getItemsByDiscardLimitedStatus(requestId, limited, items = false) {
-        await this.init(requestId);
+    async getItemsByDiscardLimitedStatus(context, limited, items = false) {
+        await this.init(context);
         let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
@@ -294,20 +292,20 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getCategory(requestId, id) {
-        await this.init(requestId);
+    async getCategory(context, id) {
+        await this.init(context);
         return this.cache.ItemCategory[id] || this.cache.HandbookCategory[id];
     }
 
-    async getTopCategory(requestId, id) {
-        await this.init(requestId);
+    async getTopCategory(context, id) {
+        await this.init(context);
         const cat = await this.getCategory(id);
         if (cat && cat.parent_id) return this.getTopCategory(cat.parent_id);
         return cat;
     }
 
-    async getCategories(requestId) {
-        await this.init(requestId);
+    async getCategories(context) {
+        await this.init(context);
         if (!this.cache) {
             return Promise.reject(new Error('Item cache is empty'));
         }
@@ -318,8 +316,8 @@ class ItemsAPI extends WorkerKV {
         return categories;
     }
 
-    async getCategoriesEnum(requestId) {
-        const cats = await this.getCategories(requestId);
+    async getCategoriesEnum(context) {
+        const cats = await this.getCategories(context);
         const map = {};
         for (const id in cats) {
             map[cats[id].enumName] = cats[id];
@@ -327,36 +325,36 @@ class ItemsAPI extends WorkerKV {
         return map;
     }
 
-    async getHandbookCategory(requestId, id) {
-        await this.init(requestId);
+    async getHandbookCategory(context, id) {
+        await this.init(context);
         return this.cache.HandbookCategory[id];
     }
 
-    async getHandbookCategories(requestId) {
-        await this.init(requestId);
+    async getHandbookCategories(context) {
+        await this.init(context);
         if (!this.cache) {
             return Promise.reject(new Error('Item cache is empty'));
         }
         return Object.values(this.cache.HandbookCategory);
     }
 
-    async getFleaMarket(requestId) {
-        await this.init(requestId);
+    async getFleaMarket(context) {
+        await this.init(context);
         return this.cache.FleaMarket;
     }
 
-    async getArmorMaterials(requestId) {
-        await this.init(requestId);
+    async getArmorMaterials(context) {
+        await this.init(context);
         return Object.values(this.cache.ArmorMaterial).sort();
     }
 
-    async getArmorMaterial(requestId, matKey) {
-        await this.init(requestId);
+    async getArmorMaterial(context, matKey) {
+        await this.init(context);
         return this.cache.ArmorMaterial[matKey];
     }
 
-    async getAmmoList(requestId) {
-        const allAmmo = await this.getItemsByBsgCategoryId(requestId, '5485a8684bdc2da71d8b4567').then(ammoItems => {
+    async getAmmoList(context) {
+        const allAmmo = await this.getItemsByBsgCategoryId(context, '5485a8684bdc2da71d8b4567').then(ammoItems => {
             // ignore bb
             return ammoItems.filter(item => item.id !== '6241c316234b593b5676b637');
         });
@@ -368,18 +366,18 @@ class ItemsAPI extends WorkerKV {
         });
     }
 
-    async getPlayerLevels(requestId) {
-        await this.init(requestId);
+    async getPlayerLevels(context) {
+        await this.init(context);
         return this.cache.PlayerLevel;
     }
 
-    async getTypes(requestId) {
-        await this.init(requestId);
+    async getTypes(context) {
+        await this.init(context);
         return this.cache.ItemType;
     }
 
-    async getLanguageCodes(requestId) {
-        await this.init(requestId);
+    async getLanguageCodes(context) {
+        await this.init(context);
         return this.cache.LanguageCode;
     }
 }
