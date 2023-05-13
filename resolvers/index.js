@@ -10,5 +10,4 @@ module.exports = mergeResolvers([
     require('./taskResolver'),
     require('./traderResolver'),
     require('./mapResolver'),
-    require('./skillResolver'),
 ]);
