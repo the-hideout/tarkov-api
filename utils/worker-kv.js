@@ -23,7 +23,8 @@ class WorkerKV {
         this.dataSource = dataSource;
     }
 
-    async init(requestId) {
+    async init(context) {
+        const requestId = typeof context === 'object' ? context.requestId : context;
         if (this.cache && (!this.dataExpires || new Date() < this.dataExpires)) {
             //console.log(`${this.kvName} is fresh; not refreshing`);
             this.dataSource.setKvUsedForRequest(this.kvName, requestId);
@@ -104,6 +105,26 @@ class WorkerKV {
             });
         });
         return this.loadingPromises[requestId];
+    }
+
+    getLocale(key, context, info) {
+        if (!key) {
+            return null;
+        }
+        const lang = context.util.getLang(info, context);
+        const getTranslation = (k) => {
+            if (this.cache.locale && this.cache.locale[lang] && this.cache.locale[lang][k]) {
+                return this.cache.locale[lang][k];
+            }
+            if (this.cache.locale && this.cache.locale.en && this.cache.locale.en[k]) {
+                return this.cache.locale.en[k];
+            }
+            return k;
+        };
+        if (Array.isArray(key)) {
+            return key.map(k => getTranslation(k)).filter(Boolean);
+        }
+        return getTranslation(key);
     }
 }
 

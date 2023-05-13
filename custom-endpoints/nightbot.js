@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 
 const cacheMachine = require('../utils/cache-machine');
+const graphqlUtil = require('../utils/graphql-util');
 
 const skipCache = false; //ENVIRONMENT !== 'production' || false;
 
@@ -35,7 +36,14 @@ module.exports = async (request, data, event) => {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const items = await data.item.getItemsByName(requestId, url.searchParams.get('q'));
+    const items = await data.item.getItemsByName(
+        {
+            util: graphqlUtil,
+            lang: 'en',
+            requestId,
+        },
+        url.searchParams.get('q'),
+    );
 
     let response = 'Found no item matching that name';
 
