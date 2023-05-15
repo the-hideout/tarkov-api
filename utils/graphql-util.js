@@ -13,9 +13,6 @@ module.exports = {
         if (depth > depthLimit) throw new Error(`Query depth ${depth} exceeds maximum (${depthLimit}) for ${info.parentType}.${info.fieldName}.`);
     },
     getLang: (info, context) => {
-        if (context && context.lang) {
-            return context.lang;
-        }
         let lang = 'en';
         let langFound = false;
         let myRoot = info.path.key;
@@ -24,10 +21,15 @@ module.exports = {
         }
         for (const selection of info.operation.selectionSet.selections) {
             let selectionRoot = selection.name.value;
-            if (selection.alias)
+            if (selection.alias) {
                 selectionRoot = selection.alias.value;
-            if (selectionRoot !== myRoot)
+            }
+            if (selectionRoot !== myRoot) {
                 continue;
+            }
+            if (context && context.lang[myRoot]) {
+                return context.lang[myRoot];
+            }
             for (const arg of selection.arguments) {
                 if (arg.name.value === 'lang') {
                     lang = arg.value.value;
@@ -38,7 +40,7 @@ module.exports = {
             if (langFound) break;
         }
         if (context) {
-            context.lang = lang;
+            context.lang[myRoot] = lang;
         }
         return lang;
     },
