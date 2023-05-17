@@ -161,7 +161,7 @@ async function graphqlHandler(event, graphQLOptions) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const context = { data: dataAPI, util: graphqlUtil, requestId, warnings: [] };
+    const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [] };
     let result = await graphql(await getSchema(dataAPI, requestId), query, {}, context, variables);
     if (context.warnings.length > 0) {
         if (!result.warnings) {
