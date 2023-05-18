@@ -119,6 +119,10 @@ class WorkerKV {
             if (this.cache.locale && this.cache.locale.en && this.cache.locale.en[k]) {
                 return this.cache.locale.en[k];
             }
+            const errorMessage = `Missing translation for key ${k}`;
+            if (!context.errors.includes(errorMessage)) {
+                context.errors.push(errorMessage);
+            }
             return k;
         };
         if (Array.isArray(key)) {
