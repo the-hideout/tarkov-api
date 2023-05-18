@@ -113,10 +113,10 @@ class WorkerKV {
         }
         const lang = context.util.getLang(info, context);
         const getTranslation = (k) => {
-            if (this.cache.locale && this.cache.locale[lang] && this.cache.locale[lang][k]) {
+            if (this.cache.locale && this.cache.locale[lang] && typeof this.cache.locale[lang][k] !== 'undefined') {
                 return this.cache.locale[lang][k];
             }
-            if (this.cache.locale && this.cache.locale.en && this.cache.locale.en[k]) {
+            if (this.cache.locale && this.cache.locale.en && typeof this.cache.locale.en[k] !== 'undefined') {
                 return this.cache.locale.en[k];
             }
             const errorMessage = `Missing translation for key ${k}`;
