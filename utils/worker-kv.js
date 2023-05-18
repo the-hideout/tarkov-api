@@ -120,8 +120,8 @@ class WorkerKV {
                 return this.cache.locale.en[k];
             }
             const errorMessage = `Missing translation for key ${k}`;
-            if (!context.errors.includes(errorMessage)) {
-                context.errors.push(errorMessage);
+            if (!context.errors.some(err => err.message = errorMessage)) {
+                context.errors.push({message: errorMessage});
             }
             return k;
         };
