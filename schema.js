@@ -632,6 +632,8 @@ type Map {
   players: String
   bosses: [BossSpawn]!
   nameId: String
+  accessKeys: [Item]!
+  accessKeysMinPlayerLevel: Int
   #svg: MapSvg
 }
 

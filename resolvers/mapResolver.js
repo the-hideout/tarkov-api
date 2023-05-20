@@ -46,6 +46,9 @@ module.exports = {
         }
     },
     Map: {
+        accessKeys(data, args, context, info) {
+            return context.data.item.getItemsByIDs(context, data.accessKeys);
+        },
         name(data, args, context, info) {
             return context.data.map.getLocale(data.name, context, info);
         },
