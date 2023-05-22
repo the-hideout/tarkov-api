@@ -725,7 +725,7 @@ type RequirementTrader {
   requirementType: String
   compareMethod: String
   value: Int
-  level: Int @deprecated(reason: "Use requirement instead.")
+  level: Int @deprecated(reason: "Use value instead.")
 }
 
 enum RequirementType {
