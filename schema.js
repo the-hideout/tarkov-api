@@ -722,9 +722,9 @@ type RequirementTask {
 type RequirementTrader {
   id: ID
   trader: Trader!
-  requirementType: String!
-  compareMethod: String!
-  value: Int!
+  requirementType: String
+  compareMethod: String
+  value: Int
   level: Int @deprecated(reason: "Use requirement instead.")
 }
 
