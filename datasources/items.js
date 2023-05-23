@@ -244,7 +244,7 @@ class ItemsAPI extends WorkerKV {
         }
         const categories = (await this.getHandbookCategories()).filter(cat => names.includes(cat.enumName));
         return items.filter((rawItem) => {
-            return rawItem.categories.some(catId => categories.some(cat => cat.id === catId));
+            return rawItem.handbookCategories.some(catId => categories.some(cat => cat.id === catId));
         }).map((rawItem) => {
             if (!format) return rawItem;
             return this.formatItem(rawItem)
