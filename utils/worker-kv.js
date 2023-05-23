@@ -98,6 +98,7 @@ class WorkerKV {
                 this.dataSource.setKvLoadedForRequest(this.kvName, requestId);
                 this.loading = false;
                 delete this.loadingPromises[requestId];
+                this.postLoad();
                 resolve();
             }).catch(error => {
                 this.loading = false;
@@ -130,6 +131,8 @@ class WorkerKV {
         }
         return getTranslation(key);
     }
+
+    postLoad() { /* some KVs may require initial processing after retrieval */ }
 }
 
 module.exports = WorkerKV;
