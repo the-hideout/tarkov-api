@@ -1,10 +1,10 @@
 module.exports = {
     Query: {
         async tasks(obj, args, context, info) {
-            const tasks = await context.data.task.getList(context);
+            let tasks = await context.data.task.getList(context);
             if (args.faction) {
                 const filterFaction = args.faction.toLowerCase();
-                return tasks.filter(task => {
+                tasks = tasks.filter(task => {
                     if (!task.factionName) return true;
                     const taskFaction = task.factionName.toLowerCase();
                     return taskFaction === 'any' || taskFaction === filterFaction;
