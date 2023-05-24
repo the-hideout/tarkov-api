@@ -161,8 +161,14 @@ async function graphqlHandler(event, graphQLOptions) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [] };
+    const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [], errors: [] };
     let result = await graphql(await getSchema(dataAPI, requestId), query, {}, context, variables);
+    if (context.errors.length > 0) {
+        if (!result.errors) {
+            result = Object.assign({errors: []}, result); // this puts the errors at the start of the result
+        }
+        result.errors.push(...context.errors);
+    }
     if (context.warnings.length > 0) {
         if (!result.warnings) {
             result = Object.assign({warnings: []}, result);
@@ -174,7 +180,6 @@ async function graphqlHandler(event, graphQLOptions) {
 
     if (specialCache === 'application/json') {
         if (!result.warnings) {
-            'specialCache !result.warnings'
             result = Object.assign({warnings: []}, result);
         }
         ttl = 30 * 60;

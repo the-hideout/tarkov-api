@@ -5,14 +5,10 @@ class ItemsAPI extends WorkerKV {
         super('item_data', dataSource);
     }
 
-    formatItem(rawItem) {
-        const item = {
-            ...rawItem,
-        };
-
-        // add trader prices to sellFor
-        item.sellFor = [
-            ...item.traderPrices.map((traderPrice) => {
+    postLoad() {
+        for (const item of Object.values(this.cache.Item)) {
+            // add trader prices to sellFor
+            item.sellFor = item.traderPrices.map((traderPrice) => {
                 return {
                     price: traderPrice.price,
                     currency: traderPrice.currency,
@@ -28,41 +24,38 @@ class ItemsAPI extends WorkerKV {
                     source: traderPrice.name.toLowerCase(),
                     requirements: [],
                 };
-            }),
-        ];
-
-        item.buyFor = [];
-
-        // add flea prices to sellFor and buyFor
-        if (!item.types.includes('noFlea') && item.lastLowPrice) {
-            item.sellFor.push({
-                price: item.lastLowPrice || 0,
-                currency: 'RUB',
-                currencyItem: '5449016a4bdc2d6f028b456f',
-                priceRUB: item.lastLowPrice || 0,
-                vendor: this.cache.FleaMarket,
-                source: 'fleaMarket',
-                requirements: [{
-                    type: 'playerLevel',
-                    value: this.cache.FleaMarket.minPlayerLevel,
-                }],
             });
 
-            item.buyFor.push({
-                price: item.avg24hPrice || item.lastLowPrice || 0,
-                currency: 'RUB',
-                currencyItem: '5449016a4bdc2d6f028b456f',
-                priceRUB: item.avg24hPrice || item.lastLowPrice || 0,
-                vendor: this.cache.FleaMarket,
-                source: 'fleaMarket',
-                requirements: [{
-                    type: 'playerLevel',
-                    value: this.cache.FleaMarket.minPlayerLevel,
-                }],
-            });
+            item.buyFor = [];
+            // add flea prices to sellFor and buyFor
+            if (!item.types.includes('noFlea') && item.lastLowPrice) {
+                item.sellFor.push({
+                    price: item.lastLowPrice || 0,
+                    currency: 'RUB',
+                    currencyItem: '5449016a4bdc2d6f028b456f',
+                    priceRUB: item.lastLowPrice || 0,
+                    vendor: this.cache.FleaMarket,
+                    source: 'fleaMarket',
+                    requirements: [{
+                        type: 'playerLevel',
+                        value: this.cache.FleaMarket.minPlayerLevel,
+                    }],
+                });
+    
+                item.buyFor.push({
+                    price: item.avg24hPrice || item.lastLowPrice || 0,
+                    currency: 'RUB',
+                    currencyItem: '5449016a4bdc2d6f028b456f',
+                    priceRUB: item.avg24hPrice || item.lastLowPrice || 0,
+                    vendor: this.cache.FleaMarket,
+                    source: 'fleaMarket',
+                    requirements: [{
+                        type: 'playerLevel',
+                        value: this.cache.FleaMarket.minPlayerLevel,
+                    }],
+                });
+            }
         }
-
-        return item;
     }
 
     async getItem(context, id, contains) {
@@ -72,198 +65,133 @@ class ItemsAPI extends WorkerKV {
             return Promise.reject(new Error(`No item found with id ${id}`));
         }
 
-        const formatted = this.formatItem(item);
         if (contains && Array.isArray(contains)) {
-            formatted.containsItems = contains.map((cItem) => {
+            item.containsItems = contains.map((cItem) => {
                 if (!cItem.attributes) cItem.attributes = [];
                 if (!cItem.count) cItem.count = 1;
                 return cItem;
             });
         }
-        return formatted;
+        return item;
     }
 
     async getAllItems(context) {
         await this.init(context);
-        return Object.values(this.cache.Item).map((rawItem) => {
-            return this.formatItem(rawItem);
-        });
+        return Object.values(this.cache.Item);
     }
 
     async getItemsByIDs(context, ids, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
-        return items.filter((rawItem) => {
-            return ids.includes(rawItem.id);
-        }).map((rawItem) => {
-            if (!format) return rawItem;
-            return this.formatItem(rawItem);
-        });
+        return items.filter((item) => ids.includes(item.id));
     }
 
     async getItemsByType(context, type, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
-        return items.filter((rawItem) => {
-            return rawItem.types.includes(type) || type === 'any';
-        }).map((rawItem) => {
-            if (!format) return rawItem;
-            return this.formatItem(rawItem);
-        });
+        return items.filter((item) => item.types.includes(type) || type === 'any');
     }
 
     async getItemsByTypes(context, types, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
-        return items.filter((rawItem) => {
-            for (const type of types) {
-                if (rawItem.types.includes(type) || type === 'any') return true;
-            }
-            return false;
-        }).map((rawItem) => {
-            if (!format) return rawItem;
-            return this.formatItem(rawItem);
-        });
+        if (types.includes('any')) {
+            return items;
+        }
+        return items.filter((item) => types.some(type => item.types.includes(type)));
     }
 
     async getItemsByName(context, name, info, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
         const searchString = name.toLowerCase();
         if (searchString === '') return Promise.reject(new Error('Searched item name cannot be blank'));
 
-        return items.filter((rawItem) => {
-            if (this.getLocale(rawItem.name, context, info).toString().toLowerCase().includes(searchString)) {
+        return items.filter((item) => {
+            if (this.getLocale(item.name, context, info).toString().toLowerCase().includes(searchString)) {
                 return true;
             }
-            if (this.getLocale(rawItem.shortName, context, info).toString().toLowerCase().includes(searchString)) {
+            if (this.getLocale(item.shortName, context, info).toString().toLowerCase().includes(searchString)) {
                 return true;
             }
             return false;
-        }).map((rawItem) => {
-            if (!format) return rawItem;
-            return this.formatItem(rawItem);
         });
     }
 
     async getItemsByNames(context, names, info, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
         const searchStrings = names.map(name => {
             if (name === '') throw new Error('Searched item name cannot be blank');
             return name.toLowerCase();
         });
-        return items.filter((rawItem) => {
+        return items.filter((item) => {
             for (const search of searchStrings) {
-                if (this.getLocale(rawItem.name, context, info).toString().toLowerCase().includes(search)) {
+                if (this.getLocale(item.name, context, info).toString().toLowerCase().includes(search)) {
                     return true;
                 }
-                if (this.getLocale(rawItem.shortName, context, info).toString().toLowerCase().includes(search)) {
+                if (this.getLocale(item.shortName, context, info).toString().toLowerCase().includes(search)) {
                     return true;
                 }
             }
             return false;
-        }).map((rawItem) => {
-            if (!format) return rawItem;
-            return this.formatItem(rawItem);
         });
     }
 
     async getItemsByBsgCategoryId(context, bsgCategoryId, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
-        return items.filter((rawItem) => {
-            return rawItem.bsgCategoryId === bsgCategoryId;
-        }).map((rawItem) => {
-            if (!format) return rawItem;
-            return this.formatItem(rawItem)
-        });
+        return items.filter((item) => item.bsgCategoryId === bsgCategoryId);
     }
 
     async getItemsByBsgCategoryIds(context, bsgCategoryIds, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
-        return items.filter((rawItem) => {
-            return bsgCategoryIds.some(catId => catId === rawItem.bsgCategoryId);
-        }).map((rawItem) => {
-            if (!format) return rawItem;
-            return this.formatItem(rawItem)
-        });
+        return items.filter((item) => bsgCategoryIds.some(catId => catId === item.bsgCategoryId));
     }
 
     async getItemsByCategoryEnums(context, names, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
         const categories = (await this.getCategories()).filter(cat => names.includes(cat.enumName));
-        return items.filter((rawItem) => {
-            return rawItem.categories.some(catId => categories.some(cat => cat.id === catId));
-        }).map((rawItem) => {
-            if (!format) return rawItem;
-            return this.formatItem(rawItem)
+        return items.filter((item) => {
+            return item.categories.some(catId => categories.some(cat => cat.id === catId));
         });
     }
 
     async getItemsByHandbookCategoryEnums(context, names, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
         const categories = (await this.getHandbookCategories()).filter(cat => names.includes(cat.enumName));
-        return items.filter((rawItem) => {
-            return rawItem.categories.some(catId => categories.some(cat => cat.id === catId));
-        }).map((rawItem) => {
-            if (!format) return rawItem;
-            return this.formatItem(rawItem)
+        return items.filter((item) => {
+            return item.handbookCategories.some(catId => categories.some(cat => cat.id === catId));
         });
     }
 
     async getItemsInBsgCategory(context, bsgCategoryId, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
-        return items.filter(item => {
-            return item.categories.includes(bsgCategoryId);
-        }).map(item => {
-            if (!format) return item;
-            return this.formatItem(item);
-        });
+        return items.filter(item => item.categories.includes(bsgCategoryId));
     }
 
     async getItemByNormalizedName(context, normalizedName) {
@@ -274,21 +202,16 @@ class ItemsAPI extends WorkerKV {
             return null;
         }
 
-        return this.formatItem(item);
+        return item;
     }
 
     async getItemsByDiscardLimitedStatus(context, limited, items = false) {
         await this.init(context);
-        let format = false;
         if (!items) {
             items = Object.values(this.cache.Item);
-            format = true;
         }
         return items.filter(item => {
             return (item.discardLimit > -1 && limited) || (item.discardLimit == -1 && !limited);
-        }).map(item => {
-            if (!format) return item;
-            return this.formatItem(item);
         });
     }
 

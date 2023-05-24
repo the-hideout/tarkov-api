@@ -632,6 +632,8 @@ type Map {
   players: String
   bosses: [BossSpawn]!
   nameId: String
+  accessKeys: [Item]!
+  accessKeysMinPlayerLevel: Int
   #svg: MapSvg
 }
 
@@ -720,10 +722,10 @@ type RequirementTask {
 type RequirementTrader {
   id: ID
   trader: Trader!
-  requirementType: String!
-  compareMethod: String!
-  value: Int!
-  level: Int @deprecated(reason: "Use requirement instead.")
+  requirementType: String
+  compareMethod: String
+  value: Int
+  level: Int @deprecated(reason: "Use value instead.")
 }
 
 enum RequirementType {

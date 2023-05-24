@@ -98,6 +98,7 @@ class WorkerKV {
                 this.dataSource.setKvLoadedForRequest(this.kvName, requestId);
                 this.loading = false;
                 delete this.loadingPromises[requestId];
+                this.postLoad();
                 resolve();
             }).catch(error => {
                 this.loading = false;
@@ -113,11 +114,15 @@ class WorkerKV {
         }
         const lang = context.util.getLang(info, context);
         const getTranslation = (k) => {
-            if (this.cache.locale && this.cache.locale[lang] && this.cache.locale[lang][k]) {
+            if (this.cache.locale && this.cache.locale[lang] && typeof this.cache.locale[lang][k] !== 'undefined') {
                 return this.cache.locale[lang][k];
             }
-            if (this.cache.locale && this.cache.locale.en && this.cache.locale.en[k]) {
+            if (this.cache.locale && this.cache.locale.en && typeof this.cache.locale.en[k] !== 'undefined') {
                 return this.cache.locale.en[k];
+            }
+            const errorMessage = `Missing translation for key ${k}`;
+            if (!context.errors.some(err => err.message = errorMessage)) {
+                context.errors.push({message: errorMessage});
             }
             return k;
         };
@@ -126,6 +131,8 @@ class WorkerKV {
         }
         return getTranslation(key);
     }
+
+    postLoad() { /* some KVs may require initial processing after retrieval */ }
 }
 
 module.exports = WorkerKV;
