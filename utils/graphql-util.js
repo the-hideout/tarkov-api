@@ -14,6 +14,9 @@ module.exports = {
     },
     getLang: (info, context) => {
         let lang = 'en';
+        if (!info) {
+            return lang;
+        }
         let langFound = false;
         let myRoot = info.path.key;
         for (let currentNode = info.path.prev; currentNode; currentNode = currentNode.prev) {
