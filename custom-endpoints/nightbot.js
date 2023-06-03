@@ -36,20 +36,48 @@ module.exports = async (request, data, event) => {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const items = await data.item.getItemsByName(
-        {
-            util: graphqlUtil,
-            lang: 'en',
-            requestId,
+    const context = {
+        data,
+        util: graphqlUtil,
+        requestId,
+        lang: {},
+        warnings: [],
+        errors: [],
+    };
+    const info = {
+        path: {
+            key: 'query',
         },
-        url.searchParams.get('q'),
-    );
+        operation: {
+            selectionSet: {
+                selections: [
+                    {
+                        name: {
+                            value: 'query'
+                        },
+                        arguments: [
+                            {
+                                name: {
+                                    value: 'lang',
+                                },
+                                value: {
+                                    value: url.searchParams.get('l') || 'en'
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    };
+    const items = await data.item.getItemsByName(context, url.searchParams.get('q'), info);
 
     let response = 'Found no item matching that name';
 
     if (items.length > 0) {
         const bestPrice = items[0].sellFor.sort((a, b) => b.price - a.price);
-        response = `${items[0].name} ${new Intl.NumberFormat().format(bestPrice[0].price)} ₽ ${capitalize(bestPrice[0].source)} https://tarkov.dev/item/${items[0].normalizedName}`;
+        const itemName = data.item.getLocale(items[0].name, context, info);
+        response = `${itemName} ${new Intl.NumberFormat().format(bestPrice[0].price)} ₽ ${capitalize(bestPrice[0].source)} https://tarkov.dev/item/${items[0].normalizedName}`;
     }
 
     let ttl = data.getRequestTtl(requestId);

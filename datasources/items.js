@@ -21,7 +21,7 @@ class ItemsAPI extends WorkerKV {
                         minTraderLevel: 1,
                         taskUnlock: null
                     },
-                    source: traderPrice.name.toLowerCase(),
+                    source: traderPrice.source,
                     requirements: [],
                 };
             });

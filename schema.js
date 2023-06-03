@@ -418,6 +418,21 @@ type ItemPropertiesGrenade {
   contusionRadius: Int
 }
 
+type ItemPropertiesHeadphone {
+  ambientVolume: Int
+  compressorAttack: Int
+  compressorGain: Int
+  compressorRelease: Int
+  compressorThreshold: Int
+  compressorVolume: Int
+  cutoffFrequency: Int
+  distanceModifier: Float
+  distortion: Float
+  dryVolume: Int
+  highFrequencyGain: Float
+  resonance: Float
+}
+
 type ItemPropertiesHelmet {
   class: Int
   durability: Int
@@ -578,6 +593,7 @@ union ItemProperties =
   ItemPropertiesFoodDrink | 
   ItemPropertiesGlasses | 
   ItemPropertiesGrenade | 
+  ItemPropertiesHeadphone | 
   ItemPropertiesHelmet | 
   ItemPropertiesKey | 
   ItemPropertiesMagazine | 
