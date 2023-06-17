@@ -15,9 +15,9 @@
     "author": "Oskar Risberg <oskar.risberg@stendahls.se>",
     "license": "ISC",
     "devDependencies": {
-        "wrangler": "^2.19.0",
         "newman": "^5.3.2",
-        "prettier": "^2.8.8"
+        "prettier": "^2.8.8",
+        "wrangler": "^2.19.0"
     },
     "dependencies": {
         "@graphql-tools/merge": "8.4.1",
