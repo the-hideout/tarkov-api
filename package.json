@@ -1,8 +1,11 @@
 {
-    "name": "tarkov-data-api",
-    "version": "1.0.0",
-    "description": "package for creating workers templates",
+    "name": "tarkov-api",
+    "version": "0.0.0",
+    "description": "Tarkov Data API",
     "main": "index.js",
+    "engines": {
+        "node": ">=18.16.0"
+    },
     "scripts": {
         "test": "echo \"Error: no test specified\"",
         "format": "prettier --write '**/*.{js,css,json,md}'",
@@ -12,7 +15,7 @@
         "tail": "node tail.js",
         "tail-dev": "node tail.js development"
     },
-    "author": "Oskar Risberg <oskar.risberg@stendahls.se>",
+    "author": "Oskar Risberg <oskar.risberg@stendahls.se> + The-Hideout team",
     "license": "ISC",
     "devDependencies": {
         "newman": "^5.3.2",
