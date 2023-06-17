@@ -27,5 +27,5 @@ jobs:
 
       - name: test
         env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: script/test
