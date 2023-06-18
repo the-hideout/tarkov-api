@@ -84,3 +84,5 @@ If you wish to deploy locally and have permissions to do so, run the following c
 ```bash
 wrangler publish
 ```
+
+> We don't do this often and generally use GitHub actions to do all of our deployments for us
