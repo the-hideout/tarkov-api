@@ -9,7 +9,23 @@ permissions:
   contents: read
 
 jobs:
+  deployment-check:
+    runs-on: ubuntu-latest
+    outputs: # set outputs for use in downstream jobs
+      continue: ${{ steps.deployment-check.outputs.continue }}
+
+    steps:
+      # https://github.com/github/branch-deploy/blob/d3c24bd92505e623615b75ffdfac5ed5259adbdb/docs/merge-commit-strategy.md
+      - name: deployment check
+        uses: github/branch-deploy@v6.0.0
+        id: deployment-check
+        with:
+          merge_deploy_mode: "true"
+          environment: production
+
   deploy:
+    if: ${{ needs.deployment-check.outputs.continue == 'true' }}
+    needs: deployment-check
     environment: production
     runs-on: ubuntu-latest
 
