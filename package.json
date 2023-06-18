@@ -20,7 +20,7 @@
     "devDependencies": {
         "newman": "^5.3.2",
         "prettier": "^2.8.8",
-        "wrangler": "^2.19.0"
+        "wrangler": "^3.1.0"
     },
     "dependencies": {
         "@graphql-tools/merge": "8.4.1",
