@@ -1,8 +1,17 @@
 // cache url
+
+var cache_basic_auth_value = '';
+try {
+    // this value comes from our wrangler environment variables as a secret
+    cache_basic_auth_value = CACHE_BASIC_AUTH
+} catch (e) {
+    console.warn('CACHE_BASIC_AUTH not set; caching disabled');
+}
+
 const cacheUrl = 'https://cache.tarkov.dev'
 const headers = {
     'content-type': 'application/json;charset=UTF-8',
-    'Authorization': `Basic ${CACHE_BASIC_AUTH}`
+    'Authorization': `Basic ${cache_basic_auth_value}`
 };
 
 let cacheFailCount = 0;
