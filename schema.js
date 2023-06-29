@@ -104,6 +104,7 @@ The chances of spawning in a given location are
 very rough estimates and may be incaccurate
 """
 type BossSpawnLocation {
+  spawnKey: String!
   name: String!
   chance: Float!
 }
