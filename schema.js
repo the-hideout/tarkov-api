@@ -651,7 +651,21 @@ type Map {
   nameId: String
   accessKeys: [Item]!
   accessKeysMinPlayerLevel: Int
+  spawns: [MapSpawn]
   #svg: MapSvg
+}
+
+type MapPosition {
+  x: Float!
+  y: Float!
+  z: Float!
+}
+
+type MapSpawn {
+  zoneName: String
+  position: MapPosition!
+  sides: [String]
+  categories: [String]
 }
 
 #type MapSvg {
