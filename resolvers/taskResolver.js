@@ -238,6 +238,10 @@ module.exports = {
         target(data, args, context, info) {
             return context.data.task.getLocale(data.target, context, info);
         },
+        targetNames(data, args, context, info) {
+            const targets = data.targetNames || [];
+            return targets.map(target => context.data.task.getLocale(target, context, info));
+        },
         usingWeapon(data, args, context) {
             return data.usingWeapon.map(item => {
                 return context.data.item.getItem(context, item.id);

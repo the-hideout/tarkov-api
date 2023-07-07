@@ -951,7 +951,7 @@ type TaskObjectiveShoot implements TaskObjective {
   #locationNames: [String]!
   maps: [Map]!
   optional: Boolean!
-  target: String!
+  targetNames: [String]!
   count: Int!
   shotType: String!
   zoneNames: [String]!
@@ -965,6 +965,7 @@ type TaskObjectiveShoot implements TaskObjective {
   enemyHealthEffect: HealthEffect
   timeFromHour: Int
   timeUntilHour: Int
+  target: String! @deprecated(reason: "Use targetNames instead.")
 }
 
 type TaskObjectiveSkill implements TaskObjective {
