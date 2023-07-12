@@ -819,6 +819,7 @@ type Task {
   map: Map
   experience: Int!
   wikiLink: String
+  taskImageLink: String
   minPlayerLevel: Int
   taskRequirements: [TaskStatusRequirement]!
   traderRequirements: [RequirementTrader]!

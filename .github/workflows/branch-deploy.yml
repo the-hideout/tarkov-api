@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: github/branch-deploy@v6.0.0
+      - uses: github/branch-deploy@v6.0.1
         id: branch-deploy
         with:
           admins: the-hideout/core-contributors
