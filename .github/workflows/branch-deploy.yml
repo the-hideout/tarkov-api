@@ -54,7 +54,7 @@ jobs:
           environment: "development"
 
       # Post comment on PR with development deploy info
-      - uses: GrantBirki/comment@v2.0.6 
+      - uses: GrantBirki/comment@v2.0.6
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'development' }}
