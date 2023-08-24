@@ -35,7 +35,11 @@ module.exports = {
             }
             for (const arg of selection.arguments) {
                 if (arg.name.value === 'lang') {
-                    lang = arg.value.value;
+                    if (arg.value.kind === 'Variable') {
+                        lang = info.variableValues.lang;
+                    } else {
+                        lang = arg.value.value;
+                    }
                     langFound = true;
                     break;
                 }
