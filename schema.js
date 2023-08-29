@@ -326,6 +326,9 @@ type ItemPropertiesAmmo {
   durabilityBurnFactor: Float
   heatFactor: Float
   staminaBurnPerDamage: Float
+  ballisticCoeficient: Float
+  bulletDiameterMilimeters: Float
+  bulletMassGrams: Float
 }
 
 type ItemPropertiesArmor {
@@ -338,6 +341,7 @@ type ItemPropertiesArmor {
   zones: [String]
   material: ArmorMaterial
   armorType: String
+  bluntThroughput: Float
 }
 
 type ItemPropertiesArmorAttachment {
@@ -350,6 +354,7 @@ type ItemPropertiesArmorAttachment {
   headZones: [String]
   material: ArmorMaterial
   blindnessProtection: Float
+  bluntThroughput: Float
 }
 
 type ItemPropertiesBackpack {
@@ -385,6 +390,7 @@ type ItemPropertiesChestRig {
   grids: [ItemStorageGrid]
   pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
   armorType: String
+  bluntThroughput: Float
 }
 
 type ItemPropertiesContainer {
@@ -408,6 +414,7 @@ type ItemPropertiesGlasses {
   #turnPenalty: Float
   #ergoPenalty: Int
   material: ArmorMaterial
+  bluntThroughput: Float
 }
 
 type ItemPropertiesGrenade {
@@ -451,6 +458,7 @@ type ItemPropertiesHelmet {
   ricochetY: Float
   ricochetZ: Float
   armorType: String
+  bluntThroughput: Float
 }
 
 type ItemPropertiesKey {
