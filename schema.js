@@ -355,6 +355,7 @@ type ItemPropertiesArmorAttachment {
   material: ArmorMaterial
   blindnessProtection: Float
   bluntThroughput: Float
+  slots: [ItemSlot]
 }
 
 type ItemPropertiesBackpack {
