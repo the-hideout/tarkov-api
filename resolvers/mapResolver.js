@@ -45,6 +45,11 @@ module.exports = {
             return context.data.map.getLocale(data.bodyPart, context, info);
         }
     },
+    Lock: {
+        key(data, args, context, info) {
+            return context.data.item.getItem(context, data.key);
+        },
+    },
     Map: {
         accessKeys(data, args, context, info) {
             return context.data.item.getItemsByIDs(context, data.accessKeys);
@@ -58,6 +63,11 @@ module.exports = {
         enemies(data, args, context, info) {
             return context.data.map.getLocale(data.enemies, context, info);
         }
+    },
+    MapExtract: {
+        name(data, args, context, info) {
+            return context.data.map.getLocale(data.name, context, info);
+        },
     },
     MobInfo: {
         name(data, args, context, info) {

@@ -646,6 +646,12 @@ type ItemStorageGrid {
   filters: ItemFilters!
 }
 
+type Lock {
+  lockType: String
+  key: Item
+  position: MapPosition
+}
+
 type Map {
   id: ID!
   tarkovDataId: ID
@@ -661,7 +667,22 @@ type Map {
   accessKeys: [Item]!
   accessKeysMinPlayerLevel: Int
   spawns: [MapSpawn]
+  extracts: [MapExtract]
+  locks: [Lock]
   #svg: MapSvg
+}
+
+type MapExtract {
+  id: String!
+  name: String
+  faction: String
+  position: MapPosition
+  size: MapPosition
+}
+
+type MapLocation {
+  map: Map
+  positions: [MapPosition]
 }
 
 type MapPosition {
@@ -870,6 +891,7 @@ type TaskObjectiveBasic implements TaskObjective {
   #locationNames: [String]!
   maps: [Map]!
   optional: Boolean!
+  zones: [TaskZone]
 }
 
 type TaskObjectiveBuildItem implements TaskObjective {
@@ -921,6 +943,7 @@ type TaskObjectiveItem implements TaskObjective {
   dogTagLevel: Int
   maxDurability: Int
   minDurability: Int
+  zones: [TaskZone]
 }
 
 type TaskObjectiveMark implements TaskObjective {
@@ -931,6 +954,7 @@ type TaskObjectiveMark implements TaskObjective {
   maps: [Map]!
   optional: Boolean!
   markerItem: Item!
+  zones: [TaskZone]
 }
 
 type TaskObjectivePlayerLevel implements TaskObjective {
@@ -952,6 +976,7 @@ type TaskObjectiveQuestItem implements TaskObjective {
   optional: Boolean!
   questItem: QuestItem!
   count: Int!
+  possibleLocations: [MapLocation]
 }
 
 type TaskObjectiveShoot implements TaskObjective {
@@ -975,6 +1000,7 @@ type TaskObjectiveShoot implements TaskObjective {
   enemyHealthEffect: HealthEffect
   timeFromHour: Int
   timeUntilHour: Int
+  zones: [TaskZone]
   target: String! @deprecated(reason: "Use targetNames instead.")
 }
 
@@ -1033,6 +1059,7 @@ type TaskObjectiveUseItem implements TaskObjective {
   compareMethod: String!
   count: Int!
   zoneNames: [String]!
+  zones: [TaskZone]
 }
 
 type TaskRewards {
@@ -1047,6 +1074,13 @@ type TaskRewards {
 type TaskStatusRequirement {
   task: Task!
   status: [String]!
+}
+
+type TaskZone {
+  id: ID!
+  map: Map
+  position: MapPosition
+  size: MapPosition
 }
 
 type Trader {
