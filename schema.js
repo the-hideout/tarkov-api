@@ -669,6 +669,7 @@ type Map {
   spawns: [MapSpawn]
   extracts: [MapExtract]
   locks: [Lock]
+  hazards: [MapHazard]
   #svg: MapSvg
 }
 
@@ -676,6 +677,13 @@ type MapExtract {
   id: String!
   name: String
   faction: String
+  position: MapPosition
+  size: MapPosition
+}
+
+type MapHazard {
+  hazardType: String
+  name: String
   position: MapPosition
   size: MapPosition
 }

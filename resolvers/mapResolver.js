@@ -69,6 +69,11 @@ module.exports = {
             return context.data.map.getLocale(data.name, context, info);
         },
     },
+    MapHazard: {
+        name(data, args, context, info) {
+            return context.data.map.getLocale(data.name, context, info);
+        },
+    },
     MobInfo: {
         name(data, args, context, info) {
             return context.data.map.getLocale(data.name, context, info);
