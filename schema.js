@@ -650,6 +650,9 @@ type Lock {
   lockType: String
   key: Item
   position: MapPosition
+  rotation: MapPosition
+  center: MapPosition
+  size: MapPosition
 }
 
 type Map {
