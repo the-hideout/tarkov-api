@@ -653,6 +653,7 @@ type Lock {
   rotation: MapPosition
   center: MapPosition
   size: MapPosition
+  terrainElevation: Float
 }
 
 type Map {
@@ -684,6 +685,7 @@ type MapExtract {
   rotation: MapPosition
   center: MapPosition
   size: MapPosition
+  terrainElevation: Float
 }
 
 type MapHazard {
@@ -693,6 +695,7 @@ type MapHazard {
   rotation: MapPosition
   center: MapPosition
   size: MapPosition
+  terrainElevation: Float
 }
 
 type MapLocation {
@@ -1098,6 +1101,7 @@ type TaskZone {
   rotation: MapPosition
   center: MapPosition
   size: MapPosition
+  terrainElevation: Float
 }
 
 type Trader {
