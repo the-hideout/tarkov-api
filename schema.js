@@ -678,6 +678,8 @@ type MapExtract {
   name: String
   faction: String
   position: MapPosition
+  rotation: MapPosition
+  center: MapPosition
   size: MapPosition
 }
 
@@ -685,6 +687,8 @@ type MapHazard {
   hazardType: String
   name: String
   position: MapPosition
+  rotation: MapPosition
+  center: MapPosition
   size: MapPosition
 }
 
@@ -1088,6 +1092,8 @@ type TaskZone {
   id: ID!
   map: Map
   position: MapPosition
+  rotation: MapPosition
+  center: MapPosition
   size: MapPosition
 }
 
