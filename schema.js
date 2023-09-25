@@ -650,11 +650,13 @@ type Lock {
   lockType: String
   key: Item
   position: MapPosition
-  rotation: MapPosition
-  center: MapPosition
-  size: MapPosition
   outline: [MapPosition]
-  terrainElevation: Float
+  top: Float
+  bottom: Float
+  #rotation: MapPosition
+  #center: MapPosition
+  #size: MapPosition
+  #terrainElevation: Float
 }
 
 type Map {
@@ -683,22 +685,26 @@ type MapExtract {
   name: String
   faction: String
   position: MapPosition
-  rotation: MapPosition
-  center: MapPosition
-  size: MapPosition
   outline: [MapPosition]
-  terrainElevation: Float
+  top: Float
+  bottom: Float
+  #rotation: MapPosition
+  #center: MapPosition
+  #size: MapPosition
+  #terrainElevation: Float
 }
 
 type MapHazard {
   hazardType: String
   name: String
   position: MapPosition
-  rotation: MapPosition
   outline: [MapPosition]
-  center: MapPosition
-  size: MapPosition
-  terrainElevation: Float
+  top: Float
+  bottom: Float
+  #rotation: MapPosition
+  #center: MapPosition
+  #size: MapPosition
+  #terrainElevation: Float
 }
 
 type MapLocation {
@@ -1101,11 +1107,13 @@ type TaskZone {
   id: ID!
   map: Map
   position: MapPosition
-  rotation: MapPosition
-  center: MapPosition
-  size: MapPosition
   outline: [MapPosition]
-  terrainElevation: Float
+  top: Float
+  bottom: Float
+  #rotation: MapPosition
+  #center: MapPosition
+  #size: MapPosition
+  #terrainElevation: Float
 }
 
 type Trader {
