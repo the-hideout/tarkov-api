@@ -653,6 +653,7 @@ type Lock {
   rotation: MapPosition
   center: MapPosition
   size: MapPosition
+  outline: [MapPosition]
   terrainElevation: Float
 }
 
@@ -685,6 +686,7 @@ type MapExtract {
   rotation: MapPosition
   center: MapPosition
   size: MapPosition
+  outline: [MapPosition]
   terrainElevation: Float
 }
 
@@ -693,6 +695,7 @@ type MapHazard {
   name: String
   position: MapPosition
   rotation: MapPosition
+  outline: [MapPosition]
   center: MapPosition
   size: MapPosition
   terrainElevation: Float
@@ -1101,6 +1104,7 @@ type TaskZone {
   rotation: MapPosition
   center: MapPosition
   size: MapPosition
+  outline: [MapPosition]
   terrainElevation: Float
 }
 
