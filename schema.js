@@ -659,6 +659,17 @@ type Lock {
   #terrainElevation: Float
 }
 
+type LootContainer {
+  id: ID!
+  name: String!
+  normalizedName: String!
+}
+
+type LootContainerPosition {
+  lootContainer: LootContainer
+  position: MapPosition
+}
+
 type Map {
   id: ID!
   tarkovDataId: ID
@@ -677,6 +688,7 @@ type Map {
   extracts: [MapExtract]
   locks: [Lock]
   hazards: [MapHazard]
+  lootContainers: [LootContainerPosition]
   #svg: MapSvg
 }
 
@@ -1220,6 +1232,7 @@ type Query {
   items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], handbookCategoryNames: [HandbookCategoryName] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   handbookCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
+  lootContainers(lang: LanguageCode, limit: Int, offset: Int): [LootContainer]
   maps(lang: LanguageCode, name: [String!], enemies: [String!], limit: Int, offset: Int): [Map]!
   questItems(lang: LanguageCode): [QuestItem]
   status: ServerStatus!

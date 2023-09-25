@@ -88,6 +88,16 @@ class MapAPI extends WorkerKV {
             return false;
         });
     }
+
+    async getLootContainer(context, id) {
+        await this.init(context);
+        return this.cache.LootContainer[id];
+    }
+
+    async getAllLootContainers(context) {
+        await this.init(context);
+        return Object.values(this.cache.LootContainer);
+    }
 }
 
 module.exports = MapAPI;

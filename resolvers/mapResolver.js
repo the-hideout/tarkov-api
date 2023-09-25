@@ -18,6 +18,10 @@ module.exports = {
             }
             return context.util.paginate(bosses, args);
         },
+        async lootContainers(obj, args, context, info) {
+            let containers = context.data.map.getAllLootContainers(context);
+            return context.util.paginate(containers, args);
+        },
         async maps(obj, args, context, info) {
             let maps = false;
             let filters = {
@@ -48,6 +52,16 @@ module.exports = {
     Lock: {
         key(data, args, context, info) {
             return context.data.item.getItem(context, data.key);
+        },
+    },
+    LootContainer: {
+        name(data, args, context, info) {
+            return context.data.map.getLocale(data.name, context, info);
+        },
+    },
+    LootContainerPosition: {
+        lootContainer(data, args, context, info) {
+            return context.data.map.getLootContainer(context, data.lootContainer);
         },
     },
     Map: {
