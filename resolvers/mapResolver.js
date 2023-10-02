@@ -142,6 +142,9 @@ module.exports = {
         async spawnTrigger(data, args, context, info) {
             return context.data.map.getLocale(data.spawnTrigger, context, info);
         },
+        async switch(data, args, context, info) {
+            return context.data.map.getSwitch(context, data.switch);
+        },
     },
     BossSpawnLocation: {
         name(data, args, context, info) {

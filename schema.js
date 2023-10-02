@@ -83,6 +83,7 @@ type BossSpawn {
   spawnTime: Int
   spawnTimeRandom: Boolean
   spawnTrigger: String
+  switch: MapSwitch
   name: String! @deprecated(reason: "Use boss.name instead.")
   normalizedName: String! @deprecated(reason: "Use boss.normalizedName instead.")
 }
