@@ -98,6 +98,28 @@ class MapAPI extends WorkerKV {
         await this.init(context);
         return Object.values(this.cache.LootContainer);
     }
+
+    async getExtract(context, id) {
+        await this.init(context);
+        return this.cache.Map.reduce((found, current) => {
+            if (found) {
+                return found;
+            }
+            found = current.extracts.find(e => e.id === id);
+            return found;
+        }, false);
+    }
+
+    async getSwitch(context, id) {
+        await this.init(context);
+        return this.cache.Map.reduce((found, current) => {
+            if (found) {
+                return found;
+            }
+            found = current.switches.find(e => e.id === id);
+            return found;
+        }, false);
+    }
 }
 
 module.exports = MapAPI;

@@ -82,10 +82,44 @@ module.exports = {
         name(data, args, context, info) {
             return context.data.map.getLocale(data.name, context, info);
         },
+        switches(data, args, context) {
+            if (!data.switches) {
+                return [];
+            }
+            return data.switches.map(switchId => context.data.map.getSwitch(context, switchId));
+        },
     },
     MapHazard: {
         name(data, args, context, info) {
             return context.data.map.getLocale(data.name, context, info);
+        },
+    },
+    MapSwitch: {
+        /*door(data, args, context) {
+
+        },*/
+        extract(data, args, context) {
+            return context.data.map.getExtract(context, data.extractId);
+        },
+        /*extractTip(data, args, context, info) {
+            if (!data.extractTip) {
+                return null;
+            }
+            return context.data.map.getLocale(data.extractTip, context, info);
+        },*/
+        previousSwitch(data, args, context) {
+            return context.data.map.getSwitch(context, data.previousSwitch);
+        },
+        /*tip(data, args, context, info) {
+            if (!data.tip) {
+                return null;
+            }
+            return context.data.map.getLocale(data.tip, context, info);
+        },*/
+    },
+    MapSwitchOperation: {
+        switch(data, args, context) {
+            return context.data.map.getSwitch(context, data.switch);
         },
     },
     MobInfo: {

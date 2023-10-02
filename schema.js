@@ -687,6 +687,7 @@ type Map {
   spawns: [MapSpawn]
   extracts: [MapExtract]
   locks: [Lock]
+  switches: [MapSwitch]
   hazards: [MapHazard]
   lootContainers: [LootContainerPosition]
   #svg: MapSvg
@@ -696,6 +697,7 @@ type MapExtract {
   id: String!
   name: String
   faction: String
+  switches: [MapSwitch]
   position: MapPosition
   outline: [MapPosition]
   top: Float
@@ -742,6 +744,23 @@ type MapSpawn {
 #  floors: [String]
 #  defaultFloor: String
 #}
+
+type MapSwitch {
+  id: ID!
+  #tip: String
+  #extractTip: String
+  #door: Lock
+  extract: MapExtract
+  switchType: String
+  previousSwitch: MapSwitch
+  nextSwitches: [MapSwitchOperation]
+  position: MapPosition
+}
+
+type MapSwitchOperation {
+  operation: String
+  switch: MapSwitch
+}
 
 type MobInfo {
   id: ID!
