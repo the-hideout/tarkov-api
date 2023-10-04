@@ -695,7 +695,7 @@ type Map {
 }
 
 type MapExtract {
-  id: String!
+  id: ID!
   name: String
   faction: String
   switches: [MapSwitch]
@@ -751,17 +751,19 @@ type MapSwitch {
   #tip: String
   #extractTip: String
   #door: Lock
-  extract: MapExtract
+  #extract: MapExtract
   switchType: String
-  previousSwitch: MapSwitch
-  nextSwitches: [MapSwitchOperation]
+  activatedBy: MapSwitch
+  activates: [MapSwitchOperation]
   position: MapPosition
 }
 
 type MapSwitchOperation {
   operation: String
-  switch: MapSwitch
+  target: MapSwitchTarget
 }
+
+union MapSwitchTarget = MapSwitch | MapExtract
 
 type MobInfo {
   id: ID!

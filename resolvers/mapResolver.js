@@ -98,17 +98,17 @@ module.exports = {
         /*door(data, args, context) {
 
         },*/
-        extract(data, args, context) {
+        /*extract(data, args, context) {
             return context.data.map.getExtract(context, data.extract);
-        },
+        },*/
         /*extractTip(data, args, context, info) {
             if (!data.extractTip) {
                 return null;
             }
             return context.data.map.getLocale(data.extractTip, context, info);
         },*/
-        previousSwitch(data, args, context) {
-            return context.data.map.getSwitch(context, data.previousSwitch);
+        activatedBy(data, args, context) {
+            return context.data.map.getSwitch(context, data.activatedBy);
         },
         /*tip(data, args, context, info) {
             if (!data.tip) {
@@ -118,8 +118,17 @@ module.exports = {
         },*/
     },
     MapSwitchOperation: {
-        switch(data, args, context) {
-            return context.data.map.getSwitch(context, data.switch);
+        target(data, args, context) {
+            if (data.switch) {
+                return context.data.map.getSwitch(context, data.switch);
+            }
+            return context.data.map.getExtract(context, data.extract);
+        },
+    },
+    MapSwitchTarget: {
+        __resolveType(data, args, context) {
+            if (data.switchType) return 'MapSwitch';
+            return 'MapExtract';
         },
     },
     MobInfo: {
