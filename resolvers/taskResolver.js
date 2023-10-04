@@ -36,7 +36,7 @@ module.exports = {
             return context.data.task.getLocale(data.effects, context, info);
         },
     },
-    MapLocation: {
+    MapWithPosition: {
         map(data, args, context, info) {
             return context.data.map.get(context, data.map);
         },

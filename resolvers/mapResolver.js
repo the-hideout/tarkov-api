@@ -99,7 +99,7 @@ module.exports = {
 
         },*/
         extract(data, args, context) {
-            return context.data.map.getExtract(context, data.extractId);
+            return context.data.map.getExtract(context, data.extract);
         },
         /*extractTip(data, args, context, info) {
             if (!data.extractTip) {

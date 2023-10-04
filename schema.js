@@ -722,7 +722,7 @@ type MapHazard {
   #terrainElevation: Float
 }
 
-type MapLocation {
+type MapWithPosition {
   map: Map
   positions: [MapPosition]
 }
@@ -971,6 +971,7 @@ type TaskObjectiveExperience implements TaskObjective {
   id: ID
   type: String!
   description: String!
+  count: Int
   #locationNames: [String]!
   maps: [Map]!
   optional: Boolean!
@@ -1035,7 +1036,7 @@ type TaskObjectiveQuestItem implements TaskObjective {
   optional: Boolean!
   questItem: QuestItem!
   count: Int!
-  possibleLocations: [MapLocation]
+  possibleLocations: [MapWithPosition]
 }
 
 type TaskObjectiveShoot implements TaskObjective {
