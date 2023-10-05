@@ -748,6 +748,7 @@ type MapSpawn {
 
 type MapSwitch {
   id: ID!
+  name: String
   #tip: String
   #extractTip: String
   #door: Lock

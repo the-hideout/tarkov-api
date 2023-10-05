@@ -26,7 +26,7 @@ const schemaRefreshInterval = 1000 * 60 * 10;
 const skipCache = false; //ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
-async function getSchema(data, requestId) {
+async function getSchema(data, context) {
     if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
         return schema;
     }
@@ -46,13 +46,13 @@ async function getSchema(data, requestId) {
                     console.log(`Schema loading timed out; forcing load`);
                     clearInterval(loadingInterval);
                     loadingSchema = false;
-                    return resolve(getSchema(data, requestId));
+                    return resolve(getSchema(data, context));
                 }
             }, 100);
         });
     }
     loadingSchema = true;
-    return dynamicTypeDefs(data, requestId).catch(error => {
+    return dynamicTypeDefs(data, context).catch(error => {
         loadingSchema = false;
         console.error('Error loading dynamic type definitions', error);
         return Promise.reject(error);
@@ -162,7 +162,7 @@ async function graphqlHandler(event, graphQLOptions) {
     }
 
     const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [], errors: [] };
-    let result = await graphql(await getSchema(dataAPI, requestId), query, {}, context, variables);
+    let result = await graphql(await getSchema(dataAPI, context), query, {}, context, variables);
     if (context.errors.length > 0) {
         if (!result.errors) {
             result = Object.assign({errors: []}, result); // this puts the errors at the start of the result

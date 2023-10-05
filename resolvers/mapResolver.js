@@ -110,12 +110,12 @@ module.exports = {
         activatedBy(data, args, context) {
             return context.data.map.getSwitch(context, data.activatedBy);
         },
-        /*tip(data, args, context, info) {
-            if (!data.tip) {
+        name(data, args, context, info) {
+            if (!data.name) {
                 return null;
             }
-            return context.data.map.getLocale(data.tip, context, info);
-        },*/
+            return context.data.map.getLocale(data.name, context, info);
+        },
     },
     MapSwitchOperation: {
         target(data, args, context) {
