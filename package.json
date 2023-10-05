@@ -10,7 +10,7 @@
         "test": "echo \"Error: no test specified\"",
         "format": "prettier --write '**/*.{js,css,json,md}'",
         "dev": "wrangler dev --env development --remote",
-        "ci": "wrangler dev --env development",
+        "ci": "wrangler dev --env development --remote",
         "local": "wrangler dev",
         "tail": "node tail.js",
         "tail-dev": "node tail.js development"
