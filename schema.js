@@ -650,6 +650,7 @@ type ItemStorageGrid {
 type Lock {
   lockType: String
   key: Item
+  needsPower: Boolean
   position: MapPosition
   outline: [MapPosition]
   top: Float
