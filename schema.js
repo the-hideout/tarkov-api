@@ -1041,6 +1041,7 @@ type TaskObjectiveQuestItem implements TaskObjective {
   questItem: QuestItem!
   count: Int!
   possibleLocations: [MapWithPosition]
+  zones: [TaskZone]
 }
 
 type TaskObjectiveShoot implements TaskObjective {
