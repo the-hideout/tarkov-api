@@ -975,7 +975,7 @@ type TaskObjectiveExperience implements TaskObjective {
   id: ID
   type: String!
   description: String!
-  count: Int
+  count: Int!
   #locationNames: [String]!
   maps: [Map]!
   optional: Boolean!
