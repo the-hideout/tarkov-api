@@ -992,6 +992,7 @@ type TaskObjectiveExtract implements TaskObjective {
   exitStatus: [String]!
   exitName: String
   zoneNames: [String]!
+  count: Int
 }
 
 type TaskObjectiveItem implements TaskObjective {
