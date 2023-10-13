@@ -25,7 +25,14 @@
     "dependencies": {
         "@graphql-tools/merge": "9.0.0",
         "@graphql-tools/schema": "10.0.0",
+        "@opentelemetry/context-async-hooks": "^1.17.1",
+        "@opentelemetry/context-zone": "^1.17.1",
+        "@opentelemetry/exporter-trace-otlp-grpc": "^0.44.0",
+        "@opentelemetry/exporter-trace-otlp-http": "^0.44.0",
+        "@opentelemetry/otlp-transformer": "^0.44.0",
+        "@opentelemetry/sdk-trace-base": "^1.17.1",
         "graphql": "^15.8.0",
+        "opentelemetry-sdk-workers": "^0.6.2",
         "uuid": "9.0.0"
     }
 }

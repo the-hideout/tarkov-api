@@ -1,7 +1,8 @@
-const zlib = require('zlib');
+
 
 const ungzip = (input, options) => {
-    return new Promise(function(resolve, reject) {
+    return new Promise(async function (resolve, reject) {
+        const zlib = await import('node:zlib');
         zlib.gunzip(input, options, function (error, result) {
             if (!error) {
                 resolve(String(result));
@@ -122,7 +123,7 @@ class WorkerKV {
             }
             const errorMessage = `Missing translation for key ${k}`;
             if (!context.errors.some(err => err.message === errorMessage)) {
-                context.errors.push({message: errorMessage});
+                context.errors.push({ message: errorMessage });
             }
             return k;
         };

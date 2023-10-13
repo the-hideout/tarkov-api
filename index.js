@@ -16,6 +16,8 @@ const cacheMachine = require('./utils/cache-machine');
 const nightbot = require('./custom-endpoints/nightbot');
 const twitch = require('./custom-endpoints/twitch');
 
+const { tracer, provider, exporter } = require('./utils/tracing');
+
 let schema = false;
 let loadingSchema = false;
 let lastSchemaRefresh = 0;
@@ -82,7 +84,7 @@ async function getSchema(data, requestId) {
 }
 
 addEventListener('fetch', event => {
-    event.respondWith(handleRequest(event));
+    event.respondWith(handleRequest(event))
 });
 
 async function graphqlHandler(event, graphQLOptions) {
@@ -165,13 +167,13 @@ async function graphqlHandler(event, graphQLOptions) {
     let result = await graphql(await getSchema(dataAPI, requestId), query, {}, context, variables);
     if (context.errors.length > 0) {
         if (!result.errors) {
-            result = Object.assign({errors: []}, result); // this puts the errors at the start of the result
+            result = Object.assign({ errors: [] }, result); // this puts the errors at the start of the result
         }
         result.errors.push(...context.errors);
     }
     if (context.warnings.length > 0) {
         if (!result.warnings) {
-            result = Object.assign({warnings: []}, result);
+            result = Object.assign({ warnings: [] }, result);
         }
         result.warnings.push(...context.warnings);
     }
@@ -180,10 +182,10 @@ async function graphqlHandler(event, graphQLOptions) {
 
     if (specialCache === 'application/json') {
         if (!result.warnings) {
-            result = Object.assign({warnings: []}, result);
+            result = Object.assign({ warnings: [] }, result);
         }
         ttl = 30 * 60;
-        result.warnings.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl/60} minutes.`});
+        result.warnings.push({ message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl / 60} minutes.` });
     }
 
     const body = JSON.stringify(result);
@@ -234,49 +236,41 @@ const graphQLOptions = {
 };
 
 const handleRequest = async event => {
-    const request = event.request;
-    const url = new URL(request.url);
+    return tracer.startActiveSpan('handleRequest', async (span) => {
+        const request = event.request;
+        const url = new URL(request.url);
+        let response; // Initializing the response object
 
-    try {
-        if (url.pathname === '/webhook/nightbot') {
-            return nightbot(request, dataAPI, event);
-        }
-
-        if (url.pathname === '/webhook/stream-elements') {
-            return nightbot(request, dataAPI, event);
-        }
-
-        if (url.pathname === '/webhook/moobot') {
-            return nightbot(request, dataAPI, event);
-        }
-
-        if (url.pathname === '/twitch') {
-            const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await twitch(request);
-            if (graphQLOptions.cors) {
-                setCors(response, graphQLOptions.cors);
+        try {
+            if (url.pathname === '/webhook/nightbot') {
+                response = await nightbot(request, dataAPI, event);
+            } else if (url.pathname === '/webhook/stream-elements') {
+                response = await nightbot(request, dataAPI, event);
+            } else if (url.pathname === '/webhook/moobot') {
+                response = await nightbot(request, dataAPI, event);
+            } else if (url.pathname === '/twitch') {
+                response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await twitch(request);
+                if (graphQLOptions.cors) {
+                    setCors(response, graphQLOptions.cors);
+                }
+            } else if (url.pathname === graphQLOptions.baseEndpoint) {
+                const span = tracer.startSpan('graphqlHandler');
+                response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(event, graphQLOptions);
+                if (graphQLOptions.cors) {
+                    setCors(response, graphQLOptions.cors);
+                }
+                span.end();
+            } else if (graphQLOptions.playgroundEndpoint && url.pathname === graphQLOptions.playgroundEndpoint) {
+                response = await playground(request, graphQLOptions);
+            } else if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
+                response = await fetch(request);
+            } else {
+                response = new Response('Not found', { status: 404 });
             }
-
-            return response;
+        } catch (err) {
+            response = new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
         }
-
-        if (url.pathname === graphQLOptions.baseEndpoint) {
-            const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(event, graphQLOptions);
-            if (graphQLOptions.cors) {
-                setCors(response, graphQLOptions.cors);
-            }
-
-            return response;
-        }
-
-        if (graphQLOptions.playgroundEndpoint && url.pathname === graphQLOptions.playgroundEndpoint) {
-            return playground(request, graphQLOptions);
-        }
-
-        if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
-            return fetch(request);
-        }
-        return new Response('Not found', { status: 404 });
-    } catch (err) {
-        return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
-    }
+        span.end();
+        return response;
+    });
 };
