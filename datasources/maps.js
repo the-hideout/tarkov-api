@@ -126,7 +126,7 @@ class MapAPI extends WorkerKV {
         return this.cache.StationaryWeapon[id];
     }
 
-    async getStationaryWeapons(context) {
+    async getAllStationaryWeapons(context) {
         await this.init(context);
         return Object.values(this.cache.StationaryWeapon);
     }

@@ -42,7 +42,11 @@ module.exports = {
                 maps = context.data.map.getList(context);
             }
             return context.util.paginate(maps, args);
-        }
+        },
+        async stationaryWeapons(obj, args, context, info) {
+            const stationaryWeapons = context.data.map.getAllStationaryWeapons(context);
+            return context.util.paginate(stationaryWeapons, args);
+        },
     },
     HealthPart: {
         bodyPart(data, args, context, info) {

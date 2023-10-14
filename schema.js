@@ -1274,6 +1274,7 @@ type Query {
   lootContainers(lang: LanguageCode, limit: Int, offset: Int): [LootContainer]
   maps(lang: LanguageCode, name: [String!], enemies: [String!], limit: Int, offset: Int): [Map]!
   questItems(lang: LanguageCode): [QuestItem]
+  stationaryWeapons(lang: LanguageCode, limit: Int, offset: Int): [StationaryWeapon]
   status: ServerStatus!
   task(id: ID!, lang: LanguageCode): Task
   tasks(faction: String, lang: LanguageCode, limit: Int, offset: Int): [Task]!
