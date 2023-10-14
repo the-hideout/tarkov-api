@@ -692,7 +692,7 @@ type Map {
   switches: [MapSwitch]
   hazards: [MapHazard]
   lootContainers: [LootContainerPosition]
-  stationaryWeaponPositions: [MapPosition]
+  stationaryWeapons: [StationaryWeaponPosition]
   #svg: MapSvg
 }
 
@@ -869,6 +869,17 @@ type ServerStatus {
 type SkillLevel {
   name: String!
   level: Float!
+}
+
+type StationaryWeapon {
+  id: ID
+  name: String
+  shortName: String
+}
+
+type StationaryWeaponPosition {
+  stationaryWeapon: StationaryWeapon
+  position: MapPosition
 }
 
 type Status {

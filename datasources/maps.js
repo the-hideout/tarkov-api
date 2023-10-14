@@ -120,6 +120,16 @@ class MapAPI extends WorkerKV {
             return found;
         }, false);
     }
+
+    async getStationaryWeapon(context, id) {
+        await this.init(context);
+        return this.cache.StationaryWeapon[id];
+    }
+
+    async getStationaryWeapons(context) {
+        await this.init(context);
+        return Object.values(this.cache.StationaryWeapon);
+    }
 }
 
 module.exports = MapAPI;

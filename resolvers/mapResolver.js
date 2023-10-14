@@ -172,5 +172,18 @@ module.exports = {
             const boss = await context.data.map.getMobInfo(context, data.id);
             return boss.normalizedName;
         }
-    }
+    },
+    StationaryWeapon: {
+        name(data, args, context, info) {
+            return context.data.map.getLocale(data.name, context, info);
+        },
+        shortName(data, args, context, info) {
+            return context.data.map.getLocale(data.shortName, context, info);
+        },
+    },
+    StationaryWeaponPosition: {
+        stationaryWeapon(data, args, context, info) {
+            return context.data.map.getStationaryWeapon(context, data.stationaryWeapon);
+        },
+    },
 };
