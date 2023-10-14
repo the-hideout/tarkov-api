@@ -692,6 +692,7 @@ type Map {
   switches: [MapSwitch]
   hazards: [MapHazard]
   lootContainers: [LootContainerPosition]
+  stationaryWeaponPositions: [MapPosition]
   #svg: MapSvg
 }
 
