@@ -18,7 +18,7 @@
     "author": "Oskar Risberg <oskar.risberg@stendahls.se> + The-Hideout team",
     "license": "ISC",
     "devDependencies": {
-        "newman": "^5.3.2",
+        "newman": "^6.0.0",
         "prettier": "^3.0.1",
         "wrangler": "^2.19.0"
     },
