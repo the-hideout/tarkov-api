@@ -21,9 +21,9 @@ const config = (env, _trigger) => {
   }
 
   return {
-    exporter: env.OTEL_ENDPOINT ? {
+    exporter: {
       url: env.OTEL_ENDPOINT,
-    } : new ConsoleSpanExporter(),
+    },
     sampling: headSampler,
     fetch: {
       includeTraceContext: fetchConf,

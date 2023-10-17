@@ -23,13 +23,13 @@ kv_namespaces = [
 # TWITCH_TOKEN
 
 [env.production.vars]
-TRACE_SAMPLE_RATE = 0.05
+TRACE_RATIO = 0.05
 ENVIRONMENT = "production"
 # We should set this to the commit ref on deploy
 TAPI_COMMIT_REF = "1.0"
 
 [env.development.vars]
-TRACE_SAMPLE_RATE = 1
+TRACE_RATIO = 1
 ENVIRONMENT = "development"
 # We should set this to the commit ref on deploy
 TAPI_COMMIT_REF = "1.0-dev"
