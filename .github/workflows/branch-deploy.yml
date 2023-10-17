@@ -29,7 +29,7 @@ jobs:
 
       - name: checkout
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ steps.branch-deploy.outputs.ref }}
 
@@ -55,7 +55,7 @@ jobs:
           environment: "development"
 
       # Post comment on PR with development deploy info
-      - uses: GrantBirki/comment@v2.0.6
+      - uses: GrantBirki/comment@v2.0.7
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'development' }}
@@ -81,7 +81,7 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
 
       # Post comment on PR with production deploy info
-      - uses: GrantBirki/comment@v2.0.6
+      - uses: GrantBirki/comment@v2.0.7
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'production' }}
