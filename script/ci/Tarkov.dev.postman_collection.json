@@ -620,7 +620,7 @@
 							"});\r",
 							"\r",
 							"pm.test(\"correct item shortName\", function () {\r",
-							"     pm.expect(pm.response.json().data.itemsByName[0].shortName).to.eq(\"Car batt.\");\r",
+							"     pm.expect(pm.response.json().data.itemsByName[0].shortName).to.eq(\"Car battery\");\r",
 							"});\r",
 							"\r",
 							"pm.test(\"correct item common number types\", function () {\r",
