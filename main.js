@@ -13,7 +13,7 @@ const config = (env, _trigger) => {
 
   const headSampler = {
     acceptRemote: false, //Whether to accept incoming trace contexts
-    ratio: env.TRACE_RATIO ? parseFloat(env.TRACE_RATIO) : env.ENVIRONMENT == 'production' ? 0.5 : 1.0,
+    ratio: env.TRACE_RATIO ? parseFloat(env.TRACE_RATIO) : env.ENVIRONMENT == 'production' ? 0.05 : 1.0,
   }
 
   const fetchConf = (request) => {
