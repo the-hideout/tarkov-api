@@ -28,4 +28,6 @@ jobs:
       - name: test
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          OTEL_ENDPOINT: ${{ secrets.OTEL_ENDPOINT }}
+          TRACE_RATIO: "1"
         run: script/test

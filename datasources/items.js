@@ -41,7 +41,7 @@ class ItemsAPI extends WorkerKV {
                         value: this.cache.FleaMarket.minPlayerLevel,
                     }],
                 });
-    
+
                 item.buyFor.push({
                     price: item.avg24hPrice || item.lastLowPrice || 0,
                     currency: 'RUB',

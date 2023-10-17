@@ -3,9 +3,10 @@ const { v4: uuidv4 } = require('uuid');
 const cacheMachine = require('../utils/cache-machine');
 const graphqlUtil = require('../utils/graphql-util');
 
+
 const skipCache = false; //ENVIRONMENT !== 'production' || false;
 
-function capitalize(s){
+function capitalize(s) {
     return s && s[0].toUpperCase() + s.slice(1);
 }
 
@@ -14,13 +15,13 @@ module.exports = async (request, data, event) => {
     const requestId = uuidv4();
     const url = new URL(request.url);
 
-    if(!url.searchParams.get('q')){
+    if (!url.searchParams.get('q')) {
         return new Response(`Missing a query param called q`);
     }
 
     // Check the cache service for data first - If cached data exists, return it
     if (!skipCache) {
-        const cachedResponse = await cacheMachine.get('nightbot', {q: url.searchParams.get('q')});
+        const cachedResponse = await cacheMachine.get('nightbot', { q: url.searchParams.get('q') });
         if (cachedResponse) {
             // Construct a new response with the cached data
             const newResponse = new Response(cachedResponse);
@@ -90,7 +91,7 @@ module.exports = async (request, data, event) => {
     // don't update cache if result contained errors
     if (!skipCache && ttl >= 30) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-        event.waitUntil(cacheMachine.put('nightbot', {q: url.searchParams.get('q')}, response, String(ttl)));
+        event.waitUntil(cacheMachine.put('nightbot', { q: url.searchParams.get('q') }, response, String(ttl)));
     }
 
     return new Response(response);

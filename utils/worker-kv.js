@@ -1,7 +1,9 @@
-const zlib = require('zlib');
+import { trace } from '@opentelemetry/api'
+import envHandler from '../environment_handler';
 
 const ungzip = (input, options) => {
-    return new Promise(function(resolve, reject) {
+    return new Promise(async function (resolve, reject) {
+        const zlib = await import('node:zlib');
         zlib.gunzip(input, options, function (error, result) {
             if (!error) {
                 resolve(String(result));
@@ -75,7 +77,10 @@ class WorkerKV {
         this.loading = true;
         this.loadingPromises[requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
-            DATA_CACHE.getWithMetadata(this.kvName, 'text').then(async response => {
+            const activeSpan = trace.getActiveSpan();
+            activeSpan.addEvent('kv_load', { kvName: this.kvName });
+            envHandler.getEnv().DATA_CACHE.getWithMetadata(this.kvName, 'text').then(async response => {
+                activeSpan.addEvent('kv_load_finish', { kvName: this.kvName });
                 console.log(`${this.kvName} load: ${new Date() - startLoad} ms`);
                 const metadata = response.metadata;
                 if (metadata && metadata.compression) {
@@ -122,7 +127,7 @@ class WorkerKV {
             }
             const errorMessage = `Missing translation for key ${k}`;
             if (!context.errors.some(err => err.message === errorMessage)) {
-                context.errors.push({message: errorMessage});
+                context.errors.push({ message: errorMessage });
             }
             return k;
         };
