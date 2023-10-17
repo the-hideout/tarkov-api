@@ -486,7 +486,6 @@ const html = baseEndpoint => `
         root.classList.add('playgroundIn');
         GraphQLPlayground.init(root, {
             endpoint: "${baseEndpoint}",
-            // 'schema.polling.enable': false,
         })
       })
     </script>

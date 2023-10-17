@@ -2,7 +2,7 @@
     "name": "tarkov-api",
     "version": "0.0.0",
     "description": "Tarkov Data API",
-    "main": "index.js",
+    "main": "main.js",
     "engines": {
         "node": ">=18.16.0"
     },
@@ -19,20 +19,15 @@
     "license": "ISC",
     "devDependencies": {
         "newman": "^5.3.2",
+        "patch-package": "^8.0.0",
         "prettier": "^3.0.1",
         "wrangler": "^2.19.0"
     },
     "dependencies": {
         "@graphql-tools/merge": "9.0.0",
         "@graphql-tools/schema": "10.0.0",
-        "@opentelemetry/context-async-hooks": "^1.17.1",
-        "@opentelemetry/context-zone": "^1.17.1",
-        "@opentelemetry/exporter-trace-otlp-grpc": "^0.44.0",
-        "@opentelemetry/exporter-trace-otlp-http": "^0.44.0",
-        "@opentelemetry/otlp-transformer": "^0.44.0",
-        "@opentelemetry/sdk-trace-base": "^1.17.1",
+        "@microlabs/otel-cf-workers": "^1.0.0-rc.13",
         "graphql": "^15.8.0",
-        "opentelemetry-sdk-workers": "^0.6.2",
         "uuid": "9.0.0"
     }
 }

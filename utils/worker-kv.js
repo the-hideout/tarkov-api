@@ -1,4 +1,5 @@
-
+import { trace } from '@opentelemetry/api'
+import envHandler from '../environment_handler';
 
 const ungzip = (input, options) => {
     return new Promise(async function (resolve, reject) {
@@ -76,7 +77,10 @@ class WorkerKV {
         this.loading = true;
         this.loadingPromises[requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
-            DATA_CACHE.getWithMetadata(this.kvName, 'text').then(async response => {
+            const activeSpan = trace.getActiveSpan();
+            activeSpan.addEvent('kv_load', { kvName: this.kvName });
+            envHandler.getEnv().DATA_CACHE.getWithMetadata(this.kvName, 'text').then(async response => {
+                activeSpan.addEvent('kv_load_finish', { kvName: this.kvName });
                 console.log(`${this.kvName} load: ${new Date() - startLoad} ms`);
                 const metadata = response.metadata;
                 if (metadata && metadata.compression) {

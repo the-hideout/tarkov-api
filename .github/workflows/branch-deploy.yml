@@ -78,6 +78,10 @@ jobs:
         with:
           wranglerVersion: '2.17.0'
           apiToken: ${{ secrets.CF_API_TOKEN }}
+          secrets: |
+            TAPI_COMMIT_REF
+        env:
+          TAPI_COMMIT_REF: ${{ steps.branch-deploy.outputs.ref }}
 
       # Post comment on PR with production deploy info
       - uses: GrantBirki/comment@v2.0.6

@@ -1,3 +1,5 @@
+import envHandler from './environment_handler';
+
 // This is used in DEV environments where we don't actually connect to the KV stores...
 // ...so we stub the implementations and download everything locally instead
 
@@ -6,8 +8,8 @@ const _get = async (url) => {
     return response.json()
 };
 
-if (typeof QUERY_CACHE === 'undefined') {
-    global.QUERY_CACHE = {
+if (typeof envHandler.getEnv().QUERY_CACHE === 'undefined') {
+    envHandler.getEnv().QUERY_CACHE = {
         get: async (...a) => {
             console.log('trying to GET query cache', ...a)
             return false
@@ -19,8 +21,8 @@ if (typeof QUERY_CACHE === 'undefined') {
     }
 }
 
-if (typeof DATA_CACHE === 'undefined') {
-    global.DATA_CACHE = {
+if (typeof envHandler.getEnv().DATA_CACHE === 'undefined') {
+    envHandler.getEnv().DATA_CACHE = {
         get: async (what) => {
             console.log(`trying to get ${what}`)
 

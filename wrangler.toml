@@ -1,6 +1,6 @@
 compatibility_date = "2023-03-14"
 name = "api"
-main = "index.js"
+main = "main.js"
 compatibility_flags = [ "nodejs_compat" ]
 account_id = "424ad63426a1ae47d559873f929eb9fc"
 workers_dev = true
@@ -25,11 +25,11 @@ kv_namespaces = [
 [env.production.vars]
 TRACE_SAMPLE_RATE = 0.05
 ENVIRONMENT = "production"
-# We should set this to the commit hash on deploy
-VERSION = "1.0"
+# We should set this to the commit ref on deploy
+TAPI_COMMIT_REF = "1.0"
 
 [env.development.vars]
 TRACE_SAMPLE_RATE = 1
 ENVIRONMENT = "development"
-# We should set this to the commit hash on deploy
-VERSION = "1.0-dev"
+# We should set this to the commit ref on deploy
+TAPI_COMMIT_REF = "1.0-dev"
