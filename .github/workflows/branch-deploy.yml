@@ -18,13 +18,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: github/branch-deploy@v7.2.1
+      - uses: github/branch-deploy@v8.1.0
         id: branch-deploy
         with:
           admins: the-hideout/core-contributors
           admins_pat: ${{ secrets.BRANCH_DEPLOY_ADMINS_PAT }}
           environment_targets: production,development
           environment_urls: production|https://api.tarkov.dev/graphql,development|https://dev-api.tarkov.dev/graphql
+          sticky_locks: "true"
 
       - name: checkout
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
@@ -54,7 +55,7 @@ jobs:
           environment: "development"
 
       # Post comment on PR with development deploy info
-      - uses: GrantBirki/comment@v2.0.6
+      - uses: GrantBirki/comment@v2.0.7
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'development' }}
@@ -80,7 +81,7 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
 
       # Post comment on PR with production deploy info
-      - uses: GrantBirki/comment@v2.0.6
+      - uses: GrantBirki/comment@v2.0.7
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'production' }}
