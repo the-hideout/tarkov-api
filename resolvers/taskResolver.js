@@ -36,6 +36,11 @@ module.exports = {
             return context.data.task.getLocale(data.effects, context, info);
         },
     },
+    MapWithPosition: {
+        map(data, args, context, info) {
+            return context.data.map.get(context, data.map);
+        },
+    },
     SkillLevel: {
         name(data, args, context, info) {
             return context.data.task.getLocale(data.name, context, info);
@@ -334,6 +339,11 @@ module.exports = {
         },
         zoneNames(data, args, context, info) {
             return context.data.task.getLocale(data.zoneNames, context, info);
+        },
+    },
+    TaskZone: {
+        map(data, args, context) {
+            return context.data.map.get(context, data.map);
         },
     },
     QuestItem: {

@@ -88,6 +88,48 @@ class MapAPI extends WorkerKV {
             return false;
         });
     }
+
+    async getLootContainer(context, id) {
+        await this.init(context);
+        return this.cache.LootContainer[id];
+    }
+
+    async getAllLootContainers(context) {
+        await this.init(context);
+        return Object.values(this.cache.LootContainer);
+    }
+
+    async getExtract(context, id) {
+        await this.init(context);
+        return this.cache.Map.reduce((found, current) => {
+            if (found) {
+                return found;
+            }
+            found = current.extracts.find(e => e.id === id);
+            return found;
+        }, false);
+    }
+
+    async getSwitch(context, id) {
+        await this.init(context);
+        return this.cache.Map.reduce((found, current) => {
+            if (found) {
+                return found;
+            }
+            found = current.switches.find(e => e.id === id);
+            return found;
+        }, false);
+    }
+
+    async getStationaryWeapon(context, id) {
+        await this.init(context);
+        return this.cache.StationaryWeapon[id];
+    }
+
+    async getAllStationaryWeapons(context) {
+        await this.init(context);
+        return Object.values(this.cache.StationaryWeapon);
+    }
 }
 
 module.exports = MapAPI;

@@ -88,7 +88,7 @@ class WorkerKV {
                     this.cache = JSON.parse(response.value);
                 }
                 let newDataExpires = false;
-                if (this.cache.expiration) {
+                if (this.cache?.expiration) {
                     newDataExpires = new Date(this.cache.expiration).valueOf();
                 }
                 if (newDataExpires && this.dataExpires === newDataExpires) {

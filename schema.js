@@ -83,6 +83,7 @@ type BossSpawn {
   spawnTime: Int
   spawnTimeRandom: Boolean
   spawnTrigger: String
+  switch: MapSwitch
   name: String! @deprecated(reason: "Use boss.name instead.")
   normalizedName: String! @deprecated(reason: "Use boss.normalizedName instead.")
 }
@@ -646,6 +647,31 @@ type ItemStorageGrid {
   filters: ItemFilters!
 }
 
+type Lock {
+  lockType: String
+  key: Item
+  needsPower: Boolean
+  position: MapPosition
+  outline: [MapPosition]
+  top: Float
+  bottom: Float
+  #rotation: MapPosition
+  #center: MapPosition
+  #size: MapPosition
+  #terrainElevation: Float
+}
+
+type LootContainer {
+  id: ID!
+  name: String!
+  normalizedName: String!
+}
+
+type LootContainerPosition {
+  lootContainer: LootContainer
+  position: MapPosition
+}
+
 type Map {
   id: ID!
   tarkovDataId: ID
@@ -661,7 +687,46 @@ type Map {
   accessKeys: [Item]!
   accessKeysMinPlayerLevel: Int
   spawns: [MapSpawn]
+  extracts: [MapExtract]
+  locks: [Lock]
+  switches: [MapSwitch]
+  hazards: [MapHazard]
+  lootContainers: [LootContainerPosition]
+  stationaryWeapons: [StationaryWeaponPosition]
   #svg: MapSvg
+}
+
+type MapExtract {
+  id: ID!
+  name: String
+  faction: String
+  switches: [MapSwitch]
+  position: MapPosition
+  outline: [MapPosition]
+  top: Float
+  bottom: Float
+  #rotation: MapPosition
+  #center: MapPosition
+  #size: MapPosition
+  #terrainElevation: Float
+}
+
+type MapHazard {
+  hazardType: String
+  name: String
+  position: MapPosition
+  outline: [MapPosition]
+  top: Float
+  bottom: Float
+  #rotation: MapPosition
+  #center: MapPosition
+  #size: MapPosition
+  #terrainElevation: Float
+}
+
+type MapWithPosition {
+  map: Map
+  positions: [MapPosition]
 }
 
 type MapPosition {
@@ -682,6 +747,26 @@ type MapSpawn {
 #  floors: [String]
 #  defaultFloor: String
 #}
+
+type MapSwitch {
+  id: ID!
+  name: String
+  #tip: String
+  #extractTip: String
+  #door: Lock
+  #extract: MapExtract
+  switchType: String
+  activatedBy: MapSwitch
+  activates: [MapSwitchOperation]
+  position: MapPosition
+}
+
+type MapSwitchOperation {
+  operation: String
+  target: MapSwitchTarget
+}
+
+union MapSwitchTarget = MapSwitch | MapExtract
 
 type MobInfo {
   id: ID!
@@ -786,6 +871,17 @@ type SkillLevel {
   level: Float!
 }
 
+type StationaryWeapon {
+  id: ID
+  name: String
+  shortName: String
+}
+
+type StationaryWeaponPosition {
+  stationaryWeapon: StationaryWeapon
+  position: MapPosition
+}
+
 type Status {
   name: String!
   message: String
@@ -870,6 +966,7 @@ type TaskObjectiveBasic implements TaskObjective {
   #locationNames: [String]!
   maps: [Map]!
   optional: Boolean!
+  zones: [TaskZone]
 }
 
 type TaskObjectiveBuildItem implements TaskObjective {
@@ -890,6 +987,7 @@ type TaskObjectiveExperience implements TaskObjective {
   id: ID
   type: String!
   description: String!
+  count: Int!
   #locationNames: [String]!
   maps: [Map]!
   optional: Boolean!
@@ -906,6 +1004,7 @@ type TaskObjectiveExtract implements TaskObjective {
   exitStatus: [String]!
   exitName: String
   zoneNames: [String]!
+  count: Int!
 }
 
 type TaskObjectiveItem implements TaskObjective {
@@ -921,6 +1020,7 @@ type TaskObjectiveItem implements TaskObjective {
   dogTagLevel: Int
   maxDurability: Int
   minDurability: Int
+  zones: [TaskZone]
 }
 
 type TaskObjectiveMark implements TaskObjective {
@@ -931,6 +1031,7 @@ type TaskObjectiveMark implements TaskObjective {
   maps: [Map]!
   optional: Boolean!
   markerItem: Item!
+  zones: [TaskZone]
 }
 
 type TaskObjectivePlayerLevel implements TaskObjective {
@@ -952,6 +1053,8 @@ type TaskObjectiveQuestItem implements TaskObjective {
   optional: Boolean!
   questItem: QuestItem!
   count: Int!
+  possibleLocations: [MapWithPosition]
+  zones: [TaskZone]
 }
 
 type TaskObjectiveShoot implements TaskObjective {
@@ -975,6 +1078,7 @@ type TaskObjectiveShoot implements TaskObjective {
   enemyHealthEffect: HealthEffect
   timeFromHour: Int
   timeUntilHour: Int
+  zones: [TaskZone]
   target: String! @deprecated(reason: "Use targetNames instead.")
 }
 
@@ -1033,6 +1137,7 @@ type TaskObjectiveUseItem implements TaskObjective {
   compareMethod: String!
   count: Int!
   zoneNames: [String]!
+  zones: [TaskZone]
 }
 
 type TaskRewards {
@@ -1047,6 +1152,19 @@ type TaskRewards {
 type TaskStatusRequirement {
   task: Task!
   status: [String]!
+}
+
+type TaskZone {
+  id: ID!
+  map: Map
+  position: MapPosition
+  outline: [MapPosition]
+  top: Float
+  bottom: Float
+  #rotation: MapPosition
+  #center: MapPosition
+  #size: MapPosition
+  #terrainElevation: Float
 }
 
 type Trader {
@@ -1153,8 +1271,10 @@ type Query {
   items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], handbookCategoryNames: [HandbookCategoryName] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   handbookCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
+  lootContainers(lang: LanguageCode, limit: Int, offset: Int): [LootContainer]
   maps(lang: LanguageCode, name: [String!], enemies: [String!], limit: Int, offset: Int): [Map]!
   questItems(lang: LanguageCode): [QuestItem]
+  stationaryWeapons(lang: LanguageCode, limit: Int, offset: Int): [StationaryWeapon]
   status: ServerStatus!
   task(id: ID!, lang: LanguageCode): Task
   tasks(faction: String, lang: LanguageCode, limit: Int, offset: Int): [Task]!
