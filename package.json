@@ -24,7 +24,7 @@
     },
     "dependencies": {
         "@graphql-tools/merge": "9.0.0",
-        "@graphql-tools/schema": "10.0.0",
+        "@graphql-tools/schema": "10.0.2",
         "graphql": "^15.8.0",
         "uuid": "9.0.1"
     }
