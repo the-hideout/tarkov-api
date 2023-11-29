@@ -205,6 +205,7 @@ type HideoutStationLevel {
 
 type historicalPricePoint {
   price: Int
+  priceMin: Int
   timestamp: String
 }
 
