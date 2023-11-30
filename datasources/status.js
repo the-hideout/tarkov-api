@@ -16,7 +16,10 @@ async function handleRequest(url) {
         },
     };
     return fetch(url, init).then(response => {
-        return response.json();
+        return response.json().catch(error => {
+            console.error(`Error parsing ${url} json: ${error.message}`);
+            return false;    
+        });
     }).catch(error => {
         console.error(`Error retrieving ${url} status: ${error.message}`);
         return false;
