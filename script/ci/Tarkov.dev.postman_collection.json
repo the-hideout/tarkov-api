@@ -286,7 +286,7 @@
 							"\r",
 							"pm.test(\"Has correct data\", function () {\r",
 							"    pm.expect(pm.response.text()).to.include(\"messages\");\r",
-							"    pm.expect(pm.response.text()).to.include(\"Website\");\r",
+							"    pm.expect(pm.response.text()).to.include(\"Global\");\r",
 							"});\r",
 							"\r",
 							"pm.test(\"No errors\", function () {\r",
