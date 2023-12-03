@@ -1267,7 +1267,7 @@ type Query {
   bosses(lang: LanguageCode, name: [String!], limit: Int, offset: Int): [MobInfo]
   crafts(lang: LanguageCode, limit: Int, offset: Int): [Craft]
   hideoutStations(lang: LanguageCode, limit: Int, offset: Int): [HideoutStation]!
-  historicalItemPrices(id: ID!, lang: LanguageCode, limit: Int, offset: Int): [historicalPricePoint]!
+  historicalItemPrices(id: ID!, days: Int, lang: LanguageCode, limit: Int, offset: Int): [historicalPricePoint]!
   item(id: ID, normalizedName: String, lang: LanguageCode): Item
   items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], handbookCategoryNames: [HandbookCategoryName] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
