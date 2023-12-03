@@ -17,7 +17,7 @@ jobs:
     steps:
       # https://github.com/github/branch-deploy/blob/d3c24bd92505e623615b75ffdfac5ed5259adbdb/docs/merge-commit-strategy.md
       - name: deployment check
-        uses: github/branch-deploy@v8.1.0
+        uses: github/branch-deploy@v8.1.1
         id: deployment-check
         with:
           merge_deploy_mode: "true"
@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
           cache: npm
