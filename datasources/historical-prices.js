@@ -10,7 +10,7 @@ class historicalPricesAPI extends WorkerKV {
 
     async getByItemId(context, itemId, days = 7) {
         await this.init(context);
-        if (days > defaultDays || days < 1) {
+        if (days > maxDays || days < 1) {
             const warningMessage = `Historical prices days argument of ${days} must be 1-${maxDays}; defaulting to ${defaultDays}.`;
             if (!context.warnings.some(warning => warning.message === warningMessage)) {
                 context.warnings.push({message: warningMessage});
