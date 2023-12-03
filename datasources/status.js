@@ -9,28 +9,21 @@ const statusMap = [
     'Down',
 ];
 
-async function gatherResponse(response) {
-    let responseOutput = false;
-    try {
-        const responseData = await response.json();
-
-        responseOutput = responseData;
-    } catch (jsonError) {
-        console.error('Error processing JSON for status request', jsonError);
-    }
-
-    return responseOutput;
-};
-
 async function handleRequest(url) {
     const init = {
         headers: {
             'accept': 'application/json, text/plain, */*',
         },
     };
-    const response = await fetch(url, init);
-
-    return await gatherResponse(response);
+    return fetch(url, init).then(response => {
+        return response.json().catch(error => {
+            console.error(`Error parsing ${url} json: ${error.message}`);
+            return false;    
+        });
+    }).catch(error => {
+        console.error(`Error retrieving ${url} status: ${error.message}`);
+        return false;
+    });
 };
 
 module.exports = async () => {
