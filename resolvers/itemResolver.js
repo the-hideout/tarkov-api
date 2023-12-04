@@ -191,11 +191,11 @@ module.exports = {
         },
         async historicalPrices(data, args, context, info) {
             context.util.testDepthLimit(info, 1);
-            const warningMessage = 'Querying historicalPrices on the Item object will return only prices from the last 2 days. For up to 30 days of historical prices, use the historicalItemPrices query.';
+            const warningMessage = `Querying historicalPrices on the Item object will only provide half the prices from the last ${context.data.historicalPrice.itemLimitDays} days. For up to ${context.data.historicalPrice.maxDays} days of historical prices, use the historicalItemPrices query.`;
             if (!context.warnings.some(warning => warning.message === warningMessage)) {
                 context.warnings.push({message: warningMessage});
             }
-            return context.data.historicalPrice.getByItemId(context, data.id, 2);
+            return context.data.historicalPrice.getByItemId(context, data.id, context.data.historicalPrice.itemLimitDays, true);
         },
         imageLink(data) {
             return data.inspectImageLink;
