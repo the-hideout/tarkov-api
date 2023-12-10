@@ -20,7 +20,7 @@ class historicalPricesAPI extends WorkerKV {
             return Promise.reject(new Error('Historical prices cache is empty'));
         }
         if (!this.cache.historicalPricePoint[itemId]) return [];
-        if (days === 30) {
+        if (days === this.maxDays) {
             return this.cache.historicalPricePoint[itemId];
         }
         const cutoffTimestamp = new Date().setDate(new Date().getDate() - days);
