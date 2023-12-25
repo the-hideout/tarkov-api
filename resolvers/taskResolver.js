@@ -114,7 +114,13 @@ module.exports = {
         },
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
-        }
+        },
+        requiredKeys(data, args, context) {
+            if (!data.requiredKeys) {
+                return null;
+            }
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+        },
     },
     TaskObjectiveBuildItem: {
         item(data, args, context) {
@@ -175,6 +181,12 @@ module.exports = {
             }
             return context.data.task.getLocale(data.zoneNames, context, info);
         },
+        requiredKeys(data, args, context) {
+            if (!data.requiredKeys) {
+                return null;
+            }
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+        },
     },
     TaskObjectiveItem: {
         item(data, args, context) {
@@ -187,7 +199,13 @@ module.exports = {
         },
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
-        }
+        },
+        requiredKeys(data, args, context) {
+            if (!data.requiredKeys) {
+                return null;
+            }
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+        },
     },
     TaskObjectiveMark: {
         markerItem(data, args, context) {
@@ -200,7 +218,13 @@ module.exports = {
         },
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
-        }
+        },
+        requiredKeys(data, args, context) {
+            if (!data.requiredKeys) {
+                return null;
+            }
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+        },
     },
     TaskObjectivePlayerLevel: {
         maps(data, args, context) {
@@ -223,7 +247,13 @@ module.exports = {
         },
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
-        }
+        },
+        requiredKeys(data, args, context) {
+            if (!data.requiredKeys) {
+                return null;
+            }
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+        },
     },
     TaskObjectiveSkill: {
         maps(data, args, context) {
@@ -285,6 +315,12 @@ module.exports = {
             }
             return context.data.task.getLocale(data.zoneNames, context, info);
         },
+        requiredKeys(data, args, context) {
+            if (!data.requiredKeys) {
+                return null;
+            }
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+        },
     },
     TaskObjectiveTaskStatus: {
         task(data, args, context) {
@@ -339,6 +375,12 @@ module.exports = {
         },
         zoneNames(data, args, context, info) {
             return context.data.task.getLocale(data.zoneNames, context, info);
+        },
+        requiredKeys(data, args, context) {
+            if (!data.requiredKeys) {
+                return null;
+            }
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
         },
     },
     TaskZone: {

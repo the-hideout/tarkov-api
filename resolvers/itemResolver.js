@@ -76,7 +76,7 @@ module.exports = {
             return context.data.item.getItemsByBsgCategoryId(context, args.bsgCategoryId, undefined);
         },
         historicalItemPrices(obj, args, context, info) {
-            return context.util.paginate(context.data.historicalPrice.getByItemId(context, args.id), args);
+            return context.util.paginate(context.data.historicalPrice.getByItemId(context, args.id, args.days), args);
         },
         armorMaterials(obj, args, context) {
             return context.data.item.getArmorMaterials(context);
@@ -191,11 +191,11 @@ module.exports = {
         },
         async historicalPrices(data, args, context, info) {
             context.util.testDepthLimit(info, 1);
-            const warningMessage = 'Querying historicalPrices on the Item object will return only the 10 most recent prices. For a full list of historical prices, use the historicalItemPrices query.';
+            const warningMessage = `Querying historicalPrices on the Item object will only provide half the prices from the last ${context.data.historicalPrice.itemLimitDays} days. For up to ${context.data.historicalPrice.maxDays} days of historical prices, use the historicalItemPrices query.`;
             if (!context.warnings.some(warning => warning.message === warningMessage)) {
                 context.warnings.push({message: warningMessage});
             }
-            return context.data.historicalPrice.getByItemId(context, data.id, 10);
+            return context.data.historicalPrice.getByItemId(context, data.id, context.data.historicalPrice.itemLimitDays, true);
         },
         imageLink(data) {
             return data.inspectImageLink;

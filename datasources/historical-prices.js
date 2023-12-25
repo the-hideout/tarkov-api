@@ -3,18 +3,40 @@ const WorkerKV = require('../utils/worker-kv');
 class historicalPricesAPI extends WorkerKV {
     constructor(dataSource) {
         super('historical_price_data', dataSource);
+        this.defaultDays = 7;
+        this.maxDays = 7;
+        this.itemLimitDays = 2;
     }
 
-    async getByItemId(requestId, itemId, limit = 0) {
-        await this.init(requestId);
+    async getByItemId(context, itemId, days = this.defaultDays, halfResults = false) {
+        await this.init(context);
         if (!this.cache) {
             return Promise.reject(new Error('Historical prices cache is empty'));
         }
-        if (!this.cache.historicalPricePoint[itemId]) return [];
-        if (limit) {
-            return this.cache.historicalPricePoint[itemId].slice(Math.max(this.cache.historicalPricePoint[itemId].length - limit, 0));
+        
+        if (days > this.maxDays || days < 1) {
+            const warningMessage = `Historical prices days argument of ${days} must be 1-${this.maxDays}; defaulting to ${this.defaultDays}.`;
+            days = this.defaultDays;
+            if (!context.warnings.some(warning => warning.message === warningMessage)) {
+                context.warnings.push({message: warningMessage});
+            }
         }
-        return this.cache.historicalPricePoint[itemId];
+        
+        let prices = this.cache.historicalPricePoint[itemId];
+        if (!prices) {
+            return [];
+        }
+        else if (days === this.maxDays) {
+            return prices;
+        }
+        else {
+            const cutoffTimestamp = new Date().setDate(new Date().getDate() - days);
+            let dayFiltered = prices.filter(hp => hp.timestamp >= cutoffTimestamp);
+            if (halfResults) {
+                dayFiltered = dayFiltered.filter((hp, index) => index % 2 === 0);
+            }
+            return dayFiltered;
+        }
     }
 }
 

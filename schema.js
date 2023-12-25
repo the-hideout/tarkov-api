@@ -936,7 +936,7 @@ type Task {
   failureOutcome: TaskRewards
   restartable: Boolean
   factionName: String
-  neededKeys: [TaskKey]
+  neededKeys: [TaskKey] @deprecated(reason: "Use requiredKeys on objectives instead.")
   kappaRequired: Boolean
   lightkeeperRequired: Boolean
   descriptionMessageId: String
@@ -968,6 +968,7 @@ type TaskObjectiveBasic implements TaskObjective {
   maps: [Map]!
   optional: Boolean!
   zones: [TaskZone]
+  requiredKeys: [[Item]]
 }
 
 type TaskObjectiveBuildItem implements TaskObjective {
@@ -1006,6 +1007,7 @@ type TaskObjectiveExtract implements TaskObjective {
   exitName: String
   zoneNames: [String]!
   count: Int!
+  requiredKeys: [[Item]]
 }
 
 type TaskObjectiveItem implements TaskObjective {
@@ -1022,6 +1024,7 @@ type TaskObjectiveItem implements TaskObjective {
   maxDurability: Int
   minDurability: Int
   zones: [TaskZone]
+  requiredKeys: [[Item]]
 }
 
 type TaskObjectiveMark implements TaskObjective {
@@ -1033,6 +1036,7 @@ type TaskObjectiveMark implements TaskObjective {
   optional: Boolean!
   markerItem: Item!
   zones: [TaskZone]
+  requiredKeys: [[Item]]
 }
 
 type TaskObjectivePlayerLevel implements TaskObjective {
@@ -1056,6 +1060,7 @@ type TaskObjectiveQuestItem implements TaskObjective {
   count: Int!
   possibleLocations: [MapWithPosition]
   zones: [TaskZone]
+  requiredKeys: [[Item]]
 }
 
 type TaskObjectiveShoot implements TaskObjective {
@@ -1080,6 +1085,7 @@ type TaskObjectiveShoot implements TaskObjective {
   timeFromHour: Int
   timeUntilHour: Int
   zones: [TaskZone]
+  requiredKeys: [[Item]]
   target: String! @deprecated(reason: "Use targetNames instead.")
 }
 
@@ -1139,6 +1145,7 @@ type TaskObjectiveUseItem implements TaskObjective {
   count: Int!
   zoneNames: [String]!
   zones: [TaskZone]
+  requiredKeys: [[Item]]
 }
 
 type TaskRewards {
@@ -1267,7 +1274,7 @@ type Query {
   bosses(lang: LanguageCode, name: [String!], limit: Int, offset: Int): [MobInfo]
   crafts(lang: LanguageCode, limit: Int, offset: Int): [Craft]
   hideoutStations(lang: LanguageCode, limit: Int, offset: Int): [HideoutStation]!
-  historicalItemPrices(id: ID!, lang: LanguageCode, limit: Int, offset: Int): [historicalPricePoint]!
+  historicalItemPrices(id: ID!, days: Int, lang: LanguageCode, limit: Int, offset: Int): [historicalPricePoint]!
   item(id: ID, normalizedName: String, lang: LanguageCode): Item
   items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], handbookCategoryNames: [HandbookCategoryName] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
