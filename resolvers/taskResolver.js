@@ -65,7 +65,8 @@ module.exports = {
             });
         },
         map(data, args, context) {
-            return context.data.map.get(context, data.map_id);
+            if (data.map_id) return context.data.map.get(context, data.map_id);
+            return null;
         }
     },
     TaskObjective: {
