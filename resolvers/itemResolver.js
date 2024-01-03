@@ -210,6 +210,36 @@ module.exports = {
             return data.inspectImageLink;
         }
     },
+    ItemArmorSlot: {
+        __resolveType(data) {
+            if (data.allowedPlates) return 'ItemArmorSlotOpen';
+            return 'ItemArmorSlotLocked';
+        }
+    },
+    ItemArmorSlotLocked: {
+        name(data) {
+            if (data.name) return data.name;
+            return data.type;
+        },
+        zones(data, args, context, info) {
+            return context.data.item.getLocale(data.zones, context, info);
+        },
+        material(data, args, context) {
+            return context.data.item.getArmorMaterial(context, data.armor_material_id);
+        },
+    },
+    ItemArmorSlotOpen: {
+        name(data) {
+            if (data.name) return data.name;
+            return data.type;
+        },
+        zones(data, args, context, info) {
+            return context.data.item.getLocale(data.zones, context, info);
+        },
+        allowedPlates(data, args, context) {
+            return data.allowedPlates.map(id => context.data.item.getItem(context, id));
+        },
+    },
     ItemAttribute: {
         type(data, args, context) {
             if (data.type) return data.type;
