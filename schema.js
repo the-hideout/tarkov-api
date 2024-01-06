@@ -293,6 +293,7 @@ type ItemArmorSlotLocked implements ItemArmorSlot {
   material: ArmorMaterial
   zones: [String]
   armorType: String
+  baseValue: Int
 }
 
 type ItemArmorSlotOpen implements ItemArmorSlot {
