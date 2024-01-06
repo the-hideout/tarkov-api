@@ -1287,6 +1287,11 @@ type TraderReputationLevelFence {
   hostileScavs: Boolean
   scavAttackSupport: Boolean
   availableScavExtracts: Int
+  btrEnabled: Boolean
+  btrDeliveryDiscount: Int
+  btrDeliveryGridSize: MapPosition
+  btrTaxiDiscount: Int
+  btrCoveringFireDiscount: Int
 }
 
 type TraderStanding {
