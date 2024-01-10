@@ -274,6 +274,35 @@ type Item {
   gridImageLinkFallback: String! @deprecated(reason: "Fallback handled automatically by gridImageLink.")
 }
 
+interface ItemArmorSlot {
+  #id: ID!
+  nameId: String
+  zones: [String]
+}
+
+type ItemArmorSlotLocked implements ItemArmorSlot {
+  nameId: String
+  name: String
+  bluntThroughput: Float
+  class: Int
+  durability: Int
+  repairCost: Int
+  speedPenalty: Float
+  turnPenalty: Float
+  ergoPenalty: Float
+  material: ArmorMaterial
+  zones: [String]
+  armorType: String
+  baseValue: Int
+}
+
+type ItemArmorSlotOpen implements ItemArmorSlot {
+  nameId: String
+  name: String
+  zones: [String]
+  allowedPlates: [Item]
+}
+
 type ItemAttribute {
   type: String!
   name: String!
@@ -344,6 +373,7 @@ type ItemPropertiesArmor {
   material: ArmorMaterial
   armorType: String
   bluntThroughput: Float
+  armorSlots: [ItemArmorSlot]
 }
 
 type ItemPropertiesArmorAttachment {
@@ -394,6 +424,7 @@ type ItemPropertiesChestRig {
   pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
   armorType: String
   bluntThroughput: Float
+  armorSlots: [ItemArmorSlot]
 }
 
 type ItemPropertiesContainer {
@@ -462,6 +493,7 @@ type ItemPropertiesHelmet {
   ricochetZ: Float
   armorType: String
   bluntThroughput: Float
+  armorSlots: [ItemArmorSlot]
 }
 
 type ItemPropertiesKey {
@@ -1255,6 +1287,11 @@ type TraderReputationLevelFence {
   hostileScavs: Boolean
   scavAttackSupport: Boolean
   availableScavExtracts: Int
+  btrEnabled: Boolean
+  btrDeliveryDiscount: Int
+  btrDeliveryGridSize: MapPosition
+  btrTaxiDiscount: Int
+  btrCoveringFireDiscount: Int
 }
 
 type TraderStanding {
