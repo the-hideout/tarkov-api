@@ -1,5 +1,8 @@
 module.exports = {
     Query: {
+        achievements(obj, args, context) {
+            return context.util.paginate(context.data.task.getAchievements(context), args);
+        },
         async tasks(obj, args, context, info) {
             let tasks = await context.data.task.getList(context);
             if (args.faction) {
@@ -21,6 +24,14 @@ module.exports = {
         questItems(obj, args, context) {
             return context.data.task.getQuestItems(context);
         }
+    },
+    Achievement: {
+        name(data, args, context, info) {
+            return context.data.task.getLocale(data.name, context, info);
+        },
+        description(data, args, context, info) {
+            return context.data.task.getLocale(data.description, context, info);
+        },
     },
     HealthEffect: {
         bodyParts(data, args, context, info) {

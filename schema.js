@@ -1,4 +1,12 @@
 module.exports = `
+type Achievement {
+  id: ID!
+  name: String!
+  description: String
+  hidden: Boolean!
+  playersCompletedPercent: Float!
+}
+
 type Ammo {
   item: Item!
   weight: Float!
@@ -385,6 +393,7 @@ type ItemPropertiesArmorAttachment {
   ergoPenalty: Int
   headZones: [String]
   material: ArmorMaterial
+  armorType: String
   blindnessProtection: Float
   bluntThroughput: Float
   slots: [ItemSlot]
@@ -1306,6 +1315,7 @@ interface Vendor {
 #union Vendor = TraderOffer | FleaMarket
 
 type Query {
+  achievements(lang: LanguageCode, limit: Int, offset: Int): [Achievement]!
   ammo(lang: LanguageCode, limit: Int, offset: Int): [Ammo]
   #archivedItemPrices(id: ID!, limit: Int, offset: Int): [historicalPricePoint]!
   barters(lang: LanguageCode, limit: Int, offset: Int): [Barter]
