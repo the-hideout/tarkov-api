@@ -78,6 +78,9 @@ module.exports = {
         historicalItemPrices(obj, args, context, info) {
             return context.util.paginate(context.data.historicalPrice.getByItemId(context, args.id, args.days), args);
         },
+        /*archivedItemPrices(obj, args, context, info) {
+            return context.util.paginate(context.data.archivedPrice.getByItemId(context, args.id), args);
+        },*/
         armorMaterials(obj, args, context) {
             return context.data.item.getArmorMaterials(context);
         },

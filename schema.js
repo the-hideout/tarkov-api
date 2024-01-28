@@ -1306,7 +1306,8 @@ interface Vendor {
 #union Vendor = TraderOffer | FleaMarket
 
 type Query {
-  ammo(lang: LanguageCode, limit: Int, offset: Int): [Ammo]  
+  ammo(lang: LanguageCode, limit: Int, offset: Int): [Ammo]
+  #archivedItemPrices(id: ID!, limit: Int, offset: Int): [historicalPricePoint]!
   barters(lang: LanguageCode, limit: Int, offset: Int): [Barter]
   bosses(lang: LanguageCode, name: [String!], limit: Int, offset: Int): [MobInfo]
   crafts(lang: LanguageCode, limit: Int, offset: Int): [Craft]

@@ -2,6 +2,7 @@ const BartersAPI = require('./barters');
 const CraftsAPI = require('./crafts');
 const HideoutAPI = require('./hideout');
 const HistoricalPricesAPI = require('./historical-prices');
+const ArchivedPricesAPI = require('./archived-prices');
 const ItemsAPI = require('./items');
 const MapAPI = require('./maps');
 const SchemaAPI = require('./schema');
@@ -16,6 +17,7 @@ class DataSource {
         this.craft = new CraftsAPI(this);
         this.hideout = new HideoutAPI(this);
         this.historicalPrice = new HistoricalPricesAPI(this);
+        this.archivedPrice = new ArchivedPricesAPI(this);
         this.item = new ItemsAPI(this);
         this.map = new MapAPI(this);
         this.schema = new SchemaAPI(this);
@@ -34,6 +36,7 @@ class DataSource {
             craft: this.craft,
             hideout: this.hideout,
             historicalPrice: this.historicalPrice,
+            archivedPrice: this.archivedPrice,
             item: this.item,
             map: this.map,
             schema: this.schema,
