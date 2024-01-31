@@ -204,6 +204,9 @@ module.exports = {
         item(data, args, context) {
             return context.data.item.getItem(context, data.item);
         },
+        items(data, args, context) {
+            return data.items.map(id => context.data.item.getItem(context, id));
+        },
         maps(data, args, context) {
             return data.map_ids.map(id => {
                 return context.data.map.get(context, id);

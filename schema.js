@@ -1061,6 +1061,7 @@ type TaskObjectiveItem implements TaskObjective {
   maps: [Map]!
   optional: Boolean!
   item: Item!
+  items: [Item]!
   count: Int!
   foundInRaid: Boolean!
   dogTagLevel: Int
