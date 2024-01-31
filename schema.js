@@ -22,6 +22,7 @@ type Ammo {
   ricochetChance: Float!
   penetrationChance: Float!
   penetrationPower: Int!
+  penetrationPowerDeviation: Float
   accuracy: Int @deprecated(reason: "Use accuracyModifier instead.")
   accuracyModifier: Float
   recoil: Int @deprecated(reason: "Use recoilModifier instead.")
@@ -355,6 +356,7 @@ type ItemPropertiesAmmo {
   ricochetChance: Float
   penetrationChance: Float
   penetrationPower: Int
+  penetrationPowerDeviation: Float
   accuracy: Int @deprecated(reason: "Use accuracyModifier instead.")
   accuracyModifier: Float
   recoil: Float @deprecated(reason: "Use recoilModifier instead.")
