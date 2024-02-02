@@ -1,6 +1,6 @@
-const WorkerKV = require('../utils/worker-kv');
+const WorkerKVSplit = require('../utils/worker-kv-split');
 
-class historicalPricesAPI extends WorkerKV {
+class historicalPricesAPI extends WorkerKVSplit {
     constructor(dataSource) {
         super('historical_price_data', dataSource);
         this.defaultDays = 7;
@@ -9,8 +9,9 @@ class historicalPricesAPI extends WorkerKV {
     }
 
     async getByItemId(context, itemId, days = this.defaultDays, halfResults = false) {
-        await this.init(context);
-        if (!this.cache) {
+        await this.init(context, itemId);
+        const data = await this.getKVData(context, itemId);
+        if (!data) {
             return Promise.reject(new Error('Historical prices cache is empty'));
         }
         
@@ -22,7 +23,7 @@ class historicalPricesAPI extends WorkerKV {
             }
         }
         
-        let prices = this.cache.historicalPricePoint[itemId];
+        let prices = data.historicalPricePoint[itemId];
         if (!prices) {
             return [];
         }
