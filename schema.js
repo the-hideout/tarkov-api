@@ -1,4 +1,12 @@
 module.exports = `
+type Achievement {
+  id: ID!
+  name: String!
+  description: String
+  hidden: Boolean!
+  playersCompletedPercent: Float!
+}
+
 type Ammo {
   item: Item!
   weight: Float!
@@ -14,6 +22,7 @@ type Ammo {
   ricochetChance: Float!
   penetrationChance: Float!
   penetrationPower: Int!
+  penetrationPowerDeviation: Float
   accuracy: Int @deprecated(reason: "Use accuracyModifier instead.")
   accuracyModifier: Float
   recoil: Int @deprecated(reason: "Use recoilModifier instead.")
@@ -347,6 +356,7 @@ type ItemPropertiesAmmo {
   ricochetChance: Float
   penetrationChance: Float
   penetrationPower: Int
+  penetrationPowerDeviation: Float
   accuracy: Int @deprecated(reason: "Use accuracyModifier instead.")
   accuracyModifier: Float
   recoil: Float @deprecated(reason: "Use recoilModifier instead.")
@@ -385,6 +395,7 @@ type ItemPropertiesArmorAttachment {
   ergoPenalty: Int
   headZones: [String]
   material: ArmorMaterial
+  armorType: String
   blindnessProtection: Float
   bluntThroughput: Float
   slots: [ItemSlot]
@@ -1050,6 +1061,7 @@ type TaskObjectiveItem implements TaskObjective {
   maps: [Map]!
   optional: Boolean!
   item: Item!
+  items: [Item]!
   count: Int!
   foundInRaid: Boolean!
   dogTagLevel: Int
@@ -1306,6 +1318,7 @@ interface Vendor {
 #union Vendor = TraderOffer | FleaMarket
 
 type Query {
+  achievements(lang: LanguageCode, limit: Int, offset: Int): [Achievement]!
   ammo(lang: LanguageCode, limit: Int, offset: Int): [Ammo]
   #archivedItemPrices(id: ID!, limit: Int, offset: Int): [historicalPricePoint]!
   barters(lang: LanguageCode, limit: Int, offset: Int): [Barter]
