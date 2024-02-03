@@ -130,6 +130,22 @@ class TasksAPI extends WorkerKV {
         await this.init(context);
         return this.cache.QuestItem[id];
     }
+
+    async getAchievements(context) {
+        await this.init(context);
+        return this.cache.Achievement;
+    }
+
+    async getAchievement(context, id) {
+        await this.init(context);
+        const achievements = await this.getAchievements(context);
+        for (const achievement of achievements) {
+            if (achievement.id === id) {
+                return achievement;
+            }
+        }
+        return Promise.reject(new Error(`No achievement with id ${id} found`));
+    }
 }
 
 module.exports = TasksAPI;
