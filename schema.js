@@ -378,7 +378,7 @@ type ItemPropertiesArmor {
   repairCost: Int
   speedPenalty: Float
   turnPenalty: Float
-  ergoPenalty: Int
+  ergoPenalty: Float
   zones: [String]
   material: ArmorMaterial
   armorType: String
@@ -392,7 +392,7 @@ type ItemPropertiesArmorAttachment {
   repairCost: Int
   speedPenalty: Float
   turnPenalty: Float
-  ergoPenalty: Int
+  ergoPenalty: Float
   headZones: [String]
   material: ArmorMaterial
   armorType: String
@@ -406,7 +406,7 @@ type ItemPropertiesBackpack {
   grids: [ItemStorageGrid]
   speedPenalty: Float
   turnPenalty: Float
-  ergoPenalty: Int
+  ergoPenalty: Float
   pouches: [ItemStorageGrid] @deprecated(reason: "Use grids instead.")
 }
 
@@ -427,7 +427,7 @@ type ItemPropertiesChestRig {
   repairCost: Int
   speedPenalty: Float
   turnPenalty: Float
-  ergoPenalty: Int
+  ergoPenalty: Float
   zones: [String]
   material: ArmorMaterial
   capacity: Int
@@ -457,7 +457,7 @@ type ItemPropertiesGlasses {
   blindnessProtection: Float
   #speedPenalty: Float
   #turnPenalty: Float
-  #ergoPenalty: Int
+  #ergoPenalty: Float
   material: ArmorMaterial
   bluntThroughput: Float
 }
@@ -492,7 +492,7 @@ type ItemPropertiesHelmet {
   repairCost: Int
   speedPenalty: Float
   turnPenalty: Float
-  ergoPenalty: Int
+  ergoPenalty: Float
   headZones: [String]
   material: ArmorMaterial
   deafening: String
