@@ -486,6 +486,10 @@ type ItemPropertiesHeadphone {
   resonance: Float
 }
 
+type ItemPropertiesHeadwear {
+  slots: [ItemSlot]
+}
+
 type ItemPropertiesHelmet {
   class: Int
   durability: Int
@@ -648,6 +652,7 @@ union ItemProperties =
   ItemPropertiesFoodDrink | 
   ItemPropertiesGlasses | 
   ItemPropertiesGrenade | 
+  ItemPropertiesHeadwear | 
   ItemPropertiesHeadphone | 
   ItemPropertiesHelmet | 
   ItemPropertiesKey | 
