@@ -51,3 +51,42 @@ Retrieve information about a given item in the game.
   }
 }
 ```
+
+### Tasks
+
+Retrieve quest or task info.
+
+[Inline fragments](https://www.apollographql.com/docs/react/data/fragments/#using-fragments-with-unions-and-interfaces) are used as `objectives` return an `interface TaskObjective`.
+
+```graphql
+query {
+  tasks {
+    id
+    name
+    objectives {
+      id
+      type
+    	description
+      maps {
+        normalizedName
+      }
+      ... on TaskObjectiveItem {
+        item {
+          name
+          shortName
+        }
+        items {
+          name
+          shortName
+        }
+        count
+        foundInRaid
+      }
+      ... on TaskObjectiveShoot{
+        targetNames
+        count
+      }
+    }
+  }
+}
+```
