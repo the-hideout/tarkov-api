@@ -180,6 +180,7 @@ type HideoutStation {
   id: ID!
   name: String!
   normalizedName: String!
+  imageLink: String
   levels: [HideoutStationLevel]!
   tarkovDataId: Int
   "crafts is only available via the hideoutStations query."
