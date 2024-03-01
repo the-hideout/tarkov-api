@@ -5,6 +5,7 @@ type Achievement {
   description: String
   hidden: Boolean!
   playersCompletedPercent: Float!
+  adjustedPlayersCompletedPercent: Float
   side: String
   normalizedSide: String
   rarity: String
