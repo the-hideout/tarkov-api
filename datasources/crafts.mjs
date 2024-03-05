@@ -19,36 +19,28 @@ class CraftsAPI extends WorkerKV {
     async getCraftsForItem(context, id) {
         await this.init(context);
         return this.cache.Craft.filter(craft => {
-            for (const item of craft.rewardItems) {
-                if (item.item === id) return true;
-            }
-            return false;
+            return craft.rewardItems.some(rew => rew.item === id);
         });
     }
 
     async getCraftsUsingItem(context, id) {
         await this.init(context);
         return this.cache.Craft.filter(craft => {
-            for (const item of craft.requiredItems) {
-                if (item.item === id) return true;
-            }
-            return false;
+            return craft.requiredItems.some(req => req.item === id);
         });
     }
 
     async getCraftsForStation(context, id) {
         await this.init(context);
         return this.cache.Craft.filter(craft => {
-            if (craft.station_id === id) return true;
-            return false;
+            return craft.station_id === id;
         });
     }
 
     async getCraftsForStationLevel(context, id, level) {
         await this.init(context);
         return this.cache.Craft.filter(craft => {
-            if (craft.station_id === id && craft.level === level) return true;
-            return false;
+            return craft.station_id === id && craft.level === level;
         });
     }
 }

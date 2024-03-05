@@ -1,4 +1,4 @@
-export default {
+const graphqlUtil =  {
     getDepth: (info) => {
         let depth = 0;
         let currentLevel = info.path;
@@ -9,7 +9,7 @@ export default {
         return depth;
     },
     testDepthLimit: (info, depthLimit) => {
-        const depth = module.exports.getDepth(info);
+        const depth = graphqlUtil.getDepth(info);
         if (depth > depthLimit) throw new Error(`Query depth ${depth} exceeds maximum (${depthLimit}) for ${info.parentType}.${info.fieldName}.`);
     },
     getLang: (info, context) => {
@@ -64,3 +64,5 @@ export default {
         return data.slice(offset, end);
     }
 };
+
+export default graphqlUtil;
