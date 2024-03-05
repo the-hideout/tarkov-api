@@ -6,3 +6,4 @@ dist/
 .vscode/
 tmp/
 kv/
+.*.vars
