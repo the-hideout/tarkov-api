@@ -6,19 +6,6 @@ const _get = async (url) => {
     return response.json()
 };
 
-if (typeof QUERY_CACHE === 'undefined') {
-    global.QUERY_CACHE = {
-        get: async (...a) => {
-            console.log('trying to GET query cache', ...a)
-            return false
-        },
-        put: async (...a) => {
-            console.log('trying to PUT query cache', ...a)
-            return false
-        },
-    }
-}
-
 if (typeof DATA_CACHE === 'undefined') {
     global.DATA_CACHE = {
         get: async (what) => {
