@@ -2,7 +2,7 @@
     "name": "tarkov-api",
     "version": "0.0.0",
     "description": "Tarkov Data API",
-    "main": "index.js",
+    "main": "index.mjs",
     "engines": {
         "node": ">=18.16.0"
     },
@@ -18,14 +18,14 @@
     "author": "Oskar Risberg <oskar.risberg@stendahls.se> + The-Hideout team",
     "license": "ISC",
     "devDependencies": {
-        "newman": "^6.1.0",
-        "prettier": "^3.2.4",
-        "wrangler": "^3.26.0"
+        "newman": "^6.1.1",
+        "prettier": "^3.2.5",
+        "wrangler": "^3.30.0"
     },
     "dependencies": {
-        "@graphql-tools/merge": "9.0.1",
-        "@graphql-tools/schema": "10.0.2",
-        "graphql": "^15.8.0",
+        "@graphql-tools/merge": "9.0.3",
+        "@graphql-tools/schema": "10.0.3",
+        "graphql": "^16.8.1",
         "uuid": "9.0.1"
     }
 }
