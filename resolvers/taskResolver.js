@@ -32,6 +32,12 @@ module.exports = {
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
         },
+        side(data, args, context, info) {
+            return context.data.task.getLocale(data.side, context, info);
+        },
+        rarity(data, args, context, info) {
+            return context.data.task.getLocale(data.rarity, context, info);
+        },
     },
     HealthEffect: {
         bodyParts(data, args, context, info) {

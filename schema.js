@@ -5,6 +5,11 @@ type Achievement {
   description: String
   hidden: Boolean!
   playersCompletedPercent: Float!
+  adjustedPlayersCompletedPercent: Float
+  side: String
+  normalizedSide: String
+  rarity: String
+  normalizedRarity: String
 }
 
 type Ammo {
@@ -371,6 +376,8 @@ type ItemPropertiesAmmo {
   ballisticCoeficient: Float
   bulletDiameterMilimeters: Float
   bulletMassGrams: Float
+  misfireChance: Float
+  failureToFeedChance: Float
 }
 
 type ItemPropertiesArmor {
