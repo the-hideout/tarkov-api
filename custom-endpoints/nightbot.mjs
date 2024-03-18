@@ -8,12 +8,21 @@ function capitalize(s) {
     return s && s[0].toUpperCase() + s.slice(1);
 }
 
-export default async function (request, data, ctx) {
+export default async function (request, data) {
+    if (request.method.toUpperCase() !== 'GET') {
+        return new Response(null, {
+            status: 405,
+            headers: { 'cache-control': 'public, max-age=2592000' },
+        });
+    }
     const requestId = uuidv4();
     const url = new URL(request.url);
 
     if (!url.searchParams.get('q')) {
-        return new Response(`Missing a query param called q`);
+        return new Response('Missing q param', {
+            status: 405,
+            headers: { 'cache-control': 'public, max-age=2592000' },
+        });
     }
 
     const context = {

@@ -164,6 +164,7 @@ class DataSource {
         if (ttl <= 0) {
             ttl = 0;
         }
+        ttl = Math.max(ttl, 60);
         return ttl;
     }
 }
