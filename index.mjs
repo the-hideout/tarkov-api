@@ -10,7 +10,6 @@ import typeDefs from './schema.mjs';
 import dynamicTypeDefs from './schema_dynamic.mjs';
 import resolvers from './resolvers/index.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
-import cacheMachine from './utils/cache-machine.mjs';
 
 import nightbot from './custom-endpoints/nightbot.mjs';
 import twitch from './custom-endpoints/twitch.mjs';
@@ -24,6 +23,7 @@ const schemaRefreshInterval = 1000 * 60 * 10;
 
 // If the environment is not production, skip using the caching service
 const skipCache = false; //ENVIRONMENT !== 'production' || false;
+const devCacheDefault = 60; // default length of time to cache in dev
 
 // Example of how router can be used in an application
 async function getSchema(data, context) {
@@ -85,7 +85,6 @@ async function graphqlHandler(request, env, ctx, graphQLOptions) {
     const url = new URL(request.url);
     let query = false;
     let variables = false;
-    const requestStart = new Date();
 
     if (request.method === 'POST') {
         try {
@@ -140,22 +139,6 @@ async function graphqlHandler(request, env, ctx, graphQLOptions) {
         specialCache = 'application/json';
     }
 
-    // Check the cache service for data first - If cached data exists, return it
-    if (!skipCache) {
-        const cachedResponse = await cacheMachine.get(env, query, variables, specialCache);
-        if (cachedResponse) {
-            // Construct a new response with the cached data
-            const newResponse = new Response(cachedResponse, responseOptions);
-            // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
-            newResponse.headers.append('X-CACHE', 'HIT');
-            console.log(`Request served from cache: ${new Date() - requestStart} ms`);
-            // Return the new cached response
-            return newResponse;
-        }
-    } else {
-        //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
-    }
-
     const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [], errors: [] };
     let result = await graphql({schema: await getSchema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
     console.log('generated graphql response');
@@ -184,17 +167,19 @@ async function graphqlHandler(request, env, ctx, graphQLOptions) {
 
     const body = JSON.stringify(result);
 
-    // Update the cache with the results of the query
+    const response = new Response(body, responseOptions)
+
+    if (ttl === 0 && env.ENVIRONMENT !== 'production') {
+        ttl = devCacheDefault;
+    }
     // don't update cache if result contained errors
-    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl >= 30) {
-        // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-        ctx.waitUntil(cacheMachine.put(env, query, variables, body, String(ttl), specialCache));
+    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl > 0) {
+        response.headers.set('cache-ttl', String(ttl));
     }
 
-    console.log(`Response time: ${new Date() - requestStart} ms`);
     //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
     delete dataAPI.requests[requestId];
-    return new Response(body, responseOptions);
+    return response;
 }
 
 const graphQLOptions = {
@@ -229,18 +214,44 @@ const graphQLOptions = {
     kvCache: false,
 };
 
+async function sha256(message) {
+    // encode as UTF-8
+    const msgBuffer = new TextEncoder().encode(message);
+    // hash the message
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    // convert bytes to hex string
+    return [...new Uint8Array(hashBuffer)]
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+}
+
 export default {
 	async fetch(request, env, ctx) {
+        const requestStart = new Date();
 		const url = new URL(request.url);
+
+        const cacheUrl = new URL(request.url);
+        let cacheKey = new Request(cacheUrl.toString().toLowerCase(), request);
+        if (request.method.toUpperCase() === 'POST') {
+            const body = await request.clone().text();
+            cacheUrl.pathname = '/posts' + cacheUrl.pathname + await sha256(body);
+            cacheKey = new Request(cacheUrl.toString().toLowerCase(), {
+                headers: request.headers,
+                method: 'GET',
+            });
+        }
+        const cache = env.ENVIRONMENT === 'production' ? caches.default : await caches.open('dev:cache');
+        let response = await cache.match(cacheKey);
+        if (!skipCache && response) {
+            return response;
+        }
 
         try {
             if (url.pathname === '/twitch') {
-                const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await twitch(env);
+                response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await twitch(env);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
                 }
-
-                return response;
             }
 
             if (!dataAPI) {
@@ -248,24 +259,22 @@ export default {
             }
             
             if (url.pathname === '/webhook/nightbot') {
-                return nightbot(request, dataAPI, env, ctx);
+                response = await nightbot(request, dataAPI, env, ctx);
             }
 
             if (url.pathname === '/webhook/stream-elements') {
-                return nightbot(request, dataAPI, env, ctx);
+                response = await nightbot(request, dataAPI, env, ctx);
             }
 
             if (url.pathname === '/webhook/moobot') {
-                return nightbot(request, dataAPI, env, ctx);
+                response = await nightbot(request, dataAPI, env, ctx);
             }
 
             if (url.pathname === graphQLOptions.baseEndpoint) {
-                const response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(request, env, ctx, graphQLOptions);
+                response = request.method === 'OPTIONS' ? new Response('', { status: 204 }) : await graphqlHandler(request, env, ctx, graphQLOptions);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
                 }
-
-                return response;
             }
 
             if (graphQLOptions.playgroundEndpoint && url.pathname === graphQLOptions.playgroundEndpoint) {
@@ -275,7 +284,21 @@ export default {
             if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
                 return fetch(request);
             }
-            return new Response('Not found', { status: 404 });
+            if (!response) {
+                response = new Response('Not found', { status: 404 });
+            }
+            if (!skipCache && response.headers.has('cache-ttl')) {
+                const ttl = parseInt(response.headers.get('cache-ttl'));
+                response.headers.delete('cache-ttl');
+                console.log('ttl', ttl);
+                if (ttl > 0) {
+                    response.headers.set('Cache-Control', `s-maxage=${ttl}`);
+                    //response.headers.delete('cache-ttl');
+                    ctx.waitUntil(cache.put(cacheKey, response.clone()));
+                }
+            }
+            console.log(`Response time: ${new Date() - requestStart} ms`);
+			return response;
         } catch (err) {
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
         }
