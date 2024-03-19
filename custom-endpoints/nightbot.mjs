@@ -69,10 +69,7 @@ export default async function (request, data) {
         responseBody = `${itemName} ${new Intl.NumberFormat().format(bestPrice[0].price)} ₽ ${capitalize(bestPrice[0].source)} https://tarkov.dev/item/${items[0].normalizedName}`;
     }
 
-    let ttl = data.getRequestTtl(requestId);
-    if (ttl < 30) {
-        ttl = 30;
-    }
+    const ttl = data.getRequestTtl(requestId);
     delete data.requests[requestId];
 
     // Update the cache with the results of the query
