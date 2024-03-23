@@ -825,6 +825,13 @@ type MapSwitchOperation {
 
 union MapSwitchTarget = MapSwitch | MapExtract
 
+type Mastering {
+  id: ID!
+  weapons: [Item]!
+  level2: Int
+  level3: Int
+}
+
 type MobInfo {
   id: ID!
   name: String!
@@ -893,6 +900,7 @@ type RequirementItem {
 type RequirementSkill {
   id: ID
   name: String!
+  skill: Skill!
   level: Int!
 }
 
@@ -923,7 +931,13 @@ type ServerStatus {
   messages: [StatusMessage]
 }
 
+type Skill {
+  id: ID
+  name: String
+}
+
 type SkillLevel {
+  skill: Skill!
   name: String!
   level: Float!
 }
@@ -969,6 +983,7 @@ type StimEffect {
   value: Float!
   percent: Boolean!
   skillName: String
+  skill: Skill
 }
 
 type Task {
@@ -1354,6 +1369,8 @@ type Query {
   fleaMarket(lang: LanguageCode): FleaMarket!
   armorMaterials(lang: LanguageCode): [ArmorMaterial]!
   playerLevels: [PlayerLevel]!
+  skills(lang: LanguageCode): [Skill]!
+  mastering(lang: LanguageCode): [Mastering]!
   hideoutModules: [HideoutModule] @deprecated(reason: "Use hideoutStations instead.")
   itemsByIDs(ids: [ID]!): [Item] @deprecated(reason: "Use items instead.")
   itemsByType(type: ItemType!): [Item]! @deprecated(reason: "Use items instead.")

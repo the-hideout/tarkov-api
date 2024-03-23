@@ -276,6 +276,26 @@ class ItemsAPI extends WorkerKV {
         return this.cache.ArmorMaterial[matKey];
     }
 
+    async getMasterings(context) {
+        await this.init(context);
+        return this.cache.Mastering;
+    }
+
+    async getMastering(context, mastId) {
+        await this.init(context);
+        return this.cache.Mastering.find(m => m.id === mastId);
+    }
+
+    async getSkills(context) {
+        await this.init(context);
+        return this.cache.Skill;
+    }
+
+    async getSkill(context, skillId) {
+        await this.init(context);
+        return this.cache.Skill.find(s => s.id === skillId);
+    }
+
     async getAmmoList(context) {
         const allAmmo = await this.getItemsByBsgCategoryId(context, '5485a8684bdc2da71d8b4567').then(ammoItems => {
             // ignore bb
