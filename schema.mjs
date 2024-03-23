@@ -1369,8 +1369,8 @@ type Query {
   fleaMarket(lang: LanguageCode): FleaMarket!
   armorMaterials(lang: LanguageCode): [ArmorMaterial]!
   playerLevels: [PlayerLevel]!
-  skills: [Skill]!
-  mastering: [Mastering]!
+  skills(lang: LanguageCode): [Skill]!
+  mastering(lang: LanguageCode): [Mastering]!
   hideoutModules: [HideoutModule] @deprecated(reason: "Use hideoutStations instead.")
   itemsByIDs(ids: [ID]!): [Item] @deprecated(reason: "Use items instead.")
   itemsByType(type: ItemType!): [Item]! @deprecated(reason: "Use items instead.")
