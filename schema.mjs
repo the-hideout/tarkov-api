@@ -983,6 +983,7 @@ type StimEffect {
   value: Float!
   percent: Boolean!
   skillName: String
+  skill: Skill
 }
 
 type Task {

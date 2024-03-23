@@ -425,6 +425,9 @@ export default {
         type(data, args, context, info) {
             return context.data.item.getLocale(data.type, context, info);
         },
+        skill(data, args, context, info) {
+            return context.data.item.getSkill(context, data.skillName);
+        },
         skillName(data, args, context, info) {
             return context.data.item.getLocale(data.skillName, context, info);
         }
