@@ -87,9 +87,15 @@ export default {
         fleaMarket(obj, args, context) {
             return context.data.item.getFleaMarket(context);
         },
+        mastering(obj, args, context) {
+            return context.data.item.getMasterings(context);
+        },
         playerLevels(obj, args, context) {
             return context.data.item.getPlayerLevels(context);
-        }
+        },
+        skills(obj, args, context) {
+            return context.data.item.getSkills(context);
+        },
     },
     Item: {
         name(data, args, context, info) {
@@ -397,12 +403,22 @@ export default {
             return context.data.item.getLocale(data.name, context, info);
         }
     },
+    Mastering: {
+        weapons(data, args, context, info) {
+            return Promise.all(data.weapons.map(id => context.data.item.getItem(context, id)));
+        },
+    },
     RequirementItem: {
         item(data, args, context) {
             return context.data.item.getItem(context, data.item);
         },
         quantity(data) {
             return data.count;
+        }
+    },
+    Skill: {
+        name(data, args, context, info) {
+            return context.data.item.getLocale(data.name, context, info);
         }
     },
     StimEffect: {

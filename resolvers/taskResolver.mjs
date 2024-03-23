@@ -59,9 +59,12 @@ export default {
         },
     },
     SkillLevel: {
+        skill(data, args, context, info) {
+            return context.data.item.getSkill(context, data.name);
+        },
         name(data, args, context, info) {
             return context.data.task.getLocale(data.name, context, info);
-        }
+        },
     },
     Task: {
         name(data, args, context, info) {

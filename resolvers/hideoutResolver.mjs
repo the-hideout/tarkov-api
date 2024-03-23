@@ -47,7 +47,10 @@ export default {
     RequirementSkill: {
         name(data, args, context, info) {
             return context.data.hideout.getLocale(data.name, context, info);
-        }
+        },
+        skill(data, args, context, info) {
+            return context.data.item.getSkill(context, data.name);
+        },
     },
     HideoutModule: {
         moduleRequirements(data, args, context) {
