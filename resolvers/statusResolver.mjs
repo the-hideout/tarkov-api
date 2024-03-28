@@ -3,5 +3,5 @@ export default {
         status(obj, args, context, info) {
             return context.data.status.getStatus(context);
         }
-    }
+    },
 };
