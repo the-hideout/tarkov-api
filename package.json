@@ -18,9 +18,9 @@
     "author": "Oskar Risberg <oskar.risberg@stendahls.se> + The-Hideout team",
     "license": "ISC",
     "devDependencies": {
-        "newman": "^6.1.1",
+        "newman": "^6.1.2",
         "prettier": "^3.2.5",
-        "wrangler": "^3.30.0"
+        "wrangler": "^3.41.0"
     },
     "dependencies": {
         "@graphql-tools/merge": "9.0.3",
