@@ -66,8 +66,8 @@ jobs:
 
             The API has been **deployed** to the **development** environment 🚀
 
-            - Endpoint: `dev-api.tarkov.dev`
-            - Playground: [dev-api.tarkov.dev/___graphql](https://dev-api.tarkov.dev/graphql)
+            - Endpoint: `dev-api.tarkov.dev/graphql`
+            - Playground: [dev-api.tarkov.dev](https://dev-api.tarkov.dev)
 
             > Pusher: @${{ github.actor }}, Action: `${{ github.event_name }}`, Workflow: `${{ github.workflow }}`;
 
@@ -92,7 +92,7 @@ jobs:
 
             The API has been **deployed** to the **production** environment 🚀
 
-            - Endpoint: `api.tarkov.dev`
-            - Playground: [api.tarkov.dev/___graphql](https://api.tarkov.dev/graphql)
+            - Endpoint: `api.tarkov.dev/graphql`
+            - Playground: [api.tarkov.dev](https://api.tarkov.dev)
 
             > Pusher: @${{ github.actor }}, Action: `${{ github.event_name }}`, Workflow: `${{ github.workflow }}`;
