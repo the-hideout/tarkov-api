@@ -87,6 +87,7 @@ type Barter {
   source: String! @deprecated(reason: "Use trader and level instead.")
   sourceName: ItemSourceName! @deprecated(reason: "Use trader instead.")
   requirements: [PriceRequirement]! @deprecated(reason: "Use level instead.")
+  buyLimit: Int
 }
 
 type BossSpawn {
@@ -1311,6 +1312,7 @@ type TraderOffer implements Vendor {
   #traderLevel: TraderLevel!
   minTraderLevel: Int
   taskUnlock: Task
+  buyLimit: Int
 }
 
 union TraderReputationLevel = TraderReputationLevelFence
