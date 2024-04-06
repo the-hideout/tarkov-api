@@ -744,6 +744,8 @@ type Map {
   nameId: String
   accessKeys: [Item]!
   accessKeysMinPlayerLevel: Int
+  minPlayerLevel: Int
+  maxPlayerLevel: Int
   spawns: [MapSpawn]
   extracts: [MapExtract]
   locks: [Lock]
