@@ -133,6 +133,9 @@ async function graphqlHandler(request, env, requestBody) {
         console.log('NewRelic health check');
         //return new Response(JSON.stringify({}), responseOptions);
     }
+    if (request.headers.has('X-Abuse-Info')) {
+        console.log(`X-Abuse-Info: ${request.headers.get('X-Abuse-Info')}`);
+    }
 
     const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [], errors: [] };
     let result = await graphql({schema: await getSchema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
