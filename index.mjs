@@ -132,6 +132,7 @@ async function graphqlHandler(request, env, requestBody) {
     if (request.headers.has('x-newrelic-synthetics')) {
         console.log('NewRelic health check');
         //return new Response(JSON.stringify({}), responseOptions);
+        console.log(`x-newrelic-synthetics: ${request.headers.get('x-newrelic-synthetics')}`);
     }
     if (request.headers.has('X-Abuse-Info')) {
         console.log(`X-Abuse-Info: ${request.headers.get('X-Abuse-Info')}`);
