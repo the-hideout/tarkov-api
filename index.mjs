@@ -224,6 +224,7 @@ export default {
         const cache = env.ENVIRONMENT === 'production' ? caches.default : await caches.open('dev:cache');
         let response = await cache.match(cacheKey);
         if (env.SKIP_CACHE !== 'true' && response) {
+            console.log(`Response time (cached): ${new Date() - requestStart} ms`);
             return response;
         }
 
@@ -236,7 +237,7 @@ export default {
             }
 
             if (url.pathname === graphQLOptions.playgroundEndpoint) {
-                return playground(request, graphQLOptions);
+                response = playground(request, graphQLOptions);
             }
 
             if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
