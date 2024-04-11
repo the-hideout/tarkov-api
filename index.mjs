@@ -22,9 +22,6 @@ let lastSchemaRefresh = 0;
 
 const schemaRefreshInterval = 1000 * 60 * 10;
 
-// If the environment is not production, skip using the caching service
-const skipCache = true; //ENVIRONMENT !== 'production' || false;
-
 // Example of how router can be used in an application
 async function getSchema(data, context) {
     if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
@@ -137,7 +134,7 @@ async function graphqlHandler(request, env, ctx) {
     }
 
     // Check the cache service for data first - If cached data exists, return it
-    if (!skipCache) {
+    if (env.SKIP_CACHE !== 'true') {
         const cachedResponse = await cacheMachine.get(env, query, variables, specialCache);
         if (cachedResponse) {
             // Construct a new response with the cached data
@@ -183,7 +180,7 @@ async function graphqlHandler(request, env, ctx) {
     const response = new Response(body, responseOptions)
 
     // don't update cache if result contained errors
-    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl > 0) {
+    if (env.SKIP_CACHE !== 'true' && (!result.errors || result.errors.length === 0) && ttl > 0) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
         ctx.waitUntil(cacheMachine.put(env, query, variables, body, String(ttl), specialCache));
     }
@@ -230,6 +227,8 @@ export default {
         const requestStart = new Date();
 		const url = new URL(request.url);
 
+        let response;
+
         try {
             if (url.pathname === '/twitch') {
                 response = await twitch(env);
@@ -270,6 +269,7 @@ export default {
             console.log(`Response time: ${new Date() - requestStart} ms`);
 			return response;
         } catch (err) {
+            console.log(err);
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
         }
 	},
