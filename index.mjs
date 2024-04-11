@@ -22,7 +22,7 @@ let lastSchemaRefresh = 0;
 const schemaRefreshInterval = 1000 * 60 * 10;
 
 // If the environment is not production, skip using the caching service
-const skipCache = true; //ENVIRONMENT !== 'production' || false;
+const skipCache = false; //ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
 async function getSchema(data, context) {
