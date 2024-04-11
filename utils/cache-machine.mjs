@@ -118,6 +118,8 @@ async function checkCache(env, query, variables, specialCache = '') {
         cacheFailCount = 0;
         if (response.status === 200) {
             return await response.json();
+        } else if (response.status !== 404) {
+            console.error(`failed to read from cache: ${response.status}`);
         }
 
         return false

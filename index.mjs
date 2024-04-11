@@ -238,7 +238,7 @@ export default {
             }
 
             if (url.pathname === graphQLOptions.playgroundEndpoint) {
-                return playground(request, graphQLOptions);
+                response = playground(request, graphQLOptions);
             }
 
             if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
