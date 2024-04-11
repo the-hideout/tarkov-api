@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
+import cacheMachine from '../utils/cache-machine.mjs';
 import graphqlUtil from '../utils/graphql-util.mjs';
 
 const skipCache = false; //ENVIRONMENT !== 'production' || false;
@@ -23,6 +24,23 @@ export default async function (request, data) {
             status: 405,
             headers: { 'cache-control': 'public, max-age=2592000' },
         });
+    }
+
+    if (!skipCache) {
+        const cachedResponse = await cacheMachine.get(env, 'nightbot', { q: url.searchParams.get('q') });
+        if (cachedResponse) {
+            // Construct a new response with the cached data
+            const newResponse = new Response(cachedResponse);
+            // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
+            newResponse.headers.append('X-CACHE', 'HIT');
+            console.log(`Request served from cache: ${new Date() - requestStart} ms`);
+            // Return the new cached response
+            return newResponse;
+        } else {
+            console.log('no cached response');
+        }
+    } else {
+        //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
     const context = {
@@ -73,10 +91,10 @@ export default async function (request, data) {
     delete data.requests[requestId];
 
     // Update the cache with the results of the query
-    // don't update cache if result contained errors
     const response = new Response(responseBody);
     if (!skipCache && ttl > 0) {
-        response.headers.set('cache-ttl', String(ttl));
+        // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
+        ctx.waitUntil(cacheMachine.put(env, 'nightbot', {q: url.searchParams.get('q')}, response, String(ttl)));
     }
 
     return response;
