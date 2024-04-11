@@ -21,9 +21,6 @@ let lastSchemaRefresh = 0;
 
 const schemaRefreshInterval = 1000 * 60 * 10;
 
-// If the environment is not production, skip using the caching service
-const skipCache = false;//ENVIRONMENT !== 'production' && false;
-
 // Example of how router can be used in an application
 async function getSchema(data, context) {
     if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
@@ -157,7 +154,7 @@ async function graphqlHandler(request, env, requestBody) {
     const response = new Response(body, responseOptions)
 
     // don't update cache if result contained errors
-    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl > 0) {
+    if (env.SKIP_CACHE !== 'true' && (!result.errors || result.errors.length === 0) && ttl > 0) {
         response.headers.set('cache-ttl', String(ttl));
     }
 
@@ -226,7 +223,7 @@ export default {
         }
         const cache = env.ENVIRONMENT === 'production' ? caches.default : await caches.open('dev:cache');
         let response = await cache.match(cacheKey);
-        if (!skipCache && response) {
+        if (env.SKIP_CACHE !== 'true' && response) {
             return response;
         }
 
@@ -267,7 +264,7 @@ export default {
             if (!response) {
                 response = new Response('Not found', { status: 404 });
             }
-            if (!skipCache && response.headers.has('cache-ttl')) {
+            if (env.SKIP_CACHE !== 'true' && response.headers.has('cache-ttl')) {
                 const ttl = parseInt(response.headers.get('cache-ttl'));
                 response.headers.delete('cache-ttl');
                 if (ttl > 0) {
