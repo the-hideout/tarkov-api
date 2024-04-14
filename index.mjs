@@ -179,9 +179,8 @@ async function graphqlHandler(request, env, ctx) {
 
     const response = new Response(body, responseOptions)
 
-    // don't update cache if result contained errors
-    if (env.SKIP_CACHE !== 'true' && (!result.errors || result.errors.length === 0) && ttl > 0) {
-        // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
+    if (env.SKIP_CACHE !== 'true' && ttl > 0) {
+        // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
         ctx.waitUntil(cacheMachine.put(env, query, variables, body, String(ttl), specialCache));
     }
 
