@@ -1294,6 +1294,7 @@ type TraderCashOffer {
   priceRUB: Int
   #updated: String
   taskUnlock: Task
+  buyLimit: Int
 }
 
 enum TraderName {
