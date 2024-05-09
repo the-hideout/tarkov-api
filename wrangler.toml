@@ -13,7 +13,7 @@ vars = { ENVIRONMENT = "production" }
 kv_namespaces = [
     { binding = "DATA_CACHE", id = "17fd725f04984e408d4a70b37c817171", preview_id = "17fd725f04984e408d4a70b37c817171" },
 ]
-vars = { ENVIRONMENT = "development" }
+vars = { ENVIRONMENT = "development", SKIP_CACHE = "false" }
 
 # [secrets]
 # CACHE_BASIC_AUTH

@@ -10,6 +10,7 @@ import typeDefs from './schema.mjs';
 import dynamicTypeDefs from './schema_dynamic.mjs';
 import resolvers from './resolvers/index.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
+import cacheMachine from './utils/cache-machine.mjs';
 
 import nightbot from './custom-endpoints/nightbot.mjs';
 import twitch from './custom-endpoints/twitch.mjs';
@@ -20,9 +21,6 @@ let loadingSchema = false;
 let lastSchemaRefresh = 0;
 
 const schemaRefreshInterval = 1000 * 60 * 10;
-
-// If the environment is not production, skip using the caching service
-const skipCache = true; //ENVIRONMENT !== 'production' || false;
 
 // Example of how router can be used in an application
 async function getSchema(data, context) {
@@ -80,19 +78,14 @@ async function getSchema(data, context) {
     });
 }
 
-async function graphqlHandler(request, env, requestBody) {
+async function graphqlHandler(request, env, ctx) {
     const url = new URL(request.url);
     let query = false;
     let variables = false;
 
     if (request.method === 'POST') {
         try {
-            if (!requestBody) {
-                requestBody = await request.json();              
-            }
-            if (typeof requestBody === 'string') {
-                requestBody = JSON.parse(requestBody);
-            }
+            const requestBody = await request.json();
             query = requestBody.query;
             variables = requestBody.variables;
         } catch (jsonError) {
@@ -134,6 +127,28 @@ async function graphqlHandler(request, env, requestBody) {
         //return new Response(JSON.stringify({}), responseOptions);
     }
 
+    let specialCache = '';
+    const contentType = request.headers.get('content-type');
+    if (!contentType || !contentType.startsWith('application/json')) {
+        specialCache = 'application/json';
+    }
+
+    // Check the cache service for data first - If cached data exists, return it
+    if (env.SKIP_CACHE !== 'true') {
+        const cachedResponse = await cacheMachine.get(env, query, variables, specialCache);
+        if (cachedResponse) {
+            // Construct a new response with the cached data
+            const newResponse = new Response(cachedResponse, responseOptions);
+            // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
+            newResponse.headers.append('X-CACHE', 'HIT');
+            console.log('Request served from cache');
+            // Return the new cached response
+            return newResponse;
+        }
+    } else {
+        //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
+    }
+
     const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [], errors: [] };
     let result = await graphql({schema: await getSchema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
     console.log('generated graphql response');
@@ -152,13 +167,21 @@ async function graphqlHandler(request, env, requestBody) {
 
     let ttl = dataAPI.getRequestTtl(requestId);
 
+    if (specialCache === 'application/json') {
+        if (!result.warnings) {
+            result = Object.assign({warnings: []}, result);
+        }
+        ttl = 30 * 60;
+        result.warnings.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl/60} minutes.`});
+    }
+
     const body = JSON.stringify(result);
 
     const response = new Response(body, responseOptions)
 
-    // don't update cache if result contained errors
-    if (!skipCache && (!result.errors || result.errors.length === 0) && ttl > 0) {
-        response.headers.set('cache-ttl', String(ttl));
+    if (env.SKIP_CACHE !== 'true' && ttl > 0) {
+        // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
+        ctx.waitUntil(cacheMachine.put(env, query, variables, body, String(ttl), specialCache));
     }
 
     //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
@@ -192,17 +215,6 @@ const graphQLOptions = {
     },
 };
 
-async function sha256(message) {
-    // encode as UTF-8
-    const msgBuffer = new TextEncoder().encode(message);
-    // hash the message
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    // convert bytes to hex string
-    return [...new Uint8Array(hashBuffer)]
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
-}
-
 export default {
 	async fetch(request, env, ctx) {
         if (!['GET', 'POST'].includes(request.method.toUpperCase())) {
@@ -214,21 +226,7 @@ export default {
         const requestStart = new Date();
 		const url = new URL(request.url);
 
-        const cacheUrl = new URL(request.url);
-        let cacheKey = new Request(cacheUrl.toString().toLowerCase(), request);
-        const requestBody = await request.text();
-        if (request.method.toUpperCase() === 'POST') {
-            cacheUrl.pathname = '/posts' + cacheUrl.pathname + await sha256(requestBody);
-            cacheKey = new Request(cacheUrl.toString().toLowerCase(), {
-                headers: request.headers,
-                method: 'GET',
-            });
-        }
-        const cache = env.ENVIRONMENT === 'production' ? caches.default : await caches.open('dev:cache');
-        let response = await cache.match(cacheKey);
-        if (!skipCache && response) {
-            return response;
-        }
+        let response;
 
         try {
             if (url.pathname === '/twitch') {
@@ -239,7 +237,7 @@ export default {
             }
 
             if (url.pathname === graphQLOptions.playgroundEndpoint) {
-                return playground(request, graphQLOptions);
+                response = playground(request, graphQLOptions);
             }
 
             if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
@@ -258,7 +256,7 @@ export default {
             }
 
             if (url.pathname === graphQLOptions.baseEndpoint) {
-                response = await graphqlHandler(request, env, requestBody);
+                response = await graphqlHandler(request, env, ctx);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
                 }
@@ -267,18 +265,10 @@ export default {
             if (!response) {
                 response = new Response('Not found', { status: 404 });
             }
-            if (!skipCache && response.headers.has('cache-ttl')) {
-                const ttl = parseInt(response.headers.get('cache-ttl'));
-                response.headers.delete('cache-ttl');
-                if (ttl > 0) {
-                    response.headers.set('Cache-Control', `s-maxage=${ttl}`);
-                    //response.headers.delete('cache-ttl');
-                    ctx.waitUntil(cache.put(cacheKey, response.clone()));
-                }
-            }
             console.log(`Response time: ${new Date() - requestStart} ms`);
 			return response;
         } catch (err) {
+            console.log(err);
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
         }
 	},

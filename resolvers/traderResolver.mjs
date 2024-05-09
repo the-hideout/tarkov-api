@@ -49,6 +49,9 @@ export default {
         taskUnlock(data, args, context) {
             if (data.vendor.taskUnlock) return context.data.task.get(context, data.vendor.taskUnlock);
             return null;
+        },
+        buyLimit(data) {
+            return data.vendor.buyLimit;
         }
     },
     TraderOffer: {
