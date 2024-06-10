@@ -1306,6 +1306,7 @@ enum TraderName {
   mechanic
   ragman
   jaeger
+  ref
 }
 
 type TraderOffer implements Vendor {
