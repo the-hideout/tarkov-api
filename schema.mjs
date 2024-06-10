@@ -696,6 +696,7 @@ enum ItemSourceName {
   mechanic
   ragman
   jaeger
+  ref
   fleaMarket
 }
 
