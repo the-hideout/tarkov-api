@@ -22,6 +22,9 @@ class WorkerKVSplit {
 
     async init(context, id) {
         const kvId = this.getIdSuffix(id);
+        if (!this.kvs[kvId]) {
+            return Promise.reject(`${id} is not a valid id`);
+        }
         return this.kvs[kvId].init(context).then(() => {
             if (this.kvs[kvId].cache?.expiration) {
                 this.dataExpiress = new Date(this.kvs[kvId].cache.expiration).valueOf();

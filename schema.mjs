@@ -696,6 +696,7 @@ enum ItemSourceName {
   mechanic
   ragman
   jaeger
+  ref
   fleaMarket
 }
 
@@ -1306,6 +1307,7 @@ enum TraderName {
   mechanic
   ragman
   jaeger
+  ref
 }
 
 type TraderOffer implements Vendor {
