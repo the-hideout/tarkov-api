@@ -402,12 +402,13 @@ type ItemPropertiesArmorAttachment {
   speedPenalty: Float
   turnPenalty: Float
   ergoPenalty: Float
-  headZones: [String]
+  zones: [String]
   material: ArmorMaterial
   armorType: String
   blindnessProtection: Float
   bluntThroughput: Float
   slots: [ItemSlot]
+  headZones: [String] @deprecated(reason: "Use zones instead.")
 }
 
 type ItemPropertiesBackpack {

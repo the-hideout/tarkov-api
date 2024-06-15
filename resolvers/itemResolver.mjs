@@ -313,6 +313,9 @@ export default {
         },
         headZones(data, args, context, info) {
             return context.data.item.getLocale(data.headZones, context, info);
+        },
+        zones(data, args, context, info) {
+            return context.data.item.getLocale(data.headZones, context, info);
         }
     },
     ItemPropertiesBackpack: {
