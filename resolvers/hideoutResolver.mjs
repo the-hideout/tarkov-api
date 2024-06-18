@@ -1,6 +1,7 @@
 export default {
     Query: {
         hideoutModules(obj, args, context, info) {
+            context.warnings.push(`The hideoutModules query is deprecated and provided only for backwards compatibility purposes. Please use the hideoutStations query, which includes the latest hideout information.`);
             return context.data.hideout.getLegacyList(context);
         },
         hideoutStations(obj, args, context, info) {
