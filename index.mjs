@@ -135,7 +135,7 @@ async function graphqlHandler(request, env, ctx) {
 
     // Check the cache service for data first - If cached data exists, return it
     // we don't check the cache if we're the http server because the worker already did
-    if (env.SKIP_CACHE !== 'true' && !env.HTTP_GRAPHQL_SERVER) {
+    if (env.SKIP_CACHE !== 'true' && !env.CLOUDFLARE_TOKEN) {
         const cachedResponse = await cacheMachine.get(env, query, variables, specialCache);
         if (cachedResponse) {
             // Construct a new response with the cached data
