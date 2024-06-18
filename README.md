@@ -86,3 +86,11 @@ wrangler publish
 ```
 
 > We don't do this often and generally use GitHub actions to do all of our deployments for us
+
+## HTTP Server
+
+There's also an http webserver in the /http folder. It can be run with `npm run dev` or `npm start`. To run locally, you need to set the following vars (for local testing, you can use an .env file in the /http folder):
+
+- CLOUDFLARE_TOKEN (token must have permissions to read the KVs the API uses)
+- CACHE_BASIC_AUTH (used for caching)
+- ENVIRONMENT (either `production` or `dev`; determines which KVs are read)

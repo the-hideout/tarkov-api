@@ -51,6 +51,45 @@ const graphqlUtil =  {
         }
         return lang;
     },
+    getGameMode: (info, context) => {
+        let mode = 'regular';
+        if (!info) {
+            return mode;
+        }
+        let modeFound = false;
+        let myRoot = info.path.key;
+        for (let currentNode = info.path.prev; currentNode; currentNode = currentNode.prev) {
+            myRoot = currentNode.key;
+        }
+        for (const selection of info.operation.selectionSet.selections) {
+            let selectionRoot = selection.name.value;
+            if (selection.alias) {
+                selectionRoot = selection.alias.value;
+            }
+            if (selectionRoot !== myRoot) {
+                continue;
+            }
+            if (context && context.gameMode[myRoot]) {
+                return context.gameMode[myRoot];
+            }
+            for (const arg of selection.arguments) {
+                if (arg.name.value === 'gameMode') {
+                    if (arg.value.kind === 'Variable') {
+                        mode = info.variableValues.gameMode;
+                    } else {
+                        mode = arg.value.value;
+                    }
+                    modeFound = true;
+                    break;
+                }
+            }
+            if (modeFound) break;
+        }
+        if (context) {
+            context.gameMode[myRoot] = mode;
+        }
+        return mode;
+    },
     paginate: async (data, args) => {
         data = await data;
         if (!Array.isArray(data)) return data;
