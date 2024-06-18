@@ -4,7 +4,7 @@ import 'dotenv/config';
 import worker from '../index.mjs';
 import getEnv from './env-binding.mjs';
 
-const port = process.env.PORT ?? 8787;
+const port = process.env.PORT ?? 8788;
 
 const convertIncomingMessageToRequest = (req) => {
     var headers = new Headers();

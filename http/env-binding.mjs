@@ -1,3 +1,5 @@
+// this module provides a way for the http server to access the cloudflare KVs
+// using the same method as in the worker context
 const accountId = '424ad63426a1ae47d559873f929eb9fc';
 
 const productionNamespaceId = '2e6feba88a9e4097b6d2209191ed4ae5';
