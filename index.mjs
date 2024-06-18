@@ -149,6 +149,31 @@ async function graphqlHandler(request, env, ctx) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
+    // if an HTTP GraphQL server is configured, pass the request to that
+    if (env.HTTP_GRAPHQL_SERVER) {
+        try {
+            const serverUrl = `${env.HTTP_GRAPHQL_SERVER}${graphQLOptions.baseEndpoint}`;
+            console.log(serverUrl);
+            const queryResult = await fetch(serverUrl, {
+                method: request.method,
+                body: JSON.stringify({
+                    query,
+                    variables,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (queryResult.status !== 200) {
+                throw new Error(`${queryResult.status} ${queryResult.statusText}`);
+            }
+            console.log('Request served from graphql server');
+            return new Response(await queryResult.text(), responseOptions);
+        } catch (error) {
+            console.error(`Error getting response from GraphQL server: ${error}`);
+        }
+    }
+
     const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [], errors: [] };
     let result = await graphql({schema: await getSchema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
     console.log('generated graphql response');
@@ -177,7 +202,7 @@ async function graphqlHandler(request, env, ctx) {
 
     const body = JSON.stringify(result);
 
-    const response = new Response(body, responseOptions)
+    const response = new Response(body, responseOptions);
 
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
         // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed

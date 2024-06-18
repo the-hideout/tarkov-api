@@ -8,7 +8,6 @@ export default function getEnv() {
         ...process.env,
         DATA_CACHE: {
             getWithMetadata: async (kvName, format) => {
-                console.log('token', process.env.CLOUDFLARE_TOKEN);
                 const namespaceId = process.env.ENVIRONMENT === 'production' ? productionNamespaceId : devNameSpaceID;
                 const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${kvName}`;
                 const response = await fetch(url, {

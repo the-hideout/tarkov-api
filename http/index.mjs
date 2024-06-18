@@ -15,7 +15,7 @@ const convertIncomingMessageToRequest = (req) => {
     if (typeof body === 'object') {
         body = JSON.stringify(body);
     }
-    let request = new Request(new URL(req.url, `http://localhost:${port}`).toString(), {
+    let request = new Request(new URL(req.url, `http://127.0.0.1:${port}`).toString(), {
         method: req.method,
         body: req.method === 'POST' ? body : null,
         headers,
@@ -42,5 +42,5 @@ app.all('*', async (req, res, next) => {
 });
 
 app.listen(port, () => {
-    console.log(`HTTP GraphQL server running at http://localhost:${port}`);
+    console.log(`HTTP GraphQL server running at http://127.0.0.1:${port}`);
 });
