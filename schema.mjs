@@ -170,11 +170,6 @@ type FleaMarketReputationLevel {
   maxRep: Float!
 }
 
-enum GameMode {
-  regular
-  pve
-}
-
 type HealthEffect {
   bodyParts: [String]!
   effects: [String]!
@@ -1378,7 +1373,7 @@ type Query {
   status: ServerStatus!
   task(id: ID!, lang: LanguageCode): Task
   tasks(faction: String, lang: LanguageCode, limit: Int, offset: Int): [Task]!
-  traders(lang: LanguageCode, mode: GameMode, limit: Int, offset: Int): [Trader]!
+  traders(lang: LanguageCode, limit: Int, offset: Int): [Trader]!
   fleaMarket(lang: LanguageCode): FleaMarket!
   armorMaterials(lang: LanguageCode): [ArmorMaterial]!
   playerLevels: [PlayerLevel]!
