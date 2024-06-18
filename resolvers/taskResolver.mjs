@@ -19,6 +19,7 @@ export default {
             return context.data.task.get(context, args.id);
         },
         quests(obj, args, context, info) {
+            context.warnings.push(`The quests query is deprecated and provided only for backwards compatibility purposes. Please use the tasks query, which includes the latest quests/tasks information.`);
             return context.data.task.getQuests(context);
         },
         questItems(obj, args, context) {
