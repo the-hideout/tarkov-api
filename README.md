@@ -94,3 +94,4 @@ There's also an http webserver in the /http folder. It can be run with `npm run 
 - CLOUDFLARE_TOKEN (token must have permissions to read the KVs the API uses)
 - CACHE_BASIC_AUTH (used for caching)
 - ENVIRONMENT (either `production` or `dev`; determines which KVs are read)
+- PORT (defaults to 8088)
