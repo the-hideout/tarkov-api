@@ -6,7 +6,7 @@ class ItemsAPI extends WorkerKV {
         this.gameModes.push('pve');
     }
 
-    postLoad(cache) {
+    postLoad({ cache }) {
         for (const item of Object.values(cache.Item)) {
             // add trader prices to sellFor
             item.sellFor = item.traderPrices.map((traderPrice) => {
