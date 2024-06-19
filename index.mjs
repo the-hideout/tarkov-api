@@ -134,7 +134,8 @@ async function graphqlHandler(request, env, ctx) {
     }
 
     // Check the cache service for data first - If cached data exists, return it
-    if (env.SKIP_CACHE !== 'true') {
+    // we don't check the cache if we're the http server because the worker already did
+    if (env.SKIP_CACHE !== 'true' && !env.CLOUDFLARE_TOKEN) {
         const cachedResponse = await cacheMachine.get(env, query, variables, specialCache);
         if (cachedResponse) {
             // Construct a new response with the cached data
@@ -147,6 +148,31 @@ async function graphqlHandler(request, env, ctx) {
         }
     } else {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
+    }
+
+    // if an HTTP GraphQL server is configured, pass the request to that
+    if (env.HTTP_GRAPHQL_SERVER) {
+        try {
+            const serverUrl = `${env.HTTP_GRAPHQL_SERVER}${graphQLOptions.baseEndpoint}`;
+            console.log(serverUrl);
+            const queryResult = await fetch(serverUrl, {
+                method: request.method,
+                body: JSON.stringify({
+                    query,
+                    variables,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (queryResult.status !== 200) {
+                throw new Error(`${queryResult.status} ${queryResult.statusText}`);
+            }
+            console.log('Request served from graphql server');
+            return new Response(await queryResult.text(), responseOptions);
+        } catch (error) {
+            console.error(`Error getting response from GraphQL server: ${error}`);
+        }
     }
 
     const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [], errors: [] };
@@ -177,7 +203,7 @@ async function graphqlHandler(request, env, ctx) {
 
     const body = JSON.stringify(result);
 
-    const response = new Response(body, responseOptions)
+    const response = new Response(body, responseOptions);
 
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
         // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
