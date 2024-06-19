@@ -11,16 +11,17 @@ const isBothDogtags = id => {
 class BartersAPI extends WorkerKV {
     constructor(dataSource) {
         super('barter_data', dataSource);
+        this.gameModes.push('pve');
     }
 
-    async getList(context) {
-        await this.init(context);
-        return this.cache.Barter;
+    async getList(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Barter;
     }
 
-    async getBartersForItem(context, id) {
-        await this.init(context);
-        return this.cache.Barter.filter(barter => {
+    async getBartersForItem(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Barter.filter(barter => {
             for (const item of barter.rewardItems) {
                 if (item.item === id) return true;
                 if (item.baseId === id) return true;
@@ -29,9 +30,9 @@ class BartersAPI extends WorkerKV {
         });
     }
 
-    async getBartersUsingItem(context, id) {
-        await this.init(context);
-        return this.cache.Barter.filter(barter => {
+    async getBartersUsingItem(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Barter.filter(barter => {
             for (const item of barter.requiredItems) {
                 if (item.item === id) return true;
                 if (isBothDogtags(id) && isAnyDogtag(item.item)) {
@@ -45,17 +46,17 @@ class BartersAPI extends WorkerKV {
         });
     }
 
-    async getBartersForTrader(context, id) {
-        await this.init(context);
-        return this.cache.Barter.filter(barter => {
+    async getBartersForTrader(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Barter.filter(barter => {
             if (barter.trader_id === id) return true;
             return false;
         });
     }
 
-    async getBartersForTraderLevel(context, id, level) {
-        await this.init(context);
-        return this.cache.Barter.filter(barter => {
+    async getBartersForTraderLevel(context, info, id, level) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Barter.filter(barter => {
             if (barter.trader_id === id && barter.level === level) return true;
             return false;
         });

@@ -14,12 +14,12 @@ export default {
                 bosses = await filters[argName](args[argName], bosses);
             }
             if (!bosses) {
-                bosses = context.data.map.getAllBosses(context);
+                bosses = context.data.map.getAllBosses(context, info);
             }
             return context.util.paginate(bosses, args);
         },
         async lootContainers(obj, args, context, info) {
-            let containers = context.data.map.getAllLootContainers(context);
+            let containers = context.data.map.getAllLootContainers(context, info);
             return context.util.paginate(containers, args);
         },
         async maps(obj, args, context, info) {
@@ -39,12 +39,12 @@ export default {
                 maps = await filters[argName](args[argName], maps);
             }
             if (!maps) {
-                maps = context.data.map.getList(context);
+                maps = context.data.map.getList(context, info);
             }
             return context.util.paginate(maps, args);
         },
         async stationaryWeapons(obj, args, context, info) {
-            const stationaryWeapons = context.data.map.getAllStationaryWeapons(context);
+            const stationaryWeapons = context.data.map.getAllStationaryWeapons(context, info);
             return context.util.paginate(stationaryWeapons, args);
         },
     },
@@ -55,7 +55,7 @@ export default {
     },
     Lock: {
         key(data, args, context, info) {
-            return context.data.item.getItem(context, data.key);
+            return context.data.item.getItem(context, info, data.key);
         },
     },
     LootContainer: {
@@ -65,12 +65,12 @@ export default {
     },
     LootContainerPosition: {
         lootContainer(data, args, context, info) {
-            return context.data.map.getLootContainer(context, data.lootContainer);
+            return context.data.map.getLootContainer(context, info, data.lootContainer);
         },
     },
     Map: {
         accessKeys(data, args, context, info) {
-            return context.data.item.getItemsByIDs(context, data.accessKeys);
+            return context.data.item.getItemsByIDs(context, info, data.accessKeys);
         },
         name(data, args, context, info) {
             return context.data.map.getLocale(data.name, context, info);
@@ -86,11 +86,11 @@ export default {
         name(data, args, context, info) {
             return context.data.map.getLocale(data.name, context, info);
         },
-        switches(data, args, context) {
+        switches(data, args, context, info) {
             if (!data.switches) {
                 return [];
             }
-            return data.switches.map(switchId => context.data.map.getSwitch(context, switchId));
+            return data.switches.map(switchId => context.data.map.getSwitch(context, info, switchId));
         },
     },
     MapHazard: {
@@ -111,8 +111,8 @@ export default {
             }
             return context.data.map.getLocale(data.extractTip, context, info);
         },*/
-        activatedBy(data, args, context) {
-            return context.data.map.getSwitch(context, data.activatedBy);
+        activatedBy(data, args, context, info) {
+            return context.data.map.getSwitch(context, info, data.activatedBy);
         },
         name(data, args, context, info) {
             if (!data.name) {
@@ -122,11 +122,11 @@ export default {
         },
     },
     MapSwitchOperation: {
-        target(data, args, context) {
+        target(data, args, context, info) {
             if (data.switch) {
-                return context.data.map.getSwitch(context, data.switch);
+                return context.data.map.getSwitch(context, info, data.switch);
             }
-            return context.data.map.getExtract(context, data.extract);
+            return context.data.map.getExtract(context, info, data.extract);
         },
     },
     MapSwitchTarget: {
@@ -142,21 +142,21 @@ export default {
     },
     BossSpawn: {
         boss(data, args, context, info) {
-            return context.data.map.getMobInfo(context, data.id);
+            return context.data.map.getMobInfo(context, info, data.id);
         },
         async name(data, args, context, info) {
-            const boss = await context.data.map.getMobInfo(context, data.id);
+            const boss = await context.data.map.getMobInfo(context, info, data.id);
             return context.data.map.getLocale(boss.name, context, info);
         },
         async normalizedName(data, args, context, info) {
-            const boss = await context.data.map.getMobInfo(context, data.id);
+            const boss = await context.data.map.getMobInfo(context, info, data.id);
             return boss.normalizedName;
         },
         async spawnTrigger(data, args, context, info) {
             return context.data.map.getLocale(data.spawnTrigger, context, info);
         },
         async switch(data, args, context, info) {
-            return context.data.map.getSwitch(context, data.switch);
+            return context.data.map.getSwitch(context, info, data.switch);
         },
     },
     BossSpawnLocation: {
@@ -166,14 +166,14 @@ export default {
     },
     BossEscort: {
         boss(data, args, context, info) {
-            return context.data.map.getMobInfo(context, data.id);
+            return context.data.map.getMobInfo(context, info, data.id);
         },
         async name(data, args, context, info) {
-            const boss = await context.data.map.getMobInfo(context, data.id);
+            const boss = await context.data.map.getMobInfo(context, info, data.id);
             return context.data.map.getLocale(boss.name, context, info);
         },
         async normalizedName(data, args, context, info) {
-            const boss = await context.data.map.getMobInfo(context, data.id);
+            const boss = await context.data.map.getMobInfo(context, info, data.id);
             return boss.normalizedName;
         }
     },
@@ -187,7 +187,7 @@ export default {
     },
     StationaryWeaponPosition: {
         stationaryWeapon(data, args, context, info) {
-            return context.data.map.getStationaryWeapon(context, data.stationaryWeapon);
+            return context.data.map.getStationaryWeapon(context, info, data.stationaryWeapon);
         },
     },
 };

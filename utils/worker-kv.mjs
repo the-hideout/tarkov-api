@@ -1,93 +1,117 @@
 class WorkerKV {
     constructor(kvName, dataSource) {
-        this.cache = false;
-        this.loading = false;
+        this.cache = {};
+        this.loading = {};
         this.kvName = kvName;
         this.loadingPromises = {};
         this.loadingInterval = false;
-        this.dataExpires = false;
+        this.dataExpires = {};
         this.dataSource = dataSource;
+        this.gameModes = ['regular'];
     }
 
-    async init(context) {
+    async getCache(context, info, forceRegular) {
         const requestId = typeof context === 'object' ? context.requestId : context;
-        if (this.cache && (!this.dataExpires || new Date() < this.dataExpires)) {
-            //console.log(`${this.kvName} is fresh; not refreshing`);
-            this.dataSource.setKvUsedForRequest(this.kvName, requestId);
-            return;
+        const gameMode = this.getGameMode(context, info);
+        let requestKv = this.kvName;
+        if (gameMode !== 'regular' && !forceRegular) {
+            requestKv += `_${gameMode}`;
         }
-        if (this.dataSource.kvLoadedForRequest(this.kvName, requestId)) {
-            //console.log(`${this.kvName} already loaded for request ${requestId}; not refreshing`);
-            return;
+        if (this.cache[gameMode] && (!this.dataExpires[gameMode] || new Date() < this.dataExpires[gameMode])) {
+            //console.log(`${requestKv} is fresh; not refreshing`);
+            this.dataSource.setKvUsedForRequest(requestKv, requestId);
+            return {cache: this.cache[gameMode], gameMode};
         }
-        if (this.cache) {
-            console.log(`${this.kvName} is stale; re-loading`);
-            this.cache = false;
-            this.loading = false;
+        if (this.dataSource.kvLoadedForRequest(requestKv, requestId)) {
+            //console.log(`${requestKv} already loaded for request ${requestId}; not refreshing`);
+            return {cache: this.cache[gameMode], gameMode};
+        }
+        if (this.cache[gameMode]) {
+            console.log(`${requestKv} is stale; re-loading`);
+            this.cache[gameMode] = false;
+            this.loading[gameMode] = false;
         } else {
-            //console.log(`${this.kvName} loading`);
+            //console.log(`${requestKv} loading`);
         }
-        if (this.loading) {
-            if (this.loadingPromises[requestId]) {
-                return this.loadingPromises[requestId];
+        if (!this.loadingPromises[gameMode]) {
+            this.loadingPromises[gameMode] = {};
+        }
+        if (this.loading[gameMode]) {
+            if (this.loadingPromises[gameMode][requestId]) {
+                return this.loadingPromises[gameMode][requestId];
             }
-            //console.log(`${this.kvName} already loading; awaiting load`);
-            this.loadingPromises[requestId] = new Promise((resolve) => {
+            //console.log(`${requestKv} already loading; awaiting load`);
+            this.loadingPromises[gameMode][requestId] = new Promise((resolve) => {
                 const startLoad = new Date();
                 let loadingTimedOut = false;
                 const loadingTimeout = setTimeout(() => {
                     loadingTimedOut = true;
                 }, 3000);
                 const loadingInterval = setInterval(() => {
-                    if (this.loading === false) {
+                    if (this.loading[gameMode] === false) {
                         clearTimeout(loadingTimeout);
                         clearInterval(loadingInterval);
-                        console.log(`${this.kvName} load: ${new Date() - startLoad} ms (secondary)`);
-                        delete this.loadingPromises[requestId];
-                        this.dataSource.setKvUsedForRequest(this.kvName, requestId);
-                        return resolve();
+                        console.log(`${requestKv} load: ${new Date() - startLoad} ms (secondary)`);
+                        delete this.loadingPromises[gameMode][requestId];
+                        this.dataSource.setKvUsedForRequest(requestKv, requestId);
+                        return resolve({cache: this.cache[gameMode], gameMode});
                     }
                     if (loadingTimedOut) {
-                        console.log(`${this.kvName} loading timed out; forcing load`);
+                        console.log(`${requestKv} loading timed out; forcing load`);
                         clearInterval(loadingInterval);
-                        this.loading = false;
-                        delete this.loadingPromises[requestId];
-                        return resolve(this.init(requestId));
+                        this.loading[gameMode] = false;
+                        delete this.loadingPromises[gameMode][requestId];
+                        return resolve(this.getCache(context, info));
                     }
                 }, 100);
             });
-            return this.loadingPromises[requestId];
+            return this.loadingPromises[gameMode][requestId];
         }
-        this.loading = true;
-        this.loadingPromises[requestId] = new Promise((resolve, reject) => {
+        this.loading[gameMode] = true;
+        this.loadingPromises[gameMode][requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
-            this.dataSource.env.DATA_CACHE.getWithMetadata(this.kvName, 'text').then(async response => {
-                console.log(`${this.kvName} load: ${new Date() - startLoad} ms`);
+            this.dataSource.env.DATA_CACHE.getWithMetadata(requestKv, 'text').then(async response => {
+                console.log(`${requestKv} load: ${new Date() - startLoad} ms`);
                 const metadata = response.metadata;
+                let responseValue = response.value;
                 if (metadata && metadata.compression) {
                     return reject(new Error(`${metadata.compression} compression is not supported`));
-                } else {
-                    this.cache = JSON.parse(response.value);
                 }
+                const parsedValue = JSON.parse(responseValue);
+                if (parsedValue.errors && parsedValue.errors[0].code === 10009 && requestKv !== this.kvName) {
+                    console.warn(`${requestKv} data not found; falling back to ${this.kvName}`);
+                    this.loading[gameMode] = false;
+                    delete this.loadingPromises[gameMode][requestId];
+                    return resolve(this.getCache(context, info, true));
+                }
+                this.cache[gameMode] = parsedValue;
                 let newDataExpires = false;
-                if (this.cache?.expiration) {
-                    newDataExpires = new Date(this.cache.expiration).valueOf();
+                if (this.cache[gameMode]?.expiration) {
+                    newDataExpires = new Date(this.cache[gameMode].expiration).valueOf();
                 }
                 if (newDataExpires && this.dataExpires === newDataExpires) {
-                    console.log(`${this.kvName} is still stale after re-load`);
+                    console.log(`${requestKv} is still stale after re-load`);
                 }
-                this.dataExpires = newDataExpires;
-                this.dataSource.setKvLoadedForRequest(this.kvName, requestId);
-                this.loading = false;
-                delete this.loadingPromises[requestId];
-                this.postLoad();
-                resolve();
+                this.dataExpires[gameMode] = newDataExpires;
+                this.dataSource.setKvLoadedForRequest(requestKv, requestId);
+                this.loading[gameMode] = false;
+                delete this.loadingPromises[gameMode][requestId];
+                this.postLoad({cache: this.cache[gameMode], gameMode});
+                resolve({cache: this.cache[gameMode], gameMode});
             }).catch(error => {
-                this.loading = false;
+                this.loading[gameMode] = false;
                 reject(error);
             });
         });
-        return this.loadingPromises[requestId];
+        return this.loadingPromises[gameMode][requestId];
+    }
+
+    getGameMode(context, info) {
+        let gameMode = context.util.getGameMode(info, context);
+        if (!this.gameModes.includes(gameMode)) {
+            gameMode = this.gameModes[0];
+        }
+        return gameMode;
     }
 
     getLocale(key, context, info) {
@@ -95,12 +119,13 @@ class WorkerKV {
             return null;
         }
         const lang = context.util.getLang(info, context);
+        const gameMode = this.getGameMode(context, info);
         const getTranslation = (k) => {
-            if (this.cache.locale && this.cache.locale[lang] && typeof this.cache.locale[lang][k] !== 'undefined') {
-                return this.cache.locale[lang][k];
+            if (this.cache[gameMode]?.locale && this.cache[gameMode].locale[lang] && typeof this.cache[gameMode].locale[lang][k] !== 'undefined') {
+                return this.cache[gameMode].locale[lang][k];
             }
-            if (this.cache.locale && this.cache.locale.en && typeof this.cache.locale.en[k] !== 'undefined') {
-                return this.cache.locale.en[k];
+            if (this.cache[gameMode]?.locale && this.cache[gameMode].locale.en && typeof this.cache[gameMode].locale.en[k] !== 'undefined') {
+                return this.cache[gameMode].locale.en[k];
             }
             const errorMessage = `Missing translation for key ${k}`;
             if (!context.errors.some(err => err.message === errorMessage)) {

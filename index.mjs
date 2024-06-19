@@ -175,7 +175,7 @@ async function graphqlHandler(request, env, ctx) {
         }
     }
 
-    const context = { data: dataAPI, util: graphqlUtil, requestId, lang: {}, warnings: [], errors: [] };
+    const context = graphqlUtil.getDefaultContext(dataAPI, requestId);
     let result = await graphql({schema: await getSchema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
     console.log('generated graphql response');
     if (context.errors.length > 0) {

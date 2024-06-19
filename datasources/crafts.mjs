@@ -6,40 +6,40 @@ class CraftsAPI extends WorkerKV {
         super('craft_data', dataSource);
     }
 
-    async getList(context) {
-        await this.init(context);
-        return this.cache.Craft;
+    async getList(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Craft;
     }
 
-    async get(context, id) {
-        await this.init(context);
-        return this.cache.Craft.filter(c => c.id === id);
+    async get(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Craft.filter(c => c.id === id);
     }
 
-    async getCraftsForItem(context, id) {
-        await this.init(context);
-        return this.cache.Craft.filter(craft => {
+    async getCraftsForItem(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Craft.filter(craft => {
             return craft.rewardItems.some(rew => rew.item === id);
         });
     }
 
-    async getCraftsUsingItem(context, id) {
-        await this.init(context);
-        return this.cache.Craft.filter(craft => {
+    async getCraftsUsingItem(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Craft.filter(craft => {
             return craft.requiredItems.some(req => req.item === id);
         });
     }
 
-    async getCraftsForStation(context, id) {
-        await this.init(context);
-        return this.cache.Craft.filter(craft => {
+    async getCraftsForStation(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Craft.filter(craft => {
             return craft.station_id === id;
         });
     }
 
-    async getCraftsForStationLevel(context, id, level) {
-        await this.init(context);
-        return this.cache.Craft.filter(craft => {
+    async getCraftsForStationLevel(context, info, id, level) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Craft.filter(craft => {
             return craft.station_id === id && craft.level === level;
         });
     }

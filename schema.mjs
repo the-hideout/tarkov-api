@@ -170,6 +170,11 @@ type FleaMarketReputationLevel {
   maxRep: Float!
 }
 
+enum GameMode {
+  regular
+  pve
+}
+
 type HealthEffect {
   bodyParts: [String]!
   effects: [String]!
@@ -1355,26 +1360,26 @@ interface Vendor {
 
 type Query {
   achievements(lang: LanguageCode, limit: Int, offset: Int): [Achievement]!
-  ammo(lang: LanguageCode, limit: Int, offset: Int): [Ammo]
+  ammo(lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Ammo]
   #archivedItemPrices(id: ID!, limit: Int, offset: Int): [historicalPricePoint]!
-  barters(lang: LanguageCode, limit: Int, offset: Int): [Barter]
-  bosses(lang: LanguageCode, name: [String!], limit: Int, offset: Int): [MobInfo]
-  crafts(lang: LanguageCode, limit: Int, offset: Int): [Craft]
-  hideoutStations(lang: LanguageCode, limit: Int, offset: Int): [HideoutStation]!
-  historicalItemPrices(id: ID!, days: Int, lang: LanguageCode, limit: Int, offset: Int): [historicalPricePoint]!
-  item(id: ID, normalizedName: String, lang: LanguageCode): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], handbookCategoryNames: [HandbookCategoryName] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, limit: Int, offset: Int): [Item]!
+  barters(lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Barter]
+  bosses(lang: LanguageCode, gameMode: GameMode, name: [String!], limit: Int, offset: Int): [MobInfo]
+  crafts(lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Craft]
+  hideoutStations(lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [HideoutStation]!
+  historicalItemPrices(id: ID!, days: Int, lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [historicalPricePoint]!
+  item(id: ID, normalizedName: String, lang: LanguageCode, gameMode: GameMode): Item
+  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], handbookCategoryNames: [HandbookCategoryName] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, mode: GameMode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   handbookCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   lootContainers(lang: LanguageCode, limit: Int, offset: Int): [LootContainer]
-  maps(lang: LanguageCode, name: [String!], enemies: [String!], limit: Int, offset: Int): [Map]!
+  maps(lang: LanguageCode, gameMode: GameMode, name: [String!], enemies: [String!], limit: Int, offset: Int): [Map]!
   questItems(lang: LanguageCode): [QuestItem]
   stationaryWeapons(lang: LanguageCode, limit: Int, offset: Int): [StationaryWeapon]
   status: ServerStatus!
-  task(id: ID!, lang: LanguageCode): Task
-  tasks(faction: String, lang: LanguageCode, limit: Int, offset: Int): [Task]!
-  traders(lang: LanguageCode, limit: Int, offset: Int): [Trader]!
-  fleaMarket(lang: LanguageCode): FleaMarket!
+  task(id: ID!, lang: LanguageCode, gameMode: GameMode): Task
+  tasks(faction: String, lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Task]!
+  traders(lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Trader]!
+  fleaMarket(lang: LanguageCode, gameMode: GameMode): FleaMarket!
   armorMaterials(lang: LanguageCode): [ArmorMaterial]!
   playerLevels: [PlayerLevel]!
   skills(lang: LanguageCode): [Skill]!
