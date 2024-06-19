@@ -161,11 +161,13 @@ type FleaMarket implements Vendor {
   enabled: Boolean!
   sellOfferFeeRate: Float!
   sellRequirementFeeRate: Float!
+  foundInRaidRequired: Boolean
   reputationLevels: [FleaMarketReputationLevel]!
 }
 
 type FleaMarketReputationLevel {
   offers: Int!
+  offersSpecialEditions: Int!
   minRep: Float!
   maxRep: Float!
 }
