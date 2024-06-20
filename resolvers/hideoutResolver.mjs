@@ -41,7 +41,7 @@ export default {
         }
     },
     RequirementHideoutStationLevel: {
-        station(data, args, context) {
+        station(data, args, context, info) {
             return context.data.hideout.getStation(context, info, data.station);
         }
     },
