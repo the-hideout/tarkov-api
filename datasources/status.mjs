@@ -6,7 +6,7 @@ class StatusAPI extends WorkerKV {
     }
 
     async getStatus(context) {
-        const cache = await this.getCache(context);
+        const { cache } = await this.getCache(context);
         if (!cache) {
             return Promise.reject(new Error('Status cache is empty'));
         }
