@@ -7,7 +7,7 @@ export default {
                     return context.data.map.getBossesByNames(context, info, names, bosses);
                 },
             }
-            const nonFilterArgs = ['lang', 'limit', 'offset'];
+            const nonFilterArgs = ['lang', 'gameMode', 'limit', 'offset'];
             for (const argName in args) {
                 if (nonFilterArgs.includes(argName)) continue;
                 if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
@@ -32,7 +32,7 @@ export default {
                     return context.data.map.getMapsByEnemies(context, info, enemies, maps);
                 },
             }
-            const nonFilterArgs = ['lang', 'limit', 'offset'];
+            const nonFilterArgs = ['lang', 'gameMode', 'limit', 'offset'];
             for (const argName in args) {
                 if (nonFilterArgs.includes(argName)) continue;
                 if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));

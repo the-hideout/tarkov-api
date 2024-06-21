@@ -43,7 +43,7 @@ export default {
                 },*/
             }
             //if (Object.keys(args).length === 0) return context.data.item.getAllItems();
-            const nonFilterArgs = ['lang', 'limit', 'offset'];
+            const nonFilterArgs = ['lang', 'gameMode', 'limit', 'offset'];
             for (const argName in args) {
                 if (nonFilterArgs.includes(argName)) continue;
                 if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
