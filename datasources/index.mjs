@@ -47,54 +47,6 @@ class DataSource {
         };
     }
 
-    async init() {
-        try {
-            if (this.initialized) return;
-            if (this.loading) {
-                return new Promise((resolve) => {
-                    let loadingTimedOut = false;
-                    const loadingTimeout = setTimeout(() => {
-                        loadingTimedOut = true;
-                    }, 3000);
-                    const loadingInterval = setInterval(() => {
-                        if (this.loading === false) {
-                            clearTimeout(loadingTimeout);
-                            clearInterval(loadingInterval);
-                            return resolve();
-                        }
-                        if (loadingTimedOut) {
-                            console.log(`DataSource init timed out; forcing init`);
-                            clearInterval(loadingInterval);
-                            this.loading = false;
-                            return resolve(this.init());
-                        }
-                    }, 100);
-                });
-            }
-            this.loading = true;
-            return Promise.all([
-                /*this.barter.init(),
-                this.craft.init(),
-                this.hideout.init(),
-                this.historicalPrice.init(),
-                this.item.init(),
-                this.map.init(),
-                this.task.init(),
-                this.trader.init(),
-                this.traderInventory.init(),*/
-                this.schema.init(),
-            ]).then(() => {
-                this.initialized = true;
-                this.loading = false;
-            }).catch(error => {
-                this.loading = false;
-                return Promise.reject(error);
-            });
-        } catch (error) {
-            console.error('error initializing data api', error.stack);
-        }
-    }
-
     kvLoadedForRequest(kvName, requestId) {
         if (!requestId) {
             return false;
