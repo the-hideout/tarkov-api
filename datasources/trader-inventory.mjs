@@ -34,14 +34,13 @@ class TraderInventoryAPI extends WorkerKV {
     }
 
     async getPricesForTrader(context, info, traderId) {
-        const { cache } = await this.getTraderCache(context, info, requestId);
+        const { cache } = await this.getTraderCache(context, info);
         return cache[traderId] ?? [];
     }
 
     async getPricesForTraderLevel(context, info, traderId, level) {
-        const { cache } = await this.getTraderCache(context, info, requestId);
-        if (!cache[traderId]) return [];
-        return cache[traderId].filter(offer => {
+        const traderPrices = await this.getPricesForTrader(context, info, traderId);
+        return traderPrices.filter(offer => {
             return offer.vendor.traderLevel === level;
         });
     }

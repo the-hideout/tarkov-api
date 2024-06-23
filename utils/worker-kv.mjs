@@ -78,7 +78,7 @@ class WorkerKV {
                     return reject(new Error(`${metadata.compression} compression is not supported`));
                 }
                 const parsedValue = JSON.parse(responseValue);
-                if (parsedValue.errors && parsedValue.errors[0].code === 10009 && requestKv !== this.kvName) {
+                if (!parsedValue && requestKv !== this.kvName) {
                     console.warn(`${requestKv} data not found; falling back to ${this.kvName}`);
                     this.loading[gameMode] = false;
                     delete this.loadingPromises[gameMode][requestId];
@@ -120,12 +120,13 @@ class WorkerKV {
         }
         const lang = context.util.getLang(info, context);
         const gameMode = this.getGameMode(context, info);
+        const cache = this.cache[gameMode];
         const getTranslation = (k) => {
-            if (this.cache[gameMode]?.locale && this.cache[gameMode].locale[lang] && typeof this.cache[gameMode].locale[lang][k] !== 'undefined') {
-                return this.cache[gameMode].locale[lang][k];
+            if (cache?.locale[lang] && typeof cache.locale[lang][k] !== 'undefined') {
+                return cache.locale[lang][k];
             }
-            if (this.cache[gameMode]?.locale && this.cache[gameMode].locale.en && typeof this.cache[gameMode].locale.en[k] !== 'undefined') {
-                return this.cache[gameMode].locale.en[k];
+            if (cache?.locale.en && typeof cache.locale.en[k] !== 'undefined') {
+                return cache.locale.en[k];
             }
             const errorMessage = `Missing translation for key ${k}`;
             if (!context.errors.some(err => err.message === errorMessage)) {
