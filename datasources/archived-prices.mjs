@@ -3,7 +3,7 @@ import WorkerKVSplit from '../utils/worker-kv-split.mjs';
 class ArchivedPricesAPI extends WorkerKVSplit {
     constructor(dataSource) {
         super('archived_price_data', dataSource);
-        this.gameModes.push('pve');
+        this.addGameMode('pve');
     }
 
     async getByItemId(context, info, itemId) {

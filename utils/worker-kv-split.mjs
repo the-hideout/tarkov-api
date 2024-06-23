@@ -20,6 +20,12 @@ class WorkerKVSplit {
     getIdSuffix(id) {
         return id.substring(id.length-this.idLength, id.length);
     }
+    
+    addGameMode(gameMode) {
+        for (const key in this.kvs) {
+            this.kvs[key].gameModes.push(gameMode);
+        }
+    }
 
     async getCache(context, info, id) {
         const kvId = this.getIdSuffix(id);

@@ -3,7 +3,7 @@ import WorkerKVSplit from '../utils/worker-kv-split.mjs';
 class historicalPricesAPI extends WorkerKVSplit {
     constructor(dataSource) {
         super('historical_price_data', dataSource);
-        this.gameModes.push('pve');
+        this.addGameMode('pve');
         this.defaultDays = 7;
         this.maxDays = 7;
         this.itemLimitDays = 2;
