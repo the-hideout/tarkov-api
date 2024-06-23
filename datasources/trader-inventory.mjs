@@ -10,7 +10,7 @@ class TraderInventoryAPI extends WorkerKV {
     async getTraderCache(context, info) {
         const { cache, gameMode } = await this.getCache(context, info);
         if (this.traderCache[gameMode]) {
-            return true;
+            return {cache: this.traderCache[gameMode], gameMode};
         }
 
         try {
@@ -30,16 +30,12 @@ class TraderInventoryAPI extends WorkerKV {
 
     async getByItemId(context, info, itemId) {
         const { cache } = await this.getCache(context, info);
-        if (!cache.TraderCashOffer[itemId]) {
-            return [];
-        }
-        return cache.TraderCashOffer[itemId];
+        return cache.TraderCashOffer[itemId] ?? [];
     }
 
     async getPricesForTrader(context, info, traderId) {
         const { cache } = await this.getTraderCache(context, info, requestId);
-        if (!cache[traderId]) return [];
-        return cache[traderId];
+        return cache[traderId] ?? [];
     }
 
     async getPricesForTraderLevel(context, info, traderId, level) {

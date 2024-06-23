@@ -170,7 +170,7 @@ class ItemsAPI extends WorkerKV {
         if (!items) {
             items = Object.values(cache.Item);
         }
-        const categories = (await this.getCategories()).filter(cat => names.includes(cat.enumName));
+        const categories = (await this.getCategories(context, info)).filter(cat => names.includes(cat.enumName));
         return items.filter((item) => {
             return item.categories.some(catId => categories.some(cat => cat.id === catId));
         });
@@ -181,7 +181,7 @@ class ItemsAPI extends WorkerKV {
         if (!items) {
             items = Object.values(cache.Item);
         }
-        const categories = (await this.getHandbookCategories()).filter(cat => names.includes(cat.enumName));
+        const categories = (await this.getHandbookCategories(context, info)).filter(cat => names.includes(cat.enumName));
         return items.filter((item) => {
             return item.handbookCategories.some(catId => categories.some(cat => cat.id === catId));
         });

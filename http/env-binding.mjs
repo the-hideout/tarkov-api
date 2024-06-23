@@ -9,6 +9,21 @@ export default function getEnv() {
     return {
         ...process.env,
         DATA_CACHE: {
+            get: async (kvName, format) => {
+                const namespaceId = process.env.ENVIRONMENT === 'production' ? productionNamespaceId : devNameSpaceID;
+                const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${kvName}`;
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${process.env.CLOUDFLARE_TOKEN}`,
+                    },
+                });
+                if (format === 'json') {
+                    return response.json();
+                }
+                return response.text();
+            },
             getWithMetadata: async (kvName, format) => {
                 const namespaceId = process.env.ENVIRONMENT === 'production' ? productionNamespaceId : devNameSpaceID;
                 const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${kvName}`;
