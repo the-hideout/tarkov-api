@@ -12,16 +12,30 @@ const graphqlUtil =  {
         const depth = graphqlUtil.getDepth(info);
         if (depth > depthLimit) throw new Error(`Query depth ${depth} exceeds maximum (${depthLimit}) for ${info.parentType}.${info.fieldName}.`);
     },
-    getLang: (info, context) => {
-        let lang = 'en';
-        if (!info) {
-            return lang;
-        }
-        let langFound = false;
+    getDefaultContext: (dataSource, requestId) => {
+        return {
+            data: dataSource,
+            util: graphqlUtil,
+            requestId,
+            arguments: {},
+            warnings: [],
+            errors: [],
+        };
+    },
+    getRoot: (info) => {
         let myRoot = info.path.key;
         for (let currentNode = info.path.prev; currentNode; currentNode = currentNode.prev) {
             myRoot = currentNode.key;
         }
+        return myRoot;
+    },
+    getArgument: (info, argumentName, defaultValue, context) => {
+        let argValue = defaultValue;
+        if (!info) {
+            return argValue;
+        }
+        let argumentFound = false;
+        const myRoot = graphqlUtil.getRoot(info);
         for (const selection of info.operation.selectionSet.selections) {
             let selectionRoot = selection.name.value;
             if (selection.alias) {
@@ -30,26 +44,35 @@ const graphqlUtil =  {
             if (selectionRoot !== myRoot) {
                 continue;
             }
-            if (context && context.lang[myRoot]) {
-                return context.lang[myRoot];
+            if (context && !context.arguments[myRoot]) {
+                context.arguments[myRoot] = {};
+            }
+            if (context && context.arguments[myRoot][argumentName]) {
+                return context.arguments[myRoot][argumentName];
             }
             for (const arg of selection.arguments) {
-                if (arg.name.value === 'lang') {
+                if (arg.name.value === argumentName) {
                     if (arg.value.kind === 'Variable') {
-                        lang = info.variableValues.lang;
+                        argValue = info.variableValues[argumentName];
                     } else {
-                        lang = arg.value.value;
+                        argValue = arg.value.value;
                     }
-                    langFound = true;
+                    argumentFound = true;
                     break;
                 }
             }
-            if (langFound) break;
+            if (argumentFound) break;
         }
         if (context) {
-            context.lang[myRoot] = lang;
+            context.arguments[myRoot][argumentName] = argValue;
         }
-        return lang;
+        return argValue;
+    },
+    getLang: (info, context) => {
+        return graphqlUtil.getArgument(info, 'lang', 'en', context);
+    },
+    getGameMode: (info, context) => {
+        return graphqlUtil.getArgument(info, 'gameMode', 'regular', context);
     },
     paginate: async (data, args) => {
         data = await data;

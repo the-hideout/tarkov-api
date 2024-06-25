@@ -6,35 +6,35 @@ class SchemaAPI extends WorkerKV {
     }
 
     async getCategories(context) {
-        await this.init(context);
-        if (!this.cache) {
+        const { cache } = await this.getCache(context);
+        if (!cache) {
             return Promise.reject(new Error('Schema cache is empty'));
         }
-        return this.cache.ItemCategory;
+        return cache.ItemCategory;
     }
 
     async getHandbookCategories(context) {
-        await this.init(context);
-        if (!this.cache) {
+        const { cache } = await this.getCache(context);
+        if (!cache) {
             return Promise.reject(new Error('Schema cache is empty'));
         }
-        return this.cache.HandbookCategory;
+        return cache.HandbookCategory;
     }
 
     async getItemTypes(context) {
-        await this.init(context);
-        if (!this.cache) {
+        const { cache } = await this.getCache(context);
+        if (!cache) {
             return Promise.reject(new Error('Schema cache is empty'));
         }
-        return this.cache.ItemType;
+        return cache.ItemType;
     }
 
     async getLanguageCodes(context) {
-        await this.init(context);
-        if (!this.cache) {
+        const { cache } = await this.getCache(context);
+        if (!cache) {
             return Promise.reject(new Error('Schema cache is empty'));
         }
-        return this.cache.LanguageCode;
+        return cache.LanguageCode;
     }
 }
 

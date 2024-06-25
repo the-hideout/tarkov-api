@@ -39,16 +39,17 @@ const traderNameIdMap = {
 class TradersAPI extends WorkerKV {
     constructor(dataSource) {
         super('trader_data', dataSource);
+        this.gameModes.push('pve');
     }
 
-    async getList(context) {
-        await this.init(context);
-        return this.cache.Trader;
+    async getList(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Trader;
     }
 
-    async get(context, id) {
-        await this.init(context);
-        for (const trader of this.cache.Trader) {
+    async get(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        for (const trader of cache.Trader) {
             if (trader.id === id) {
                 return trader;
             }
@@ -58,8 +59,8 @@ class TradersAPI extends WorkerKV {
     }
 
     async getByName(context, info, name) {
-        await this.init(context);
-        for (const trader of this.cache.Trader) {
+        const { cache } = await this.getCache(context, info);
+        for (const trader of cache.Trader) {
             if (this.getLocale(trader.name, context, info).toLowerCase() === name.toLowerCase()) {
                 return trader;
             }
@@ -68,9 +69,9 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with name ${name}`));
     }
 
-    async getByLevel(context, traderId, level) {
-        await this.init(context);
-        for (const trader of this.cache.Trader) {
+    async getByLevel(context, info, traderId, level) {
+        const { cache } = await this.getCache(context, info);
+        for (const trader of cache.Trader) {
             if (trader.id !== traderId) continue;
             for (const rawLevel of trader.levels) {
                 if (rawLevel.level === level) {
@@ -81,13 +82,13 @@ class TradersAPI extends WorkerKV {
         return Promise.reject(new Error(`No trader found with id ${traderId} and level ${level}`));
     }
 
-    getByDataId(context, dataId) {
-        return this.get(context, dataIdMap[dataId]);
+    getByDataId(context, info, dataId) {
+        return this.get(context, info, dataIdMap[dataId]);
     }
 
     async getTraderResets(context, info) {
-        await this.init(context);
-        return this.cache.Trader.map(trader => {
+        const { cache } = await this.getCache(context, info);
+        return cache.Trader.map(trader => {
             return {
                 name: this.getLocale(trader.name, context, info).toLowerCase(),
                 resetTimestamp: trader.resetTime,

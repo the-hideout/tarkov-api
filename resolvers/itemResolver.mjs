@@ -1,100 +1,98 @@
 export default {
     Query: {
         item(obj, args, context, info) {
-            if (args.id) return context.data.item.getItem(context, args.id);
-            if (args.normalizedName) return context.data.item.getItemByNormalizedName(args.normalizedName);
+            if (args.id) return context.data.item.getItem(context, info, args.id);
+            if (args.normalizedName) return context.data.item.getItemByNormalizedName(context, info, args.normalizedName);
             return Promise.reject(new Error('You must specify either the id or the normalizedName argument'));
         },
         async items(obj, args, context, info) {
             let items = false;
             let filters = {
                 ids: async ids => {
-                    return context.data.item.getItemsByIDs(context, ids, items);
+                    return context.data.item.getItemsByIDs(context, info, ids, items);
                 },
                 name: async name => {
-                    return context.data.item.getItemsByName(context, name, info, items);
+                    return context.data.item.getItemsByName(context, info, name, items);
                 },
                 names: async names => {
-                    return context.data.item.getItemsByNames(context, names, info, items);
+                    return context.data.item.getItemsByNames(context, info, names, items);
                 },
                 type: async type => {
-                    return context.data.item.getItemsByType(context, type, items);
+                    return context.data.item.getItemsByType(context, info, type, items);
                 },
                 types: async types => {
-                    return context.data.item.getItemsByTypes(context, types, items);
+                    return context.data.item.getItemsByTypes(context, info, types, items);
                 },
                 categoryNames: async bsgcats => {
-                    return context.data.item.getItemsByCategoryEnums(context, bsgcats, items);
+                    return context.data.item.getItemsByCategoryEnums(context, info, bsgcats, items);
                 },
                 handbookCategoryNames: async handbookcats => {
-                    return context.data.item.getItemsByHandbookCategoryEnums(context, handbookcats, items);
+                    return context.data.item.getItemsByHandbookCategoryEnums(context, info, handbookcats, items);
                 },
                 bsgCategoryId: async bsgcat => {
-                    return context.data.item.getItemsByBsgCategoryId(context, bsgcat, items);
+                    return context.data.item.getItemsByBsgCategoryId(context, info, bsgcat, items);
                 },
                 bsgCategoryIds: async bsgcats => {
-                    return context.data.item.getItemsByBsgCategoryIds(context, bsgcats, items);
+                    return context.data.item.getItemsByBsgCategoryIds(context, info, bsgcats, items);
                 },
                 bsgCategory: async bsgcat => {
-                    return context.data.item.getItemsInBsgCategory(context, bsgcat, items);
+                    return context.data.item.getItemsInBsgCategory(context, info, bsgcat, items);
                 },
                 /*discardLimited: async limited => {
                     return context.data.item.getItemsByDiscardLimitedStatus(limited, items);
                 },*/
             }
             //if (Object.keys(args).length === 0) return context.data.item.getAllItems();
-            const nonFilterArgs = ['lang', 'limit', 'offset'];
             for (const argName in args) {
-                if (nonFilterArgs.includes(argName)) continue;
-                if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
-                items = await filters[argName](args[argName], items);
+                if (!filters[argName]) continue;
+                items = await filters[argName](args[argName]);
             }
             if (!items) {
-                items = context.data.item.getAllItems(context);
+                items = context.data.item.getAllItems(context, info);
             }
             return context.util.paginate(items, args);
         },
-        itemCategories(obj, args, context) {
-            return context.util.paginate(context.data.item.getCategories(context), args);
+        itemCategories(obj, args, context, info) {
+            return context.util.paginate(context.data.item.getCategories(context, info), args);
         },
-        handbookCategories(obj, args, context) {
-            return context.util.paginate(context.data.item.getHandbookCategories(context), args);
+        handbookCategories(obj, args, context, info) {
+            return context.util.paginate(context.data.item.getHandbookCategories(context, info), args);
         },
         itemsByIDs(obj, args, context, info) {
-            return context.data.item.getItemsByIDs(context, args.ids, false);
+            return context.data.item.getItemsByIDs(context, info, args.ids, false);
         },
         itemsByType(obj, args, context, info) {
-            return context.data.item.getItemsByType(context, args.type, false);
+            return context.data.item.getItemsByType(context, info, args.type, false);
         },
         itemsByName(obj, args, context, info) {
-            return context.data.item.getItemsByName(context, args.name, info);
+            return context.data.item.getItemsByName(context, info, args.name);
         },
         itemByNormalizedName(obj, args, context, info) {
-            return context.data.item.getItemByNormalizedName(context, args.normalizedName);
+            return context.data.item.getItemByNormalizedName(context, info, args.normalizedName);
         },
         itemsByBsgCategoryId(obj, args, context, info) {
-            return context.data.item.getItemsByBsgCategoryId(context, args.bsgCategoryId, undefined);
+            return context.data.item.getItemsByBsgCategoryId(context, info, args.bsgCategoryId);
         },
         historicalItemPrices(obj, args, context, info) {
-            return context.util.paginate(context.data.historicalPrice.getByItemId(context, args.id, args.days), args);
+            return context.util.paginate(context.data.historicalPrice.getByItemId(context, info, args.id, args.days), args);
         },
         /*archivedItemPrices(obj, args, context, info) {
-            return context.util.paginate(context.data.archivedPrice.getByItemId(context, args.id), args);
+            return context.util.paginate(context.data.archivedPrice.getByItemId(context, info, args.id), args);
         },*/
-        armorMaterials(obj, args, context) {
-            return context.data.item.getArmorMaterials(context);
+        armorMaterials(obj, args, context, info) {
+            return context.data.item.getArmorMaterials(context, info);
         },
-        fleaMarket(obj, args, context) {
-            return context.data.item.getFleaMarket(context);
+        fleaMarket(obj, args, context, info) {
+            return context.data.item.getFleaMarket(context, info);
         },
-        mastering(obj, args, context) {
-            return context.data.item.getMasterings(context);
+        mastering(obj, args, context, info) {
+            return context.data.item.getMasterings(context, info);
         },
-        playerLevels(obj, args, context) {
-            return context.data.item.getPlayerLevels(context);
+        playerLevels(obj, args, context, info) {
+            return context.data.item.getPlayerLevels(context, info);
         },
-        skills(obj, args, context) {
-            return context.data.item.getSkills(context);
+        skills(obj, args, context, info) {
+            return context.data.item.getSkills(context, info);
         },
     },
     Item: {
@@ -107,38 +105,38 @@ export default {
         description(data, args, context, info) {
             return context.data.item.getLocale(data.description, context, info);
         },
-        async buyFor(data, args, context) {
+        async buyFor(data, args, context, info) {
             if (!data.buyFor) data.buyFor = [];
             return [
-                ...await context.data.traderInventory.getByItemId(context, data.id),
+                ...await context.data.traderInventory.getByItemId(context, info, data.id),
                 ...data.buyFor
             ];
         },
-        bsgCategory(data, args, context) {
-            if (data.bsgCategoryId) return context.data.item.getCategory(context, data.bsgCategoryId);
+        bsgCategory(data, args, context, info) {
+            if (data.bsgCategoryId) return context.data.item.getCategory(context, info, data.bsgCategoryId);
             return null;
         },
-        category(data, args, context) {
-            if (data.bsgCategoryId) return context.data.item.getCategory(context, data.bsgCategoryId);
+        category(data, args, context, info) {
+            if (data.bsgCategoryId) return context.data.item.getCategory(context, info, data.bsgCategoryId);
             return null;
         },
-        categoryTop(data, args, context) {
-            if (data.bsgCategoryId) return context.data.item.getTopCategory(context, data.bsgCategoryId);
+        categoryTop(data, args, context, info) {
+            if (data.bsgCategoryId) return context.data.item.getTopCategory(context, info, data.bsgCategoryId);
             return null;
         },
-        categories(data, args, context) {
+        categories(data, args, context, info) {
             return data.categories.map(id => {
-                return context.data.item.getCategory(context, id);
+                return context.data.item.getCategory(context, info, id);
             });
         },
-        handbookCategories(data, args, context) {
+        handbookCategories(data, args, context, info) {
             return data.handbookCategories.map(id => {
-                return context.data.item.getCategory(context, id);
+                return context.data.item.getCategory(context, info, id);
             });
         },
-        async conflictingItems(data, args, context) {
+        async conflictingItems(data, args, context, info) {
             return Promise.all(data.conflictingItems.map(async id => {
-                const item = await context.data.item.getItem(context, id).catch(error => {
+                const item = await context.data.item.getItem(context, info, id).catch(error => {
                     console.warn(`item ${id} not found for conflictingItems`);
                     return null;
                 });
@@ -146,25 +144,25 @@ export default {
                 return item;
             }));
         },
-        usedInTasks(data, args, context) {
-            return context.data.task.getTasksRequiringItem(context, data.id);
+        usedInTasks(data, args, context, info) {
+            return context.data.task.getTasksRequiringItem(context, info, data.id);
         },
-        receivedFromTasks(data, args, context) {
-            return context.data.task.getTasksProvidingItem(context, data.id);
+        receivedFromTasks(data, args, context, info,) {
+            return context.data.task.getTasksProvidingItem(context, info, data.id);
         },
-        bartersFor(data, args, context) {
-            return context.data.barter.getBartersForItem(context, data.id);
+        bartersFor(data, args, context, info) {
+            return context.data.barter.getBartersForItem(context, info, data.id);
         },
-        bartersUsing(data, args, context) {
-            return context.data.barter.getBartersUsingItem(context, data.id);
+        bartersUsing(data, args, context, info) {
+            return context.data.barter.getBartersUsingItem(context, info, data.id);
         },
-        craftsFor(data, args, context) {
-            return context.data.craft.getCraftsForItem(context, data.id);
+        craftsFor(data, args, context, info) {
+            return context.data.craft.getCraftsForItem(context, info, data.id);
         },
-        craftsUsing(data, args, context) {
-            return context.data.craft.getCraftsUsingItem(context, data.id);
+        craftsUsing(data, args, context, info) {
+            return context.data.craft.getCraftsUsingItem(context, info, data.id);
         },
-        async fleaMarketFee(data, args, context) {
+        async fleaMarketFee(data, args, context, info) {
             if (data.types.includes('noFlea')) return null;
             const options = {
                 price: data.lastLowPrice || data.basePrice,
@@ -174,7 +172,7 @@ export default {
                 requireAll: false,
                 ...args
             };
-            const flea = await context.data.item.getFleaMarket(context);
+            const flea = await context.data.item.getFleaMarket(context, info);
             const q = options.requireAll ? 1 : options.count;
             const vo = data.basePrice * (options.count / q);
             const vr = options.price;
@@ -204,7 +202,7 @@ export default {
             if (!context.warnings.some(warning => warning.message === warningMessage)) {
                 context.warnings.push({message: warningMessage});
             }
-            return context.data.historicalPrice.getByItemId(context, data.id, context.data.historicalPrice.itemLimitDays, true);
+            return context.data.historicalPrice.getByItemId(context, info, data.id, context.data.historicalPrice.itemLimitDays, true);
         },
         imageLink(data) {
             return data.inspectImageLink;
@@ -233,8 +231,8 @@ export default {
         zones(data, args, context, info) {
             return context.data.item.getLocale(data.zones, context, info);
         },
-        material(data, args, context) {
-            return context.data.item.getArmorMaterial(context, data.armor_material_id);
+        material(data, args, context, info) {
+            return context.data.item.getArmorMaterial(context, info, data.armor_material_id);
         },
     },
     ItemArmorSlotOpen: {
@@ -245,8 +243,8 @@ export default {
         zones(data, args, context, info) {
             return context.data.item.getLocale(data.zones, context, info);
         },
-        allowedPlates(data, args, context) {
-            return data.allowedPlates.map(id => context.data.item.getItem(context, id));
+        allowedPlates(data, args, context, info) {
+            return data.allowedPlates.map(id => context.data.item.getItem(context, info, id));
         },
     },
     ItemAttribute: {
@@ -263,31 +261,31 @@ export default {
         name(data, args, context, info) {
             return context.data.item.getLocale(data.name, context, info);
         },
-        parent(data, args, context) {
-            if (data.parent_id) return context.data.item.getCategory(context, data.parent_id);
+        parent(data, args, context, info) {
+            if (data.parent_id) return context.data.item.getCategory(context, info, data.parent_id);
             return null;
         },
-        children(data, args, context) {
-            return data.child_ids.map(id => context.data.item.getCategory(context, id));
+        children(data, args, context, info) {
+            return data.child_ids.map(id => context.data.item.getCategory(context, info, id));
         }
     },
     ItemFilters: {
-        allowedCategories(data, args, context) {
-            return data.allowedCategories.map(id => context.data.item.getCategory(context, id));
+        allowedCategories(data, args, context, info) {
+            return data.allowedCategories.map(id => context.data.item.getCategory(context, info, id));
         },
-        allowedItems(data, args, context) {
-            return data.allowedItems.map(id => context.data.item.getItem(context, id));
+        allowedItems(data, args, context, info) {
+            return data.allowedItems.map(id => context.data.item.getItem(context, info, id));
         },
-        excludedCategories(data, args, context) {
-            return data.excludedCategories.map(id => context.data.item.getCategory(context, id));
+        excludedCategories(data, args, context, info) {
+            return data.excludedCategories.map(id => context.data.item.getCategory(context, info, id));
         },
-        excludedItems(data, args, context) {
-            return data.excludedItems.map(id => context.data.item.getItem(context, id));
+        excludedItems(data, args, context, info) {
+            return data.excludedItems.map(id => context.data.item.getItem(context, info, id));
         },
     },
     ItemPrice: {
-        currencyItem(data, args, context) {
-            return context.data.item.getItem(context, data.currencyItem);
+        currencyItem(data, args, context, info) {
+            return context.data.item.getItem(context, info, data.currencyItem);
         }
     },
     ItemProperties: {
@@ -300,16 +298,16 @@ export default {
         armorType(data, args, context, info) {
             return context.data.item.getLocale(data.armorType, context, info);
         },
-        material(data, args, context) {
-            return context.data.item.getArmorMaterial(context, data.armor_material_id);
+        material(data, args, context, info) {
+            return context.data.item.getArmorMaterial(context, info, data.armor_material_id);
         },
         zones(data, args, context, info) {
             return context.data.item.getLocale(data.zones, context, info);
         },
     },
     ItemPropertiesArmorAttachment: {
-        material(data, args, context) {
-            return context.data.item.getArmorMaterial(context, data.armor_material_id);
+        material(data, args, context, info) {
+            return context.data.item.getArmorMaterial(context, info, data.armor_material_id);
         },
         headZones(data, args, context, info) {
             return context.data.item.getLocale(data.headZones, context, info);
@@ -327,8 +325,8 @@ export default {
         armorType(data, args, context, info) {
             return context.data.item.getLocale(data.armorType, context, info);
         },
-        material(data, args, context) {
-            return context.data.item.getArmorMaterial(context, data.armor_material_id);
+        material(data, args, context, info) {
+            return context.data.item.getArmorMaterial(context, info, data.armor_material_id);
         },
         zones(data, args, context, info) {
             return context.data.item.getLocale(data.zones, context, info);
@@ -338,48 +336,48 @@ export default {
         }
     },
     ItemPropertiesGlasses: {
-        material(data, args, context) {
-            return context.data.item.getArmorMaterial(context, data.armor_material_id);
+        material(data, args, context, info) {
+            return context.data.item.getArmorMaterial(context, info, data.armor_material_id);
         },
     },
     ItemPropertiesHelmet: {
         armorType(data, args, context, info) {
             return context.data.item.getLocale(data.armorType, context, info);
         },
-        material(data, args, context) {
-            return context.data.item.getArmorMaterial(context, data.armor_material_id);
+        material(data, args, context, info) {
+            return context.data.item.getArmorMaterial(context, info, data.armor_material_id);
         },
         headZones(data, args, context, info) {
             return context.data.item.getLocale(data.headZones, context, info);
         }
     },
     ItemPropertiesMagazine: {
-        allowedAmmo(data, args, context) {
-            return data.allowedAmmo.map(id => context.data.item.getItem(context, id));
+        allowedAmmo(data, args, context, info) {
+            return data.allowedAmmo.map(id => context.data.item.getItem(context, info, id));
         }
     },
     ItemPropertiesPreset: {
-        baseItem(data, args, context) {
-            return context.data.item.getItem(context, data.base_item_id);
+        baseItem(data, args, context, info) {
+            return context.data.item.getItem(context, info, data.base_item_id);
         }
     },
     ItemPropertiesWeapon: {
-        defaultAmmo(data, args, context) {
+        defaultAmmo(data, args, context, info) {
             if (!data.default_ammo_id) return null;
-            return context.data.item.getItem(context, data.default_ammo_id);
+            return context.data.item.getItem(context, info, data.default_ammo_id);
         },
         fireModes(data, args, context, info) {
             return context.data.item.getLocale(data.fireModes, context, info);
         },
-        allowedAmmo(data, args, context) {
-            return data.allowedAmmo.map(id => context.data.item.getItem(context, id));
+        allowedAmmo(data, args, context, info) {
+            return data.allowedAmmo.map(id => context.data.item.getItem(context, info, id));
         },
-        defaultPreset(data, args, context) {
+        defaultPreset(data, args, context, info) {
             if (!data.defaultPreset) return null;
-            return context.data.item.getItem(context, data.defaultPreset);
+            return context.data.item.getItem(context, info, data.defaultPreset);
         },
-        presets(data, args, context) {
-            return Promise.all(data.presets.map(id => context.data.item.getItem(context, id)));
+        presets(data, args, context, info) {
+            return Promise.all(data.presets.map(id => context.data.item.getItem(context, info, id)));
         }
     },
     ItemSlot: {
@@ -388,9 +386,9 @@ export default {
         }
     },
     ContainedItem: {
-        item(data, args, context) {
-            if (data.contains) return context.data.item.getItem(context, data.item, data.contains);
-            return context.data.item.getItem(context, data.item);
+        item(data, args, context, info) {
+            if (data.contains) return context.data.item.getItem(context, info, data.item, data.contains);
+            return context.data.item.getItem(context, info, data.item);
         },
         quantity(data, args, context) {
             return data.count;
@@ -408,12 +406,12 @@ export default {
     },
     Mastering: {
         weapons(data, args, context, info) {
-            return Promise.all(data.weapons.map(id => context.data.item.getItem(context, id)));
+            return Promise.all(data.weapons.map(id => context.data.item.getItem(context, info, id)));
         },
     },
     RequirementItem: {
-        item(data, args, context) {
-            return context.data.item.getItem(context, data.item);
+        item(data, args, context, info) {
+            return context.data.item.getItem(context, info, data.item);
         },
         quantity(data) {
             return data.count;
@@ -429,7 +427,7 @@ export default {
             return context.data.item.getLocale(data.type, context, info);
         },
         skill(data, args, context, info) {
-            return context.data.item.getSkill(context, data.skillName);
+            return context.data.item.getSkill(context, info, data.skillName);
         },
         skillName(data, args, context, info) {
             return context.data.item.getLocale(data.skillName, context, info);

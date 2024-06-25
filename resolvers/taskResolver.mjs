@@ -1,10 +1,10 @@
 export default {
     Query: {
-        achievements(obj, args, context) {
-            return context.util.paginate(context.data.task.getAchievements(context), args);
+        achievements(obj, args, context, info) {
+            return context.util.paginate(context.data.task.getAchievements(context, info), args);
         },
         async tasks(obj, args, context, info) {
-            let tasks = await context.data.task.getList(context);
+            let tasks = await context.data.task.getList(context, info);
             if (args.faction) {
                 const filterFaction = args.faction.toLowerCase();
                 tasks = tasks.filter(task => {
@@ -15,15 +15,15 @@ export default {
             }
             return context.util.paginate(tasks, args);
         },
-        task(obj, args, context) {
-            return context.data.task.get(context, args.id);
+        task(obj, args, context, info) {
+            return context.data.task.get(context, info, args.id);
         },
         quests(obj, args, context, info) {
             context.warnings.push(`The quests query is deprecated and provided only for backwards compatibility purposes. Please use the tasks query, which includes the latest quests/tasks information.`);
-            return context.data.task.getQuests(context);
+            return context.data.task.getQuests(context, info);
         },
-        questItems(obj, args, context) {
-            return context.data.task.getQuestItems(context);
+        questItems(obj, args, context, info) {
+            return context.data.task.getQuestItems(context, info);
         }
     },
     Achievement: {
@@ -56,12 +56,12 @@ export default {
     },
     MapWithPosition: {
         map(data, args, context, info) {
-            return context.data.map.get(context, data.map);
+            return context.data.map.get(context, info, data.map);
         },
     },
     SkillLevel: {
         skill(data, args, context, info) {
-            return context.data.item.getSkill(context, data.name);
+            return context.data.item.getSkill(context, info, data.name);
         },
         name(data, args, context, info) {
             return context.data.task.getLocale(data.name, context, info);
@@ -71,22 +71,22 @@ export default {
         name(data, args, context, info) {
             return context.data.task.getLocale(data.name, context, info);
         },
-        trader(data, args, context) {
-            return context.data.trader.get(context, data.trader);
+        trader(data, args, context, info) {
+            return context.data.trader.get(context, info, data.trader);
         },
-        map(data, args, context) {
-            if (data.location_id) return context.data.map.get(context, data.location_id);
+        map(data, args, context, info) {
+            if (data.location_id) return context.data.map.get(context, info, data.location_id);
             return null;
         }
     },
     TaskKey: {
-        keys(data, args, context) {
+        keys(data, args, context, info) {
             return data.key_ids.map(id => {
-                return context.data.item.getItem(context, id);
+                return context.data.item.getItem(context, info, id);
             });
         },
-        map(data, args, context) {
-            if (data.map_id) return context.data.map.get(context, data.map_id);
+        map(data, args, context, info) {
+            if (data.map_id) return context.data.map.get(context, info, data.map_id);
             return null;
         }
     },
@@ -122,60 +122,60 @@ export default {
             }
             return 'TaskObjectiveBasic';
         },
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         }
     },
     TaskObjectiveBasic: {
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
         },
-        requiredKeys(data, args, context) {
+        requiredKeys(data, args, context, info) {
             if (!data.requiredKeys) {
                 return null;
             }
-            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, info, keyId)));
         },
     },
     TaskObjectiveBuildItem: {
-        item(data, args, context) {
-            return context.data.item.getItem(context, data.item);
+        item(data, args, context, info) {
+            return context.data.item.getItem(context, info, data.item);
         },
-        containsAll(data, args, context) {
+        containsAll(data, args, context, info) {
             return data.containsAll.map((item) => {
-                return context.data.item.getItem(context, item.id);
+                return context.data.item.getItem(context, info, item.id);
             });
         },
-        containsCategory(data, args,context) {
+        containsCategory(data, args, context, info) {
             return data.containsCategory.map((cat) => {
-                return context.data.item.getCategory(context, cat.id);
+                return context.data.item.getCategory(context, info, cat.id);
             });
         },
-        containsOne(data, args, context) {
+        containsOne(data, args, context, info) {
             return data.containsOne.map((item) => {
-                return context.data.item.getItem(context, item.id);
+                return context.data.item.getItem(context, info, item.id);
             });
         },
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
-            return context.data.task.getLocale(data.description, context, info);
+            return context.data.task.getLocale(data.description, context, info, info);
         }
     },
     TaskObjectiveExperience: {
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
@@ -183,9 +183,9 @@ export default {
         }
     },
     TaskObjectiveExtract: {
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
@@ -203,58 +203,58 @@ export default {
             }
             return context.data.task.getLocale(data.zoneNames, context, info);
         },
-        requiredKeys(data, args, context) {
+        requiredKeys(data, args, context, info) {
             if (!data.requiredKeys) {
                 return null;
             }
-            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, info, keyId)));
         },
     },
     TaskObjectiveItem: {
-        item(data, args, context) {
-            return context.data.item.getItem(context, data.item);
+        item(data, args, context, info) {
+            return context.data.item.getItem(context, info, data.item);
         },
-        items(data, args, context) {
-            return data.items.map(id => context.data.item.getItem(context, id));
+        items(data, args, context, info) {
+            return data.items.map(id => context.data.item.getItem(context, info, id));
         },
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
         },
-        requiredKeys(data, args, context) {
+        requiredKeys(data, args, context, info) {
             if (!data.requiredKeys) {
                 return null;
             }
-            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, info, keyId)));
         },
     },
     TaskObjectiveMark: {
-        markerItem(data, args, context) {
-            return context.data.item.getItem(context, data.item_id);
+        markerItem(data, args, context, info) {
+            return context.data.item.getItem(context, info, data.item_id);
         },
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
         },
-        requiredKeys(data, args, context) {
+        requiredKeys(data, args, context, info) {
             if (!data.requiredKeys) {
                 return null;
             }
-            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, info, keyId)));
         },
     },
     TaskObjectivePlayerLevel: {
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
@@ -262,28 +262,28 @@ export default {
         }
     },
     TaskObjectiveQuestItem: {
-        async questItem(data, args, context) {
-            return context.data.task.getQuestItem(context, data.item_id);
+        async questItem(data, args, context, info) {
+            return context.data.task.getQuestItem(context, info, data.item_id);
         },
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
         },
-        requiredKeys(data, args, context) {
+        requiredKeys(data, args, context, info) {
             if (!data.requiredKeys) {
                 return null;
             }
-            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, info, keyId)));
         },
     },
     TaskObjectiveSkill: {
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
@@ -302,33 +302,33 @@ export default {
             const targets = data.targetNames || [];
             return targets.map(target => context.data.task.getLocale(target, context, info));
         },
-        usingWeapon(data, args, context) {
+        usingWeapon(data, args, context, info) {
             return data.usingWeapon.map(item => {
-                return context.data.item.getItem(context, item.id);
+                return context.data.item.getItem(context, info, item.id);
             });
         },
-        usingWeaponMods(data, args, context) {
+        usingWeaponMods(data, args, context, info) {
             return data.usingWeaponMods.map(itemGroup => {
                 return itemGroup.map(item => {
-                    return context.data.item.getItem(context, item.id);
+                    return context.data.item.getItem(context, info, item.id);
                 });
             });
         },
-        wearing(data, args, context) {
+        wearing(data, args, context, info) {
             return data.wearing.map(itemGroup => {
                 return itemGroup.map(item => {
-                    return context.data.item.getItem(context, item.id);
+                    return context.data.item.getItem(context, info, item.id);
                 });
             });
         },
-        notWearing(data, args, context) {
+        notWearing(data, args, context, info) {
             return data.notWearing.map((item) => {
-                return context.data.item.getItem(context, item.id);
+                return context.data.item.getItem(context, info, item.id);
             });
         },
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
@@ -340,20 +340,20 @@ export default {
             }
             return context.data.task.getLocale(data.zoneNames, context, info);
         },
-        requiredKeys(data, args, context) {
+        requiredKeys(data, args, context, info) {
             if (!data.requiredKeys) {
                 return null;
             }
-            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, info, keyId)));
         },
     },
     TaskObjectiveTaskStatus: {
-        task(data, args, context) {
-            return context.data.task.get(context, data.task);
+        task(data, args, context, info) {
+            return context.data.task.get(context, info, data.task);
         },
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
@@ -361,12 +361,12 @@ export default {
         }
     },
     TaskObjectiveTraderLevel: {
-        trader(data, args, context) {
-            return context.data.trader.get(context, data.trader_id);
+        trader(data, args, context, info) {
+            return context.data.trader.get(context, info, data.trader_id);
         },
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
@@ -374,12 +374,12 @@ export default {
         }
     },
     TaskObjectiveTraderStanding: {
-        trader(data, args, context) {
-            return context.data.trader.get(context, data.trader_id);
+        trader(data, args, context, info) {
+            return context.data.trader.get(context, info, data.trader_id);
         },
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
@@ -387,30 +387,30 @@ export default {
         }
     },
     TaskObjectiveUseItem: {
-        maps(data, args, context) {
+        maps(data, args, context, info) {
             return data.map_ids.map(id => {
-                return context.data.map.get(context, id);
+                return context.data.map.get(context, info, id);
             });
         },
         description(data, args, context, info) {
             return context.data.task.getLocale(data.description, context, info);
         },
-        useAny(data, args, context) {
-            return Promise.all(data.useAny.map(id => context.data.item.getItem(context, id)));
+        useAny(data, args, context, info) {
+            return Promise.all(data.useAny.map(id => context.data.item.getItem(context, info, id)));
         },
         zoneNames(data, args, context, info) {
             return context.data.task.getLocale(data.zoneNames, context, info);
         },
-        requiredKeys(data, args, context) {
+        requiredKeys(data, args, context, info) {
             if (!data.requiredKeys) {
                 return null;
             }
-            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, keyId)));
+            return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.item.getItem(context, info, keyId)));
         },
     },
     TaskZone: {
-        map(data, args, context) {
-            return context.data.map.get(context, data.map);
+        map(data, args, context, info) {
+            return context.data.map.get(context, info, data.map);
         },
     },
     QuestItem: {
@@ -425,19 +425,19 @@ export default {
         },
     },
     TaskRewards: {
-        traderUnlock(data, args, context) {
+        traderUnlock(data, args, context, info) {
             return Promise.all(data.traderUnlock.map(unlock => {
-                return context.data.trader.get(context, unlock.trader_id);
+                return context.data.trader.get(context, info, unlock.trader_id);
             }));
         },
-        async craftUnlock(data, args, context) {
+        async craftUnlock(data, args, context, info) {
             if (!data.craftUnlock) {
                 return [];
             }
             if (data.craftUnlock.length === 0) {
                 return [];
             }
-            const crafts = await context.data.craft.getList(context);
+            const crafts = await context.data.craft.getList(context, info);
             return data.craftUnlock.map(unlock => {
                 return crafts.find(c => {
                     if (c.station !== unlock.station_id || c.level !== unlock.level) {
@@ -452,32 +452,32 @@ export default {
         }
     },
     TaskStatusRequirement: {
-        task(data, args, context) {
-            return context.data.task.get(context, data.task);
+        task(data, args, context, info) {
+            return context.data.task.get(context, info, data.task);
         }
     },
     OfferUnlock: {
-        item(data, args, context) {
-            if (data.contains && Array.isArray(data.contains) && data.contains.length > 0) return context.data.item.getItem(context, data.item, data.contains);
-            return context.data.item.getItem(context, data.item);
+        item(data, args, context, info) {
+            if (data.contains && Array.isArray(data.contains) && data.contains.length > 0) return context.data.item.getItem(context, info, data.item, data.contains);
+            return context.data.item.getItem(context, info, data.item);
         },
-        trader(data, args, context) {
-            return context.data.trader.get(context, data.trader_id)
+        trader(data, args, context, info) {
+            return context.data.trader.get(context, info, data.trader_id)
         }
     },
     Quest: {
-        giver(data, args, context) {
-            return context.data.trader.get(context, context.data.trader.getDataIdMap()[data.giver]);
+        giver(data, args, context, info) {
+            return context.data.trader.get(context, info, context.data.trader.getDataIdMap()[data.giver]);
         },
-        turnin(data, args, context) {
-            return context.data.trader.get(context, context.data.trader.getDataIdMap()[data.turnin]);
+        turnin(data, args, context, info) {
+            return context.data.trader.get(context, info, context.data.trader.getDataIdMap()[data.turnin]);
         }
     },
     QuestObjective: {
-        async targetItem(data, args, context) {
+        async targetItem(data, args, context, info) {
             if (!data.targetItem) return null;
             try {
-                return await context.data.item.getItem(context, data.targetItem)
+                return await context.data.item.getItem(context, info, data.targetItem)
             } catch (error) {
                 if (error.message.includes('No item found with id')) return null;
                 return Promise.reject(error);
@@ -485,17 +485,17 @@ export default {
         }
     },
     QuestRequirement: {
-        prerequisiteQuests(data, args, context) {
+        prerequisiteQuests(data, args, context, info) {
             return data.prerequisiteQuests.map(questArray => {
                 return questArray.map(questId => {
-                    return context.data.task.getQuest(context, questId);
+                    return context.data.task.getQuest(context, info, questId);
                 });
             });
         }
     },
     QuestRewardReputation: {
-        async trader(data, args, context) {
-            return context.data.trader.get(context, context.data.trader.getDataIdMap()[data.trader]);
+        async trader(data, args, context, info) {
+            return context.data.trader.get(context, info, context.data.trader.getDataIdMap()[data.trader]);
         }
     }
 };

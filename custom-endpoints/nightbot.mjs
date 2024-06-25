@@ -43,14 +43,7 @@ export default async function (request, data) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    const context = {
-        data,
-        util: graphqlUtil,
-        requestId,
-        lang: {},
-        warnings: [],
-        errors: [],
-    };
+    const context = graphqlUtil.getDefaultContext(data, requestId);
     const info = {
         path: {
             key: 'query',
@@ -68,7 +61,22 @@ export default async function (request, data) {
                                     value: 'lang',
                                 },
                                 value: {
-                                    value: url.searchParams.get('l') || 'en'
+                                    value: url.searchParams.get('l') || 'en',
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        name: {
+                            value: 'query'
+                        },
+                        arguments: [
+                            {
+                                name: {
+                                    value: 'gameMode',
+                                },
+                                value: {
+                                    value: url.searchParams.get('m') || 'regular',
                                 }
                             }
                         ]
@@ -77,7 +85,7 @@ export default async function (request, data) {
             }
         }
     };
-    const items = await data.item.getItemsByName(context, url.searchParams.get('q'), info);
+    const items = await data.item.getItemsByName(context, info, url.searchParams.get('q'));
 
     let responseBody = 'Found no item matching that name';
 

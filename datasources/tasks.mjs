@@ -3,24 +3,25 @@ import WorkerKV from '../utils/worker-kv.mjs';
 class TasksAPI extends WorkerKV {
     constructor(dataSource) {
         super('quest_data', dataSource);
+        this.gameModes.push('pve');
     }
 
-    async getList(context) {
-        await this.init(context);
-        return this.cache.Task;
+    async getList(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Task;
     }
 
-    async get(context, id) {
-        await this.init(context);
-        for (const task of this.cache.Task) {
+    async get(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        for (const task of cache.Task) {
             if (task.id === id || task.tarkovDataId === id) return task;
         }
         return Promise.reject(new Error(`No task found with id ${id}`));
     }
 
-    async getTasksRequiringItem(context, itemId) {
-        await this.init(context);
-        const tasks = this.cache.Task.filter(rawTask => {
+    async getTasksRequiringItem(context, info, itemId) {
+        const { cache } = await this.getCache(context, info);
+        const tasks = cache.Task.filter(rawTask => {
             for (const obj of rawTask.objectives) {
                 if (obj.item === itemId) {
                     return true;
@@ -70,14 +71,12 @@ class TasksAPI extends WorkerKV {
             }
             return false;
         });
-        return tasks.map(rawTask => {
-            return rawTask;
-        });
+        return tasks;
     }
 
-    async getTasksProvidingItem(context, itemId) {
-        await this.init(context);
-        const tasks = this.cache.Task.filter(rawTask => {
+    async getTasksProvidingItem(context, info, itemId) {
+        const { cache } = await this.getCache(context, info);
+        const tasks = cache.Task.filter(rawTask => {
             for (const reward of rawTask.startRewards.items) {
                 if (reward.item === itemId) {
                     return true
@@ -100,19 +99,17 @@ class TasksAPI extends WorkerKV {
             }
             return false;
         });
-        return tasks.map(rawTask => {
-            return rawTask;
-        });
+        return tasks;
     }
 
-    async getQuests(context) {
-        await this.init(context);
-        return this.cache.Quest;
+    async getQuests(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Quest;
     }
 
-    async getQuest(context, id) {
-        await this.init(context);
-        for (const quest of this.cache.Quest) {
+    async getQuest(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        for (const quest of cache.Quest) {
             if (quest.id === id) {
                 return quest;
             }
@@ -120,24 +117,23 @@ class TasksAPI extends WorkerKV {
         return Promise.reject(new Error(`No quest with id ${id} found`));
     }
 
-    async getQuestItems(context) {
-        await this.init(context);
-        return Object.values(this.cache.QuestItem);
+    async getQuestItems(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return Object.values(cache.QuestItem);
     }
 
-    async getQuestItem(context, id) {
-        await this.init(context);
-        return this.cache.QuestItem[id];
+    async getQuestItem(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.QuestItem[id];
     }
 
-    async getAchievements(context) {
-        await this.init(context);
-        return this.cache.Achievement;
+    async getAchievements(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Achievement;
     }
 
-    async getAchievement(context, id) {
-        await this.init(context);
-        const achievements = await this.getAchievements(context);
+    async getAchievement(context, info, id) {
+        const achievements = await this.getAchievements(context, info);
         for (const achievement of achievements) {
             if (achievement.id === id) {
                 return achievement;

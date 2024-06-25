@@ -3,15 +3,15 @@ import WorkerKVSplit from '../utils/worker-kv-split.mjs';
 class historicalPricesAPI extends WorkerKVSplit {
     constructor(dataSource) {
         super('historical_price_data', dataSource);
+        this.addGameMode('pve');
         this.defaultDays = 7;
         this.maxDays = 7;
         this.itemLimitDays = 2;
     }
 
-    async getByItemId(context, itemId, days = this.defaultDays, halfResults = false) {
-        await this.init(context, itemId);
-        const data = await this.getKVData(context, itemId);
-        if (!data) {
+    async getByItemId(context, info, itemId, days = this.defaultDays, halfResults = false) {
+        const { cache } = await this.getCache(context, info, itemId);
+        if (!cache) {
             return Promise.reject(new Error('Historical prices cache is empty'));
         }
         
@@ -23,7 +23,7 @@ class historicalPricesAPI extends WorkerKVSplit {
             }
         }
         
-        let prices = data.historicalPricePoint[itemId];
+        let prices = cache.historicalPricePoint[itemId];
         if (!prices) {
             return [];
         }

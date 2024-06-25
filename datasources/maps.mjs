@@ -3,25 +3,26 @@ import WorkerKV from '../utils/worker-kv.mjs';
 class MapAPI extends WorkerKV {
     constructor(dataSource) {
         super('map_data', dataSource);
+        this.gameModes.push('pve');
     }
 
-    async getList(context) {
-        await this.init(context);
-        return this.cache.Map;
+    async getList(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Map;
     }
 
-    async get(context, id) {
-        await this.init(context);
-        for (const map of this.cache.Map) {
+    async get(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        for (const map of cache.Map) {
             if (map.id === id || map.tarkovDataId === id) return map;
         }
         return Promise.reject(new Error(`No map found with id ${id}`));
     }
 
     async getMapsByNames(context, info, names, maps = false) {
-        await this.init(context);
+        const { cache } = await this.getCache(context, info);
         if (!maps) {
-            maps = this.cache.Map;
+            maps = cache.Map;
         }
         const searchStrings = names.map(name => {
             if (name === '') throw new Error('Searched map name cannot be blank');
@@ -39,9 +40,9 @@ class MapAPI extends WorkerKV {
     }
 
     async getMapsByEnemies(context, info, enemies, maps = false) {
-        await this.init(context);
+        const { cache } = await this.getCache(context, info);
         if (!maps) {
-            maps = this.cache.Map;
+            maps = cache.Map;
         }
         const searchStrings = enemies.map(name => {
             if (name === '') throw new Error('Searched enemy name cannot be blank');
@@ -59,20 +60,20 @@ class MapAPI extends WorkerKV {
         });
     }
 
-    async getAllBosses(context) {
-        await this.init(context);
-        return Object.values(this.cache.MobInfo);
+    async getAllBosses(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return Object.values(cache.MobInfo);
     }
 
-    async getMobInfo(context, mobId) {
-        await this.init(context);
-        return this.cache.MobInfo[mobId];
+    async getMobInfo(context, info, mobId) {
+        const { cache } = await this.getCache(context, info);
+        return cache.MobInfo[mobId];
     }
 
     async getBossesByNames(context, info, names, bosses = false) {
-        await this.init(context);
+        const { cache } = await this.getCache(context, info);
         if (!bosses) {
-            bosses = Object.values(this.cache.MobInfo);
+            bosses = Object.values(cache.MobInfo);
         }
         const searchStrings = names.map(name => {
             if (name === '') throw new Error('Searched boss name cannot be blank');
@@ -89,19 +90,19 @@ class MapAPI extends WorkerKV {
         });
     }
 
-    async getLootContainer(context, id) {
-        await this.init(context);
-        return this.cache.LootContainer[id];
+    async getLootContainer(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.LootContainer[id];
     }
 
-    async getAllLootContainers(context) {
-        await this.init(context);
-        return Object.values(this.cache.LootContainer);
+    async getAllLootContainers(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return Object.values(cache.LootContainer);
     }
 
-    async getExtract(context, id) {
-        await this.init(context);
-        return this.cache.Map.reduce((found, current) => {
+    async getExtract(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Map.reduce((found, current) => {
             if (found) {
                 return found;
             }
@@ -110,9 +111,9 @@ class MapAPI extends WorkerKV {
         }, false);
     }
 
-    async getSwitch(context, id) {
-        await this.init(context);
-        return this.cache.Map.reduce((found, current) => {
+    async getSwitch(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Map.reduce((found, current) => {
             if (found) {
                 return found;
             }
@@ -121,14 +122,14 @@ class MapAPI extends WorkerKV {
         }, false);
     }
 
-    async getStationaryWeapon(context, id) {
-        await this.init(context);
-        return this.cache.StationaryWeapon[id];
+    async getStationaryWeapon(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.StationaryWeapon[id];
     }
 
-    async getAllStationaryWeapons(context) {
-        await this.init(context);
-        return Object.values(this.cache.StationaryWeapon);
+    async getAllStationaryWeapons(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return Object.values(cache.StationaryWeapon);
     }
 }
 
