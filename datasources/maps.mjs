@@ -131,6 +131,11 @@ class MapAPI extends WorkerKV {
         const { cache } = await this.getCache(context, info);
         return Object.values(cache.StationaryWeapon);
     }
+
+    async getGoonReports(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.GoonReport;
+    }
 }
 
 export default MapAPI;

@@ -18,6 +18,10 @@ export default {
             }
             return context.util.paginate(bosses, args);
         },
+        async goonReports( obj, args, context, info) {
+            let reports = context.data.map.getGoonReports(context, info);
+            return context.util.paginate(reports, args);
+        },
         async lootContainers(obj, args, context, info) {
             let containers = context.data.map.getAllLootContainers(context, info);
             return context.util.paginate(containers, args);
@@ -47,6 +51,11 @@ export default {
             const stationaryWeapons = context.data.map.getAllStationaryWeapons(context, info);
             return context.util.paginate(stationaryWeapons, args);
         },
+    },
+    GoonReport: {
+        map(data, args, context, info) {
+            return context.data.map.get(context, info, data.map);
+        }
     },
     HealthPart: {
         bodyPart(data, args, context, info) {
