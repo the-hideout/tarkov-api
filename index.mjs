@@ -4,7 +4,8 @@ import { graphql } from 'graphql';
 import { v4 as uuidv4 } from 'uuid';
 
 import DataSource from './datasources/index.mjs';
-import playground from './handlers/playground.mjs';
+//import playground from './handlers/playground.mjs';
+import graphiql from './handlers/graphiql.mjs';
 import setCors from './utils/setCors.mjs';
 import typeDefs from './schema.mjs';
 import dynamicTypeDefs from './schema_dynamic.mjs';
@@ -199,6 +200,9 @@ async function graphqlHandler(request, env, ctx) {
         }
         ttl = 30 * 60;
         result.warnings.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl/60} minutes.`});
+    } else if (ttl > 1800) {
+        // if the ttl is greater than a half hour, limit it
+        ttl = 1800;
     }
 
     const body = JSON.stringify(result);
@@ -263,7 +267,8 @@ export default {
             }
 
             if (url.pathname === graphQLOptions.playgroundEndpoint) {
-                response = playground(request, graphQLOptions);
+                //response = playground(request, graphQLOptions);
+                response = graphiql(request, graphQLOptions);
             }
 
             if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
