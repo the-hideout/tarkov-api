@@ -248,10 +248,12 @@ const graphQLOptions = {
 export default {
 	async fetch(request, env, ctx) {
         if (!['GET', 'POST'].includes(request.method.toUpperCase())) {
-            return new Response(null, {
+            const errorResponse = new Response(null, {
                 status: 405,
                 headers: { 'cache-control': 'public, max-age=2592000' },
             });
+            setCors(errorResponse, graphQLOptions.cors);
+            return errorResponse;
         }
         const requestStart = new Date();
 		const url = new URL(request.url);
