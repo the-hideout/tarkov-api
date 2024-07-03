@@ -241,19 +241,26 @@ const graphQLOptions = {
         allowCredentials: 'true',
         allowHeaders: 'Content-type',
         allowOrigin: '*',
-        allowMethods: 'GET, POST',
+        allowMethods: 'OPTIONS, GET, POST',
     },
 };
 
 export default {
 	async fetch(request, env, ctx) {
-        if (!['GET', 'POST'].includes(request.method.toUpperCase())) {
+        if (!graphQLOptions.cors.allowMethods.split(', ').includes(request.method.toUpperCase())) {
             const errorResponse = new Response(null, {
                 status: 405,
                 headers: { 'cache-control': 'public, max-age=2592000' },
             });
             setCors(errorResponse, graphQLOptions.cors);
             return errorResponse;
+        }
+        if (request.method.toUpperCase() === 'OPTIONS') {
+            const optionsResponse = new Response(null, {
+                headers: { 'cache-control': 'public, max-age=2592000' },
+            });
+            setCors(optionsResponse, graphQLOptions.cors);
+            return optionsResponse;
         }
         const requestStart = new Date();
 		const url = new URL(request.url);
