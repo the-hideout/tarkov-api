@@ -177,6 +177,11 @@ enum GameMode {
   pve
 }
 
+type GoonReport {
+  map: Map
+  timestamp: String
+}
+
 type HealthEffect {
   bodyParts: [String]!
   effects: [String]!
@@ -1372,6 +1377,7 @@ type Query {
   item(id: ID, normalizedName: String, lang: LanguageCode, gameMode: GameMode): Item
   items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [ItemCategoryName], handbookCategoryNames: [HandbookCategoryName] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Item]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
+  goonReports(lang: LanguageCode, gameMode: GameMode, limit: Int, ofset: Int): [GoonReport]!
   handbookCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   lootContainers(lang: LanguageCode, limit: Int, offset: Int): [LootContainer]
   maps(lang: LanguageCode, gameMode: GameMode, name: [String!], enemies: [String!], limit: Int, offset: Int): [Map]!
