@@ -21,6 +21,7 @@ env:
   # Environment variables used by docker build and push
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  DEFAULT_PORT: 8788
 
 jobs:
   deploy:
@@ -79,7 +80,8 @@ jobs:
           push-to-registry: true
       
       # Setup SSH agent
-      - if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
+      - name: Setup Deployment Agent
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' }}
         id: setup-ssh
         env:
@@ -103,7 +105,7 @@ jobs:
             # Uses the ssh agent set up in the previous step to connect to the deployment environment
             SSH_AUTH_SOCK: /tmp/ssh_agent.sock
             # Allows for the API to be deployed to the same system on different ports based on the environment
-            ENV_PORT: ${{ steps.branch-deploy.outputs.environment == 'production' && '80' || '8788' }}
+            ENV_PORT: ${{ steps.branch-deploy.outputs.environment == 'production' && '80' || env.DEFAULT_PORT }}
             # The name of the container to be run
             CONTAINER_NAME: tarkov-api-${{ steps.branch-deploy.outputs.environment }}
         run: |
@@ -112,7 +114,7 @@ jobs:
           # Pull the latest version of the image published to the registry
           ssh ${{ secrets.SSH_USER }}@${{ steps.setup-ssh.outputs.ssh-host }} "sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:${{ steps.meta.outputs.tags[0] }}"
           # Run the image as a container
-          ssh ${{ secrets.SSH_USER }}@${{ steps.setup-ssh.outputs.ssh-host }} "sudo docker run -d --name ${{ env.CONTAINER_NAME }} - -p ${{ env.ENV_PORT }}:8788 -e CLOUDFLARE_TOKEN='${{ secrets.CLOUDFLARE_TOKEN }}' -e CACHE_BASIC_AUTH='${{ secrets.CACHE_BASIC_AUTH }}' ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags[0] }}"
+          ssh ${{ secrets.SSH_USER }}@${{ steps.setup-ssh.outputs.ssh-host }} "sudo docker run -d --name ${{ env.CONTAINER_NAME }} - -p ${{ env.ENV_PORT }}:${{ env.DEFAULT_PORT }} -e CLOUDFLARE_TOKEN='${{ secrets.CLOUDFLARE_TOKEN }}' -e CACHE_BASIC_AUTH='${{ secrets.CACHE_BASIC_AUTH }}' ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}"
 
       # Post comment on PR with development deploy info
       - uses: GrantBirki/comment@v2.0.10
@@ -130,15 +132,6 @@ jobs:
             - Playground: [dev-api.tarkov.dev](https://dev-api.tarkov.dev)
 
             > Pusher: @${{ github.actor }}, Action: `${{ github.event_name }}`, Workflow: `${{ github.workflow }}`;
-
-      - name: Publish - Production
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
-          steps.branch-deploy.outputs.noop != 'true' &&
-          steps.branch-deploy.outputs.environment == 'production' }}
-        uses: cloudflare/wrangler-action@a08dc762e87e8754e0d56a16a35a70b406bc869f # pin@3.6.1
-        with:
-          wranglerVersion: '2.17.0'
-          apiToken: ${{ secrets.CF_API_TOKEN }}
 
       # Post comment on PR with production deploy info
       - uses: GrantBirki/comment@v2.0.10
