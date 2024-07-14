@@ -37,6 +37,7 @@ jobs:
           environment_targets: production,development
           environment_urls: production|https://api.tarkov.dev/graphql,development|https://dev-api.tarkov.dev/graphql
           sticky_locks: "true"
+          skip_reviews: "development"
 
       - name: checkout
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
