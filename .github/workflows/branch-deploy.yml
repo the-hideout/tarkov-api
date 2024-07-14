@@ -62,6 +62,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      # In theory, we could build the container as soon as a commit is pushed, rather than waiting until just before deployment.
+      # This would make deployments faster, but it does mean we would have images in our repository that may not have been reviewed.
       - name: Build and push Docker image to registry
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         id: docker-push
