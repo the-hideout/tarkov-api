@@ -22,13 +22,15 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   DEFAULT_PORT: 8788
-  IMAGE_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.issue.number }}
 
 jobs:
   deploy:
     environment: secrets
     if: ${{ github.event.issue.pull_request }} # only run on pull request comments
     runs-on: ubuntu-latest
+
+    env:
+      IMAGE_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.issue.number }}
 
     steps:
       - uses: github/branch-deploy@v9.3.0
