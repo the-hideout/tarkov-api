@@ -22,7 +22,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   DEFAULT_PORT: 8788
-  IMAGE_TAG: ghcr.io/${{ github.repository }}:pr-${{ github.issue.number }}
+  IMAGE_TAG: ghcr.io/${{ github.repository }}:pr-${{ github.event.issue.number }}
 
 jobs:
   deploy:
