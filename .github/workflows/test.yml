@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   test:
+    environment: secrets
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
