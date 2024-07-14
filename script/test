@@ -6,7 +6,7 @@ START=1
 END=60
 
 # Start the GraphQL server in the background
-CLOUDFLARE_API_TOKEN=$CLOUDFLARE_TOKEN CACHE_BASIC_AUTH=$CACHE_BASIC_AUTH cd http && npm run ci &
+CLOUDFLARE_API_TOKEN=$CLOUDFLARE_TOKEN CACHE_BASIC_AUTH=$CACHE_BASIC_AUTH cd http && npm run start &
 
 for (( c=$START; c<=$END; c++ ))
 do
