@@ -52,14 +52,27 @@ jobs:
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
       
-  # deploy:
-  #   needs: build-image
-  #   runs-on: ubuntu-latest
+  deploy:
+    needs: build-image
+    runs-on: ubuntu-latest
+    environment: development
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-  #     - name: Deploy via SSH
-  #       run: |
-  #         echo "Deploying via SSH"
+      - name: Setup SSH Key
+        run: |
+          mkdir -p /home/runner/.ssh
+          ssh-keyscan ${{ secrets.SSH_HOST }} >> /home/runner/.ssh/known_hosts
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > /home/runner/.ssh/api-server-key
+          chmod 600 /home/runner/.ssh/api-server-key
+          eval $(ssh-agent)
+          ssh-add /home/runner/.ssh/api-server-key
+
+      - name: Deploy via SSH
+        run: |
+          echo "Deploying via SSH"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo docker rm -f tarkov-api || true"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:ssh-deploy"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo docker run -d --name tarkov-api -p 80:8088 -e CLOUDFLARE_TOKEN='${{ secrets.CLOUDFLARE_TOKEN }}' -e CACHE_BASIC_AUTH='${{ secrets.CACHE_BASIC_AUTH }}' ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:ssh-deploy"
