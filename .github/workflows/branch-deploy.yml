@@ -117,7 +117,7 @@ jobs:
           # Pull the latest version of the image published to the registry
           ssh ${{ secrets.SSH_USER }}@${{ steps.setup-ssh.outputs.ssh-host }} "sudo docker pull ${{ env.IMAGE_TAG }}"
           # Run the image as a container
-          ssh ${{ secrets.SSH_USER }}@${{ steps.setup-ssh.outputs.ssh-host }} "sudo docker run -d --name ${{ env.CONTAINER_NAME }} -p ${{ env.ENV_PORT }}:${{ env.DEFAULT_PORT }} -e CLOUDFLARE_TOKEN='${{ secrets.CLOUDFLARE_TOKEN }}' -e CACHE_BASIC_AUTH='${{ secrets.CACHE_BASIC_AUTH }}' ${{ env.IMAGE_TAG }}"
+          ssh ${{ secrets.SSH_USER }}@${{ steps.setup-ssh.outputs.ssh-host }} "sudo docker run -d --name ${{ env.CONTAINER_NAME }} -p ${{ env.ENV_PORT }}:${{ env.DEFAULT_PORT }} -e SENTRY_DSN='${{ secrets.SENTRY_DSN || '' }}' -e SENTRY_TRACE_RATE=${{ secrets.SENTRY_TRACE_RATE || 0 }} -e SENTRY_PROFILE_RATE=${{ secrets.SENTRY_PROFILE_RATE || 0 }} -e DEPLOY_REF='${{ steps.branch-deploy.ouputs.ref }}' -e CLOUDFLARE_TOKEN='${{ secrets.CLOUDFLARE_TOKEN }}' -e CACHE_BASIC_AUTH='${{ secrets.CACHE_BASIC_AUTH }}' ${{ env.IMAGE_TAG }}"
 
       # Post comment on PR with development deploy info
       - uses: GrantBirki/comment@v2.0.10

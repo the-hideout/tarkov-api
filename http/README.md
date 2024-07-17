@@ -10,3 +10,6 @@ This folder is for running the API as a standalonen application, without using C
 * `ENVIRONMENT` - The environment to run in. Either `production` or `dev`. Default is `dev`.
 * `CACHE_BASIC_AUTH` - The basic auth string to use for caching. Default is `placeholder`.
 * `CLOUDFLARE_TOKEN` - The Cloudflare token to use for accessing the KV store. Default is `placeholder`.
+* `SENTRY_DSN` - The Sentry DSN to use for error reporting. Defaults to empty.
+* `SENTRY_TRACE_RATE` - The Sentry trace sample rate to use for error reporting. Default is `0`.
+* `SENTRY_PROFILE_RATE` - The Sentry profile sample rate to use for error reporting. Default is `0`.

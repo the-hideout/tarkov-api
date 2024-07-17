@@ -1,3 +1,4 @@
+import "./instrument.mjs";
 import express from 'express';
 import 'dotenv/config';
 
@@ -24,9 +25,9 @@ const convertIncomingMessageToRequest = (req) => {
 };
 
 const app = express();
-app.use(express.json({limit: '100mb'}), express.text());
+app.use(express.json({ limit: '100mb' }), express.text());
 app.all('*', async (req, res, next) => {
-    const response = await worker.fetch(convertIncomingMessageToRequest(req), getEnv(), {waitUntil: () => {}});
+    const response = await worker.fetch(convertIncomingMessageToRequest(req), getEnv(), { waitUntil: () => { } });
 
     // Convert Response object to JSON
     const responseBody = await response.text();
