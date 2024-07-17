@@ -13,3 +13,4 @@ This folder is for running the API as a standalonen application, without using C
 * `SENTRY_DSN` - The Sentry DSN to use for error reporting. Defaults to empty.
 * `SENTRY_TRACE_RATE` - The Sentry trace sample rate to use for error reporting. Default is `0`.
 * `SENTRY_PROFILE_RATE` - The Sentry profile sample rate to use for error reporting. Default is `0`.
+* `SENTRY_ENV` - The Sentry environment to use for error reporting. Default is `unknown`.

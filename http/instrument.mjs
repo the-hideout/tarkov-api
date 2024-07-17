@@ -4,6 +4,7 @@ import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 Sentry.init({
   release: `tarkov-api@${process.env.DEPLOY_REF || 'local'}`,
+  environment: process.env.SENTRY_ENV || 'unknown',
   dsn: process.env.SENTRY_DSN || '',
   integrations: [
     nodeProfilingIntegration(),
