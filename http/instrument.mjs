@@ -8,6 +8,14 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN || '',
   integrations: [
     nodeProfilingIntegration(),
+    Sentry.requestDataIntegration({
+      include: {
+        ip: true
+      }
+    }),
+    Sentry.graphqlIntegration({
+      ignoreResolveSpans: false
+    })
   ],
   // Performance Monitoring
   tracesSampleRate: process.env.SENTRY_TRACE_RATE || 0,
