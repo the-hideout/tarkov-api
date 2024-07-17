@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import "./instrument.mjs";
 import express from 'express';
 import 'dotenv/config';
@@ -27,6 +28,7 @@ const convertIncomingMessageToRequest = (req) => {
 const app = express();
 app.use(express.json({ limit: '100mb' }), express.text());
 app.all('*', async (req, res, next) => {
+    Sentry.setUser({ ip_address: req.ip });
     const response = await worker.fetch(convertIncomingMessageToRequest(req), getEnv(), { waitUntil: () => { } });
 
     // Convert Response object to JSON
