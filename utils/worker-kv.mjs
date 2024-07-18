@@ -6,6 +6,8 @@ class WorkerKV {
         this.loadingPromises = {};
         this.loadingInterval = false;
         this.dataExpires = {};
+        this.lastRefresh = {};
+        this.refreshCooldown = 1000 * 60;
         this.dataSource = dataSource;
         this.gameModes = ['regular'];
     }
@@ -17,7 +19,13 @@ class WorkerKV {
         if (gameMode !== 'regular' && !forceRegular) {
             requestKv += `_${gameMode}`;
         }
-        if (this.cache[gameMode] && (!this.dataExpires[gameMode] || new Date() < this.dataExpires[gameMode])) {
+        let dataNeedsRefresh = false;
+        if (this.dataExpires[gameMode]) {
+            const stale = new Date() > this.dataExpires[gameMode];
+            const dataAge = new Date() - (this.lastRefresh[gameMode] ?? 0);
+            dataNeedsRefresh = stale && dataAge > this.refreshCooldown;
+        }
+        if (this.cache[gameMode] && !dataNeedsRefresh) {
             //console.log(`${requestKv} is fresh; not refreshing`);
             this.dataSource.setKvUsedForRequest(requestKv, requestId);
             return {cache: this.cache[gameMode], gameMode};
@@ -92,6 +100,7 @@ class WorkerKV {
                 if (newDataExpires && this.dataExpires === newDataExpires) {
                     console.log(`${requestKv} is still stale after re-load`);
                 }
+                this.lastRefresh[gameMode] = new Date();
                 this.dataExpires[gameMode] = newDataExpires;
                 this.dataSource.setKvLoadedForRequest(requestKv, requestId);
                 this.loading[gameMode] = false;

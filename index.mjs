@@ -155,7 +155,6 @@ async function graphqlHandler(request, env, ctx) {
     if (env.HTTP_GRAPHQL_SERVER) {
         try {
             const serverUrl = `${env.HTTP_GRAPHQL_SERVER}${graphQLOptions.baseEndpoint}`;
-            console.log(serverUrl);
             const queryResult = await fetch(serverUrl, {
                 method: request.method,
                 body: JSON.stringify({
@@ -167,7 +166,7 @@ async function graphqlHandler(request, env, ctx) {
                 },
             });
             if (queryResult.status !== 200) {
-                throw new Error(`${queryResult.status} ${queryResult.statusText}`);
+                throw new Error(`${queryResult.status} ${queryResult.statusText}: ${await queryResult.text()}`);
             }
             console.log('Request served from graphql server');
             return new Response(await queryResult.text(), responseOptions);
