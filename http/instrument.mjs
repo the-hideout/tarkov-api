@@ -14,7 +14,7 @@ Sentry.init({
       }
     }),
     Sentry.graphqlIntegration({
-      ignoreResolveSpans: false
+      ignoreResolveSpans: true
     })
   ],
   // Performance Monitoring
