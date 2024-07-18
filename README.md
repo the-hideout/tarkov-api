@@ -72,6 +72,11 @@ Prerequisites:
 - Install [Wrangler](https://github.com/cloudflare/wrangler)
 - Run `wrangler login` - (needed for k/v store and secrets)
 
+You may want to create a .dev.vars file in the main project folder with the following values:
+
+- CACHE_BASIC_AUTH (used for caching)
+- HTTP_GRAPHQL_SERVER (the address to the dedicated graphql server; must be https and a domain - not an IP address)
+
 Start the API server:
 
 - Start the dev environment by running `npm run dev`
