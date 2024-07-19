@@ -1,3 +1,5 @@
+import cluster from 'node:cluster';
+import os from 'node:os';
 import * as Sentry from "@sentry/node";
 import "./instrument.mjs";
 import express from 'express';
@@ -25,25 +27,39 @@ const convertIncomingMessageToRequest = (req) => {
     return request
 };
 
-const app = express();
-app.use(express.json({ limit: '100mb' }), express.text());
-app.all('*', async (req, res, next) => {
-    Sentry.setUser({ ip_address: req.ip });
-    const response = await worker.fetch(convertIncomingMessageToRequest(req), getEnv(), { waitUntil: () => { } });
+if (cluster.isPrimary) {
+    // Create workers (process forks) equal to the available CPUs.
+    console.log(`Primary ${process.pid} is running`);
+    cluster.on('exit', (worker, code, signal) => {
+        console.log(`Worker ${worker.process.pid} crashed. Starting a new worker...`);
+        cluster.fork();
+    });
+    for (let i = 0; i < os.cpus().length; i++) {
+        cluster.fork();
+    }
+} else {
+    // We are a worker (fork) - start a server
+    const app = express();
+    app.use(express.json({ limit: '100mb' }), express.text());
+    app.all('*', async (req, res, next) => {
+        Sentry.setUser({ ip_address: req.ip });
+        const response = await worker.fetch(convertIncomingMessageToRequest(req), getEnv(), { waitUntil: () => { } });
 
-    // Convert Response object to JSON
-    const responseBody = await response.text();
+        // Convert Response object to JSON
+        const responseBody = await response.text();
 
-    // Reflect headers from Response object
-    //Object.entries(response.headers.raw()).forEach(([key, value]) => {
-    response.headers.forEach((value, key) => {
-        res.setHeader(key, value);
+        // Reflect headers from Response object
+        response.headers.forEach((value, key) => {
+            res.setHeader(key, value);
+        });
+
+        // Send the status and JSON body
+        res.status(response.status).send(responseBody);
     });
 
-    // Send the status and JSON body
-    res.status(response.status).send(responseBody);
-});
+    app.listen(port, () => {
+        console.log(`HTTP GraphQL server (PID: ${process.pid}) running at http://127.0.0.1:${port}`);
+    });
+}
 
-app.listen(port, () => {
-    console.log(`HTTP GraphQL server running at http://127.0.0.1:${port}`);
-});
+
