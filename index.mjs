@@ -1,3 +1,4 @@
+import "./instrument.mjs";
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { mergeTypeDefs } from '@graphql-tools/merge';
 import { graphql } from 'graphql';
@@ -99,7 +100,7 @@ async function graphqlHandler(request, env, ctx) {
     } else if (request.method === 'GET') {
         query = url.searchParams.get('query');
         variables = url.searchParams.get('variables');
-    } 
+    }
 
     // Check for empty /graphql query
     if (!query || query.trim() === '') {
@@ -176,17 +177,17 @@ async function graphqlHandler(request, env, ctx) {
     }
 
     const context = graphqlUtil.getDefaultContext(dataAPI, requestId);
-    let result = await graphql({schema: await getSchema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
+    let result = await graphql({ schema: await getSchema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables });
     console.log('generated graphql response');
     if (context.errors.length > 0) {
         if (!result.errors) {
-            result = Object.assign({errors: []}, result); // this puts the errors at the start of the result
+            result = Object.assign({ errors: [] }, result); // this puts the errors at the start of the result
         }
         result.errors.push(...context.errors);
     }
     if (context.warnings.length > 0) {
         if (!result.warnings) {
-            result = Object.assign({warnings: []}, result);
+            result = Object.assign({ warnings: [] }, result);
         }
         result.warnings.push(...context.warnings);
     }
@@ -195,10 +196,10 @@ async function graphqlHandler(request, env, ctx) {
 
     if (specialCache === 'application/json') {
         if (!result.warnings) {
-            result = Object.assign({warnings: []}, result);
+            result = Object.assign({ warnings: [] }, result);
         }
         ttl = 30 * 60;
-        result.warnings.push({message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl/60} minutes.`});
+        result.warnings.push({ message: `Your request does not have a "content-type" header set to "application/json". Requests missing this header are limited to resposnes that update every ${ttl / 60} minutes.` });
     } else if (ttl > 1800) {
         // if the ttl is greater than a half hour, limit it
         ttl = 1800;
@@ -245,7 +246,7 @@ const graphQLOptions = {
 };
 
 export default {
-	async fetch(request, env, ctx) {
+    async fetch(request, env, ctx) {
         if (!graphQLOptions.cors.allowMethods.split(', ').includes(request.method.toUpperCase())) {
             const errorResponse = new Response(null, {
                 status: 405,
@@ -262,7 +263,7 @@ export default {
             return optionsResponse;
         }
         const requestStart = new Date();
-		const url = new URL(request.url);
+        const url = new URL(request.url);
 
         let response;
 
@@ -286,7 +287,7 @@ export default {
             if (!dataAPI) {
                 dataAPI = new DataSource(env);
             }
-            
+
             if (url.pathname === '/webhook/nightbot' ||
                 url.pathname === '/webhook/stream-elements' ||
                 url.pathname === '/webhook/moobot'
@@ -305,10 +306,10 @@ export default {
                 response = new Response('Not found', { status: 404 });
             }
             console.log(`Response time: ${new Date() - requestStart} ms`);
-			return response;
+            return response;
         } catch (err) {
             console.log(err);
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
         }
-	},
+    },
 };

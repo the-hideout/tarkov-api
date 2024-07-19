@@ -6,14 +6,14 @@ workers_dev = true
 kv_namespaces = [
     { binding = "DATA_CACHE", id = "2e6feba88a9e4097b6d2209191ed4ae5", preview_id = "17fd725f04984e408d4a70b37c817171" },
 ]
-vars = { ENVIRONMENT = "production" }
+vars = { ENVIRONMENT = "production", SENTRY_DSN = "https://9ff227d0c421a56e2e22483aa264c9e0@sentry.thaddeus.io/2", SENTRY_ENV = "cf-production", SENTRY_TRACE_RATE = 0.05, SENTRY_PROFILE_RATE = 1 }
 
 
 [env.development]
 kv_namespaces = [
     { binding = "DATA_CACHE", id = "17fd725f04984e408d4a70b37c817171", preview_id = "17fd725f04984e408d4a70b37c817171" },
 ]
-vars = { ENVIRONMENT = "development", SKIP_CACHE = "false" }
+vars = { ENVIRONMENT = "development", SKIP_CACHE = "false", SENTRY_DSN = "https://9ff227d0c421a56e2e22483aa264c9e0@sentry.thaddeus.io/2", SENTRY_ENV = "cf-development", SENTRY_TRACE_RATE = 1, SENTRY_PROFILE_RATE = 1 }
 
 # [secrets]
 # CACHE_BASIC_AUTH
