@@ -19,8 +19,8 @@
     "license": "ISC",
     "devDependencies": {
         "newman": "^6.1.2",
-        "prettier": "^3.3.2",
-        "wrangler": "^3.62.0"
+        "prettier": "^3.3.3",
+        "wrangler": "^3.67.1"
     },
     "dependencies": {
         "@graphql-tools/merge": "9.0.4",
