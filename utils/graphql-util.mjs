@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 const graphqlUtil =  {
     getDepth: (info) => {
         let depth = 0;
@@ -12,11 +14,11 @@ const graphqlUtil =  {
         const depth = graphqlUtil.getDepth(info);
         if (depth > depthLimit) throw new Error(`Query depth ${depth} exceeds maximum (${depthLimit}) for ${info.parentType}.${info.fieldName}.`);
     },
-    getDefaultContext: (dataSource, requestId) => {
+    getDefaultContext: (dataSource) => {
         return {
+            requestId: uuidv4(),
             data: dataSource,
             util: graphqlUtil,
-            requestId,
             arguments: {},
             warnings: [],
             errors: [],
