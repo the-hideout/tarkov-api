@@ -4,6 +4,29 @@ export default function useCacheMachine(requestContext, env, ctx) {
     return {
         async onParams({params, request, setParams, setResult, fetchAPI}) {
             console.log('plugin onParams');
+            requestContext.params = params;
+            // if an HTTP GraphQL server is configured, pass the request to that
+            if (env.HTTP_GRAPHQL_SERVER) {
+                try {
+                    const serverUrl = `${env.HTTP_GRAPHQL_SERVER}/graphql`;
+                    const queryResult = await fetch(serverUrl, {
+                        method: request.method,
+                        body: JSON.stringify(params),
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    if (queryResult.status !== 200) {
+                        throw new Error(`${queryResult.status} ${queryResult.statusText}: ${await queryResult.text()}`);
+                    }
+                    console.log('Request served from graphql server');
+                    setResult(await queryResult.json());
+                    return;
+                } catch (error) {
+                    console.error(`Error getting response from GraphQL server: ${error}`);
+                }
+            }
+
             const contentType = request.headers.get('content-type');
             if (!contentType || !contentType.startsWith('application/json')) {
                 requestContext.specialCache = 'application/json';
@@ -14,6 +37,7 @@ export default function useCacheMachine(requestContext, env, ctx) {
                 if (cachedResponse) {
                     console.log('Request served from cache');
                     setResult(cachedResponse);
+                    return;
                 }
             } else {
                 console.log(`Skipping cache in ${env.ENVIRONMENT} environment`);
@@ -21,7 +45,7 @@ export default function useCacheMachine(requestContext, env, ctx) {
         },
         onParse({ result, replaceParseResult, context, extendContext }) {
             console.log('plugin onParse');
-            requestContext.params = context.params;
+            //requestContext.params = context.params;
         },
         onResultProcess({request, acceptableMediaTypes, result, setResult, resultProcessor, setResultProcessor}) {
             console.log('plugin onResultProcess');
@@ -51,7 +75,7 @@ export default function useCacheMachine(requestContext, env, ctx) {
                 // if the ttl is greater than a half hour, limit it
                 requestContext.ttl = 1800;
             }
-            if (env.SKIP_CACHE !== 'true' && requestContext.ttl > 0) {
+            if (env.SKIP_CACHE !== 'true' && requestContext.ttl > 0 && !env.HTTP_GRAPHQL_SERVER) {
                 // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
                 ctx.waitUntil(cacheMachine.put(env, requestContext.params.query, requestContext.params.variables, result, String(requestContext.ttl), requestContext.specialCache));
             }

@@ -78,32 +78,6 @@ async function getSchema(data, context) {
 }
 
 async function graphqlHandler(request, env, ctx) {
-    // if an HTTP GraphQL server is configured, pass the request to that
-    if (env.HTTP_GRAPHQL_SERVER) {
-        try {
-            const serverUrl = `${env.HTTP_GRAPHQL_SERVER}${graphQLOptions.baseEndpoint}`;
-            const serverRequest = request.clone();
-            const queryResult = await fetch(serverUrl, {
-                method: request.method,
-                body: await serverRequest.text(),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (queryResult.status !== 200) {
-                throw new Error(`${queryResult.status} ${queryResult.statusText}: ${await queryResult.text()}`);
-            }
-            console.log('Request served from graphql server');
-            return new Response(await queryResult.text(), {
-                headers: {
-                    'content-type': 'application/json;charset=UTF-8',
-                }
-            });
-        } catch (error) {
-            console.error(`Error getting response from GraphQL server: ${error}`);
-        }
-    }
-
     const context = graphqlUtil.getDefaultContext(dataAPI);
     const yoga = createYoga({
         schema: await getSchema(dataAPI, context),
