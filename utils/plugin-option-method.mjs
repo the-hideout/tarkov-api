@@ -1,7 +1,6 @@
 export default function useOptionMethod() {
     return {
         async onRequest({ request, endResponse, serverContext }) {
-            console.log('plugin-option-method onRequest');
             if (request.method.toUpperCase() !== 'OPTIONS') {
                 return;
             }

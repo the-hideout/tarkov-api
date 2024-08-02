@@ -15,7 +15,6 @@ const usePaths = [
 export default function useNightbot() {
     return {
         async onRequest({ request, url, endResponse, serverContext, fetchAPI }) {
-            console.log('plugin-nightbot onRequest');
             if (!usePaths.includes(url.pathname)) {
                 return;
             }

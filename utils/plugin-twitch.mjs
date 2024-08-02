@@ -5,7 +5,6 @@ const usePaths = [
 export default function useTwitch() {
     return {
         async onRequest({ url, endResponse, serverContext }) {
-            console.log('plugin-twitch onRequest');
             if (!usePaths.includes(url.pathname)) {
                 return;
             }

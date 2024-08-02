@@ -12,8 +12,6 @@ function specialCache(request) {
 export default function useCacheMachine(env, ctx) {
     return {
         async onParams({params, request, setParams, setResult, fetchAPI}) {
-            console.log('plugin-use-cache-machine onParams');
-
             if (env.SKIP_CACHE !== 'true' && !env.CLOUDFLARE_TOKEN) {
                 const cachedResponse = await cacheMachine.get(env, params.query, params.variables, specialCache(request));
                 if (cachedResponse) {
@@ -26,7 +24,6 @@ export default function useCacheMachine(env, ctx) {
             }
         },
         onContextBuilding({context, extendContext, breakContextBuilding}) {
-            console.log('plugin-use-cache-machine onContextBuilding');
             context.request.requestId = context.requestId;
             context.request.waitUntil = context.executionContext.waitUntil;
             context.request.data = context.data;
@@ -35,7 +32,6 @@ export default function useCacheMachine(env, ctx) {
             context.request.params = context.params;
         },
         onResultProcess({request, acceptableMediaTypes, result, setResult, resultProcessor, setResultProcessor}) {
-            console.log('plugin-use-cache-machine onResultProcess');
             if (request.cached) {
                 return;
             }
@@ -71,12 +67,9 @@ export default function useCacheMachine(env, ctx) {
             }
             delete request.data.requests[request.requestId];
             setResult(result);
+            console.log('generated graphql response');
         },
         onResponse({request, response, serverContext, setResponse, fetchAPI}) {
-            console.log('plugin-use-cache-machine onResponse');
-            //console.log('onResponse', serverContext.ttl, serverContext.requestId);
-            //console.log('serverContext', Object.keys(serverContext));
-            console.log('generated graphql response');
             setCors(response);
         },
     }

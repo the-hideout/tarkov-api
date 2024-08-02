@@ -7,6 +7,7 @@ import typeDefs from './schema.mjs';
 import dynamicTypeDefs from './schema_dynamic.mjs';
 import resolvers from './resolvers/index.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
+import useRequestTimer from './utils/plugin-request-timer.mjs';
 import useHttpServer from './utils/plugin-http-server.mjs';
 import useCacheMachine from './utils/plugin-use-cache-machine.mjs';
 import useTwitch from './utils/plugin-twitch.mjs';
@@ -93,6 +94,7 @@ export async function getYoga(env, ctx) {
             return graphqlUtil.getDefaultContext(dataAPI);
         },
         plugins: [
+            useRequestTimer(),
             useOptionMethod(),
             useTwitch(),
             usePlayground(),
