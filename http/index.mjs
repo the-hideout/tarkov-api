@@ -8,7 +8,7 @@ import { getYoga } from '../index.mjs';
 import getEnv from './env-binding.mjs';
 
 const port = process.env.PORT ?? 8788;
-const processes = process.env.THREADS ?? os.cpus().length;
+const processes = process.env.WORKERS ?? os.cpus().length - 1;
 
 if (cluster.isPrimary) {
     const kvStore = {};
