@@ -70,7 +70,6 @@ class DataSource {
                 process.send({action: 'getKv', kvName, id: messageId});
             });
         }
-        console.log('getData from cf kv');
         return this.env.DATA_CACHE.get(kvName, 'json');
     }
 
