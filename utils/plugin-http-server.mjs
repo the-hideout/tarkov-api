@@ -21,6 +21,7 @@ export default function useHttpServer(env) {
                     }
                     console.log('Request served from graphql server');
                     setResult(await queryResult.json());
+                    request.cached = true;
                 } catch (error) {
                     console.error(`Error getting response from GraphQL server: ${error}`);
                 }

@@ -36,6 +36,9 @@ export default function useCacheMachine(env, ctx) {
         },
         onResultProcess({request, acceptableMediaTypes, result, setResult, resultProcessor, setResultProcessor}) {
             console.log('plugin-use-cache-machine onResultProcess');
+            if (request.cached) {
+                return;
+            }
             if (request.errors.length > 0) {
                 if (!result.errors) {
                     result = Object.assign({errors: []}, result); // this puts the errors at the start of the result
