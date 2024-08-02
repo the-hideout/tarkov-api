@@ -78,14 +78,8 @@ class WorkerKV {
         this.loading[gameMode] = true;
         this.loadingPromises[gameMode][requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
-            this.dataSource.env.DATA_CACHE.getWithMetadata(requestKv, 'text').then(async response => {
+            this.dataSource.getData(requestKv).then(async parsedValue => {
                 console.log(`${requestKv} load: ${new Date() - startLoad} ms`);
-                const metadata = response.metadata;
-                let responseValue = response.value;
-                if (metadata && metadata.compression) {
-                    return reject(new Error(`${metadata.compression} compression is not supported`));
-                }
-                const parsedValue = JSON.parse(responseValue);
                 if (!parsedValue && requestKv !== this.kvName) {
                     console.warn(`${requestKv} data not found; falling back to ${this.kvName}`);
                     this.loading[gameMode] = false;
