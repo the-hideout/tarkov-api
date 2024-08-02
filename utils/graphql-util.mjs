@@ -17,6 +17,7 @@ const graphqlUtil =  {
     getDefaultContext: (dataSource) => {
         return {
             requestId: uuidv4(),
+            requestStart: new Date(),
             data: dataSource,
             util: graphqlUtil,
             arguments: {},

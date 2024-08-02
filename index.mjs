@@ -3,17 +3,19 @@ import { mergeTypeDefs } from '@graphql-tools/merge';
 import { createYoga } from 'graphql-yoga'
 
 import DataSource from './datasources/index.mjs';
-//import playground from './handlers/playground.mjs';
-import graphiql from './handlers/graphiql.mjs';
-import setCors from './utils/setCors.mjs';
 import typeDefs from './schema.mjs';
 import dynamicTypeDefs from './schema_dynamic.mjs';
 import resolvers from './resolvers/index.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
+import useHttpServer from './utils/plugin-http-server.mjs';
 import useCacheMachine from './utils/plugin-use-cache-machine.mjs';
+import useTwitch from './utils/plugin-twitch.mjs';
+import useNightbot from './utils/plugin-nightbot.mjs';
+import graphQLOptions from './utils/graphql-options.mjs';
 
-import nightbot from './custom-endpoints/nightbot.mjs';
-import twitch from './custom-endpoints/twitch.mjs';
+import usePlayground from './utils/plugin-playground.mjs';
+import useOptionMethod from './utils/plugin-option-method.mjs';
+import useExecutionContext from './utils/plugin-execution-context.mjs';
 
 let dataAPI;
 let schema, loadingSchema;
@@ -77,110 +79,42 @@ async function getSchema(data, context) {
     });
 }
 
-async function graphqlHandler(request, env, ctx) {
+export async function getYoga(env, ctx) {
+    if (!dataAPI) {
+        dataAPI = new DataSource(env);
+    }
     const context = graphqlUtil.getDefaultContext(dataAPI);
-    const yoga = createYoga({
+    return createYoga({
         schema: await getSchema(dataAPI, context),
-        context,
-        plugins: [useCacheMachine(context, env, ctx)],
+        context: async ({request, params}) => {
+            if (!dataAPI) {
+                dataAPI = new DataSource(env);
+            }
+            return graphqlUtil.getDefaultContext(dataAPI);
+        },
+        plugins: [
+            useOptionMethod(),
+            useTwitch(),
+            usePlayground(),
+            useExecutionContext(ctx),
+            useNightbot(),
+            useHttpServer(env),
+            useCacheMachine(env, ctx),
+        ],
         cors: {
             origin: '*',
             credentials: true,
             allowedHeaders: ['Content-Type'],
-            methods: ['GET', 'POST'],
+            methods: graphQLOptions.cors.allowMethods.split(', '),
         },
     });
-    return yoga.fetch(request);
 }
-
-const graphQLOptions = {
-    // Set the path for the GraphQL server
-    baseEndpoint: '/graphql',
-
-    // Set the path for the GraphQL playground
-    // This option can be removed to disable the playground route
-    playgroundEndpoint: '/',
-
-    // When a request's path isn't matched, forward it to the origin
-    forwardUnmatchedRequestsToOrigin: false,
-
-    // Enable debug mode to return script errors directly in browser
-    debug: true,
-
-    // Enable CORS headers on GraphQL requests
-    // Set to `true` for defaults (see `utils/setCors`),
-    // or pass an object to configure each header
-    //   cors: true,
-    cors: {
-        allowCredentials: 'true',
-        allowHeaders: 'Content-type',
-        allowOrigin: '*',
-        allowMethods: 'OPTIONS, GET, POST',
-    },
-};
 
 export default {
 	async fetch(request, env, ctx) {
-        if (!graphQLOptions.cors.allowMethods.split(', ').includes(request.method.toUpperCase())) {
-            const errorResponse = new Response(null, {
-                status: 405,
-                headers: { 'cache-control': 'public, max-age=2592000' },
-            });
-            setCors(errorResponse, graphQLOptions.cors);
-            return errorResponse;
-        }
-        if (request.method.toUpperCase() === 'OPTIONS') {
-            const optionsResponse = new Response(null, {
-                headers: { 'cache-control': 'public, max-age=2592000' },
-            });
-            setCors(optionsResponse, graphQLOptions.cors);
-            return optionsResponse;
-        }
-        const requestStart = new Date();
-		const url = new URL(request.url);
-
-        let response;
-
         try {
-            if (url.pathname === '/twitch') {
-                response = await twitch(env);
-                if (graphQLOptions.cors) {
-                    setCors(response, graphQLOptions.cors);
-                }
-            }
-
-            if (url.pathname === graphQLOptions.playgroundEndpoint) {
-                //response = playground(request, graphQLOptions);
-                response = graphiql(request, graphQLOptions);
-            }
-
-            if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
-                return fetch(request);
-            }
-
-            if (!dataAPI) {
-                dataAPI = new DataSource(env);
-            }
-            
-            if (url.pathname === '/webhook/nightbot' ||
-                url.pathname === '/webhook/stream-elements' ||
-                url.pathname === '/webhook/moobot'
-            ) {
-                response = await nightbot(request, dataAPI);
-            }
-
-            if (url.pathname === graphQLOptions.baseEndpoint) {
-                response = await graphqlHandler(request, env, ctx);
-                if (graphQLOptions.cors) {
-                    setCors(response, graphQLOptions.cors);
-                }
-            }
-
-            if (!response) {
-                response = new Response('Not found', { status: 404 });
-            }
-            console.log(`Response time: ${new Date() - requestStart} ms`);
-			return response;
+            const yoga = await getYoga(env, ctx);
+            return yoga.fetch(request, env, ctx);
         } catch (err) {
             console.log(err);
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
