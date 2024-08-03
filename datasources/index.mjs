@@ -13,7 +13,6 @@ import TasksAPI from './tasks.mjs';
 import TraderInventoryAPI from './trader-inventory.mjs';
 import TradersAPI from './traders.mjs';
 
-const schemaRefreshInterval = 1000 * 60 * 10;
 let emitter;
 if (typeof process !== 'undefined') {
     emitter = new (await import('node:events')).EventEmitter()
@@ -36,7 +35,6 @@ class DataSource {
         this.loading = false;
         this.requests = {};
         this.kvLoaded = [];
-        this.lastSchemaRefresh = 0;
 
         this.worker = {
             barter: new BartersAPI(this),
@@ -52,64 +50,6 @@ class DataSource {
             trader: new TradersAPI(this),
             traderInventory: new TraderInventoryAPI(this),
         };
-    }
-
-    async getSchema(context) {
-        if (schema && new Date() - this.lastSchemaRefresh < schemaRefreshInterval) {
-            return schema;
-        }
-        if (loadingSchema) {
-            return new Promise((resolve) => {
-                let loadingTimedOut = false;
-                const loadingTimeout = setTimeout(() => {
-                    loadingTimedOut = true;
-                }, 3100);
-                loadingTimeout.unref();
-                const loadingInterval = setInterval(() => {
-                    if (loadingSchema === false) {
-                        clearTimeout(loadingTimeout);
-                        clearInterval(loadingInterval);
-                        return resolve(schema);
-                    }
-                    if (loadingTimedOut) {
-                        console.log(`Schema loading timed out; forcing load`);
-                        clearInterval(loadingInterval);
-                        loadingSchema = false;
-                        return resolve(getSchema(this, context));
-                    }
-                }, 100);
-                loadingInterval.unref();
-            });
-        }
-        loadingSchema = true;
-        return dynamicTypeDefs(this, context).catch(error => {
-            loadingSchema = false;
-            console.error('Error loading dynamic type definitions', error);
-            return Promise.reject(error);
-        }).then(dynamicDefs => {
-            let mergedDefs;
-            try {
-                mergedDefs = mergeTypeDefs([typeDefs, dynamicDefs]);
-            } catch (error) {
-                console.error('Error merging type defs', error);
-                return Promise.reject(error);
-            }
-            try {
-                schema = makeExecutableSchema({ typeDefs: mergedDefs, resolvers: resolvers });
-                loadingSchema = false;
-                //console.log('schema loaded');
-                this.lastSchemaRefresh = new Date().getTime();
-                return schema;
-            } catch (error) {
-                console.error('Error making schema executable');
-                if (!error.message) {
-                    console.error('Check type names in resolvers');
-                } else {
-                    console.error(error.message);
-                }
-                return Promise.reject(error);
-            }
-        });
     }
 
     async getData(kvName) {
