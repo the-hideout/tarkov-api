@@ -1,8 +1,8 @@
 export default async (data, context) => {
-    const itemTypes = await data.schema.getItemTypes(context);
-    const categories = await data.schema.getCategories(context);
-    const handbookCategories = await data.schema.getHandbookCategories(context);
-    const languageCodes = await data.schema.getLanguageCodes(context);
+    const itemTypes = await data.worker.schema.getItemTypes(context);
+    const categories = await data.worker.schema.getCategories(context);
+    const handbookCategories = await data.worker.schema.getHandbookCategories(context);
+    const languageCodes = await data.worker.schema.getLanguageCodes(context);
     return `
 enum ItemType {
     ${itemTypes}

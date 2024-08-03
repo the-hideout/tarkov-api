@@ -21,7 +21,7 @@ if (cluster.isPrimary) {
 
     for (const id in cluster.workers) {
         cluster.workers[id].on('message', async (message) => {
-            console.log(`message from worker ${id}:`, message);
+            //console.log(`message from worker ${id}:`, message);
             if (message.action === 'getKv') {
                 let data;
                 if (kvStore[message.kvName]) {
@@ -52,7 +52,7 @@ if (cluster.isPrimary) {
     });
 } else {
     // Workers can share any TCP connection
-    const yoga = await getYoga(getEnv(), {waitUntil: () => {}});
+    const yoga = await getYoga(getEnv());
 
     const server = createServer(yoga);
 

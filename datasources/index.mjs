@@ -13,11 +13,15 @@ import TasksAPI from './tasks.mjs';
 import TraderInventoryAPI from './trader-inventory.mjs';
 import TradersAPI from './traders.mjs';
 
+const schemaRefreshInterval = 1000 * 60 * 10;
 let emitter;
 if (typeof process !== 'undefined') {
     emitter = new (await import('node:events')).EventEmitter()
     process.on('message', (message) => {
         if (!message.id) {
+            return;
+        }
+        if (message.action !== 'kvData') {
             return;
         }
         emitter.emit(message.id, message);
@@ -27,37 +31,85 @@ if (typeof process !== 'undefined') {
 class DataSource {
     constructor(env) {
         this.env = env;
-        this.barter = new BartersAPI(this);
-        this.craft = new CraftsAPI(this);
-        this.hideout = new HideoutAPI(this);
-        this.historicalPrice = new HistoricalPricesAPI(this);
-        this.archivedPrice = new ArchivedPricesAPI(this);
-        this.item = new ItemsAPI(this);
-        this.map = new MapAPI(this);
-        this.schema = new SchemaAPI(this);
-        this.status = new StatusAPI(this);
-        this.traderInventory = new TraderInventoryAPI(this);
-        this.trader = new TradersAPI(this);
-        this.task = new TasksAPI(this);
 
         this.initialized = false;
         this.loading = false;
         this.requests = {};
         this.kvLoaded = [];
+        this.lastSchemaRefresh = 0;
 
-        this.kvWorkers = {
-            barter: this.barter,
-            craft: this.craft,
-            hideout: this.hideout,
-            historicalPrice: this.historicalPrice,
-            archivedPrice: this.archivedPrice,
-            item: this.item,
-            map: this.map,
-            schema: this.schema,
-            task: this.task,
-            trader: this.trader,
-            traderInventory: this.traderInventory,
+        this.worker = {
+            barter: new BartersAPI(this),
+            craft: new CraftsAPI(this),
+            hideout: new HideoutAPI(this),
+            historicalPrice: new HistoricalPricesAPI(this),
+            archivedPrice: new ArchivedPricesAPI(this),
+            item: new ItemsAPI(this),
+            map: new MapAPI(this),
+            schema: new SchemaAPI(this),
+            status: new StatusAPI(this),
+            task: new TasksAPI(this),
+            trader: new TradersAPI(this),
+            traderInventory: new TraderInventoryAPI(this),
         };
+    }
+
+    async getSchema(context) {
+        if (schema && new Date() - this.lastSchemaRefresh < schemaRefreshInterval) {
+            return schema;
+        }
+        if (loadingSchema) {
+            return new Promise((resolve) => {
+                let loadingTimedOut = false;
+                const loadingTimeout = setTimeout(() => {
+                    loadingTimedOut = true;
+                }, 3100);
+                loadingTimeout.unref();
+                const loadingInterval = setInterval(() => {
+                    if (loadingSchema === false) {
+                        clearTimeout(loadingTimeout);
+                        clearInterval(loadingInterval);
+                        return resolve(schema);
+                    }
+                    if (loadingTimedOut) {
+                        console.log(`Schema loading timed out; forcing load`);
+                        clearInterval(loadingInterval);
+                        loadingSchema = false;
+                        return resolve(getSchema(this, context));
+                    }
+                }, 100);
+                loadingInterval.unref();
+            });
+        }
+        loadingSchema = true;
+        return dynamicTypeDefs(this, context).catch(error => {
+            loadingSchema = false;
+            console.error('Error loading dynamic type definitions', error);
+            return Promise.reject(error);
+        }).then(dynamicDefs => {
+            let mergedDefs;
+            try {
+                mergedDefs = mergeTypeDefs([typeDefs, dynamicDefs]);
+            } catch (error) {
+                console.error('Error merging type defs', error);
+                return Promise.reject(error);
+            }
+            try {
+                schema = makeExecutableSchema({ typeDefs: mergedDefs, resolvers: resolvers });
+                loadingSchema = false;
+                //console.log('schema loaded');
+                this.lastSchemaRefresh = new Date().getTime();
+                return schema;
+            } catch (error) {
+                console.error('Error making schema executable');
+                if (!error.message) {
+                    console.error('Check type names in resolvers');
+                } else {
+                    console.error(error.message);
+                }
+                return Promise.reject(error);
+            }
+        });
     }
 
     async getData(kvName) {
@@ -120,7 +172,7 @@ class DataSource {
         }
         let lowestExpire = Number.MAX_SAFE_INTEGER;
         let schemaExpire = Number.MAX_SAFE_INTEGER;
-        for (const worker of Object.values(this.kvWorkers)) {
+        for (const worker of Object.values(this.worker)) {
             if (!this.requests[requestId].kvUsed.includes(worker.kvName)) {
                 continue;
             }

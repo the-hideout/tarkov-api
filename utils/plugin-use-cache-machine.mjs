@@ -9,7 +9,7 @@ function specialCache(request) {
     return undefined;
 }
 
-export default function useCacheMachine(env, ctx) {
+export default function useCacheMachine(env) {
     return {
         async onParams({params, request, setParams, setResult, fetchAPI}) {
             if (env.SKIP_CACHE === 'true' || env.CLOUDFLARE_TOKEN) {
@@ -23,12 +23,13 @@ export default function useCacheMachine(env, ctx) {
             } 
         },
         onContextBuilding({context, extendContext, breakContextBuilding}) {
-            context.request.requestId = context.requestId;
-            context.request.waitUntil = context.executionContext.waitUntil;
+            context.request.ctx = context.ctx ?? context.request.ctx;
             context.request.data = context.data;
             context.request.warnings = context.warnings;
             context.request.errors = context.errors;
             context.request.params = context.params;
+            console.log(`KVs pre-loaded: ${context.data.kvLoaded.join(', ') || 'none'}`);
+            extendContext({requestId: context.request.requestId});
         },
         onResultProcess({request, acceptableMediaTypes, result, setResult, resultProcessor, setResultProcessor}) {
             if (request.cached) {
@@ -65,8 +66,10 @@ export default function useCacheMachine(env, ctx) {
             }
             if (env.SKIP_CACHE !== 'true' && ttl > 0 && !env.HTTP_GRAPHQL_SERVER) {
                 // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
-                ctx.waitUntil(cacheMachine.put(env, request.params.query, request.params.variables, result, String(ttl), sCache));
+                request.ctx.waitUntil(cacheMachine.put(env, request.params.query, request.params.variables, result, String(ttl), sCache));
             }
+            console.log(request.requestId);
+            console.log(`kvs used in request: ${request.data.requests[request.requestId].kvUsed.join(', ') ?? 'none'}`);
             delete request.data.requests[request.requestId];
             setResult(result);
             console.log('generated graphql response');

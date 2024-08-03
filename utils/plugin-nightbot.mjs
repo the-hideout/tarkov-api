@@ -109,7 +109,7 @@ export default function useNightbot() {
             // Update the cache with the results of the query
             if (serverContext.SKIP_CACHE !== 'true' && ttl > 0) {
                 // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-                serverContext.executionContext.waitUntil(cacheMachine.put(serverContext, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' }, responseBody, String(ttl)));
+                request.ctx.waitUntil(cacheMachine.put(serverContext, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' }, responseBody, String(ttl)));
             }
         
             endResponse(new Response(responseBody));

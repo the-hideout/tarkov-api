@@ -35,5 +35,6 @@ export default function getEnv() {
     return {
         ...process.env,
         DATA_CACHE,
+        ctx: {waitUntil: () => {}},
     }
 };

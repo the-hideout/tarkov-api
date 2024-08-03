@@ -23,5 +23,10 @@
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
         "uuid": "^10.0.0"
+    },
+    "nodemonConfig": {
+      "watch": ["../", "*.mjs", ".env"],
+      "ignore": ["dumps/", "scanner/", "plugin/game/BepInEx/plugins/scanner_settings.json", "plugin/game/BepInEx/plugins/map_image_settings.json"],
+      "delay": 2500
     }
 }

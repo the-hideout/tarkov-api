@@ -1,7 +1,7 @@
 export default {
     Query: {
         crafts(obj, args, context, info) {
-            return context.util.paginate(context.data.craft.getList(context, info), args);
+            return context.util.paginate(context.data.worker.craft.getList(context, info), args);
         }
     },
     Craft: {
@@ -10,15 +10,15 @@ export default {
                 if (qi === null) {
                     return qi;
                 }
-                return context.data.task.getQuestItem(context, info, qi.item);
+                return context.data.worker.task.getQuestItem(context, info, qi.item);
             }));
         },
         station(data, args, context, info) {
-            return context.data.hideout.getStation(context, info, data.station);
+            return context.data.worker.hideout.getStation(context, info, data.station);
         },
         taskUnlock(data, args, context, info) {
             if (!data || !data.taskUnlock) return null;
-            return context.data.task.get(context, info, data.taskUnlock);
+            return context.data.worker.task.get(context, info, data.taskUnlock);
         },
     }
 };

@@ -14,9 +14,9 @@ const graphqlUtil =  {
         const depth = graphqlUtil.getDepth(info);
         if (depth > depthLimit) throw new Error(`Query depth ${depth} exceeds maximum (${depthLimit}) for ${info.parentType}.${info.fieldName}.`);
     },
-    getDefaultContext: (dataSource) => {
+    getDefaultContext: (dataSource, requestId) => {
         return {
-            requestId: uuidv4(),
+            requestId: requestId ?? uuidv4(),
             requestStart: new Date(),
             data: dataSource,
             util: graphqlUtil,

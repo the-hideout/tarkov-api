@@ -78,7 +78,7 @@ class WorkerKV {
         this.loading[gameMode] = true;
         this.loadingPromises[gameMode][requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
-            this.dataSource.getData(requestKv).then(async parsedValue => {
+            this.dataSource.getData(requestKv).then(parsedValue => {
                 console.log(`${requestKv} load: ${new Date() - startLoad} ms`);
                 if (!parsedValue && requestKv !== this.kvName) {
                     console.warn(`${requestKv} data not found; falling back to ${this.kvName}`);
