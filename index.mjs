@@ -14,7 +14,7 @@ import useNightbot from './plugins/plugin-nightbot.mjs';
 import usePlayground from './plugins/plugin-playground.mjs';
 import useOptionMethod from './plugins/plugin-option-method.mjs';
 
-let dataAPI, yoga;
+let dataAPI;
 
 export async function getYoga(env) {
     if (!dataAPI) {
@@ -40,7 +40,7 @@ export async function getYoga(env) {
             useOptionMethod(),
             useTwitch(),
             usePlayground(),
-            useNightbot(),
+            useNightbot(env),
             useHttpServer(env),
             useCacheMachine(env),
         ],
@@ -56,9 +56,7 @@ export async function getYoga(env) {
 export default {
 	async fetch(request, env, ctx) {
         try {
-            if (!yoga) {
-                yoga = await getYoga(env);
-            }
+            const yoga = await getYoga(env);
             return yoga.fetch(request, {...env, ctx});
         } catch (err) {
             console.log(err);

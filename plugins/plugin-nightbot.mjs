@@ -12,7 +12,7 @@ const usePaths = [
     '/webhook/moobot',
 ];
 
-export default function useNightbot() {
+export default function useNightbot(env) {
     return {
         async onRequest({ request, url, endResponse, serverContext, fetchAPI }) {
             if (!usePaths.includes(url.pathname)) {
@@ -32,9 +32,9 @@ export default function useNightbot() {
                 }));
             }
         
-            if (serverContext.SKIP_CACHE !== 'true') {
+            if (env.SKIP_CACHE !== 'true') {
                 const requestStart = new Date();
-                const cachedResponse = await cacheMachine.get(serverContext, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' });
+                const cachedResponse = await cacheMachine.get(env, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' });
                 if (cachedResponse) {
                     // Construct a new response with the cached data
                     const newResponse = new Response(cachedResponse);
@@ -49,7 +49,7 @@ export default function useNightbot() {
             } else {
                 //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
             }
-            const data = new DataSource(serverContext);
+            const data = new DataSource(env);
             const context = graphqlUtil.getDefaultContext(data);
         
             const info = {
@@ -93,23 +93,24 @@ export default function useNightbot() {
                     }
                 }
             };
-            const items = await data.item.getItemsByName(context, info, url.searchParams.get('q'));
+            const items = await data.worker.item.getItemsByName(context, info, url.searchParams.get('q'));
 
             let responseBody = 'Found no item matching that name';
         
             if (items.length > 0) {
                 const bestPrice = items[0].sellFor.sort((a, b) => b.price - a.price);
-                const itemName = data.item.getLocale(items[0].name, context, info);
+                const itemName = data.worker.item.getLocale(items[0].name, context, info);
                 responseBody = `${itemName} ${new Intl.NumberFormat().format(bestPrice[0].price)} ₽ ${capitalize(bestPrice[0].source)} https://tarkov.dev/item/${items[0].normalizedName}`;
             }
         
             const ttl = data.getRequestTtl(context.requestId);
             delete data.requests[context.requestId];
-        
+            
             // Update the cache with the results of the query
-            if (serverContext.SKIP_CACHE !== 'true' && ttl > 0) {
+            if (env.SKIP_CACHE !== 'true' && ttl > 0) {
                 // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-                request.ctx.waitUntil(cacheMachine.put(serverContext, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' }, responseBody, String(ttl)));
+                const waitUntil = request.ctx?.waitUntil ?? serverContext.waitUntil;
+                waitUntil(cacheMachine.put(env, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' }, responseBody, String(ttl)));
             }
         
             endResponse(new Response(responseBody));

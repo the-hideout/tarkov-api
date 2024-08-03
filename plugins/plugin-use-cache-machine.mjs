@@ -19,7 +19,8 @@ export default function useCacheMachine(env) {
             const cachedResponse = await cacheMachine.get(env, params.query, params.variables, specialCache(request));
             if (cachedResponse) {
                 console.log('Request served from cache');
-                setResult(cachedResponse);
+                request.cached = true;
+                setResult(JSON.parse(cachedResponse));
             } 
         },
         onContextBuilding({context, extendContext, breakContextBuilding}) {
@@ -66,10 +67,10 @@ export default function useCacheMachine(env) {
             }
             if (env.SKIP_CACHE !== 'true' && ttl > 0 && !env.HTTP_GRAPHQL_SERVER) {
                 // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
-                request.ctx.waitUntil(cacheMachine.put(env, request.params.query, request.params.variables, result, String(ttl), sCache));
+                request.ctx.waitUntil(cacheMachine.put(env, request.params.query, request.params.variables, JSON.stringify(result), String(ttl), sCache));
             }
             console.log(request.requestId);
-            console.log(`kvs used in request: ${request.data.requests[request.requestId].kvUsed.join(', ') ?? 'none'}`);
+            console.log(`kvs used in request: ${request.data.requests[request.requestId]?.kvUsed.join(', ') ?? 'none'}`);
             delete request.data.requests[request.requestId];
             setResult(result);
             console.log('generated graphql response');
