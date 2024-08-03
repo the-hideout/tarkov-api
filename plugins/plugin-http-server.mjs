@@ -1,5 +1,5 @@
-import cacheMachine from './cache-machine.mjs';
-import graphQLOptions from './graphql-options.mjs';
+import cacheMachine from '../utils/cache-machine.mjs';
+import graphQLOptions from '../utils/graphql-options.mjs';
 
 export default function useHttpServer(env) {
     return {

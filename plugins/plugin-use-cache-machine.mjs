@@ -1,5 +1,5 @@
-import cacheMachine from './cache-machine.mjs';
-import setCors from './setCors.mjs';
+import cacheMachine from '../utils/cache-machine.mjs';
+import setCors from '../utils/setCors.mjs';
 
 function specialCache(request) {
     const contentType = request.headers.get('content-type');

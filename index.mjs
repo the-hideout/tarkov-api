@@ -6,13 +6,13 @@ import schema from './schema.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
 import graphQLOptions from './utils/graphql-options.mjs';
 
-import useRequestTimer from './utils/plugin-request-timer.mjs';
-import useHttpServer from './utils/plugin-http-server.mjs';
-import useCacheMachine from './utils/plugin-use-cache-machine.mjs';
-import useTwitch from './utils/plugin-twitch.mjs';
-import useNightbot from './utils/plugin-nightbot.mjs';
-import usePlayground from './utils/plugin-playground.mjs';
-import useOptionMethod from './utils/plugin-option-method.mjs';
+import useRequestTimer from './plugins/plugin-request-timer.mjs';
+import useHttpServer from './plugins/plugin-http-server.mjs';
+import useCacheMachine from './plugins/plugin-use-cache-machine.mjs';
+import useTwitch from './plugins/plugin-twitch.mjs';
+import useNightbot from './plugins/plugin-nightbot.mjs';
+import usePlayground from './plugins/plugin-playground.mjs';
+import useOptionMethod from './plugins/plugin-option-method.mjs';
 
 let dataAPI, yoga;
 

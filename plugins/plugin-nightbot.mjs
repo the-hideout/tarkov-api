@@ -1,6 +1,6 @@
 import cacheMachine from '../utils/cache-machine.mjs';
 import DataSource from '../datasources/index.mjs';
-import graphqlUtil from './graphql-util.mjs';
+import graphqlUtil from '../utils/graphql-util.mjs';
 
 function capitalize(s) {
     return s && s[0].toUpperCase() + s.slice(1);

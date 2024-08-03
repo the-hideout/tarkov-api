@@ -1,5 +1,5 @@
 import graphiql from '../handlers/graphiql.mjs';
-import graphQLOptions from './graphql-options.mjs';
+import graphQLOptions from '../utils/graphql-options.mjs';
 
 const usePaths = [
     '/',
