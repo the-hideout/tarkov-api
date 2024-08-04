@@ -22,6 +22,7 @@ class WorkerKVSplit {
     }
     
     addGameMode(gameMode) {
+        this.gameModes.push(gameMode);
         for (const key in this.kvs) {
             this.kvs[key].gameModes.push(gameMode);
         }
