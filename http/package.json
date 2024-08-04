@@ -19,7 +19,7 @@
     "dependencies": {
         "@graphql-tools/merge": "9.0.4",
         "@graphql-tools/schema": "10.0.4",
-        "graphql-yoga": "^5.6.2",
+        "graphql-yoga": "^5.6.3",
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
         "uuid": "^10.0.0"

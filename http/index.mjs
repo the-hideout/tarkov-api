@@ -4,7 +4,7 @@ import os from 'node:os';
 
 import 'dotenv/config';
 
-import { getYoga } from '../index.mjs';
+import getYoga from '../graphql-yoga.mjs';
 import getEnv from './env-binding.mjs';
 
 const port = process.env.PORT ?? 8788;
