@@ -15,11 +15,11 @@ export default {
             return context.data.worker.trader.getLocale(data.description, context, info);
         },
         currency(trader, args, context, info) {
-            return context.data.item.getItem(context, info, context.data.worker.trader.getCurrencyMap()[trader.currency]);
+            return context.data.worker.item.getItem(context, info, context.data.worker.trader.getCurrencyMap()[trader.currency]);
         },
         barters(data, args, context, info) {
             context.util.testDepthLimit(info, 1);
-            return context.data.barter.getBartersForTrader(context, info, data.id);
+            return context.data.worker.barter.getBartersForTrader(context, info, data.id);
         },
         cashOffers(data, args, context, info) {
             context.util.testDepthLimit(info, 1);
