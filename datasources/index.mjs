@@ -42,25 +42,28 @@ class DataSource {
 
     getData(kvName) {
         if (typeof process !== 'undefined') {
-            /*if (!emitter) {
-                emitter = new (await import('node:events')).EventEmitter()
-                process.on('message', (message) => {
-                    if (!message.id) {
-                        return;
-                    }
-                    if (message.action !== 'kvData') {
-                        return;
-                    }
-                    emitter.emit(message.id, message);
+            const getFromParentProcess = async () => {    
+                if (!emitter) {
+                    emitter = new (await import('node:events')).EventEmitter()
+                    process.on('message', (message) => {
+                        if (!message.id) {
+                            return;
+                        }
+                        if (message.action !== 'kvData') {
+                            return;
+                        }
+                        emitter.emit(message.id, message);
+                    });
+                }
+                return new Promise((resolve, reject) => {
+                    const messageId = uuidv4();
+                    emitter.once(messageId, (message) => {
+                        resolve({value: message.data});
+                    });
+                    process.send({action: 'getKv', kvName, id: messageId});
                 });
-            }
-            return new Promise((resolve, reject) => {
-                const messageId = uuidv4();
-                emitter.once(messageId, (message) => {
-                    resolve(JSON.parse(message.data));
-                });
-                process.send({action: 'getKv', kvName, id: messageId});
-            });*/
+            };
+            return getFromParentProcess();
         }
         return this.env.DATA_CACHE.getWithMetadata(kvName, 'text');
     }

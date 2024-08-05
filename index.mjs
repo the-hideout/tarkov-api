@@ -24,8 +24,8 @@ import schema from './schema.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
 import cacheMachine from './utils/cache-machine.mjs';
 
-import nightbot from './custom-endpoints/nightbot.mjs';
-import twitch from './custom-endpoints/twitch.mjs';
+import { getNightbotResponse } from './plugins/plugin-nightbot.mjs';
+import { getTwitchResponse } from './plugins/plugin-twitch.mjs';
 
 let dataAPI;
 
@@ -67,6 +67,10 @@ async function graphqlHandler(request, env, ctx) {
             'content-type': 'application/json;charset=UTF-8',
         }
     };
+
+    if (!dataAPI) {
+        dataAPI = new DataSource(env);
+    }
 
     const requestId = uuidv4();
     console.info(requestId);
@@ -218,7 +222,7 @@ export default {
 
         try {
             if (url.pathname === '/twitch') {
-                response = await twitch(env);
+                response = await getTwitchResponse(env);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
                 }
@@ -232,16 +236,12 @@ export default {
             if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
                 return fetch(request);
             }
-
-            if (!dataAPI) {
-                dataAPI = new DataSource(env);
-            }
             
             if (url.pathname === '/webhook/nightbot' ||
                 url.pathname === '/webhook/stream-elements' ||
                 url.pathname === '/webhook/moobot'
             ) {
-                response = await nightbot(request, dataAPI);
+                response = await getNightbotResponse(request, url, env, ctx);
             }
 
             if (url.pathname === graphQLOptions.baseEndpoint) {

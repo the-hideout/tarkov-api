@@ -42,7 +42,7 @@ export default async function getYoga(env) {
         plugins: [
             useRequestTimer(),
             useOptionMethod(),
-            useTwitch(),
+            useTwitch(env),
             usePlayground(),
             useNightbot(env),
             useHttpServer(env),
