@@ -8,14 +8,14 @@ import getYoga from '../graphql-yoga.mjs';
 import getEnv from './env-binding.mjs';
 
 const port = process.env.PORT ?? 8788;
-const processes = process.env.WORKERS ?? os.cpus().length - 1;
+const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1));
 
-if (cluster.isPrimary) {
+if (cluster.isPrimary && workerCount > 0) {
     const kvStore = {};
     const kvLoading = {};
     const env = getEnv();
-    console.log(`Starting ${processes} server processes`);
-    for (let i = 0; i < processes; i++) {
+    console.log(`Starting ${workerCount} workers`);
+    for (let i = 0; i < workerCount; i++) {
         cluster.fork();
     }
 
