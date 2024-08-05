@@ -88,7 +88,50 @@ const graphqlUtil =  {
         let end = Math.abs(limit) + offset;
         if (offset < 0) end = data.length - Math.abs(offset) + limit;
         return data.slice(offset, end);
-    }
+    },
+    getGenericInfo: (lang = 'en', gameMode = 'regular') => {
+        return {
+            path: {
+                key: 'query',
+            },
+            operation: {
+                selectionSet: {
+                    selections: [
+                        {
+                            name: {
+                                value: 'query'
+                            },
+                            arguments: [
+                                {
+                                    name: {
+                                        value: 'lang',
+                                    },
+                                    value: {
+                                        value: lang,
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            name: {
+                                value: 'query'
+                            },
+                            arguments: [
+                                {
+                                    name: {
+                                        value: 'gameMode',
+                                    },
+                                    value: {
+                                        value: gameMode,
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        };
+    },
 };
 
 export default graphqlUtil;

@@ -27,9 +27,13 @@ export async function getNightbotResponse(request, url, env, serverContext) {
         });
     }
 
+    const lang = url.searchParams.get('l') || 'en';
+    const gameMode = url.searchParams.get('m') || 'regular';
+    const query = url.searchParams.get('q');
+
     if (env.SKIP_CACHE !== 'true') {
         const requestStart = new Date();
-        const cachedResponse = await cacheMachine.get(env, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' });
+        const cachedResponse = await cacheMachine.get(env, 'nightbot', { q: query, l: lang, m: gameMode });
         if (cachedResponse) {
             // Construct a new response with the cached data
             const newResponse = new Response(cachedResponse);
@@ -47,48 +51,8 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     const data = new DataSource(env);
     const context = graphqlUtil.getDefaultContext(data);
 
-    const info = {
-        path: {
-            key: 'query',
-        },
-        operation: {
-            selectionSet: {
-                selections: [
-                    {
-                        name: {
-                            value: 'query'
-                        },
-                        arguments: [
-                            {
-                                name: {
-                                    value: 'lang',
-                                },
-                                value: {
-                                    value: url.searchParams.get('l') || 'en',
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        name: {
-                            value: 'query'
-                        },
-                        arguments: [
-                            {
-                                name: {
-                                    value: 'gameMode',
-                                },
-                                value: {
-                                    value: url.searchParams.get('m') || 'regular',
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        }
-    };
-    const items = await data.worker.item.getItemsByName(context, info, url.searchParams.get('q'));
+    const info = graphqlUtil.getGenericInfo(lang, gameMode);
+    const items = await data.worker.item.getItemsByName(context, info, query);
 
     let responseBody = 'Found no item matching that name';
 
@@ -103,7 +67,7 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     
     // Update the cache with the results of the query
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
-        const putCachePromise = cacheMachine.put(env, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' }, responseBody, String(ttl));
+        const putCachePromise = cacheMachine.put(env, 'nightbot', { q: query, l: lang, m: gameMode }, responseBody, String(ttl));
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
         if (request.ctx?.waitUntil) {
             request.ctx.waitUntil(putCachePromise);
