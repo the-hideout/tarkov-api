@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import BartersAPI from './barters.mjs';
 import CraftsAPI from './crafts.mjs';
 import HideoutAPI from './hideout.mjs';
@@ -12,8 +10,6 @@ import StatusAPI from './status.mjs';
 import TasksAPI from './tasks.mjs';
 import TraderInventoryAPI from './trader-inventory.mjs';
 import TradersAPI from './traders.mjs';
-
-let emitter;
 
 class DataSource {
     constructor(env) {
@@ -38,34 +34,6 @@ class DataSource {
             trader: new TradersAPI(this),
             traderInventory: new TraderInventoryAPI(this),
         };
-    }
-
-    getData(kvName) {
-        if (typeof process !== 'undefined') {
-            const getFromParentProcess = async () => {    
-                if (!emitter) {
-                    emitter = new (await import('node:events')).EventEmitter()
-                    process.on('message', (message) => {
-                        if (!message.id) {
-                            return;
-                        }
-                        if (message.action !== 'kvData') {
-                            return;
-                        }
-                        emitter.emit(message.id, message);
-                    });
-                }
-                return new Promise((resolve, reject) => {
-                    const messageId = uuidv4();
-                    emitter.once(messageId, (message) => {
-                        resolve({value: message.data});
-                    });
-                    process.send({action: 'getKv', kvName, id: messageId});
-                });
-            };
-            return getFromParentProcess();
-        }
-        return this.env.DATA_CACHE.getWithMetadata(kvName, 'text');
     }
 
     kvLoadedForRequest(kvName, requestId) {
