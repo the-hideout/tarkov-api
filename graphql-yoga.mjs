@@ -17,11 +17,12 @@ import useOptionMethod from './plugins/plugin-option-method.mjs';
 let dataAPI, yoga;
 
 export default async function getYoga(env) {
-    if (yoga) {
-        return yoga;
-    }
     if (!dataAPI) {
         dataAPI = new DataSource(env);
+    }
+    if (yoga) {
+        dataAPI.env = env;
+        return yoga;
     }
     yoga = createYoga({
         schema: (context) => {
