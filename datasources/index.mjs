@@ -14,18 +14,6 @@ import TraderInventoryAPI from './trader-inventory.mjs';
 import TradersAPI from './traders.mjs';
 
 let emitter;
-if (typeof process !== 'undefined') {
-    emitter = new (await import('node:events')).EventEmitter()
-    process.on('message', (message) => {
-        if (!message.id) {
-            return;
-        }
-        if (message.action !== 'kvData') {
-            return;
-        }
-        emitter.emit(message.id, message);
-    });
-}
 
 class DataSource {
     constructor(env) {
@@ -52,17 +40,29 @@ class DataSource {
         };
     }
 
-    async getData(kvName) {
+    getData(kvName) {
         if (typeof process !== 'undefined') {
+            /*if (!emitter) {
+                emitter = new (await import('node:events')).EventEmitter()
+                process.on('message', (message) => {
+                    if (!message.id) {
+                        return;
+                    }
+                    if (message.action !== 'kvData') {
+                        return;
+                    }
+                    emitter.emit(message.id, message);
+                });
+            }
             return new Promise((resolve, reject) => {
                 const messageId = uuidv4();
                 emitter.once(messageId, (message) => {
                     resolve(JSON.parse(message.data));
                 });
                 process.send({action: 'getKv', kvName, id: messageId});
-            });
+            });*/
         }
-        return this.env.DATA_CACHE.get(kvName, 'json');
+        return this.env.DATA_CACHE.getWithMetadata(kvName, 'text');
     }
 
     kvLoadedForRequest(kvName, requestId) {
