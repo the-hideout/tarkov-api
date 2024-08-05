@@ -37,7 +37,7 @@ export async function getNightbotResponse(request, url, env, serverContext) {
             newResponse.headers.append('X-CACHE', 'HIT');
             console.log(`Request served from cache: ${new Date() - requestStart} ms`);
             // Return the new cached response
-            return endResponse(newResponse);
+            return newResponse;
         } else {
             console.log('no cached response');
         }
@@ -103,9 +103,13 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     
     // Update the cache with the results of the query
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
+        const putCachePromise = cacheMachine.put(env, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' }, responseBody, String(ttl));
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
-        const waitUntil = request.ctx?.waitUntil ?? serverContext.waitUntil;
-        waitUntil(cacheMachine.put(env, 'nightbot', { q: url.searchParams.get('q'), l: url.searchParams.get('l') ?? 'en', m: url.searchParams.get('m') ?? 'regular' }, responseBody, String(ttl)));
+        if (request.ctx?.waitUntil) {
+            request.ctx.waitUntil(putCachePromise);
+        } else if (serverContext.waitUntil) {
+            serverContext.waitUntil(putCachePromise);
+        }
     }
     return new Response(responseBody)
 }
