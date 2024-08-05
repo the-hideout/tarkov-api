@@ -20,7 +20,7 @@ export default async function getSchema(data, context) {
             const loadingTimeout = setTimeout(() => {
                 loadingTimedOut = true;
             }, 3100);
-            loadingTimeout.unref();
+            loadingTimeout;
             const loadingInterval = setInterval(() => {
                 if (loadingSchema === false) {
                     clearTimeout(loadingTimeout);
@@ -34,7 +34,7 @@ export default async function getSchema(data, context) {
                     return resolve(getSchema(data, context));
                 }
             }, 100);
-            loadingInterval.unref();
+            loadingInterval;
         });
     }
     loadingSchema = true;
