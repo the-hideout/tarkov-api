@@ -38,13 +38,13 @@ export default {
     },
     TraderCashOffer: {
         item(data, args, context, info) {
-            return context.data.item.getItem(context, info, data.id);
+            return context.data.worker.item.getItem(context, info, data.id);
         },
         minTraderLevel(data) {
             return data.vendor.traderLevel;
         },
         currencyItem(data, args, context, info) {
-            return context.data.item.getItem(context, info, data.currencyItem);
+            return context.data.worker.item.getItem(context, info, data.currencyItem);
         },
         taskUnlock(data, args, context, info) {
             if (data.vendor.taskUnlock) return context.data.worker.task.get(context, info, data.vendor.taskUnlock);
