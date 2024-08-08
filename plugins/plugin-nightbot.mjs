@@ -52,18 +52,22 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     const context = graphqlUtil.getDefaultContext(data);
 
     const info = graphqlUtil.getGenericInfo(lang, gameMode);
-    const items = await data.worker.item.getItemsByName(context, info, query);
-
+    let items, ttl;
     let responseBody = 'Found no item matching that name';
-
-    if (items.length > 0) {
-        const bestPrice = items[0].sellFor.sort((a, b) => b.price - a.price);
-        const itemName = data.worker.item.getLocale(items[0].name, context, info);
-        responseBody = `${itemName} ${new Intl.NumberFormat().format(bestPrice[0].price)} ₽ ${capitalize(bestPrice[0].source)} https://tarkov.dev/item/${items[0].normalizedName}`;
+    try {
+        items = await data.worker.item.getItemsByName(context, info, query);
+        ttl = data.getRequestTtl(context.requestId)
+    
+        if (items.length > 0) {
+            const bestPrice = items[0].sellFor.sort((a, b) => b.price - a.price);
+            const itemName = data.worker.item.getLocale(items[0].name, context, info);
+            responseBody = `${itemName} ${new Intl.NumberFormat().format(bestPrice[0].price)} ₽ ${capitalize(bestPrice[0].source)} https://tarkov.dev/item/${items[0].normalizedName}`;
+        }
+    } catch (error) {
+        throw (error);
+    } finally {
+        data.clearRequestData(context.requestId);
     }
-
-    const ttl = data.getRequestTtl(context.requestId);
-    delete data.requests[context.requestId];
     
     // Update the cache with the results of the query
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {

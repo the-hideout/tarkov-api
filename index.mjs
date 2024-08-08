@@ -131,7 +131,16 @@ async function graphqlHandler(request, env, ctx) {
     }
 
     const context = graphqlUtil.getDefaultContext(dataAPI, requestId);
-    let result = await graphql({schema: await schema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
+    let result, ttl;
+    try {
+        result = await graphql({schema: await schema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
+        ttl = dataAPI.getRequestTtl(requestId);
+        //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
+    } catch (error) {
+        throw error;
+    } finally {
+        dataAPI.clearRequestData(requestId);
+    }
     console.log('generated graphql response');
     if (context.errors.length > 0) {
         if (!result.errors) {
@@ -145,8 +154,6 @@ async function graphqlHandler(request, env, ctx) {
         }
         result.warnings.push(...context.warnings);
     }
-
-    let ttl = dataAPI.getRequestTtl(requestId);
 
     if (specialCache === 'application/json') {
         if (!result.warnings) {
@@ -168,8 +175,6 @@ async function graphqlHandler(request, env, ctx) {
         ctx.waitUntil(cacheMachine.put(env, query, variables, body, String(ttl), specialCache));
     }
 
-    //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
-    delete dataAPI.requests[requestId];
     return response;
 }
 

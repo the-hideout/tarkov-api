@@ -71,11 +71,16 @@ export default function useCacheMachine(env) {
             }
             console.log(request.requestId);
             console.log(`kvs used in request: ${request.data.requests[request.requestId]?.kvUsed.join(', ') ?? 'none'}`);
-            delete request.data.requests[request.requestId];
+            console.log('onResultProcess');
+            request.data.clearRequestData(request.requestId);
+            delete request.requestId;
             setResult(result);
             console.log('generated graphql response');
         },
         onResponse({request, response, serverContext, setResponse, fetchAPI}) {
+            if (request.data && request.requestId) {
+                request.data.clearRequestData(request.requestId);
+            }
             setCors(response);
         },
     }
