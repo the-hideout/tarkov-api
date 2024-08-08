@@ -49,7 +49,7 @@ export default async function getYoga(env) {
             useCacheMachine(env),
         ],
         cors: {
-            origin: '*',
+            origin: graphQLOptions.cors.allowOrigin,
             credentials: true,
             allowedHeaders: ['Content-Type'],
             methods: graphQLOptions.cors.allowMethods.split(', '),
