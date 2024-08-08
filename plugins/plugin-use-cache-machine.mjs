@@ -12,8 +12,12 @@ function specialCache(request) {
 export default function useCacheMachine(env) {
     return {
         async onParams({params, request, setParams, setResult, fetchAPI}) {
-            if (env.SKIP_CACHE === 'true' || env.CLOUDFLARE_TOKEN) {
-                console.log(`Skipping cache in ${env.ENVIRONMENT} environment`);
+            if (env.SKIP_CACHE === 'true') {
+                console.log(`Skipping cache check due to SKIP_CACHE`);
+                return;
+            }
+            if (env.CLOUDFLARE_TOKEN) {
+                console.log(`Skipping cache check already performed by worker`);
                 return;
             }
             const cachedResponse = await cacheMachine.get(env, params.query, params.variables, specialCache(request));
