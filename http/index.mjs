@@ -3,63 +3,64 @@ import os from 'node:os';
 import * as Sentry from "@sentry/node";
 import "./instrument.mjs";
 import express from 'express';
+import { createServer } from 'node:http';
+
 import 'dotenv/config';
 
-import worker from '../index.mjs';
+import getYoga from '../graphql-yoga.mjs';
 import getEnv from './env-binding.mjs';
 
 const port = process.env.PORT ?? 8788;
+const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1));
 
-const convertIncomingMessageToRequest = (req) => {
-    var headers = new Headers();
-    for (var key in req.headers) {
-        if (req.headers[key]) headers.append(key, req.headers[key]);
-    }
-    let body = req.body;
-    if (typeof body === 'object') {
-        body = JSON.stringify(body);
-    }
-    let request = new Request(new URL(req.url, `http://127.0.0.1:${port}`).toString(), {
-        method: req.method,
-        body: req.method === 'POST' ? body : null,
-        headers,
-    })
-    return request
-};
-
-if (cluster.isPrimary) {
-    // Create workers (process forks) equal to the available CPUs.
-    console.log(`Primary ${process.pid} is running`);
-    cluster.on('exit', (worker, code, signal) => {
-        console.log(`Worker ${worker.process.pid} crashed. Starting a new worker...`);
-        cluster.fork();
-    });
-    for (let i = 0; i < os.cpus().length; i++) {
+if (cluster.isPrimary && workerCount > 0) {
+    const kvStore = {};
+    const kvLoading = {};
+    const env = getEnv();
+    console.log(`Starting ${workerCount} workers`);
+    for (let i = 0; i < workerCount; i++) {
         cluster.fork();
     }
-} else {
-    // We are a worker (fork) - start a server
-    const app = express();
-    app.use(express.json({ limit: '100mb' }), express.text());
-    app.all('*', async (req, res, next) => {
-        Sentry.setUser({ ip_address: req.ip });
-        const response = await worker.fetch(convertIncomingMessageToRequest(req), getEnv(), { waitUntil: () => { } });
 
-        // Convert Response object to JSON
-        const responseBody = await response.text();
-
-        // Reflect headers from Response object
-        response.headers.forEach((value, key) => {
-            res.setHeader(key, value);
+    for (const id in cluster.workers) {
+        cluster.workers[id].on('message', async (message) => {
+            //console.log(`message from worker ${id}:`, message);
+            if (message.action === 'getKv') {
+                let data;
+                if (kvStore[message.kvName]) {
+                    data = kvStore[message.kvName];
+                } else if (kvLoading[message.kvName]) {
+                    data = await kvLoading[message.kvName];
+                } else {
+                    kvLoading[message.kvName] = env.DATA_CACHE.get(message.kvName, 'json');
+                    data = await kvLoading[message.kvName];
+                    let refreshTime = 1000 * 60 * 30;
+                    if (data?.expiration && new Date(data.expiration) > new Date()) {
+                        refreshTime = new Date(data.expiration) - new Date();
+                        if (refreshTime < 1000 * 60) {
+                            refreshTime = 60000;
+                        }
+                    }
+                    setTimeout(() => {
+                        delete kvStore[message.kvName];
+                    }, refreshTime);
+                }
+                cluster.workers[id].send({ action: 'kvData', kvName: message.kvName, data: JSON.stringify(data), id: message.id });
+            }
         });
+    }
 
-        // Send the status and JSON body
-        res.status(response.status).send(responseBody);
+    cluster.on('exit', function (worker, code, signal) {
+        console.log('worker ' + worker.process.pid + ' died');
     });
+} else {
+    // Workers can share any TCP connection
+    const yoga = await getYoga(getEnv());
 
-    app.listen(port, () => {
-        console.log(`HTTP GraphQL server (PID: ${process.pid}) running at http://127.0.0.1:${port}`);
+    const server = createServer(yoga);
+
+    // Start the server and you're done!
+    server.listen(port, () => {
+        console.info(`Server is running on http://localhost:${port}`);
     });
 }
-
-

@@ -14,36 +14,25 @@ import TradersAPI from './traders.mjs';
 class DataSource {
     constructor(env) {
         this.env = env;
-        this.barter = new BartersAPI(this);
-        this.craft = new CraftsAPI(this);
-        this.hideout = new HideoutAPI(this);
-        this.historicalPrice = new HistoricalPricesAPI(this);
-        this.archivedPrice = new ArchivedPricesAPI(this);
-        this.item = new ItemsAPI(this);
-        this.map = new MapAPI(this);
-        this.schema = new SchemaAPI(this);
-        this.status = new StatusAPI(this);
-        this.traderInventory = new TraderInventoryAPI(this);
-        this.trader = new TradersAPI(this);
-        this.task = new TasksAPI(this);
 
         this.initialized = false;
         this.loading = false;
         this.requests = {};
         this.kvLoaded = [];
 
-        this.kvWorkers = {
-            barter: this.barter,
-            craft: this.craft,
-            hideout: this.hideout,
-            historicalPrice: this.historicalPrice,
-            archivedPrice: this.archivedPrice,
-            item: this.item,
-            map: this.map,
-            schema: this.schema,
-            task: this.task,
-            trader: this.trader,
-            traderInventory: this.traderInventory,
+        this.worker = {
+            barter: new BartersAPI(this),
+            craft: new CraftsAPI(this),
+            hideout: new HideoutAPI(this),
+            historicalPrice: new HistoricalPricesAPI(this),
+            archivedPrice: new ArchivedPricesAPI(this),
+            item: new ItemsAPI(this),
+            map: new MapAPI(this),
+            schema: new SchemaAPI(this),
+            status: new StatusAPI(this),
+            task: new TasksAPI(this),
+            trader: new TradersAPI(this),
+            traderInventory: new TraderInventoryAPI(this),
         };
     }
 
@@ -94,7 +83,7 @@ class DataSource {
         }
         let lowestExpire = Number.MAX_SAFE_INTEGER;
         let schemaExpire = Number.MAX_SAFE_INTEGER;
-        for (const worker of Object.values(this.kvWorkers)) {
+        for (const worker of Object.values(this.worker)) {
             if (!this.requests[requestId].kvUsed.includes(worker.kvName)) {
                 continue;
             }

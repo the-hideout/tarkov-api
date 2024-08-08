@@ -1,5 +1,18 @@
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { mergeTypeDefs } from '@graphql-tools/merge';
+
+/*import getYoga from './graphql-yoga.mjs';
+import graphQLOptions from './utils/graphql-options.mjs';
+
+export default {
+	async fetch(request, env, ctx) {
+        try {
+            const yoga = await getYoga(env);
+            return yoga.fetch(request, {...env, ctx});
+        } catch (err) {
+            console.log(err);
+            return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
+        }
+	},
+};*/
 import { graphql } from 'graphql';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -7,77 +20,14 @@ import DataSource from './datasources/index.mjs';
 //import playground from './handlers/playground.mjs';
 import graphiql from './handlers/graphiql.mjs';
 import setCors from './utils/setCors.mjs';
-import typeDefs from './schema.mjs';
-import dynamicTypeDefs from './schema_dynamic.mjs';
-import resolvers from './resolvers/index.mjs';
+import schema from './schema.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
 import cacheMachine from './utils/cache-machine.mjs';
 
-import nightbot from './custom-endpoints/nightbot.mjs';
-import twitch from './custom-endpoints/twitch.mjs';
+import { getNightbotResponse } from './plugins/plugin-nightbot.mjs';
+import { getTwitchResponse } from './plugins/plugin-twitch.mjs';
 
 let dataAPI;
-let schema = false;
-let loadingSchema = false;
-let lastSchemaRefresh = 0;
-
-const schemaRefreshInterval = 1000 * 60 * 10;
-
-// Example of how router can be used in an application
-async function getSchema(data, context) {
-    if (schema && new Date() - lastSchemaRefresh < schemaRefreshInterval) {
-        return schema;
-    }
-    if (loadingSchema) {
-        return new Promise((resolve) => {
-            let loadingTimedOut = false;
-            const loadingTimeout = setTimeout(() => {
-                loadingTimedOut = true;
-            }, 3100);
-            const loadingInterval = setInterval(() => {
-                if (loadingSchema === false) {
-                    clearTimeout(loadingTimeout);
-                    clearInterval(loadingInterval);
-                    return resolve(schema);
-                }
-                if (loadingTimedOut) {
-                    console.log(`Schema loading timed out; forcing load`);
-                    clearInterval(loadingInterval);
-                    loadingSchema = false;
-                    return resolve(getSchema(data, context));
-                }
-            }, 100);
-        });
-    }
-    loadingSchema = true;
-    return dynamicTypeDefs(data, context).catch(error => {
-        loadingSchema = false;
-        console.error('Error loading dynamic type definitions', error);
-        return Promise.reject(error);
-    }).then(dynamicDefs => {
-        let mergedDefs;
-        try {
-            mergedDefs = mergeTypeDefs([typeDefs, dynamicDefs]);
-        } catch (error) {
-            console.error('Error merging type defs', error);
-            return Promise.reject(error);
-        }
-        try {
-            schema = makeExecutableSchema({ typeDefs: mergedDefs, resolvers: resolvers });
-            loadingSchema = false;
-            //console.log('schema loaded');
-            return schema;
-        } catch (error) {
-            console.error('Error making schema executable');
-            if (!error.message) {
-                console.error('Check type names in resolvers');
-            } else {
-                console.error(error.message);
-            }
-            return Promise.reject(error);
-        }
-    });
-}
 
 async function graphqlHandler(request, env, ctx) {
     const url = new URL(request.url);
@@ -117,6 +67,10 @@ async function graphqlHandler(request, env, ctx) {
             'content-type': 'application/json;charset=UTF-8',
         }
     };
+
+    if (!dataAPI) {
+        dataAPI = new DataSource(env);
+    }
 
     const requestId = uuidv4();
     console.info(requestId);
@@ -176,7 +130,7 @@ async function graphqlHandler(request, env, ctx) {
     }
 
     const context = graphqlUtil.getDefaultContext(dataAPI, requestId);
-    let result = await graphql({schema: await getSchema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
+    let result = await graphql({schema: await schema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
     console.log('generated graphql response');
     if (context.errors.length > 0) {
         if (!result.errors) {
@@ -268,7 +222,7 @@ export default {
 
         try {
             if (url.pathname === '/twitch') {
-                response = await twitch(env);
+                response = await getTwitchResponse(env);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
                 }
@@ -276,22 +230,18 @@ export default {
 
             if (url.pathname === graphQLOptions.playgroundEndpoint) {
                 //response = playground(request, graphQLOptions);
-                response = graphiql(request, graphQLOptions);
+                response = graphiql(graphQLOptions);
             }
 
             if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
                 return fetch(request);
-            }
-
-            if (!dataAPI) {
-                dataAPI = new DataSource(env);
             }
             
             if (url.pathname === '/webhook/nightbot' ||
                 url.pathname === '/webhook/stream-elements' ||
                 url.pathname === '/webhook/moobot'
             ) {
-                response = await nightbot(request, dataAPI);
+                response = await getNightbotResponse(request, url, env, ctx);
             }
 
             if (url.pathname === graphQLOptions.baseEndpoint) {

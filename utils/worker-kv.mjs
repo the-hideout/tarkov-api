@@ -78,7 +78,7 @@ class WorkerKV {
         this.loading[gameMode] = true;
         this.loadingPromises[gameMode][requestId] = new Promise((resolve, reject) => {
             const startLoad = new Date();
-            this.dataSource.env.DATA_CACHE.getWithMetadata(requestKv, 'text').then(async response => {
+            this.dataSource.env.DATA_CACHE.getWithMetadata(requestKv, 'text').then(response => {
                 console.log(`${requestKv} load: ${new Date() - startLoad} ms`);
                 const metadata = response.metadata;
                 let responseValue = response.value;
