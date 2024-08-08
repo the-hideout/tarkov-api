@@ -7,13 +7,20 @@ kv_namespaces = [
     { binding = "DATA_CACHE", id = "2e6feba88a9e4097b6d2209191ed4ae5", preview_id = "17fd725f04984e408d4a70b37c817171" },
 ]
 vars = { ENVIRONMENT = "production" }
-
+routes = [
+	{ pattern = "api.tarkov.dev/*", zone_name = "tarkov.dev" },
+    { pattern = "streamer.tarkov.dev/*", zone_name = "tarkov.dev" }
+]
 
 [env.development]
 kv_namespaces = [
     { binding = "DATA_CACHE", id = "17fd725f04984e408d4a70b37c817171", preview_id = "17fd725f04984e408d4a70b37c817171" },
 ]
 vars = { ENVIRONMENT = "development", SKIP_CACHE = "false" }
+routes = [
+	{ pattern = "dev-api.tarkov.dev/*", zone_name = "tarkov.dev" },
+    { pattern = "dev-streamer.tarkov.dev/*", zone_name = "tarkov.dev" }
+]
 
 # [secrets]
 # CACHE_BASIC_AUTH

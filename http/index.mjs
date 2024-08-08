@@ -27,26 +27,35 @@ if (cluster.isPrimary && workerCount > 0) {
         cluster.workers[id].on('message', async (message) => {
             //console.log(`message from worker ${id}:`, message);
             if (message.action === 'getKv') {
-                let data;
-                if (kvStore[message.kvName]) {
-                    data = kvStore[message.kvName];
-                } else if (kvLoading[message.kvName]) {
-                    data = await kvLoading[message.kvName];
-                } else {
-                    kvLoading[message.kvName] = env.DATA_CACHE.get(message.kvName, 'json');
-                    data = await kvLoading[message.kvName];
-                    let refreshTime = 1000 * 60 * 30;
-                    if (data?.expiration && new Date(data.expiration) > new Date()) {
-                        refreshTime = new Date(data.expiration) - new Date();
-                        if (refreshTime < 1000 * 60) {
-                            refreshTime = 60000;
+                const response = {
+                    action: 'kvData',
+                    kvName: message.kvName,
+                    id: message.id,
+                };
+                try {
+                    if (kvStore[message.kvName]) {
+                        response.data = JSON.stringify(kvStore[message.kvName]);
+                    } else if (kvLoading[message.kvName]) {
+                        response.data = JSON.stringify(await kvLoading[message.kvName]);
+                    } else {
+                        kvLoading[message.kvName] = env.DATA_CACHE.get(message.kvName, 'json');
+                        const data = await kvLoading[message.kvName];
+                        let refreshTime = 1000 * 60 * 30;
+                        if (data?.expiration && new Date(data.expiration) > new Date()) {
+                            refreshTime = new Date(data.expiration) - new Date();
+                            if (refreshTime < 1000 * 60) {
+                                refreshTime = 60000;
+                            }
                         }
+                        response.data = JSON.stringify(data);
+                        setTimeout(() => {
+                            delete kvStore[message.kvName];
+                        }, refreshTime);
                     }
-                    setTimeout(() => {
-                        delete kvStore[message.kvName];
-                    }, refreshTime);
+                } catch (error) {
+                    response.error = error.message;
                 }
-                cluster.workers[id].send({action: 'kvData', kvName: message.kvName, data: JSON.stringify(data), id: message.id});
+                cluster.workers[id].send(response);
             }
         });
     }

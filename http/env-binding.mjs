@@ -25,11 +25,16 @@ async function getDataPrimary(kvName, format) {
     if (response.status === 404) {
         return null;
     }
+    if (response.status === 400) {
+        return Promise.reject(new Error('Invalid CLOUDFLARE_TOKEN'));
+    }
+    if (response.status !== 200) {
+        return Promise.reject(new Error(`${response.statusText} ${response.status}`));
+    }
     if (format === 'json') {
         return response.json();
     }
-    return response.text();
-    
+    return response.text();   
 }
 
 async function getDataWorker(kvName, format) {
@@ -48,6 +53,9 @@ async function getDataWorker(kvName, format) {
     return new Promise((resolve, reject) => {
         const messageId = uuidv4();
         emitter.once(messageId, (message) => {
+            if (message.error) {
+                return reject(new Error(message.error));
+            }
             resolve(message.data);
         });
         process.send({action: 'getKv', kvName, id: messageId});
@@ -55,7 +63,7 @@ async function getDataWorker(kvName, format) {
 }
 
 const DATA_CACHE = {
-    get: async (kvName, format) => {
+    get: (kvName, format) => {
         if (cluster.isPrimary) {
             return getDataPrimary(kvName, format);
         }
