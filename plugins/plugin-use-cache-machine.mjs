@@ -71,7 +71,6 @@ export default function useCacheMachine(env) {
             }
             console.log(request.requestId);
             console.log(`kvs used in request: ${request.data.requests[request.requestId]?.kvUsed.join(', ') ?? 'none'}`);
-            console.log('onResultProcess');
             request.data.clearRequestData(request.requestId);
             delete request.requestId;
             setResult(result);
