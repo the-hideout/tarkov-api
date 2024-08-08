@@ -1,6 +1,9 @@
-import { createServer } from 'node:http';
 import cluster from 'node:cluster';
 import os from 'node:os';
+import * as Sentry from "@sentry/node";
+import "./instrument.mjs";
+import express from 'express';
+import { createServer } from 'node:http';
 
 import 'dotenv/config';
 
@@ -60,7 +63,7 @@ if (cluster.isPrimary && workerCount > 0) {
         });
     }
 
-    cluster.on('exit', function(worker, code, signal) {
+    cluster.on('exit', function (worker, code, signal) {
         console.log('worker ' + worker.process.pid + ' died');
     });
 } else {
