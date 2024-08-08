@@ -138,7 +138,7 @@ class WorkerKV {
         }
         const lang = context.util.getLang(info, context);
         const gameMode = this.getGameMode(context, info);
-        const cache = this.cache[gameMode];
+        const cache = this.requestCache[context.requestId][gameMode];
         const getTranslation = (k) => {
             if (cache?.locale[lang] && typeof cache.locale[lang][k] !== 'undefined') {
                 return cache.locale[lang][k];
