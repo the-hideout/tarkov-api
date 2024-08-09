@@ -121,7 +121,7 @@ async function graphqlHandler(request, env, ctx) {
                 },
             });
             if (queryResult.status !== 200) {
-                throw new Error(`${queryResult.status} ${queryResult.statusText}: ${await queryResult.text()}`);
+                throw new Error(`${queryResult.status} ${await queryResult.text()}`);
             }
             console.log('Request served from graphql server');
             return new Response(await queryResult.text(), responseOptions);
