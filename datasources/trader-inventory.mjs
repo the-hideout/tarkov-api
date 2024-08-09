@@ -4,7 +4,7 @@ class TraderInventoryAPI extends WorkerKV {
     constructor(dataSource) {
         super('trader_price_data', dataSource);
         this.traderCache = {};
-        this.gameModes.push('pve');
+        //this.gameModes.push('pve');
     }
 
     async getTraderCache(context, info) {

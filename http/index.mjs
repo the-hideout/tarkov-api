@@ -1,46 +1,81 @@
+import cluster from 'node:cluster';
+import os from 'node:os';
+import * as Sentry from "@sentry/node";
+import "./instrument.mjs";
 import express from 'express';
+import { createServer } from 'node:http';
+
 import 'dotenv/config';
 
-import worker from '../index.mjs';
+import getYoga from '../graphql-yoga.mjs';
 import getEnv from './env-binding.mjs';
 
 const port = process.env.PORT ?? 8788;
+const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1));
 
-const convertIncomingMessageToRequest = (req) => {
-    var headers = new Headers();
-    for (var key in req.headers) {
-        if (req.headers[key]) headers.append(key, req.headers[key]);
+/*process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception', error.stack);
+});*/
+
+if (cluster.isPrimary && workerCount > 0) {
+    const kvStore = {};
+    const kvLoading = {};
+    const env = getEnv();
+    console.log(`Starting ${workerCount} workers`);
+    for (let i = 0; i < workerCount; i++) {
+        cluster.fork();
     }
-    let body = req.body;
-    if (typeof body === 'object') {
-        body = JSON.stringify(body);
+
+    for (const id in cluster.workers) {
+        cluster.workers[id].on('message', async (message) => {
+            //console.log(`message from worker ${id}:`, message);
+            if (message.action === 'getKv') {
+                const response = {
+                    action: 'kvData',
+                    kvName: message.kvName,
+                    id: message.id,
+                };
+                try {
+                    if (kvStore[message.kvName]) {
+                        response.data = JSON.stringify(kvStore[message.kvName]);
+                    } else if (kvLoading[message.kvName]) {
+                        response.data = JSON.stringify(await kvLoading[message.kvName]);
+                    } else {
+                        kvLoading[message.kvName] = env.DATA_CACHE.get(message.kvName, 'json');
+                        const data = await kvLoading[message.kvName];
+                        kvStore[message.kvName] = data;
+                        delete kvLoading[message.kvName];
+                        let refreshTime = 1000 * 60 * 30;
+                        if (data?.expiration && new Date(data.expiration) > new Date()) {
+                            refreshTime = new Date(data.expiration) - new Date();
+                            if (refreshTime < 1000 * 60) {
+                                refreshTime = 60000;
+                            }
+                        }
+                        response.data = JSON.stringify(data);
+                        setTimeout(() => {
+                            delete kvStore[message.kvName];
+                        }, refreshTime);
+                    }
+                } catch (error) {
+                    response.error = error.message;
+                }
+                cluster.workers[id].send(response);
+            }
+        });
     }
-    let request = new Request(new URL(req.url, `http://127.0.0.1:${port}`).toString(), {
-        method: req.method,
-        body: req.method === 'POST' ? body : null,
-        headers,
-    })
-    return request
-};
 
-const app = express();
-app.use(express.json({limit: '100mb'}), express.text());
-app.all('*', async (req, res, next) => {
-    const response = await worker.fetch(convertIncomingMessageToRequest(req), getEnv(), {waitUntil: () => {}});
-
-    // Convert Response object to JSON
-    const responseBody = await response.text();
-
-    // Reflect headers from Response object
-    //Object.entries(response.headers.raw()).forEach(([key, value]) => {
-    response.headers.forEach((value, key) => {
-        res.setHeader(key, value);
+    cluster.on('exit', function (worker, code, signal) {
+        console.log('worker ' + worker.process.pid + ' died');
     });
+} else {
+    // Workers can share any TCP connection
+    const yoga = await getYoga(getEnv());
 
-    // Send the status and JSON body
-    res.status(response.status).send(responseBody);
-});
+    const server = createServer(yoga);
 
-app.listen(port, () => {
-    console.log(`HTTP GraphQL server running at http://127.0.0.1:${port}`);
-});
+    // Start the server and you're done!
+    server.listen(port, () => {
+        console.info(`Server is running on http://localhost:${port}`);
+    });
+}

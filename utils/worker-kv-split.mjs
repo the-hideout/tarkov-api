@@ -22,6 +22,7 @@ class WorkerKVSplit {
     }
     
     addGameMode(gameMode) {
+        this.gameModes.push(gameMode);
         for (const key in this.kvs) {
             this.kvs[key].gameModes.push(gameMode);
         }
@@ -38,6 +39,12 @@ class WorkerKVSplit {
             }
             return result;
         });
+    }
+
+    clearRequestCache(requestId) {
+        for (const worker of Object.values(this.kvs)) {
+            worker.clearRequestCache(requestId);
+        }
     }
 }
 
