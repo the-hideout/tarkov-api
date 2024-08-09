@@ -13,9 +13,9 @@ import getEnv from './env-binding.mjs';
 const port = process.env.PORT ?? 8788;
 const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1));
 
-process.on('uncaughtException', (error) => {
-    console.error({ title: "Uncaught Exception", message: error.stack });
-});
+/*process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception', error.stack);
+});*/
 
 if (cluster.isPrimary && workerCount > 0) {
     const kvStore = {};
