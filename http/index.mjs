@@ -43,6 +43,8 @@ if (cluster.isPrimary && workerCount > 0) {
                     } else {
                         kvLoading[message.kvName] = env.DATA_CACHE.get(message.kvName, 'json');
                         const data = await kvLoading[message.kvName];
+                        kvStore[message.kvName] = data;
+                        delete kvLoading[message.kvName];
                         let refreshTime = 1000 * 60 * 30;
                         if (data?.expiration && new Date(data.expiration) > new Date()) {
                             refreshTime = new Date(data.expiration) - new Date();
