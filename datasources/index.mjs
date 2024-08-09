@@ -108,6 +108,13 @@ class DataSource {
         ttl = Math.max(ttl, 60);
         return ttl;
     }
+
+    clearRequestData(requestId) {
+        delete this.requests[requestId];
+        for (const worker of Object.values(this.worker)) {
+            worker.clearRequestCache(requestId);
+        }
+    }
 }
 
 export default DataSource;

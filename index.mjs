@@ -22,6 +22,7 @@ import graphiql from './handlers/graphiql.mjs';
 import setCors from './utils/setCors.mjs';
 import schema from './schema.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
+import graphQLOptions from './utils/graphql-options.mjs';
 import cacheMachine from './utils/cache-machine.mjs';
 
 import { getNightbotResponse } from './plugins/plugin-nightbot.mjs';
@@ -130,7 +131,16 @@ async function graphqlHandler(request, env, ctx) {
     }
 
     const context = graphqlUtil.getDefaultContext(dataAPI, requestId);
-    let result = await graphql({schema: await schema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
+    let result, ttl;
+    try {
+        result = await graphql({schema: await schema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
+        ttl = dataAPI.getRequestTtl(requestId);
+        //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
+    } catch (error) {
+        throw error;
+    } finally {
+        dataAPI.clearRequestData(requestId);
+    }
     console.log('generated graphql response');
     if (context.errors.length > 0) {
         if (!result.errors) {
@@ -144,8 +154,6 @@ async function graphqlHandler(request, env, ctx) {
         }
         result.warnings.push(...context.warnings);
     }
-
-    let ttl = dataAPI.getRequestTtl(requestId);
 
     if (specialCache === 'application/json') {
         if (!result.warnings) {
@@ -167,36 +175,8 @@ async function graphqlHandler(request, env, ctx) {
         ctx.waitUntil(cacheMachine.put(env, query, variables, body, String(ttl), specialCache));
     }
 
-    //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
-    delete dataAPI.requests[requestId];
     return response;
 }
-
-const graphQLOptions = {
-    // Set the path for the GraphQL server
-    baseEndpoint: '/graphql',
-
-    // Set the path for the GraphQL playground
-    // This option can be removed to disable the playground route
-    playgroundEndpoint: '/',
-
-    // When a request's path isn't matched, forward it to the origin
-    forwardUnmatchedRequestsToOrigin: false,
-
-    // Enable debug mode to return script errors directly in browser
-    debug: true,
-
-    // Enable CORS headers on GraphQL requests
-    // Set to `true` for defaults (see `utils/setCors`),
-    // or pass an object to configure each header
-    //   cors: true,
-    cors: {
-        allowCredentials: 'true',
-        allowHeaders: 'Content-type',
-        allowOrigin: '*',
-        allowMethods: 'OPTIONS, GET, POST',
-    },
-};
 
 export default {
 	async fetch(request, env, ctx) {
