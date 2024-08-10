@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/node';
+
 // cache url
 const cacheUrl = 'https://cache.tarkov.dev'
 
