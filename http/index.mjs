@@ -9,6 +9,7 @@ import 'dotenv/config';
 
 import getYoga from '../graphql-yoga.mjs';
 import getEnv from './env-binding.mjs';
+import * as Sentry from "@sentry/node";
 
 const port = process.env.PORT ?? 8788;
 const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1));
@@ -73,6 +74,9 @@ if (cluster.isPrimary && workerCount > 0) {
 
     for (const id in cluster.workers) {
         cluster.workers[id].on('message', async (message) => {
+            // Add worker message span
+            const rcvWorkerMsgSpan = Sentry.startInactiveSpan({ name: "Receive worker message" });
+
             //console.log(`message from worker ${id}:`, message);
             if (message.action === 'getKv') {
                 const response = {
@@ -93,6 +97,9 @@ if (cluster.isPrimary && workerCount > 0) {
                 }
                 cluster.workers[id].send(response);
             }
+
+            // End the span
+            rcvWorkerMsgSpan.end();
         });
     }
 
