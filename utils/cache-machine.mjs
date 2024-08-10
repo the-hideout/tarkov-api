@@ -66,8 +66,8 @@ async function updateCache(env, query, variables, body, ttl = '', specialCache =
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Authorization': `Basic ${env.CACHE_BASIC_AUTH}`,
-                'sentry-trace': Sentry.getCurrentHub().getScope().getSpan().toTraceparent(),
-                'baggage': Sentry.getCurrentHub().getScope().getSpan().toBaggageHeader()
+                'sentry-trace': Sentry.spanToTraceHeader(Sentry.getActiveSpan()),
+                'baggage': Sentry.spanToBaggageHeader(Sentry.getActiveSpan()),
             },
             timeout: 10000,
         };
