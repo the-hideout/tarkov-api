@@ -12,6 +12,7 @@ function specialCache(request) {
 export default function useCacheMachine(env) {
     return {
         async onParams({params, request, setParams, setResult, fetchAPI}) {
+            console.log(request.requestId);
             if (env.SKIP_CACHE === 'true') {
                 console.log(`Skipping cache check due to SKIP_CACHE`);
                 return;
@@ -29,6 +30,9 @@ export default function useCacheMachine(env) {
         },
         onContextBuilding({context, extendContext, breakContextBuilding}) {
             context.request.ctx = context.ctx ?? context.request.ctx;
+            if (typeof context.waitUntil === 'function') {
+                context.request.ctx.waitUntil = context.waitUntil;
+            }
             context.request.data = context.data;
             context.request.warnings = context.warnings;
             context.request.errors = context.errors;
@@ -73,7 +77,6 @@ export default function useCacheMachine(env) {
                 // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
                 request.ctx.waitUntil(cacheMachine.put(env, request.params.query, request.params.variables, JSON.stringify(result), String(ttl), sCache));
             }
-            console.log(request.requestId);
             console.log(`kvs used in request: ${request.data.requests[request.requestId]?.kvUsed.join(', ') ?? 'none'}`);
             request.data.clearRequestData(request.requestId);
             delete request.requestId;
