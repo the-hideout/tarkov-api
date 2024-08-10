@@ -16,7 +16,7 @@ export default function useCacheMachine(env) {
                 console.log(`Skipping cache check due to SKIP_CACHE`);
                 return;
             }
-            if (env.CLOUDFLARE_TOKEN) {
+            if (request.headers.has('cache-check-complete')) {
                 console.log(`Skipping cache check already performed by worker`);
                 return;
             }

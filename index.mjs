@@ -118,6 +118,7 @@ async function graphqlHandler(request, env, ctx) {
                 }),
                 headers: {
                     'Content-Type': 'application/json',
+                    'cache-check-complete': 'true',
                 },
             });
             if (queryResult.status !== 200) {
