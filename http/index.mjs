@@ -17,7 +17,52 @@ const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1)
 if (cluster.isPrimary && workerCount > 0) {
     const kvStore = {};
     const kvLoading = {};
+    const kvRefreshTimeout = {};
+    const msOneMinute = 1000 * 60;
+    const msHalfHour = msOneMinute * 30;
     const env = getEnv();
+
+    const getKv = async (kvName, rejectOnError = true) => {
+        try {
+            console.log(`getting ${kvName} data`);
+            clearTimeout(kvRefreshTimeout[kvName]);
+            const oldExpiration = kvStore[kvName]?.expiration ?? 0;
+            kvLoading[kvName] = env.DATA_CACHE.get(kvName, 'json');
+            const data = await kvLoading[kvName];
+            kvStore[kvName] = data;
+            delete kvLoading[kvName];
+            let refreshTime = msHalfHour;
+            if (data?.expiration && new Date(data.expiration) > new Date()) {
+                refreshTime = new Date(data.expiration) - new Date();
+                if (refreshTime < msOneMinute) {
+                    refreshTime = msOneMinute;
+                }
+            }
+            if (data?.expiration === oldExpiration) {
+                refreshTime = msOneMinute;
+            }
+            kvRefreshTimeout[kvName] = setTimeout(() => {
+                getKv(kvName, false);
+            }, refreshTime);
+            return data;
+        } catch (error) {
+            delete kvLoading[kvName];
+            console.error('Error getting KV from cloudflare', error);
+            if (error.message !== 'Invalid CLOUDFLARE_TOKEN') {
+                refreshTime = msOneMinute;
+                if (!kvStore[kvName]) {
+                    refreshTime = 1000;
+                }
+                kvRefreshTimeout[kvName] = setTimeout(() => {
+                    getKv(kvName, false);
+                }, refreshTime);
+            }
+            if (rejectOnError) {
+                return Promise.reject(error);
+            }
+        }
+    };
+
     console.log(`Starting ${workerCount} workers`);
     for (let i = 0; i < workerCount; i++) {
         cluster.fork();
@@ -38,21 +83,7 @@ if (cluster.isPrimary && workerCount > 0) {
                     } else if (kvLoading[message.kvName]) {
                         response.data = JSON.stringify(await kvLoading[message.kvName]);
                     } else {
-                        kvLoading[message.kvName] = env.DATA_CACHE.get(message.kvName, 'json');
-                        const data = await kvLoading[message.kvName];
-                        kvStore[message.kvName] = data;
-                        delete kvLoading[message.kvName];
-                        let refreshTime = 1000 * 60 * 30;
-                        if (data?.expiration && new Date(data.expiration) > new Date()) {
-                            refreshTime = new Date(data.expiration) - new Date();
-                            if (refreshTime < 1000 * 60) {
-                                refreshTime = 60000;
-                            }
-                        }
-                        response.data = JSON.stringify(data);
-                        setTimeout(() => {
-                            delete kvStore[message.kvName];
-                        }, refreshTime);
+                        response.data = JSON.stringify(await getKv(message.kvName));
                     }
                 } catch (error) {
                     response.error = error.message;
