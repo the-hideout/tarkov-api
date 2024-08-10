@@ -63,7 +63,9 @@ async function updateCache(env, query, variables, body, ttl = '', specialCache =
             method: 'POST',
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
-                'Authorization': `Basic ${env.CACHE_BASIC_AUTH}`
+                'Authorization': `Basic ${env.CACHE_BASIC_AUTH}`,
+                'sentry-trace': Sentry.getCurrentHub().getScope().getSpan().toTraceparent(),
+                'baggage': Sentry.getCurrentHub().getScope().getSpan().toBaggageHeader()
             },
             timeout: 10000,
         };
@@ -109,11 +111,11 @@ async function checkCache(env, query, variables, specialCache = '') {
             return false;
         }
 
-        const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${cacheKey}`, { 
+        const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${cacheKey}`, {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Authorization': `Basic ${env.CACHE_BASIC_AUTH}`
-            }, 
+            },
         });
         cacheFailCount = 0;
         if (response.status === 200) {

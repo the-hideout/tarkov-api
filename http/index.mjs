@@ -2,14 +2,12 @@ import cluster from 'node:cluster';
 import os from 'node:os';
 import * as Sentry from "@sentry/node";
 import "./instrument.mjs";
-import express from 'express';
 import { createServer } from 'node:http';
 
 import 'dotenv/config';
 
 import getYoga from '../graphql-yoga.mjs';
 import getEnv from './env-binding.mjs';
-import * as Sentry from "@sentry/node";
 
 const port = process.env.PORT ?? 8788;
 const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1));
