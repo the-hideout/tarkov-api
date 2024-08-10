@@ -75,7 +75,15 @@ export default function useCacheMachine(env) {
             }
             if (env.SKIP_CACHE !== 'true' && ttl > 0 && !env.HTTP_GRAPHQL_SERVER) {
                 // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
-                request.ctx.waitUntil(cacheMachine.put(env, request.params.query, request.params.variables, JSON.stringify(result), String(ttl), sCache));
+                const cacheBody = JSON.stringify(result);
+                if (cacheBody.length > 0) {
+                    request.ctx.waitUntil(cacheMachine.put(env, request.params.query, request.params.variables, cacheBody, String(ttl), sCache));
+                } else {
+                    console.warn('Skipping cache for zero-length response');
+                    console.log(`Request method: ${request.method}`);
+                    console.log(`Query: ${request.params.query}`);
+                    console.log(`Variables: ${JSON.stringify(request.params.variables ?? {}, null, 4)}`);
+                }
             }
             console.log(`kvs used in request: ${request.data.requests[request.requestId]?.kvUsed.join(', ') ?? 'none'}`);
             request.data.clearRequestData(request.requestId);
