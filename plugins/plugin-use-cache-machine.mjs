@@ -77,10 +77,7 @@ export default function useCacheMachine(env) {
                 // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
                 const cacheBody = JSON.stringify(result);
                 if (cacheBody.length > 0) {
-                    const cachePut = cacheMachine.put(env, request.params.query, request.params.variables, cacheBody, String(ttl), sCache);
-                    if (typeof process === 'undefined') {
-                        request.ctx.waitUntil(cachePut);
-                    }
+                    request.ctx.waitUntil(cacheMachine.put(env, request.params.query, request.params.variables, cacheBody, String(ttl), sCache));
                 } else {
                     console.warn('Skipping cache for zero-length response');
                     console.log(`Request method: ${request.method}`);
