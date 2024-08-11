@@ -13,6 +13,7 @@ const usePaths = [
 ];
 
 export async function getNightbotResponse(request, url, env, serverContext) {
+    console.log('serverContext', Object.keys(serverContext));
     if (request.method.toUpperCase() !== 'GET') {
         return new Response(null, {
             status: 405,
@@ -75,9 +76,9 @@ export async function getNightbotResponse(request, url, env, serverContext) {
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
         if (request.ctx?.waitUntil) {
             request.ctx.waitUntil(putCachePromise);
-        } else if (serverContext.waitUntil) {
+        } /*else if (serverContext.waitUntil) {
             serverContext.waitUntil(putCachePromise);
-        }
+        }*/
     }
     return new Response(responseBody)
 }

@@ -51,8 +51,8 @@ if (cluster.isPrimary && workerCount > 0) {
             delete kvLoading[kvName];
             console.error('Error getting KV from cloudflare', error);
             if (error.message !== 'Invalid CLOUDFLARE_TOKEN') {
-                refreshTime = msOneMinute;
-                if (!kvStore[kvName]) {
+                let refreshTime = msOneMinute;
+                if (typeof kvStore[kvName] === 'undefined') {
                     refreshTime = 1000;
                 }
                 kvRefreshTimeout[kvName] = setTimeout(() => {
@@ -83,7 +83,7 @@ if (cluster.isPrimary && workerCount > 0) {
                     id: message.id,
                 };
                 try {
-                    if (kvStore[message.kvName]) {
+                    if (typeof kvStore[message.kvName] !== 'undefined') {
                         response.data = JSON.stringify(kvStore[message.kvName]);
                     } else if (kvLoading[message.kvName]) {
                         response.data = JSON.stringify(await kvLoading[message.kvName]);
