@@ -1,5 +1,5 @@
 
-import getYoga from './graphql-yoga.mjs';
+/*import getYoga from './graphql-yoga.mjs';
 import graphQLOptions from './utils/graphql-options.mjs';
 
 export default {
@@ -12,8 +12,8 @@ export default {
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
         }
 	},
-};
-/*import { graphql } from 'graphql';
+};*/
+import { graphql } from 'graphql';
 import { v4 as uuidv4 } from 'uuid';
 
 import DataSource from './datasources/index.mjs';
@@ -242,4 +242,4 @@ export default {
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
         }
 	},
-};*/
+};
