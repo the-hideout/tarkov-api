@@ -1,12 +1,12 @@
-
-/*import getYoga from './graphql-yoga.mjs';
+/*import cacheMachine from './utils/cache-machine.mjs';
+import getYoga from './graphql-yoga.mjs';
 import graphQLOptions from './utils/graphql-options.mjs';
 
 export default {
 	async fetch(request, env, ctx) {
         try {
-            const yoga = await getYoga(env);
-            return yoga.fetch(request, {...env, ctx});
+            const yoga = await getYoga({...env, RESPONSE_CACHE: cacheMachine});
+            return yoga.fetch(request, {...env, ctx, RESPONSE_CACHE: cacheMachine});
         } catch (err) {
             console.log(err);
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
@@ -173,7 +173,7 @@ async function graphqlHandler(request, env, ctx) {
 
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
         // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
-        ctx.waitUntil(cacheMachine.put(env, query, variables, body, String(ttl), specialCache));
+        ctx.waitUntil(cacheMachine.put(env, body, {query, variables, ttl, specialCache}));
     }
 
     return response;
