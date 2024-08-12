@@ -3,6 +3,7 @@ import WorkerKV from '../utils/worker-kv.mjs';
 class HideoutAPI extends WorkerKV {
     constructor(dataSource) {
         super('hideout_data', dataSource);
+        this.gameModes.push('pve');
     }
 
     async getList(context, info) {
