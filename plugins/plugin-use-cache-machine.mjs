@@ -78,9 +78,7 @@ export default function useCacheMachine(env) {
                 const cacheBody = JSON.stringify(result);
                 if (cacheBody.length > 0) {
                     const cachePut = env.RESPONSE_CACHE.put(env, cacheBody, {query: request.params.query, variables: request.params.variables, ttl, specialCache: sCache});
-                    if (typeof process === 'undefined') {
-                        request.ctx.waitUntil(cachePut);
-                    }
+                    request.ctx.waitUntil(cachePut);
                 } else {
                     console.warn('Skipping cache for zero-length response');
                     console.log(`Request method: ${request.method}`);

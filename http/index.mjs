@@ -99,11 +99,9 @@ if (cluster.isPrimary && workerCount > 0) {
                 };
                 try {
                     if (cachePending[message.key]) {
-                        console.log('cache put pending');
                         response.data = await cachePending[message.key];
                     } else {
                         let cachePutCooldown = message.ttl ? message.ttl * 1000 : 60000;
-                        console.log('doing cache put', cachePutCooldown);
                         cachePending[message.key] = cacheMachine.put(process.env, message.body, {key: message.key, ttl: message.ttl}).catch(error => {
                             cachePutCooldown = 10000;
                             return Promise.reject(error);
