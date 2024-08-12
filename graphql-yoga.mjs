@@ -27,6 +27,7 @@ export default async function getYoga(env) {
     yoga = createYoga({
         schema: (context) => {
             // this context only has the env vars present on creation
+            console.log('schema context', Object.keys(context));
             context.request.requestId = uuidv4();
             if (env.ctx) {
                 context.request.ctx = env.ctx;
