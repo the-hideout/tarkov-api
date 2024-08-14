@@ -89,10 +89,12 @@ async function graphqlHandler(request, env, ctx) {
         specialCache = 'application/json';
     }
 
+    let key;
     // Check the cache service for data first - If cached data exists, return it
     // we don't check the cache if we're the http server because the worker already did
     if (env.SKIP_CACHE !== 'true' && !env.CLOUDFLARE_TOKEN) {
-        const cachedResponse = await cacheMachine.get(env, query, variables, specialCache);
+        key = await cacheMachine.createKey(env, query, variables, specialCache);
+        const cachedResponse = await cacheMachine.get(env, {key});
         if (cachedResponse) {
             // Construct a new response with the cached data
             const newResponse = new Response(cachedResponse, responseOptions);
@@ -173,7 +175,7 @@ async function graphqlHandler(request, env, ctx) {
 
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
         // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
-        ctx.waitUntil(cacheMachine.put(env, body, {query, variables, ttl, specialCache}));
+        ctx.waitUntil(cacheMachine.put(env, body, {key, query, variables, ttl, specialCache}));
     }
 
     return response;

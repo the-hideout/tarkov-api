@@ -21,12 +21,21 @@ export default function useCacheMachine(env) {
                 console.log(`Skipping cache check already performed by worker`);
                 return;
             }
-            const cachedResponse = await cacheMachine.get(env, params.query, params.variables, specialCache(request));
+            const cachedResponse = await cacheMachine.get(env, {query: params.query, variables: params.variables, specialCache: specialCache(request)});
             if (cachedResponse) {
                 console.log('Request served from cache');
                 request.cached = true;
                 setResult(JSON.parse(cachedResponse));
             } 
+        },
+        onValidate({ context, extendContext, params, validateFn, addValidationRule, setValidationFn, setResult }) {
+            return ({ valid, result, context, extendContext, setResult }) => {
+                // collect stats on if query was valid
+                if (valid) {
+                    return;
+                }
+                // result is an array of errors we can log
+            };
         },
         onContextBuilding({context, extendContext, breakContextBuilding}) {
             context.request.ctx = context.ctx ?? context.request.ctx;
@@ -40,11 +49,21 @@ export default function useCacheMachine(env) {
             console.log(`KVs pre-loaded: ${context.data.kvLoaded.join(', ') || 'none'}`);
             extendContext({requestId: context.request.requestId});
         },
+        onExecute({ executeFn, setExecuteFn, setResultAndStopExecution, extendContext, args }) {
+            const executeStart = new Date();
+            //extendContext({executeStart: new Date()});
+            return {
+                onExecuteDone: ({ args, result, setResult }) => {
+                    console.log(args.contextValue.requestId, `Executaion time: ${new Date() - executeStart} ms`);
+                    // can check for errors at result.errors
+                },
+            };
+        },
         onResultProcess({request, acceptableMediaTypes, result, setResult, resultProcessor, setResultProcessor}) {
             if (request.cached) {
                 return;
             }
-            if (!result.data) {
+            if (!result.data && !result.errors) {
                 return;
             }
             if (request.errors?.length > 0) {
@@ -60,7 +79,7 @@ export default function useCacheMachine(env) {
                 result.warnings.push(...request.warnings);
             }
 
-            let ttl = request.data.getRequestTtl(request.requestId);
+            let ttl = request.data.getRequestTtl(request.requestId) ?? 60 * 5;
 
             const sCache = specialCache(request);
             if (sCache === 'application/json') {
