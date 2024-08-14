@@ -31,9 +31,11 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     const gameMode = url.searchParams.get('m') || 'regular';
     const query = url.searchParams.get('q');
 
-    if (env.SKIP_CACHE !== 'true') {
+    let key;
+    if (env.SKIP_CACHE !== 'true' && !request.headers.has('cache-check-complete')) {
         const requestStart = new Date();
-        const cachedResponse = await cacheMachine.get(env, 'nightbot', { q: query, l: lang, m: gameMode });
+        key = await cacheMachine.createKey(env, 'nightbot', { q: query, l: lang, m: gameMode });
+        const cachedResponse = await cacheMachine.get(env, {key});
         if (cachedResponse) {
             // Construct a new response with the cached data
             const newResponse = new Response(cachedResponse);
@@ -41,6 +43,7 @@ export async function getNightbotResponse(request, url, env, serverContext) {
             newResponse.headers.append('X-CACHE', 'HIT');
             console.log(`Request served from cache: ${new Date() - requestStart} ms`);
             // Return the new cached response
+            request.cached = true;
             return newResponse;
         } else {
             console.log('no cached response');
@@ -56,7 +59,7 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     let responseBody = 'Found no item matching that name';
     try {
         items = await data.worker.item.getItemsByName(context, info, query);
-        ttl = data.getRequestTtl(context.requestId)
+        ttl = data.getRequestTtl(context.requestId);
     
         if (items.length > 0) {
             const bestPrice = items[0].sellFor.sort((a, b) => b.price - a.price);
@@ -71,7 +74,7 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     
     // Update the cache with the results of the query
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
-        const putCachePromise = cacheMachine.put(env, 'nightbot', { q: query, l: lang, m: gameMode }, responseBody, String(ttl));
+        const putCachePromise = cacheMachine.put(env, responseBody, { key, query: 'nightbot', variables: { q: query, l: lang, m: gameMode }, ttl: String(ttl)});
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
         if (request.ctx?.waitUntil) {
             request.ctx.waitUntil(putCachePromise);

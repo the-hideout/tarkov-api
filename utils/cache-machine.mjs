@@ -8,7 +8,7 @@ let cachePaused = false;
 
 function pauseCache() {
     cacheFailCount++;
-    if (cacheFailCount <= 2) {
+    if (cacheFailCount <= 4) {
         return;
     }
     cachePaused = true;
@@ -41,17 +41,20 @@ async function hash(string) {
 }
 
 const cacheMachine = {
-    createKey: (environment, query, variables, specialCache = '') => {
+    createKey: (env, query, variables = {}, specialCache = '') => {
         if (typeof variables !== 'string') {
             variables = JSON.stringify(variables);
         }
+        if (typeof query !== 'string') {
+            query = JSON.stringify(query);
+        }
         query = query.trim();
-        return hash(environment + query + variables + specialCache);
+        return hash(env.ENVIRONMENT + query + variables + specialCache);
     },
     // Checks the caching service to see if a request has been cached
     // :param json: the json payload of the incoming worker request
     // :return: json results of the item found in the cache or false if not found
-    get: async (env, query, variables, specialCache = '') => {
+    get: async (env, options = {}) => {
         try {
             if (!env.CACHE_BASIC_AUTH) {
                 console.warn('env.CACHE_BASIC_AUTH is not set; skipping cache check');
@@ -61,14 +64,17 @@ const cacheMachine = {
                 console.warn('Cache paused; skipping cache check');
                 return false;
             }
+            let query = options.query ?? '';
             query = query.trim();
-            const cacheKey = await cacheMachine.createKey(env.ENVIRONMENT, query, variables, specialCache);
-            if (!cacheKey) {
+            let { key, variables = {}, specialCache = '' } = options;
+            key = key ?? await cacheMachine.createKey(env, query, variables, specialCache);
+            //console.log('getting cache ', key, typeof query, query);
+            if (!key) {
                 console.warn('Skipping cache check; key is empty');
                 return false;
             }
     
-            const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${cacheKey}`, { 
+            const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${key}`, { 
                 headers: {
                     'content-type': 'application/json;charset=UTF-8',
                     'Authorization': `Basic ${env.CACHE_BASIC_AUTH}`
@@ -109,10 +115,10 @@ const cacheMachine = {
                 console.warn('Key or query not provided, skipping cache put');
                 return false;
             }
-            let { key, query, variables, ttl = 60, specialCache = '' } = options;
+            let { key, query, variables, ttl = 60 * 5, specialCache = '' } = options;
             if (!key) {
                 query = query.trim();
-                key = await cacheMachine.createKey(env.ENVIRONMENT, query, variables, specialCache);
+                key = await cacheMachine.createKey(env, query, variables, specialCache);
             }
             ttl = String(ttl);
             console.log(`Caching ${body.length} byte response for ${env.ENVIRONMENT} environment${ttl ? ` for ${ttl} seconds` : ''}`);

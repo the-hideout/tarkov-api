@@ -1,4 +1,4 @@
-import { createYoga } from 'graphql-yoga'
+import { createYoga, useExecutionCancellation  } from 'graphql-yoga'
 import { v4 as uuidv4 } from 'uuid';
 
 import DataSource from './datasources/index.mjs';
@@ -27,7 +27,6 @@ export default async function getYoga(env) {
     yoga = createYoga({
         schema: (context) => {
             // this context only has the env vars present on creation
-            console.log('schema context', Object.keys(context));
             context.request.requestId = uuidv4();
             if (env.ctx) {
                 context.request.ctx = env.ctx;
@@ -41,6 +40,7 @@ export default async function getYoga(env) {
             return graphqlUtil.getDefaultContext(dataAPI, request.requestId);
         },
         plugins: [
+            //useExecutionCancellation(),
             useRequestTimer(),
             useOptionMethod(),
             useTwitch(env),

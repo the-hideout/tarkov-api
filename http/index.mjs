@@ -23,6 +23,7 @@ if (cluster.isPrimary && workerCount > 0) {
     const kvRefreshTimeout = {};
     const cachePending = {};
     const msOneMinute = 1000 * 60;
+    const msFiveMinutes = msOneMinute * 5;
     const msHalfHour = msOneMinute * 30;
     const env = getEnv();
 
@@ -106,7 +107,7 @@ if (cluster.isPrimary && workerCount > 0) {
                     if (cachePending[message.key]) {
                         response.data = await cachePending[message.key];
                     } else {
-                        let cachePutCooldown = message.ttl ? message.ttl * 1000 : 60000;
+                        let cachePutCooldown = message.ttl ? message.ttl * 1000 : msFiveMinutes;
                         cachePending[message.key] = cacheMachine.put(process.env, message.body, {key: message.key, ttl: message.ttl}).catch(error => {
                             cachePutCooldown = 10000;
                             return Promise.reject(error);
