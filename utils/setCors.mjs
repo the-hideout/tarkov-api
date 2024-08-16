@@ -1,5 +1,7 @@
+import graphQLOptions from "./graphql-options.mjs";
+
 const setCorsHeaders = (response, config) => {
-  const corsConfig = config instanceof Object ? config : {};
+  const corsConfig = config instanceof Object ? config : graphQLOptions.cors;
 
   response.headers.set(
     'Access-Control-Allow-Credentials',

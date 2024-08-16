@@ -1,46 +1,137 @@
-import express from 'express';
+import { createServer } from 'node:http';
+import cluster from 'node:cluster';
+import os from 'node:os';
+
 import 'dotenv/config';
 
-import worker from '../index.mjs';
+import getYoga from '../graphql-yoga.mjs';
 import getEnv from './env-binding.mjs';
+import cacheMachine from '../utils/cache-machine.mjs';
 
 const port = process.env.PORT ?? 8788;
+const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1));
 
-const convertIncomingMessageToRequest = (req) => {
-    var headers = new Headers();
-    for (var key in req.headers) {
-        if (req.headers[key]) headers.append(key, req.headers[key]);
+/*process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception', error.stack);
+});*/
+
+if (cluster.isPrimary && workerCount > 0) {
+    const kvStore = {};
+    const kvLoading = {};
+    const kvRefreshTimeout = {};
+    const cachePending = {};
+    const msOneMinute = 1000 * 60;
+    const msFiveMinutes = msOneMinute * 5;
+    const msHalfHour = msOneMinute * 30;
+    const env = getEnv();
+
+    const getKv = async (kvName, rejectOnError = true) => {
+        try {
+            console.log(`getting ${kvName} data`);
+            clearTimeout(kvRefreshTimeout[kvName]);
+            const oldExpiration = kvStore[kvName]?.expiration ?? 0;
+            kvLoading[kvName] = env.DATA_CACHE.get(kvName, 'json');
+            const data = await kvLoading[kvName];
+            kvStore[kvName] = data;
+            delete kvLoading[kvName];
+            let refreshTime = msHalfHour;
+            if (data?.expiration && new Date(data.expiration) > new Date()) {
+                refreshTime = new Date(data.expiration) - new Date();
+                if (refreshTime < msOneMinute) {
+                    refreshTime = msOneMinute;
+                }
+            }
+            if (data?.expiration === oldExpiration) {
+                refreshTime = msOneMinute;
+            }
+            kvRefreshTimeout[kvName] = setTimeout(() => {
+                getKv(kvName, false);
+            }, refreshTime);
+            return data;
+        } catch (error) {
+            delete kvLoading[kvName];
+            console.error('Error getting KV from cloudflare', error);
+            if (error.message !== 'Invalid CLOUDFLARE_TOKEN') {
+                let refreshTime = msOneMinute;
+                if (typeof kvStore[kvName] === 'undefined') {
+                    refreshTime = 1000;
+                }
+                kvRefreshTimeout[kvName] = setTimeout(() => {
+                    getKv(kvName, false);
+                }, refreshTime);
+            }
+            if (rejectOnError) {
+                return Promise.reject(error);
+            }
+        }
+    };
+
+    console.log(`Starting ${workerCount} workers`);
+    for (let i = 0; i < workerCount; i++) {
+        cluster.fork();
     }
-    let body = req.body;
-    if (typeof body === 'object') {
-        body = JSON.stringify(body);
+
+    for (const id in cluster.workers) {
+        cluster.workers[id].on('message', async (message) => {
+            //console.log(`message from worker ${id}:`, message);
+            if (message.action === 'getKv') {
+                const response = {
+                    action: 'kvData',
+                    kvName: message.kvName,
+                    id: message.id,
+                };
+                try {
+                    if (typeof kvStore[message.kvName] !== 'undefined') {
+                        response.data = JSON.stringify(kvStore[message.kvName]);
+                    } else if (kvLoading[message.kvName]) {
+                        response.data = JSON.stringify(await kvLoading[message.kvName]);
+                    } else {
+                        response.data = JSON.stringify(await getKv(message.kvName));
+                    }
+                } catch (error) {
+                    response.error = error.message;
+                }
+                cluster.workers[id].send(response);
+            }
+            if (message.action === 'cacheResponse') {
+                const response = {
+                    id: message.id,
+                    data: false,
+                };
+                try {
+                    if (cachePending[message.key]) {
+                        response.data = await cachePending[message.key];
+                    } else {
+                        let cachePutCooldown = message.ttl ? message.ttl * 1000 : msFiveMinutes;
+                        cachePending[message.key] = cacheMachine.put(process.env, message.body, {key: message.key, ttl: message.ttl}).catch(error => {
+                            cachePutCooldown = 10000;
+                            return Promise.reject(error);
+                        }).finally(() => {
+                            setTimeout(() => {
+                                delete cachePending[message.key];
+                            }, cachePutCooldown);
+                        });
+                        response.data = await cachePending[message.key];
+                    }
+                } catch (error) {
+                    response.error = error.message;
+                }
+                cluster.workers[id].send(response);
+            }
+        });
     }
-    let request = new Request(new URL(req.url, `http://127.0.0.1:${port}`).toString(), {
-        method: req.method,
-        body: req.method === 'POST' ? body : null,
-        headers,
-    })
-    return request
-};
 
-const app = express();
-app.use(express.json({limit: '100mb'}), express.text());
-app.all('*', async (req, res, next) => {
-    const response = await worker.fetch(convertIncomingMessageToRequest(req), getEnv(), {waitUntil: () => {}});
-
-    // Convert Response object to JSON
-    const responseBody = await response.text();
-
-    // Reflect headers from Response object
-    //Object.entries(response.headers.raw()).forEach(([key, value]) => {
-    response.headers.forEach((value, key) => {
-        res.setHeader(key, value);
+    cluster.on('exit', function(worker, code, signal) {
+        console.log('worker ' + worker.process.pid + ' died');
     });
+} else {
+    // Workers can share any TCP connection
+    const yoga = await getYoga(getEnv());
 
-    // Send the status and JSON body
-    res.status(response.status).send(responseBody);
-});
+    const server = createServer(yoga);
 
-app.listen(port, () => {
-    console.log(`HTTP GraphQL server running at http://127.0.0.1:${port}`);
-});
+    // Start the server and you're done!
+    server.listen(port, () => {
+        console.info(`Server is running on http://localhost:${port}`);
+    });
+}

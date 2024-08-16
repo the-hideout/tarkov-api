@@ -11,7 +11,7 @@
         "format": "prettier --write '**/*.{js,css,json,md}'",
         "dev": "wrangler dev --env development --remote",
         "ci": "wrangler dev --env development --remote",
-        "local": "wrangler dev",
+        "local": "wrangler dev --env development",
         "tail": "node tail.js",
         "tail-dev": "node tail.js development"
     },
@@ -25,7 +25,7 @@
     "dependencies": {
         "@graphql-tools/merge": "9.0.4",
         "@graphql-tools/schema": "10.0.4",
-        "graphql": "^16.9.0",
+        "graphql-yoga": "^5.6.3",
         "uuid": "^10.0.0"
     }
 }

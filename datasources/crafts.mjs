@@ -4,6 +4,7 @@ import WorkerKV from '../utils/worker-kv.mjs';
 class CraftsAPI extends WorkerKV {
     constructor(dataSource) {
         super('craft_data', dataSource);
+        this.gameModes.push('pve');
     }
 
     async getList(context, info) {

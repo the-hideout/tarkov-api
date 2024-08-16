@@ -1,3 +1,5 @@
+
+
 const defaultQuery = `# Welcome to the Tarkov.dev API Playground
 #
 # Type queries into this side of the screen, click the Execute query
@@ -114,6 +116,6 @@ const html = baseEndpoint => `
 `
 
 const headers = { 'Content-Type': 'text/html' }
-const handler = (request, { baseEndpoint }) => new Response(html(baseEndpoint), { headers });
+const handler = ({ baseEndpoint }) => new Response(html(baseEndpoint), { headers });
 
 export default handler;
