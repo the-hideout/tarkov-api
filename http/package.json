@@ -25,7 +25,7 @@
     },
     "nodemonConfig": {
       "watch": ["../", "*.mjs", ".env"],
-      "ignore": ["dumps/", "scanner/", "plugin/game/BepInEx/plugins/scanner_settings.json", "plugin/game/BepInEx/plugins/map_image_settings.json"],
+      "ignore": [],
       "delay": 2500
     }
 }
