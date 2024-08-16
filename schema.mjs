@@ -33,7 +33,6 @@ export default async function getSchema(data, context) {
                     return resolve(getSchema(data, context));
                 }
             }, 100);
-            loadingInterval;
         });
     }
     loadingSchema = true;
