@@ -109,9 +109,9 @@ async function graphqlHandler(request, env, ctx) {
     }
 
     // if an HTTP GraphQL server is configured, pass the request to that
-    if (env.HTTP_GRAPHQL_SERVER) {
+    if (env.USE_ORIGIN === 'true') {
         try {
-            const serverUrl = `${env.HTTP_GRAPHQL_SERVER}${graphQLOptions.baseEndpoint}`;
+            const serverUrl = `https://api.tarkov.dev${graphQLOptions.baseEndpoint}`;
             const queryResult = await fetch(serverUrl, {
                 method: request.method,
                 body: JSON.stringify({
