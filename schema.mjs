@@ -20,9 +20,8 @@ export default async function getSchema(data, context) {
             const loadingTimeout = setTimeout(() => {
                 loadingTimedOut = true;
             }, 3100);
-            loadingTimeout;
             const loadingInterval = setInterval(() => {
-                if (loadingSchema === false) {
+                if (!loadingSchema) {
                     clearTimeout(loadingTimeout);
                     clearInterval(loadingInterval);
                     return resolve(schema);
@@ -34,12 +33,10 @@ export default async function getSchema(data, context) {
                     return resolve(getSchema(data, context));
                 }
             }, 100);
-            loadingInterval;
         });
     }
     loadingSchema = true;
     return schemaDynamic(data, context).catch(error => {
-        loadingSchema = false;
         console.error('Error loading dynamic type definitions', error);
         return Promise.reject(error);
     }).then(dynamicDefs => {
@@ -52,7 +49,6 @@ export default async function getSchema(data, context) {
         }
         try {
             schema = makeExecutableSchema({ typeDefs: mergedDefs, resolvers: resolvers });
-            loadingSchema = false;
             //console.log('schema loaded');
             lastSchemaRefresh = new Date();
             return schema;
@@ -65,5 +61,7 @@ export default async function getSchema(data, context) {
             }
             return Promise.reject(error);
         }
+    }).finally(() => {
+        loadingSchema = false;
     });
 }
