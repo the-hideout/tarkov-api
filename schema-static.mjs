@@ -1105,7 +1105,6 @@ type TaskObjectiveItem implements TaskObjective {
   #locationNames: [String]!
   maps: [Map]!
   optional: Boolean!
-  item: Item!
   items: [Item]!
   count: Int!
   foundInRaid: Boolean!
@@ -1114,6 +1113,7 @@ type TaskObjectiveItem implements TaskObjective {
   minDurability: Int
   zones: [TaskZone]
   requiredKeys: [[Item]]
+  item: Item! @deprecated(reason: "Use items instead.")
 }
 
 type TaskObjectiveMark implements TaskObjective {

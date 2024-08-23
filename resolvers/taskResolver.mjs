@@ -95,7 +95,7 @@ export default {
             //return data.gql_type;
             if (data.type === 'findQuestItem' || data.type === 'giveQuestItem' || data.type === 'plantQuestItem') {
                 return 'TaskObjectiveQuestItem';
-            } else if (data.type === 'findItem' || data.type === 'giveItem' || data.type === 'plantItem') {
+            } else if (data.type === 'findItem' || data.type === 'giveItem' || data.type === 'plantItem' || data.type === 'sellItem') {
                 return 'TaskObjectiveItem';
             } else if (data.type === 'mark') {
                 return 'TaskObjectiveMark';
