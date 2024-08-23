@@ -92,7 +92,7 @@ export default function useCacheMachine(env) {
                 // if the ttl is greater than a half hour, limit it
                 ttl = 1800;
             }
-            if (env.SKIP_CACHE !== 'true' && ttl > 0 && !env.HTTP_GRAPHQL_SERVER) {
+            if (env.SKIP_CACHE !== 'true' && ttl > 0 && env.USE_ORIGIN !== 'true') {
                 // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
                 const cacheBody = JSON.stringify(result);
                 if (cacheBody.length > 0) {

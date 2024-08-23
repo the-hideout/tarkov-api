@@ -144,6 +144,23 @@ export default {
             return 'MapExtract';
         },
     },
+    MapTransit: {
+        conditions(data, args, context, info) {
+            if (!data.conditions) {
+                return null;
+            }
+            return context.data.worker.map.getLocale(data.conditions, context, info);
+        },
+        description(data, args, context, info) {
+            if (!data.description) {
+                return null;
+            }
+            return context.data.worker.map.getLocale(data.description, context, info);
+        },
+        map(data, args, context, info) {
+            return context.data.worker.map.get(context, info, data.map);
+        },
+    },
     MobInfo: {
         name(data, args, context, info) {
             return context.data.worker.map.getLocale(data.name, context, info);
