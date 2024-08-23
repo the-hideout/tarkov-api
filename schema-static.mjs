@@ -762,6 +762,7 @@ type Map {
   maxPlayerLevel: Int
   spawns: [MapSpawn]
   extracts: [MapExtract]
+  transits: [MapTransit]
   locks: [Lock]
   switches: [MapSwitch]
   hazards: [MapHazard]
@@ -841,6 +842,17 @@ type MapSwitchOperation {
 }
 
 union MapSwitchTarget = MapSwitch | MapExtract
+
+type MapTransit {
+  id: ID!
+  description: String
+  conditions: String
+  map: Map
+  position: MapPosition
+  outline: [MapPosition]
+  top: Float
+  bottom: Float
+}
 
 type Mastering {
   id: ID!
