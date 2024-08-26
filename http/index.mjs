@@ -132,7 +132,7 @@ if (cluster.isPrimary && workerCount > 0) {
         });
     }
 
-    cluster.on('exit', function(worker, code, signal) {
+    cluster.on('exit', function (worker, code, signal) {
         if (!signal) {
             console.log('worker ' + worker.process.pid + ' died');
             cluster.fork();
