@@ -27,9 +27,10 @@ async function fetchWithTimeout(resource, options = {}) {
             reject(new Error('The operation was aborted due to timeout'));
         }, timeout);
         fetch(resource, options).then(response => {
-            clearTimeout(requestTimeout);
             resolve(response);
-        }).catch(reject);
+        }).catch(reject).finally(() => {
+            clearTimeout(requestTimeout);
+        });
     });
 }
 

@@ -92,7 +92,7 @@ async function graphqlHandler(request, env, ctx) {
     let key;
     // Check the cache service for data first - If cached data exists, return it
     // we don't check the cache if we're the http server because the worker already did
-    if (env.SKIP_CACHE !== 'true' && !env.CLOUDFLARE_TOKEN) {
+    if (env.SKIP_CACHE !== 'true' && env.SKIP_CACHE_CHECK !== 'true' && !env.CLOUDFLARE_TOKEN) {
         key = await cacheMachine.createKey(env, query, variables, specialCache);
         const cachedResponse = await cacheMachine.get(env, {key});
         if (cachedResponse) {
@@ -174,8 +174,12 @@ async function graphqlHandler(request, env, ctx) {
     const response = new Response(body, responseOptions);
 
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
+        key = key ?? await cacheMachine.createKey(env, query, variables, specialCache);
+        ctx.waitUntil(cacheMachine.put(env, body, {key}));
         // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
-        ctx.waitUntil(cacheMachine.put(env, body, {key, query, variables, ttl, specialCache}));
+        /*const safePut = await cacheMachine.safePut(env, body, {key});
+        console.log(safePut);
+        ctx.waitUntil(safePut.fetchRequest);*/
     }
 
     return response;
