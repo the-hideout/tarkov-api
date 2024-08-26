@@ -28,6 +28,7 @@ if (cluster.isPrimary && workerCount > 0) {
     const env = getEnv();
 
     const getKv = async (kvName, rejectOnError = true) => {
+        let refreshTime = msHalfHour;
         try {
             console.log(`getting ${kvName} data`);
             clearTimeout(kvRefreshTimeout[kvName]);
@@ -36,7 +37,6 @@ if (cluster.isPrimary && workerCount > 0) {
             const data = await kvLoading[kvName];
             kvStore[kvName] = data;
             delete kvLoading[kvName];
-            let refreshTime = msHalfHour;
             if (data?.expiration && new Date(data.expiration) > new Date()) {
                 refreshTime = new Date(data.expiration) - new Date();
                 if (refreshTime < msOneMinute) {
@@ -46,25 +46,23 @@ if (cluster.isPrimary && workerCount > 0) {
             if (data?.expiration === oldExpiration) {
                 refreshTime = msOneMinute;
             }
-            kvRefreshTimeout[kvName] = setTimeout(() => {
-                getKv(kvName, false);
-            }, refreshTime);
             return data;
         } catch (error) {
             delete kvLoading[kvName];
             console.error('Error getting KV from cloudflare', error);
             if (error.message !== 'Invalid CLOUDFLARE_TOKEN') {
                 refreshTime = msOneMinute;
-                if (!kvStore[kvName]) {
+                if (typeof kvStore[kvName] === 'undefined') {
                     refreshTime = 1000;
                 }
-                kvRefreshTimeout[kvName] = setTimeout(() => {
-                    getKv(kvName, false);
-                }, refreshTime);
             }
             if (rejectOnError) {
                 return Promise.reject(error);
             }
+        } finally {
+            kvRefreshTimeout[kvName] = setTimeout(() => {
+                getKv(kvName, false);
+            }, refreshTime);
         }
     };
 
@@ -79,8 +77,9 @@ if (cluster.isPrimary && workerCount > 0) {
             const rcvWorkerMsgSpan = Sentry.startInactiveSpan({ name: "Receive worker message" });
 
             //console.log(`message from worker ${id}:`, message);
+            let response = false;
             if (message.action === 'getKv') {
-                const response = {
+                response = {
                     action: 'kvData',
                     kvName: message.kvName,
                     id: message.id,
@@ -96,10 +95,9 @@ if (cluster.isPrimary && workerCount > 0) {
                 } catch (error) {
                     response.error = error.message;
                 }
-                cluster.workers[id].send(response);
             }
             if (message.action === 'cacheResponse') {
-                const response = {
+                response = {
                     id: message.id,
                     data: false,
                 };
@@ -121,7 +119,13 @@ if (cluster.isPrimary && workerCount > 0) {
                 } catch (error) {
                     response.error = error.message;
                 }
-                cluster.workers[id].send(response);
+                
+            }
+            if (response) {
+                const worker = cluster.workers[id];
+                if (worker?.isConnected()) {
+                    cluster.workers[id].send(response);
+                }
             }
             // End the span
             rcvWorkerMsgSpan.end();
@@ -129,7 +133,10 @@ if (cluster.isPrimary && workerCount > 0) {
     }
 
     cluster.on('exit', function (worker, code, signal) {
-        console.log('worker ' + worker.process.pid + ' died');
+        if (!signal) {
+            console.log('worker ' + worker.process.pid + ' died');
+            cluster.fork();
+        }
     });
 } else {
     // Workers can share any TCP connection
