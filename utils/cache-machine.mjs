@@ -18,9 +18,18 @@ function pauseCache() {
 
 async function fetchWithTimeout(resource, options = {}) {
     const { timeout = 1000 } = options;
-    return fetch(resource, {
+    /*return fetch(resource, {
         ...options,
         signal: AbortSignal.timeout(timeout),
+    });*/
+    return new Promise((resolve, reject) => {
+        const requestTimeout = setTimeout(() => {
+            reject(new Error('The operation was aborted due to timeout'));
+        }, timeout);
+        fetch(resource, options).then(response => {
+            clearTimeout(requestTimeout);
+            resolve(response);
+        }).catch(reject);
     });
 }
 
@@ -132,6 +141,7 @@ const cacheMachine = {
                 },
                 timeout: 10000,
             });
+            console.log('Response cached');
     
             // Log non-200 responses
             if (response.status !== 200) {
