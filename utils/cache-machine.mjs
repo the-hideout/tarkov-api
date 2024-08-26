@@ -1,3 +1,5 @@
+import fetchWithTimeout from './fetch-with-timeout.mjs';
+
 // cache url
 const cacheUrl = 'https://cache.tarkov.dev'
 
@@ -14,24 +16,6 @@ function pauseCache() {
         cachePaused = false;
         cacheFailCount = 0;
     }, 60000);
-}
-
-async function fetchWithTimeout(resource, options = {}) {
-    const { timeout = 1000 } = options;
-    /*return fetch(resource, {
-        ...options,
-        signal: AbortSignal.timeout(timeout),
-    });*/
-    return new Promise((resolve, reject) => {
-        const requestTimeout = setTimeout(() => {
-            reject(new Error('The operation was aborted due to timeout'));
-        }, timeout);
-        fetch(resource, options).then(response => {
-            resolve(response);
-        }).catch(reject).finally(() => {
-            clearTimeout(requestTimeout);
-        });
-    });
 }
 
 // Helper function to create a hash from a string

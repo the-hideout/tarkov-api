@@ -24,6 +24,7 @@ import schema from './schema.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
 import graphQLOptions from './utils/graphql-options.mjs';
 import cacheMachine from './utils/cache-machine.mjs';
+import fetchWithTimeout from './utils/fetch-with-timeout.mjs';
 
 import { getNightbotResponse } from './plugins/plugin-nightbot.mjs';
 import { getTwitchResponse } from './plugins/plugin-twitch.mjs';
@@ -112,7 +113,7 @@ async function graphqlHandler(request, env, ctx) {
     if (env.USE_ORIGIN === 'true') {
         try {
             const serverUrl = `https://api.tarkov.dev${graphQLOptions.baseEndpoint}`;
-            const queryResult = await fetch(serverUrl, {
+            const queryResult = await fetchWithTimeout(serverUrl, {
                 method: request.method,
                 body: JSON.stringify({
                     query,
@@ -122,6 +123,7 @@ async function graphqlHandler(request, env, ctx) {
                     'Content-Type': 'application/json',
                     'cache-check-complete': 'true',
                 },
+                timeout: 20000
             });
             if (queryResult.status !== 200) {
                 throw new Error(`${queryResult.status} ${await queryResult.text()}`);
