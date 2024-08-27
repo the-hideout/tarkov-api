@@ -1,3 +1,5 @@
+import fetchWithTimeout from './fetch-with-timeout.mjs';
+
 import * as Sentry from '@sentry/node';
 
 // cache url
@@ -16,14 +18,6 @@ function pauseCache() {
         cachePaused = false;
         cacheFailCount = 0;
     }, 60000);
-}
-
-async function fetchWithTimeout(resource, options = {}) {
-    const { timeout = 1000 } = options;
-    return fetch(resource, {
-        ...options,
-        signal: AbortSignal.timeout(timeout),
-    });
 }
 
 // Helper function to create a hash from a string
@@ -137,6 +131,7 @@ const cacheMachine = {
                 },
                 timeout: 10000,
             });
+            console.log('Response cached');
     
             // Log non-200 responses
             if (response.status !== 200) {

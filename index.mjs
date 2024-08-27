@@ -24,6 +24,7 @@ import schema from './schema.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
 import graphQLOptions from './utils/graphql-options.mjs';
 import cacheMachine from './utils/cache-machine.mjs';
+import fetchWithTimeout from './utils/fetch-with-timeout.mjs';
 
 import { getNightbotResponse } from './plugins/plugin-nightbot.mjs';
 import { getTwitchResponse } from './plugins/plugin-twitch.mjs';
@@ -32,8 +33,7 @@ let dataAPI;
 
 async function graphqlHandler(request, env, ctx) {
     const url = new URL(request.url);
-    let query = false;
-    let variables = false;
+    let query, variables;
 
     if (request.method === 'POST') {
         try {
@@ -92,7 +92,7 @@ async function graphqlHandler(request, env, ctx) {
     let key;
     // Check the cache service for data first - If cached data exists, return it
     // we don't check the cache if we're the http server because the worker already did
-    if (env.SKIP_CACHE !== 'true' && !env.CLOUDFLARE_TOKEN) {
+    if (env.SKIP_CACHE !== 'true' && env.SKIP_CACHE_CHECK !== 'true' && !env.CLOUDFLARE_TOKEN) {
         key = await cacheMachine.createKey(env, query, variables, specialCache);
         const cachedResponse = await cacheMachine.get(env, {key});
         if (cachedResponse) {
@@ -112,7 +112,7 @@ async function graphqlHandler(request, env, ctx) {
     if (env.USE_ORIGIN === 'true') {
         try {
             const serverUrl = `https://api.tarkov.dev${graphQLOptions.baseEndpoint}`;
-            const queryResult = await fetch(serverUrl, {
+            const queryResult = await fetchWithTimeout(serverUrl, {
                 method: request.method,
                 body: JSON.stringify({
                     query,
@@ -122,6 +122,7 @@ async function graphqlHandler(request, env, ctx) {
                     'Content-Type': 'application/json',
                     'cache-check-complete': 'true',
                 },
+                timeout: 20000
             });
             if (queryResult.status !== 200) {
                 throw new Error(`${queryResult.status} ${await queryResult.text()}`);
@@ -174,8 +175,12 @@ async function graphqlHandler(request, env, ctx) {
     const response = new Response(body, responseOptions);
 
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
+        key = key ?? await cacheMachine.createKey(env, query, variables, specialCache);
+        ctx.waitUntil(cacheMachine.put(env, body, {key}));
         // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
-        ctx.waitUntil(cacheMachine.put(env, body, {key, query, variables, ttl, specialCache}));
+        /*const safePut = await cacheMachine.safePut(env, body, {key});
+        console.log(safePut);
+        ctx.waitUntil(safePut.fetchRequest);*/
     }
 
     return response;

@@ -10,7 +10,6 @@ class WorkerKV {
         this.refreshCooldown = 1000 * 60;
         this.dataSource = dataSource;
         this.gameModes = ['regular'];
-        this.requestCache = {};
     }
 
     async getCache(context, info, forceRegular) {
@@ -19,15 +18,6 @@ class WorkerKV {
         let requestKv = this.kvName;
         if (gameMode !== 'regular' && !forceRegular) {
             requestKv += `_${gameMode}`;
-        }
-        if (!this.requestCache[requestId]) {
-            this.requestCache[requestId] = {
-                created: new Date(),
-            };
-        }
-        if (this.requestCache[requestId][gameMode]) {
-            this.dataSource.setKvUsedForRequest(requestKv, requestId);
-            return {cache: this.requestCache[requestId][gameMode], gameMode};
         }
         let dataNeedsRefresh = false;
         if (this.dataExpires[gameMode]) {
@@ -38,15 +28,7 @@ class WorkerKV {
         if (this.cache[gameMode] && !dataNeedsRefresh) {
             //console.log(`${requestKv} is fresh; not refreshing`);
             this.dataSource.setKvUsedForRequest(requestKv, requestId);
-            this.requestCache[requestId][gameMode] = this.cache[gameMode];
             return {cache: this.cache[gameMode], gameMode};
-        }
-        if (this.cache[gameMode]) {
-            console.log(`${requestKv} is stale; re-loading`);
-            this.cache[gameMode] = false;
-            this.loading[gameMode] = false;
-        } else {
-            //console.log(`${requestKv} loading`);
         }
         if (!this.loadingPromises[gameMode]) {
             this.loadingPromises[gameMode] = {};
@@ -69,7 +51,6 @@ class WorkerKV {
                         console.log(`${requestKv} load: ${new Date() - startLoad} ms (secondary)`);
                         delete this.loadingPromises[gameMode][requestId];
                         this.dataSource.setKvUsedForRequest(requestKv, requestId);
-                        this.requestCache[requestId][gameMode] = this.cache[gameMode];
                         return resolve({cache: this.cache[gameMode], gameMode});
                     }
                     if (loadingTimedOut) {
@@ -82,6 +63,11 @@ class WorkerKV {
                 }, 100);
             });
             return this.loadingPromises[gameMode][requestId];
+        }
+        if (this.cache[gameMode]) {
+            console.log(`${requestKv} is stale; re-loading`);
+        } else {
+            //console.log(`${requestKv} loading`);
         }
         this.loading[gameMode] = true;
         this.loadingPromises[gameMode][requestId] = new Promise((resolve, reject) => {
@@ -114,7 +100,6 @@ class WorkerKV {
                 this.loading[gameMode] = false;
                 delete this.loadingPromises[gameMode][requestId];
                 this.postLoad({cache: this.cache[gameMode], gameMode});
-                this.requestCache[requestId][gameMode] = this.cache[gameMode];
                 resolve({cache: this.cache[gameMode], gameMode});
             }).catch(error => {
                 this.loading[gameMode] = false;
@@ -138,7 +123,7 @@ class WorkerKV {
         }
         const lang = context.util.getLang(info, context);
         const gameMode = this.getGameMode(context, info);
-        const cache = this.requestCache[context.requestId][gameMode];
+        const cache = this.cache[gameMode];
         const getTranslation = (k) => {
             if (cache?.locale[lang] && typeof cache.locale[lang][k] !== 'undefined') {
                 return cache.locale[lang][k];
@@ -156,10 +141,6 @@ class WorkerKV {
             return key.map(k => getTranslation(k)).filter(Boolean);
         }
         return getTranslation(key);
-    }
-
-    clearRequestCache(requestId) {
-        delete this.requestCache[requestId];
     }
 
     postLoad() { /* some KVs may require initial processing after retrieval */ }
