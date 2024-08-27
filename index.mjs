@@ -33,8 +33,7 @@ let dataAPI;
 
 async function graphqlHandler(request, env, ctx) {
     const url = new URL(request.url);
-    let query = false;
-    let variables = false;
+    let query, variables;
 
     if (request.method === 'POST') {
         try {
