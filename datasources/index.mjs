@@ -111,9 +111,6 @@ class DataSource {
 
     clearRequestData(requestId) {
         delete this.requests[requestId];
-        for (const worker of Object.values(this.worker)) {
-            worker.clearRequestCache(requestId);
-        }
     }
 }
 
