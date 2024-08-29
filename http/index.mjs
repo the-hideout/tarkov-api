@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import cluster from 'node:cluster';
-import os from 'node:os';
+import { availableParallelism } from 'node:os';
 
 import 'dotenv/config';
 
@@ -9,7 +9,7 @@ import getEnv from './env-binding.mjs';
 import cacheMachine from '../utils/cache-machine.mjs';
 
 const port = process.env.PORT ?? 8788;
-const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1));
+const workerCount = parseInt(process.env.WORKERS ?? String(Math.max(availableParallelism() - 1, 1)));
 
 /*process.on('uncaughtException', (error) => {
     console.error('Uncaught Exception', error.stack);
@@ -118,7 +118,7 @@ if (cluster.isPrimary && workerCount > 0) {
             }
             if (response) {
                 const worker = cluster.workers[id];
-                if (worker?.isConnected()) {
+                if (worker && worker.isConnected() && !worker.isDead()) {
                     cluster.workers[id].send(response);
                 }
             }

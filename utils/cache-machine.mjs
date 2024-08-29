@@ -6,16 +6,24 @@ const cacheUrl = 'https://cache.tarkov.dev'
 let cacheFailCount = 0;
 let cachePaused = false;
 
-function pauseCache() {
+function cacheIsPaused() {
+    if (!cachePaused) {
+        return false;
+    }
+    const coolDownExpired = new Date() - cachePaused > 60000;
+    if (coolDownExpired) {
+        cachePaused = false;
+        return false;
+    }
+    return true;
+}
+
+function cacheRequestFail() {
     cacheFailCount++;
-    if (cacheFailCount <= 4) {
+    if (cacheFailCount <= 4 || cacheIsPaused()) {
         return;
     }
-    cachePaused = true;
-    setTimeout(() => {
-        cachePaused = false;
-        cacheFailCount = 0;
-    }, 60000);
+    cachePaused = new Date();
 }
 
 // Helper function to create a hash from a string
@@ -52,7 +60,7 @@ const cacheMachine = {
                 console.warn('env.CACHE_BASIC_AUTH is not set; skipping cache check');
                 return false;
             }
-            if (cachePaused) {
+            if (cacheIsPaused()) {
                 console.warn('Cache paused; skipping cache check');
                 return false;
             }
@@ -73,6 +81,7 @@ const cacheMachine = {
                 }, 
             });
             cacheFailCount = 0;
+            response.body.cancel();
             if (response.status === 200) {
                 return await response.json();
             } else if (response.status !== 404) {
@@ -83,7 +92,7 @@ const cacheMachine = {
         } catch (error) {
             if (error.message === 'The operation was aborted due to timeout') {
                 console.warn('Checking cache timed out');
-                pauseCache();
+                cacheRequestFail();
                 return false;
             }
             console.error('checkCache error: ' + error.message);
@@ -100,7 +109,7 @@ const cacheMachine = {
                 console.warn('env.CACHE_BASIC_AUTH is not set; skipping cache put');
                 return false;
             }
-            if (cachePaused) {
+            if (cacheIsPaused()) {
                 console.warn('Cache paused; skipping cache update');
                 return false;
             }
@@ -130,6 +139,7 @@ const cacheMachine = {
     
             // Log non-200 responses
             if (response.status !== 200) {
+                response.body.cancel();
                 console.error(`failed to write to cache: ${response.status}`);
                 return false
             }
@@ -138,7 +148,7 @@ const cacheMachine = {
         } catch (error) {
             if (error.message === 'The operation was aborted due to timeout') {
                 console.warn('Updating cache timed out');
-                pauseCache();
+                cacheRequestFail();
                 return false;
             }
             console.error('updateCache error: ' + error.message);

@@ -177,10 +177,6 @@ async function graphqlHandler(request, env, ctx) {
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
         key = key ?? await cacheMachine.createKey(env, query, variables, specialCache);
         ctx.waitUntil(cacheMachine.put(env, body, {key}));
-        // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
-        /*const safePut = await cacheMachine.safePut(env, body, {key});
-        console.log(safePut);
-        ctx.waitUntil(safePut.fetchRequest);*/
     }
 
     return response;
