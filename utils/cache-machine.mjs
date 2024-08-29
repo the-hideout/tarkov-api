@@ -81,12 +81,12 @@ const cacheMachine = {
                 }, 
             });
             cacheFailCount = 0;
-            response.body.cancel();
             if (response.status === 200) {
                 return await response.json();
             } else if (response.status !== 404) {
                 console.error(`failed to read from cache: ${response.status}`);
             }
+            response.body.cancel();
     
             return false
         } catch (error) {
