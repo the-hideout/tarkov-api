@@ -40,12 +40,6 @@ class WorkerKVSplit {
             return result;
         });
     }
-
-    clearRequestCache(requestId) {
-        for (const worker of Object.values(this.kvs)) {
-            worker.clearRequestCache(requestId);
-        }
-    }
 }
 
 export default WorkerKVSplit;
