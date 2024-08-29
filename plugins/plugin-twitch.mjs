@@ -10,6 +10,12 @@ export async function getTwitchResponse(env) {
                 'Client-ID': env.TWITCH_CLIENT_ID,
             },
         });
+        
+        if (response.status !== 200) {
+            response.body.cancel();
+            throw new Error(`Invalid response code ${response.status}`);
+        }
+
         const twitchJson = JSON.stringify(await response.json(), null, 2);
 
         return new Response(twitchJson, {
