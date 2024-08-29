@@ -159,7 +159,9 @@ async function graphqlHandler(request, env, ctx) {
         result.warnings.push(...context.warnings);
     }
 
-    if (specialCache === 'application/json') {
+    if (result.errors?.some(err => err.message === 'Unexpected error.')) {
+        ttl = 0;
+    } else if (specialCache === 'application/json') {
         if (!result.warnings) {
             result = Object.assign({warnings: []}, result);
         }
