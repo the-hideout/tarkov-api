@@ -23,6 +23,25 @@ if (!cluster.isPrimary) {
     });
 }
 
+async function messageParentProcess(message) {
+    return new Promise(async (resolve, reject) => {
+        const messageId = uuidv4();
+        const responseTimeout = setTimeout(() => {
+            emitter.off(messageId, messageResponseHandler);
+            reject(new Error('Response from primary process timed out'));
+        }, message.timeout ?? 10000);
+        const messageResponseHandler = (response) => {
+            clearTimeout(responseTimeout);
+            if (response.error) {
+                return reject(new Error(response.error));
+            }
+            resolve(response.data);
+        }
+        emitter.once(messageId, messageResponseHandler);
+        process.send({ ...message, id: messageId });
+    });
+}
+
 async function getDataPrimary(kvName, format) {
     const namespaceId = process.env.ENVIRONMENT === 'production' ? productionNamespaceId : devNameSpaceID;
     const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${kvName}`;
@@ -49,16 +68,7 @@ async function getDataPrimary(kvName, format) {
 }
 
 async function getDataWorker(kvName, format) {
-    return new Promise((resolve, reject) => {
-        const messageId = uuidv4();
-        emitter.once(messageId, (message) => {
-            if (message.error) {
-                return reject(new Error(message.error));
-            }
-            resolve(message.data);
-        });
-        process.send({action: 'getKv', kvName, id: messageId});
-    });
+    return messageParentProcess({action: 'getKv', kvName});
 }
 
 const DATA_CACHE = {
@@ -75,18 +85,12 @@ const DATA_CACHE = {
     },
 };
 
-const putCacheWorker = (env, body, options) => {
-    return new Promise(async (resolve, reject) => {
-        const messageId = uuidv4();
-        emitter.once(messageId, (message) => {
-            if (message.error) {
-                return reject(new Error(message.error));
-            }
-            resolve(message.data);
-        });
-        const key = await cacheMachine.createKey(env, options.query, options.variables, options.specialCache);
-        process.send({action: 'cacheResponse', key, body, ttl: options.ttl, id: messageId});
+const putCacheWorker = async (env, body, options) => {
+    const key = await cacheMachine.createKey(env, options.query, options.variables, options.specialCache);
+    messageParentProcess({action: 'cacheResponse', key, body, ttl: options.ttl}).catch(error => {
+        console.error(`Error updating cache`, error);
     });
+    return;
 };
 
 const RESPONSE_CACHE = {
