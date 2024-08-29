@@ -112,7 +112,11 @@ if (cluster.isPrimary && workerCount > 0) {
         }
         if (response) {
             if (worker.isConnected() && !worker.isDead()) {
-                worker.send(response);
+                try {
+                    worker.send(response);
+                } catch (error) {
+                    console.error(`Error sending worker ${message.action} message response`, error);
+                }
             }
         }
     });
