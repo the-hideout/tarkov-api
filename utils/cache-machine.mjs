@@ -136,10 +136,10 @@ const cacheMachine = {
                 timeout: 10000,
             });
             console.log('Response cached');
+            response.body.cancel();
     
             // Log non-200 responses
             if (response.status !== 200) {
-                response.body.cancel();
                 console.error(`failed to write to cache: ${response.status}`);
                 return false
             }
