@@ -14,8 +14,8 @@ export default function useCacheMachine(env) {
         async onParams({params, request, setParams, setResult, fetchAPI}) {
             console.log(request.requestId);
             request.params = params;
-            if (env.SKIP_CACHE === 'true') {
-                console.log(`Skipping cache check due to SKIP_CACHE`);
+            if (env.SKIP_CACHE === 'true' || env.SKIP_CACHE_CHECK === 'true') {
+                console.log(`Skipping cache check due to SKIP_CACHE or SKIP_CACHE_CHECK`);
                 return;
             }
             if (request.headers.has('cache-check-complete')) {
@@ -107,7 +107,7 @@ export default function useCacheMachine(env) {
                 }
             }
             console.log(`kvs used in request: ${request.data?.requests[request.requestId]?.kvUsed.join(', ') ?? 'none'}`);
-            request.data.clearRequestData(request.requestId);
+            request.data?.clearRequestData(request.requestId);
             delete request.requestId;
             setResult(result);
             console.log('generated graphql response');

@@ -70,41 +70,39 @@ class WorkerKV {
             //console.log(`${requestKv} loading`);
         }
         this.loading[gameMode] = true;
-        this.loadingPromises[gameMode][requestId] = new Promise((resolve, reject) => {
-            const startLoad = new Date();
-            this.dataSource.env.DATA_CACHE.getWithMetadata(requestKv, 'text').then(response => {
-                console.log(`${requestKv} load: ${new Date() - startLoad} ms`);
-                const metadata = response.metadata;
-                let responseValue = response.value;
-                if (metadata && metadata.compression) {
-                    return reject(new Error(`${metadata.compression} compression is not supported`));
-                }
-                const parsedValue = JSON.parse(responseValue);
-                if (!parsedValue && requestKv !== this.kvName) {
-                    console.warn(`${requestKv} data not found; falling back to ${this.kvName}`);
-                    this.loading[gameMode] = false;
-                    delete this.loadingPromises[gameMode][requestId];
-                    return resolve(this.getCache(context, info, true));
-                }
-                this.cache[gameMode] = parsedValue;
-                let newDataExpires = false;
-                if (this.cache[gameMode]?.expiration) {
-                    newDataExpires = new Date(this.cache[gameMode].expiration).valueOf();
-                }
-                if (newDataExpires && this.dataExpires === newDataExpires) {
-                    console.log(`${requestKv} is still stale after re-load`);
-                }
-                this.lastRefresh[gameMode] = new Date();
-                this.dataExpires[gameMode] = newDataExpires;
-                this.dataSource.setKvLoadedForRequest(requestKv, requestId);
+        const startLoad = new Date();
+        this.loadingPromises[gameMode][requestId] = this.dataSource.env.DATA_CACHE.getWithMetadata(requestKv, 'text').then(response => {
+            console.log(`${requestKv} load: ${new Date() - startLoad} ms`);
+            const metadata = response.metadata;
+            let responseValue = response.value;
+            if (metadata && metadata.compression) {
+                return Promise.reject(new Error(`${metadata.compression} compression is not supported`));
+            }
+            const parsedValue = JSON.parse(responseValue);
+            if (!parsedValue && requestKv !== this.kvName) {
+                console.warn(`${requestKv} data not found; falling back to ${this.kvName}`);
                 this.loading[gameMode] = false;
                 delete this.loadingPromises[gameMode][requestId];
-                this.postLoad({cache: this.cache[gameMode], gameMode});
-                resolve({cache: this.cache[gameMode], gameMode});
-            }).catch(error => {
-                this.loading[gameMode] = false;
-                reject(error);
-            });
+                return this.getCache(context, info, true);
+            }
+            this.cache[gameMode] = parsedValue;
+            let newDataExpires = false;
+            if (this.cache[gameMode]?.expiration) {
+                newDataExpires = new Date(this.cache[gameMode].expiration).valueOf();
+            }
+            if (newDataExpires && this.dataExpires === newDataExpires) {
+                console.log(`${requestKv} is still stale after re-load`);
+            }
+            this.lastRefresh[gameMode] = new Date();
+            this.dataExpires[gameMode] = newDataExpires;
+            this.dataSource.setKvLoadedForRequest(requestKv, requestId);
+            this.loading[gameMode] = false;
+            delete this.loadingPromises[gameMode][requestId];
+            this.postLoad({cache: this.cache[gameMode], gameMode});
+            return {cache: this.cache[gameMode], gameMode};
+        }).catch(error => {
+            this.loading[gameMode] = false;
+            return Promise.reject(error);
         });
         return this.loadingPromises[gameMode][requestId];
     }

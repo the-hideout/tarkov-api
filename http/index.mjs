@@ -1,5 +1,5 @@
 import cluster from 'node:cluster';
-import os from 'node:os';
+import { availableParallelism } from 'node:os';
 import * as Sentry from "@sentry/node";
 import "./instrument.mjs";
 import { createServer } from 'node:http';
@@ -11,7 +11,7 @@ import getEnv from './env-binding.mjs';
 import cacheMachine from '../utils/cache-machine.mjs';
 
 const port = process.env.PORT ?? 8788;
-const workerCount = parseInt(process.env.WORKERS ?? String(os.cpus().length - 1));
+const workerCount = parseInt(process.env.WORKERS ?? String(Math.max(availableParallelism() - 1, 1)));
 
 /*process.on('uncaughtException', (error) => {
     console.error('Uncaught Exception', error.stack);
@@ -66,71 +66,62 @@ if (cluster.isPrimary && workerCount > 0) {
         }
     };
 
-    console.log(`Starting ${workerCount} workers`);
-    for (let i = 0; i < workerCount; i++) {
-        cluster.fork();
-    }
-
-    for (const id in cluster.workers) {
-        cluster.workers[id].on('message', async (message) => {
-            // Add worker message span
-            const rcvWorkerMsgSpan = Sentry.startInactiveSpan({ name: "Receive worker message" });
-
-            //console.log(`message from worker ${id}:`, message);
-            let response = false;
-            if (message.action === 'getKv') {
-                response = {
-                    action: 'kvData',
-                    kvName: message.kvName,
-                    id: message.id,
-                };
-                try {
-                    if (kvStore[message.kvName]) {
-                        response.data = JSON.stringify(kvStore[message.kvName]);
-                    } else if (kvLoading[message.kvName]) {
-                        response.data = JSON.stringify(await kvLoading[message.kvName]);
-                    } else {
-                        response.data = JSON.stringify(await getKv(message.kvName));
-                    }
-                } catch (error) {
-                    response.error = error.message;
+    cluster.on('message', async (worker, message) => {
+        // Add worker message span
+        const rcvWorkerMsgSpan = Sentry.startInactiveSpan({ name: "Receive worker message" });
+        //console.log(`message from worker ${id}:`, message);
+        let response = false;
+        if (message.action === 'getKv') {
+            response = {
+                action: 'kvData',
+                kvName: message.kvName,
+                id: message.id,
+            };
+            try {
+                if (typeof kvStore[message.kvName] !== 'undefined') {
+                    response.data = JSON.stringify(kvStore[message.kvName]);
+                } else if (kvLoading[message.kvName]) {
+                    response.data = JSON.stringify(await kvLoading[message.kvName]);
+                } else {
+                    response.data = JSON.stringify(await getKv(message.kvName));
                 }
+            } catch (error) {
+                response.error = error.message;
             }
-            if (message.action === 'cacheResponse') {
-                response = {
-                    id: message.id,
-                    data: false,
-                };
-                try {
-                    if (cachePending[message.key]) {
-                        response.data = await cachePending[message.key];
-                    } else {
-                        let cachePutCooldown = message.ttl ? message.ttl * 1000 : msFiveMinutes;
-                        cachePending[message.key] = cacheMachine.put(process.env, message.body, {key: message.key, ttl: message.ttl}).catch(error => {
-                            cachePutCooldown = 10000;
-                            return Promise.reject(error);
-                        }).finally(() => {
-                            setTimeout(() => {
-                                delete cachePending[message.key];
-                            }, cachePutCooldown);
-                        });
-                        response.data = await cachePending[message.key];
-                    }
-                } catch (error) {
-                    response.error = error.message;
+        }
+        if (message.action === 'cacheResponse') {
+            response = {
+                id: message.id,
+                data: false,
+            };
+            try {
+                if (cachePending[message.key]) {
+                    response.data = await cachePending[message.key];
+                } else {
+                    let cachePutCooldown = message.ttl ? message.ttl * 1000 : msFiveMinutes;
+                    cachePending[message.key] = cacheMachine.put(process.env, message.body, {key: message.key, ttl: message.ttl}).catch(error => {
+                        cachePutCooldown = 10000;
+                        return Promise.reject(error);
+                    }).finally(() => {
+                        setTimeout(() => {
+                            delete cachePending[message.key];
+                        }, cachePutCooldown);
+                    });
+                    response.data = await cachePending[message.key];
                 }
-                
+            } catch (error) {
+                response.error = error.message;
             }
-            if (response) {
-                const worker = cluster.workers[id];
-                if (worker?.isConnected()) {
-                    cluster.workers[id].send(response);
-                }
+            
+        }
+        if (response) {
+            if (worker.isConnected() && !worker.isDead()) {
+                worker.send(response);
             }
-            // End the span
-            rcvWorkerMsgSpan.end();
-        });
-    }
+        }
+        // End the span
+        rcvWorkerMsgSpan.end();
+    });
 
     cluster.on('exit', function (worker, code, signal) {
         if (!signal) {
@@ -138,6 +129,11 @@ if (cluster.isPrimary && workerCount > 0) {
             cluster.fork();
         }
     });
+
+    console.log(`Starting ${workerCount} workers`);
+    for (let i = 0; i < workerCount; i++) {
+        cluster.fork();
+    }
 } else {
     // Workers can share any TCP connection
     const yoga = await getYoga(getEnv());
