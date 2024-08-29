@@ -64,66 +64,58 @@ if (cluster.isPrimary && workerCount > 0) {
         }
     };
 
-    console.log(`Starting ${workerCount} workers`);
-    for (let i = 0; i < workerCount; i++) {
-        cluster.fork();
-    }
-
-    for (const id in cluster.workers) {
-        cluster.workers[id].on('message', async (message) => {
-            //console.log(`message from worker ${id}:`, message);
-            let response = false;
-            if (message.action === 'getKv') {
-                response = {
-                    action: 'kvData',
-                    kvName: message.kvName,
-                    id: message.id,
-                };
-                try {
-                    if (typeof kvStore[message.kvName] !== 'undefined') {
-                        response.data = JSON.stringify(kvStore[message.kvName]);
-                    } else if (kvLoading[message.kvName]) {
-                        response.data = JSON.stringify(await kvLoading[message.kvName]);
-                    } else {
-                        response.data = JSON.stringify(await getKv(message.kvName));
-                    }
-                } catch (error) {
-                    response.error = error.message;
+    cluster.on('message', async (worker, message) => {
+        //console.log(`message from worker ${id}:`, message);
+        let response = false;
+        if (message.action === 'getKv') {
+            response = {
+                action: 'kvData',
+                kvName: message.kvName,
+                id: message.id,
+            };
+            try {
+                if (typeof kvStore[message.kvName] !== 'undefined') {
+                    response.data = JSON.stringify(kvStore[message.kvName]);
+                } else if (kvLoading[message.kvName]) {
+                    response.data = JSON.stringify(await kvLoading[message.kvName]);
+                } else {
+                    response.data = JSON.stringify(await getKv(message.kvName));
                 }
+            } catch (error) {
+                response.error = error.message;
             }
-            if (message.action === 'cacheResponse') {
-                response = {
-                    id: message.id,
-                    data: false,
-                };
-                try {
-                    if (cachePending[message.key]) {
-                        response.data = await cachePending[message.key];
-                    } else {
-                        let cachePutCooldown = message.ttl ? message.ttl * 1000 : msFiveMinutes;
-                        cachePending[message.key] = cacheMachine.put(process.env, message.body, {key: message.key, ttl: message.ttl}).catch(error => {
-                            cachePutCooldown = 10000;
-                            return Promise.reject(error);
-                        }).finally(() => {
-                            setTimeout(() => {
-                                delete cachePending[message.key];
-                            }, cachePutCooldown);
-                        });
-                        response.data = await cachePending[message.key];
-                    }
-                } catch (error) {
-                    response.error = error.message;
+        }
+        if (message.action === 'cacheResponse') {
+            response = {
+                id: message.id,
+                data: false,
+            };
+            try {
+                if (cachePending[message.key]) {
+                    response.data = await cachePending[message.key];
+                } else {
+                    let cachePutCooldown = message.ttl ? message.ttl * 1000 : msFiveMinutes;
+                    cachePending[message.key] = cacheMachine.put(process.env, message.body, {key: message.key, ttl: message.ttl}).catch(error => {
+                        cachePutCooldown = 10000;
+                        return Promise.reject(error);
+                    }).finally(() => {
+                        setTimeout(() => {
+                            delete cachePending[message.key];
+                        }, cachePutCooldown);
+                    });
+                    response.data = await cachePending[message.key];
                 }
-                
+            } catch (error) {
+                response.error = error.message;
             }
-            if (response) {
-                const worker = cluster.workers[id];
-                if (worker && worker.isConnected() && !worker.isDead()) {
-                    cluster.workers[id].send(response);
-                }
+            
+        }
+        if (response) {
+            if (worker.isConnected() && !worker.isDead()) {
+                worker.send(response);
             }
-        });
-    }
+        }
+    });
 
     cluster.on('exit', function (worker, code, signal) {
         if (!signal) {
@@ -131,6 +123,11 @@ if (cluster.isPrimary && workerCount > 0) {
             cluster.fork();
         }
     });
+
+    console.log(`Starting ${workerCount} workers`);
+    for (let i = 0; i < workerCount; i++) {
+        cluster.fork();
+    }
 } else {
     // Workers can share any TCP connection
     const yoga = await getYoga(getEnv());
