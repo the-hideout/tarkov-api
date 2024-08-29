@@ -5,10 +5,12 @@ function fetchWithTimeout(resource, options = {}) {
         signal: AbortSignal.timeout(timeout),
     });*/
     return new Promise((resolve, reject) => {
+        const controller = new AbortController();
         const requestTimeout = setTimeout(() => {
+            controller.abort();
             reject(new Error('The operation was aborted due to timeout'));
         }, timeout);
-        fetch(resource, options).then(response => {
+        fetch(resource, { ...options, signal: controller.signal }).then(response => {
             resolve(response);
         }).catch(reject).finally(() => {
             clearTimeout(requestTimeout);
