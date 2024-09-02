@@ -83,7 +83,11 @@ export default function useCacheMachine(env) {
             let ttl = request.data?.getRequestTtl(request.requestId) ?? 60 * 5;
 
             const sCache = specialCache(request);
-            if (sCache === 'application/json') {
+            if (result.errors?.some(err => err.message === 'Unexpected error.')) {
+                ttl = 0;
+            } else if (result.errors?.some(err => err.message.startsWith('Syntax Error'))) {
+                ttl = 1800;
+            } else if (sCache === 'application/json') {
                 if (!result.warnings) {
                     result = Object.assign({warnings: []}, result);
                 }
