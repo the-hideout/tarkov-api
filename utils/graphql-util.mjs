@@ -56,7 +56,7 @@ const graphqlUtil =  {
             for (const arg of selection.arguments) {
                 if (arg.name.value === argumentName) {
                     if (arg.value.kind === 'Variable') {
-                        argValue = info.variableValues[argumentName];
+                        argValue = info.variableValues[arg.value.name.value];
                     } else {
                         argValue = arg.value.value;
                     }
