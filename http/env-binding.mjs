@@ -6,11 +6,7 @@ import { EventEmitter } from 'node:events';
 import { v4 as uuidv4} from 'uuid';
 
 import cacheMachine from '../utils/cache-machine.mjs';
-
-const accountId = '424ad63426a1ae47d559873f929eb9fc';
-
-const productionNamespaceId = '2e6feba88a9e4097b6d2209191ed4ae5';
-const devNameSpaceID = '17fd725f04984e408d4a70b37c817171';
+import cloudflareKv from './cloudflare-kv.mjs';
 
 const emitter = new EventEmitter();
 
@@ -43,15 +39,7 @@ async function messageParentProcess(message) {
 }
 
 async function getDataPrimary(kvName, format) {
-    const namespaceId = process.env.ENVIRONMENT === 'production' ? productionNamespaceId : devNameSpaceID;
-    const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${kvName}`;
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.CLOUDFLARE_TOKEN}`,
-        },
-    });
+    const response = await cloudflareKv.get(kvName);
     if (response.status === 404) {
         return null;
     }
@@ -68,7 +56,7 @@ async function getDataPrimary(kvName, format) {
 }
 
 async function getDataWorker(kvName, format) {
-    return messageParentProcess({action: 'getKv', kvName});
+    return messageParentProcess({action: 'getKv', kvName, timeout: 25000});
 }
 
 const DATA_CACHE = {

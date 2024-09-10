@@ -18,16 +18,16 @@
     "author": "Oskar Risberg <oskar.risberg@stendahls.se> + The-Hideout team",
     "license": "ISC",
     "devDependencies": {
-        "newman": "^6.1.2",
+        "newman": "^6.2.1",
         "prettier": "^3.3.3",
-        "wrangler": "^3.72.2"
+        "wrangler": "^3.73.0"
     },
     "dependencies": {
-        "@graphql-tools/merge": "9.0.4",
-        "@graphql-tools/schema": "10.0.4",
+        "@graphql-tools/merge": "9.0.7",
+        "@graphql-tools/schema": "10.0.6",
         "@sentry/node": "^8.25.0",
         "@sentry/profiling-node": "^8.25.0",
-        "graphql-yoga": "^5.6.3",
+        "graphql-yoga": "^5.7.0",
         "uuid": "^10.0.0"
     }
 }
