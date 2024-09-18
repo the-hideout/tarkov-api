@@ -16,7 +16,7 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
         q = url.searchParams.get('q');
         lang = url.searchParams.get('lang') ?? 'en';
         uid = url.searchParams.get('uid');
-        tags = url.searchParams.get('tags')?.split(',') ?? [];
+        tags = url.searchParams.get('tags')?.split(',');
         sort = url.searchParams.get('sort');
         sort_direction = url.searchParams.get('sort_direction');
     } else if (request.method.toUpperCase() === 'POST') {
@@ -24,7 +24,7 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
         q = body.q;
         lang = body.lang ?? 'en';
         uid = body.uid;
-        tags = body.tags?.split(',') ?? [];
+        tags = body.tags?.split(',');
         sort = body.sort;
         sort_direction = body.sort_direction;
     } else {
