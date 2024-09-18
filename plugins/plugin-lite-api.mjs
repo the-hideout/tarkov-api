@@ -57,7 +57,6 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
 
     const info = graphqlUtil.getGenericInfo(lang, gameMode);
 
-    const traders = await data.worker.trader.getList(context, info);
     function toLiteApiItem(item) {
         const bestTraderSell = item.traderPrices.reduce((best, current) => {
             if (!best || current.priceRUB > best.priceRUB) {
@@ -65,7 +64,6 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
             }
             return best;
         }, undefined);
-        const bestTrader = bestTraderSell ? traders.find(t => t.id === bestTraderSell.trader) : undefined;
         return {
             uid: item.id,
             name: data.worker.item.getLocale(item.name, context, info),
@@ -75,7 +73,7 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
             basePrice: item.basePrice,
             avg24hPrice: item.avg24hPrice,
             //avg7daysPrice: null,
-            traderName: bestTrader ? data.worker.trader.getLocale(bestTrader.name, context, info) : null,
+            traderName: bestTraderSell ? bestTraderSell.name : null,
             traderPrice: bestTraderSell ? bestTraderSell.price : null,
             traderPriceCur: bestTraderSell ? currencyMap[bestTraderSell.currency] : null,
             updated: item.updated,
@@ -90,15 +88,23 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
             img512: item.image512pxLink,
             image8x: item.image8xLink,
             bsgId: item.id,
-            isFunctional: !item.types.includes('gun'),
+            isFunctional: true, // !item.types.includes('gun'),
             reference: 'https://tarkov.dev',
         };
     }
 
     let items, ttl;
+    const responseOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
     try {
         if (endpoint.startsWith('items')) {
             items = await data.worker.item.getAllItems(context, info);
+            if (endpoint.endsWith('/download')) {
+                responseOptions.headers['Content-Disposition'] = 'attachment; filename="items.json"';
+            }
         }
         if (!items && endpoint.startsWith('item')) {
             if (!q) {
@@ -125,15 +131,13 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
             serverContext.waitUntil(putCachePromise);
         }
     }
-    return new Response(responseBody)
+
+    return new Response(responseBody, responseOptions);
 }
 
 export default function useLiteApi(env) {
     return {
         async onRequest({ request, url, endResponse, serverContext, fetchAPI }) {
-            request.headers.forEach((hVal, hKey) => {
-                console.log(hKey, hVal);
-            });
             if (!url.pathname.match(liteApiPathRegex)) {
                 return;
             }
