@@ -199,7 +199,7 @@ export default {
             // if an origin server is configured, pass the request
             if (env.USE_ORIGIN === 'true') {
                 try {
-                    response = await fetchWithTimeout(request, {
+                    response = await fetchWithTimeout(request.clone(), {
                         headers: {
                             'cache-check-complete': 'true',
                         },
