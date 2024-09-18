@@ -26,8 +26,9 @@ import graphQLOptions from './utils/graphql-options.mjs';
 import cacheMachine from './utils/cache-machine.mjs';
 import fetchWithTimeout from './utils/fetch-with-timeout.mjs';
 
-import { getNightbotResponse } from './plugins/plugin-nightbot.mjs';
+import { getNightbotResponse, nightbotPaths } from './plugins/plugin-nightbot.mjs';
 import { getTwitchResponse } from './plugins/plugin-twitch.mjs';
+import { getLiteApiResponse, liteApiPathRegex } from './plugins/plugin-lite-api.mjs';
 
 let dataAPI;
 
@@ -106,32 +107,6 @@ async function graphqlHandler(request, env, ctx) {
         }
     } else {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
-    }
-
-    // if an HTTP GraphQL server is configured, pass the request to that
-    if (env.USE_ORIGIN === 'true') {
-        try {
-            const serverUrl = `https://api.tarkov.dev${graphQLOptions.baseEndpoint}`;
-            const queryResult = await fetchWithTimeout(serverUrl, {
-                method: request.method,
-                body: JSON.stringify({
-                    query,
-                    variables,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'cache-check-complete': 'true',
-                },
-                timeout: 20000
-            });
-            if (queryResult.status !== 200) {
-                throw new Error(`${queryResult.status} ${await queryResult.text()}`);
-            }
-            console.log('Request served from graphql server');
-            return new Response(await queryResult.text(), responseOptions);
-        } catch (error) {
-            console.error(`Error getting response from GraphQL server: ${error}`);
-        }
     }
 
     const context = graphqlUtil.getDefaultContext(dataAPI, requestId);
@@ -221,18 +196,34 @@ export default {
                 response = graphiql(graphQLOptions);
             }
 
-            if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
-                return fetch(request);
+            // if an origin server is configured, pass the request
+            if (env.USE_ORIGIN === 'true') {
+                try {
+                    response = await fetchWithTimeout(request.clone(), {
+                        headers: {
+                            'cache-check-complete': 'true',
+                        },
+                        timeout: 20000
+                    });
+                    if (response.status !== 200) {
+                        throw new Error(`${response.status} ${await response.text()}`);
+                    }
+                    console.log('Request served from origin server');
+                } catch (error) {
+                    console.error(`Error getting response from origin server: ${error}`);
+                    response = undefined;
+                }
             }
             
-            if (url.pathname === '/webhook/nightbot' ||
-                url.pathname === '/webhook/stream-elements' ||
-                url.pathname === '/webhook/moobot'
-            ) {
+            if (!response && nightbotPaths.includes(url.pathname)) {
                 response = await getNightbotResponse(request, url, env, ctx);
             }
 
-            if (url.pathname === graphQLOptions.baseEndpoint) {
+            if (!response && url.pathname.match(liteApiPathRegex)) {
+                response = await getLiteApiResponse(request, url, env, ctx);
+            }
+
+            if (!response && url.pathname === graphQLOptions.baseEndpoint) {
                 response = await graphqlHandler(request, env, ctx);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
