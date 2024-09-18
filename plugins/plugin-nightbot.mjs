@@ -6,7 +6,7 @@ function capitalize(s) {
     return s && s[0].toUpperCase() + s.slice(1);
 }
 
-const usePaths = [
+export const nightbotPaths = [
     '/webhook/nightbot',
     '/webhook/stream-elements',
     '/webhook/moobot',
@@ -88,7 +88,7 @@ export async function getNightbotResponse(request, url, env, serverContext) {
 export default function useNightbot(env) {
     return {
         async onRequest({ request, url, endResponse, serverContext, fetchAPI }) {
-            if (!usePaths.includes(url.pathname)) {
+            if (!nightbotPaths.includes(url.pathname)) {
                 return;
             }
             const response = await getNightbotResponse(request, url, env, serverContext);

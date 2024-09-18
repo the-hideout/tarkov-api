@@ -13,6 +13,7 @@ import useTwitch from './plugins/plugin-twitch.mjs';
 import useNightbot from './plugins/plugin-nightbot.mjs';
 import usePlayground from './plugins/plugin-playground.mjs';
 import useOptionMethod from './plugins/plugin-option-method.mjs';
+import useLiteApi from './plugins/plugin-lite-api.mjs';
 
 let dataAPI, yoga;
 
@@ -46,6 +47,7 @@ export default async function getYoga(env) {
             useTwitch(env),
             usePlayground(),
             useNightbot(env),
+            useLiteApi(env),
             useHttpServer(env),
             useCacheMachine(env),
         ],
