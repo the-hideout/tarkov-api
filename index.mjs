@@ -181,25 +181,28 @@ export default {
         const requestStart = new Date();
 		const url = new URL(request.url);
 
-        let response;
-
         try {
             if (url.pathname === '/twitch') {
-                response = await getTwitchResponse(env);
+                const response = await getTwitchResponse(env);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
                 }
+                return response;
             }
 
             if (url.pathname === graphQLOptions.playgroundEndpoint) {
                 //response = playground(request, graphQLOptions);
-                response = graphiql(graphQLOptions);
+                return graphiql(graphQLOptions);
+            }
+
+            if (!nightbotPaths.includes(url.pathname) && !url.pathname.match(liteApiPathRegex) && url.pathname !== graphQLOptions.baseEndpoint) {
+                return new Response('Not found', { status: 404 });
             }
 
             // if an origin server is configured, pass the request
             if (env.USE_ORIGIN === 'true') {
                 try {
-                    response = await fetchWithTimeout(request.clone(), {
+                    const response = await fetchWithTimeout(request.clone(), {
                         headers: {
                             'cache-check-complete': 'true',
                         },
@@ -209,35 +212,34 @@ export default {
                         throw new Error(`${response.status} ${await response.text()}`);
                     }
                     console.log('Request served from origin server');
+                    return response;
                 } catch (error) {
                     console.error(`Error getting response from origin server: ${error}`);
-                    response = undefined;
                 }
             }
             
-            if (!response && nightbotPaths.includes(url.pathname)) {
-                response = await getNightbotResponse(request, url, env, ctx);
+            if (nightbotPaths.includes(url.pathname)) {
+                return await getNightbotResponse(request, url, env, ctx);
             }
 
-            if (!response && url.pathname.match(liteApiPathRegex)) {
-                response = await getLiteApiResponse(request, url, env, ctx);
+            if (url.pathname.match(liteApiPathRegex)) {
+                return await getLiteApiResponse(request, url, env, ctx);
             }
 
-            if (!response && url.pathname === graphQLOptions.baseEndpoint) {
-                response = await graphqlHandler(request, env, ctx);
+            if (url.pathname === graphQLOptions.baseEndpoint) {
+                const response = await graphqlHandler(request, env, ctx);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
                 }
+                return response;
             }
 
-            if (!response) {
-                response = new Response('Not found', { status: 404 });
-            }
-            console.log(`Response time: ${new Date() - requestStart} ms`);
-			return response;
+			return new Response('Not found', { status: 404 });
         } catch (err) {
             console.log(err);
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
+        } finally {
+            console.log(`Response time: ${new Date() - requestStart} ms`);
         }
 	},
 };
