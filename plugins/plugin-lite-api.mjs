@@ -11,14 +11,22 @@ const currencyMap = {
 };
 
 export async function getLiteApiResponse(request, url, env, serverContext) {
-    let q, lang;
+    let q, lang, uid, tags, sort, sort_direction;
     if (request.method.toUpperCase() === 'GET') {
         q = url.searchParams.get('q');
         lang = url.searchParams.get('lang') ?? 'en';
+        uid = url.searchParams.get('uid');
+        tags = url.searchParams.get('tags')?.split(',') ?? [];
+        sort = url.searchParams.get('sort');
+        sort_direction = url.searchParams.get('sort_direction');
     } else if (request.method.toUpperCase() === 'POST') {
         const body = await request.json();
         q = body.q;
         lang = body.lang ?? 'en';
+        uid = body.uid;
+        tags = body.tags?.split(',') ?? [];
+        sort = body.sort;
+        sort_direction = body.sort_direction;
     } else {
         return new Response(null, {
             status: 405,
@@ -35,7 +43,7 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
     let key;
     if (env.SKIP_CACHE !== 'true' && !request.headers.has('cache-check-complete')) {
         const requestStart = new Date();
-        key = await cacheMachine.createKey(env, url.pathname, { q, lang, gameMode });
+        key = await cacheMachine.createKey(env, url.pathname, { q, lang, gameMode, uid, tags, sort, sort_direction });
         const cachedResponse = await cacheMachine.get(env, {key});
         if (cachedResponse) {
             // Construct a new response with the cached data
@@ -105,25 +113,46 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
             if (endpoint.endsWith('/download')) {
                 responseOptions.headers['Content-Disposition'] = 'attachment; filename="items.json"';
             }
+            if (tags) {
+                items = await data.worker.item.getItemsByTypes(context, info, tags, items);
+            }
         }
         if (!items && endpoint.startsWith('item')) {
-            if (!q) {
-                throw new Error('No q parameter provided');
+            if (!q && !uid) {
+                throw new Error('The item request requires either a q or uid parameter');
             }
-            items = await data.worker.item.getItemsByName(context, info, q);
+            if (q) {
+                items = await data.worker.item.getItemsByName(context, info, q);
+            } else if (uid) {
+                items = [await data.worker.item.getItem(context, info, uid)];
+            }
         }
         items = items.map(toLiteApiItem);
         ttl = data.getRequestTtl(context.requestId);
     } catch (error) {
-        throw (error);
+        return new Response(error.message, {status: 400});
     } finally {
         data.clearRequestData(context.requestId);
+    }
+    if (sort && items?.length) {
+        items.sort((a, b) => {
+            let aValue = sort_direction === 'desc' ? b[sort] : a[sort];
+            let bValue = sort_direction === 'desc' ? a[sort] : b[sort];
+            if (sort === 'updated') {
+                aValue = new Date(aValue);
+                bValue = new Date(bValue);
+            }
+            if (typeof aValue === 'string') {
+                return aValue.localeCompare(bValue, lang);
+            }
+            return aValue - bValue;
+        });
     }
     const responseBody = JSON.stringify(items ?? [], null, 4);
     
     // Update the cache with the results of the query
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
-        const putCachePromise = cacheMachine.put(env, responseBody, { key, query: url.pathname, variables: { q, lang, gameMode }, ttl: String(ttl)});
+        const putCachePromise = cacheMachine.put(env, responseBody, { key, query: url.pathname, variables: { q, lang, gameMode, uid, tags, sort, sort_direction }, ttl: String(ttl)});
         // using waitUntil doens't hold up returning a response but keeps the worker alive as long as needed
         if (request.ctx?.waitUntil) {
             request.ctx.waitUntil(putCachePromise);
