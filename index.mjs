@@ -218,6 +218,11 @@ export default {
                 }
                 return response;
             }
+
+            if (url.pathname === graphQLOptions.playgroundEndpoint) {
+                //response = playground(request, graphQLOptions);
+                return graphiql(graphQLOptions);
+            }
             
             if (useNightbotOnUrl(url)) {
                 return await getNightbotResponse(request, url, env, ctx);
