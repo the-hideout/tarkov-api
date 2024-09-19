@@ -112,9 +112,12 @@ async function graphqlHandler(request, env, ctx) {
     // if an origin server is configured, pass the request
     if (env.USE_ORIGIN === 'true') {
         try {
-            const serverUrl = `https://api.tarkov.dev${graphQLOptions.baseEndpoint}`;
-            const queryResult = await fetchWithTimeout(serverUrl, {
-                method: request.method,
+            const originUrl = new URL(request.url);
+            if (env.ORIGIN_OVERRIDE) {
+                originUrl.host = env.ORIGIN_OVERRIDE;
+            }
+            const queryResult = await fetchWithTimeout(originUrl, {
+                method: 'POST',
                 body: JSON.stringify({
                     query,
                     variables,

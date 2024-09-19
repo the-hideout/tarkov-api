@@ -1,6 +1,7 @@
-import cacheMachine from '../utils/cache-machine.mjs';
 import DataSource from '../datasources/index.mjs';
+import cacheMachine from '../utils/cache-machine.mjs';
 import graphqlUtil from '../utils/graphql-util.mjs';
+import fetchWithTimeout from '../utils/fetch-with-timeout.mjs';
 
 function capitalize(s) {
     return s && s[0].toUpperCase() + s.slice(1);
@@ -36,7 +37,7 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     const query = url.searchParams.get('q');
 
     let key;
-    if (env.SKIP_CACHE !== 'true' && !request.headers.has('cache-check-complete')) {
+    if (env.SKIP_CACHE !== 'true' && env.SKIP_CACHE_CHECK !== 'true' && !request.headers.has('cache-check-complete')) {
         const requestStart = new Date();
         key = await cacheMachine.createKey(env, 'nightbot', { q: query, l: lang, m: gameMode });
         const cachedResponse = await cacheMachine.get(env, {key});
@@ -55,6 +56,30 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     } else {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
+
+    if (env.USE_ORIGIN === 'true') {
+        try {
+            const originUrl = new URL(request.url);
+            if (env.ORIGIN_OVERRIDE) {
+                originUrl.host = env.ORIGIN_OVERRIDE;
+            }
+            const response = await fetchWithTimeout(originUrl, {
+                method: 'GET',
+                headers: {
+                    'cache-check-complete': 'true',
+                },
+                timeout: 20000
+            });
+            if (response.status !== 200) {
+                throw new Error(`${response.status} ${await response.text()}`);
+            }
+            console.log('Request served from origin server');
+            return response;
+        } catch (error) {
+            console.error(`Error getting response from origin server: ${error}`);
+        }
+    }
+
     const data = new DataSource(env);
     const context = graphqlUtil.getDefaultContext(data);
 

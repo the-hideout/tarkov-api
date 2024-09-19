@@ -7,7 +7,7 @@ import graphqlUtil from './utils/graphql-util.mjs';
 import graphQLOptions from './utils/graphql-options.mjs';
 
 import useRequestTimer from './plugins/plugin-request-timer.mjs';
-import useOriginServer from './plugins/plugin-origin-server.mjs';
+import useGraphQLOrigin from './plugins/plugin-graphql-origin.mjs';
 import useCacheMachine from './plugins/plugin-use-cache-machine.mjs';
 import useTwitch from './plugins/plugin-twitch.mjs';
 import useNightbot from './plugins/plugin-nightbot.mjs';
@@ -47,7 +47,7 @@ export default async function getYoga(env) {
             useTwitch(env),
             usePlayground(),
             useCacheMachine(env),
-            useOriginServer(env),
+            useGraphQLOrigin(env),
             useNightbot(env),
             useLiteApi(env),
         ],
