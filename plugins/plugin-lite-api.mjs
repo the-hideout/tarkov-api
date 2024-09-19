@@ -4,6 +4,10 @@ import graphqlUtil from '../utils/graphql-util.mjs';
 
 export const liteApiPathRegex = /\/api\/v1(?<gameMode>\/\w+)?\/(?<endpoint>item[\w\/]*)/;
 
+export function useLiteApiOnUrl(url) {
+    return !!url.pathname.match(liteApiPathRegex);
+};
+
 const currencyMap = {
     RUB: '₽',
     USD: '$',
@@ -167,7 +171,7 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
 export default function useLiteApi(env) {
     return {
         async onRequest({ request, url, endResponse, serverContext, fetchAPI }) {
-            if (!url.pathname.match(liteApiPathRegex)) {
+            if (!useLiteApiOnUrl(url)) {
                 return;
             }
             const response = await getLiteApiResponse(request, url, env, serverContext);

@@ -12,6 +12,10 @@ export const nightbotPaths = [
     '/webhook/moobot',
 ];
 
+export function useNightbotOnUrl(url) {
+    return nightbotPaths.includes(url.pathname);
+};
+
 export async function getNightbotResponse(request, url, env, serverContext) {
     if (request.method.toUpperCase() !== 'GET') {
         return new Response(null, {
@@ -88,7 +92,7 @@ export async function getNightbotResponse(request, url, env, serverContext) {
 export default function useNightbot(env) {
     return {
         async onRequest({ request, url, endResponse, serverContext, fetchAPI }) {
-            if (!nightbotPaths.includes(url.pathname)) {
+            if (!useNightbotOnUrl(url)) {
                 return;
             }
             const response = await getNightbotResponse(request, url, env, serverContext);
