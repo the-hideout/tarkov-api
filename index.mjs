@@ -223,10 +223,6 @@ export default {
                 //response = playground(request, graphQLOptions);
                 return graphiql(graphQLOptions);
             }
-
-            if (!useNightbotOnUrl(url) && !useLiteApiOnUrl(url) && url.pathname !== graphQLOptions.baseEndpoint) {
-                return new Response('Not found', { status: 404 });
-            }
             
             if (useNightbotOnUrl(url)) {
                 return await getNightbotResponse(request, url, env, ctx);
