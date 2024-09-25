@@ -7,12 +7,13 @@ import graphqlUtil from './utils/graphql-util.mjs';
 import graphQLOptions from './utils/graphql-options.mjs';
 
 import useRequestTimer from './plugins/plugin-request-timer.mjs';
-import useHttpServer from './plugins/plugin-http-server.mjs';
+import useGraphQLOrigin from './plugins/plugin-graphql-origin.mjs';
 import useCacheMachine from './plugins/plugin-use-cache-machine.mjs';
 import useTwitch from './plugins/plugin-twitch.mjs';
 import useNightbot from './plugins/plugin-nightbot.mjs';
 import usePlayground from './plugins/plugin-playground.mjs';
 import useOptionMethod from './plugins/plugin-option-method.mjs';
+import useLiteApi from './plugins/plugin-lite-api.mjs';
 
 let dataAPI, yoga;
 
@@ -45,9 +46,10 @@ export default async function getYoga(env) {
             useOptionMethod(),
             useTwitch(env),
             usePlayground(),
-            useNightbot(env),
-            useHttpServer(env),
             useCacheMachine(env),
+            useGraphQLOrigin(env),
+            useNightbot(env),
+            useLiteApi(env),
         ],
         cors: {
             origin: graphQLOptions.cors.allowOrigin,
