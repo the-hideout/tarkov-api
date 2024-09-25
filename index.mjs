@@ -26,8 +26,9 @@ import graphQLOptions from './utils/graphql-options.mjs';
 import cacheMachine from './utils/cache-machine.mjs';
 import fetchWithTimeout from './utils/fetch-with-timeout.mjs';
 
-import { getNightbotResponse } from './plugins/plugin-nightbot.mjs';
+import { getNightbotResponse, useNightbotOnUrl } from './plugins/plugin-nightbot.mjs';
 import { getTwitchResponse } from './plugins/plugin-twitch.mjs';
+import { getLiteApiResponse, useLiteApiOnUrl } from './plugins/plugin-lite-api.mjs';
 
 let dataAPI;
 
@@ -108,12 +109,15 @@ async function graphqlHandler(request, env, ctx) {
         //console.log(`Skipping cache in ${ENVIRONMENT} environment`);
     }
 
-    // if an HTTP GraphQL server is configured, pass the request to that
+    // if an origin server is configured, pass the request
     if (env.USE_ORIGIN === 'true') {
         try {
-            const serverUrl = `https://api.tarkov.dev${graphQLOptions.baseEndpoint}`;
-            const queryResult = await fetchWithTimeout(serverUrl, {
-                method: request.method,
+            const originUrl = new URL(request.url);
+            if (env.ORIGIN_OVERRIDE) {
+                originUrl.host = env.ORIGIN_OVERRIDE;
+            }
+            const queryResult = await fetchWithTimeout(originUrl, {
+                method: 'POST',
                 body: JSON.stringify({
                     query,
                     variables,
@@ -127,10 +131,10 @@ async function graphqlHandler(request, env, ctx) {
             if (queryResult.status !== 200) {
                 throw new Error(`${queryResult.status} ${await queryResult.text()}`);
             }
-            console.log('Request served from graphql server');
+            console.log('Request served from origin server');
             return new Response(await queryResult.text(), responseOptions);
         } catch (error) {
-            console.error(`Error getting response from GraphQL server: ${error}`);
+            console.error(`Error getting response from origin server: ${error}`);
         }
     }
 
@@ -206,47 +210,42 @@ export default {
         const requestStart = new Date();
 		const url = new URL(request.url);
 
-        let response;
-
         try {
             if (url.pathname === '/twitch') {
-                response = await getTwitchResponse(env);
+                const response = await getTwitchResponse(env);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
                 }
+                return response;
             }
 
             if (url.pathname === graphQLOptions.playgroundEndpoint) {
                 //response = playground(request, graphQLOptions);
-                response = graphiql(graphQLOptions);
-            }
-
-            if (graphQLOptions.forwardUnmatchedRequestsToOrigin) {
-                return fetch(request);
+                return graphiql(graphQLOptions);
             }
             
-            if (url.pathname === '/webhook/nightbot' ||
-                url.pathname === '/webhook/stream-elements' ||
-                url.pathname === '/webhook/moobot'
-            ) {
-                response = await getNightbotResponse(request, url, env, ctx);
+            if (useNightbotOnUrl(url)) {
+                return await getNightbotResponse(request, url, env, ctx);
+            }
+
+            if (useLiteApiOnUrl(url)) {
+                return await getLiteApiResponse(request, url, env, ctx);
             }
 
             if (url.pathname === graphQLOptions.baseEndpoint) {
-                response = await graphqlHandler(request, env, ctx);
+                const response = await graphqlHandler(request, env, ctx);
                 if (graphQLOptions.cors) {
                     setCors(response, graphQLOptions.cors);
                 }
+                return response;
             }
 
-            if (!response) {
-                response = new Response('Not found', { status: 404 });
-            }
-            console.log(`Response time: ${new Date() - requestStart} ms`);
-			return response;
+			return new Response('Not found', { status: 404 });
         } catch (err) {
             console.log(err);
             return new Response(graphQLOptions.debug ? err : 'Something went wrong', { status: 500 });
+        } finally {
+            console.log(`Response time: ${new Date() - requestStart} ms`);
         }
 	},
 };
