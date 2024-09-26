@@ -778,6 +778,9 @@ type MapArtillerySettings {
 
 type MapArtilleryZone {
   position: MapPosition
+  outline: [MapPosition]
+  top: Float
+  bottom: Float
   radius: Float
 }
 
