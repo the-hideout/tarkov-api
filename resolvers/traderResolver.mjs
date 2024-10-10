@@ -47,8 +47,10 @@ export default {
             return context.data.worker.item.getItem(context, info, data.currencyItem);
         },
         taskUnlock(data, args, context, info) {
-            if (data.vendor.taskUnlock) return context.data.worker.task.get(context, info, data.vendor.taskUnlock);
-            return null;
+            if (!data.vendor.taskUnlock) {
+                return null;
+            }
+            return context.data.worker.task.get(context, info, data.vendor.taskUnlock);
         },
         buyLimit(data) {
             return data.vendor.buyLimit;
@@ -60,14 +62,17 @@ export default {
             return context.data.worker.trader.getLocale(trader.name, context, info);
         },
         async normalizedName(data, args, context, info) {
-            return (await context.data.worker.trader.get(context, info, data.trader_id)).normalizedName;
+            const trader = await context.data.worker.trader.get(context, info, data.trader_id);
+            return trader.normalizedName;
         },
         trader(data, args, context, info) {
             return context.data.worker.trader.get(context, info, data.trader_id);
         },
         taskUnlock(data, args, context, info) {
-            if (data.taskUnlock) return context.data.worker.task.get(context, info, data.taskUnlock);
-            return null;
+            if (!data.taskUnlock) {
+                return null;
+            }
+            return context.data.worker.task.get(context, info, data.taskUnlock);
         },
     },
     TraderPrice: {

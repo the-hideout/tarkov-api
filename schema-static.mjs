@@ -768,7 +768,20 @@ type Map {
   hazards: [MapHazard]
   lootContainers: [LootContainerPosition]
   stationaryWeapons: [StationaryWeaponPosition]
+  artillery: MapArtillerySettings
   #svg: MapSvg
+}
+
+type MapArtillerySettings {
+  zones: [MapArtilleryZone]
+}
+
+type MapArtilleryZone {
+  position: MapPosition
+  outline: [MapPosition]
+  top: Float
+  bottom: Float
+  radius: Float @deprecated(reason: "Use outline instead.")
 }
 
 type MapExtract {
