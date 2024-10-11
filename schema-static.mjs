@@ -781,7 +781,7 @@ type MapArtilleryZone {
   outline: [MapPosition]
   top: Float
   bottom: Float
-  radius: Float
+  radius: Float @deprecated(reason: "Use outline instead.")
 }
 
 type MapExtract {
