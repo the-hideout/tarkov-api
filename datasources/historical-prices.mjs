@@ -26,18 +26,16 @@ class historicalPricesAPI extends WorkerKVSplit {
         let prices = cache.historicalPricePoint[itemId];
         if (!prices) {
             return [];
-        }
-        else if (days === this.maxDays) {
+        } 
+        /*if (days === this.maxDays) {
             return prices;
+        }*/
+        const cutoffTimestamp = new Date().setDate(new Date().getDate() - days);
+        let dayFiltered = prices.filter(hp => hp.timestamp >= cutoffTimestamp);
+        if (halfResults) {
+            dayFiltered = dayFiltered.filter((hp, index) => index % 2 === 0);
         }
-        else {
-            const cutoffTimestamp = new Date().setDate(new Date().getDate() - days);
-            let dayFiltered = prices.filter(hp => hp.timestamp >= cutoffTimestamp);
-            if (halfResults) {
-                dayFiltered = dayFiltered.filter((hp, index) => index % 2 === 0);
-            }
-            return dayFiltered;
-        }
+        return dayFiltered;
     }
 }
 

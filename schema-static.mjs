@@ -1042,6 +1042,8 @@ type Task {
   minPlayerLevel: Int
   taskRequirements: [TaskStatusRequirement]!
   traderRequirements: [RequirementTrader]!
+  availableDelaySecondsMin: Int
+  availableDelaySecondsMax: Int
   objectives: [TaskObjective]!
   startRewards: TaskRewards
   finishRewards: TaskRewards
