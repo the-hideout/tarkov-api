@@ -197,7 +197,7 @@ class ItemsAPI extends WorkerKV {
 
     async getItemByNormalizedName(context, info, normalizedName) {
         const { cache } = await this.getCache(context, info);
-        const item = Object.values(cache.Item).find((item) => item.normalized_name === normalizedName);
+        const item = Object.values(cache.Item).find((item) => item.normalizedName === normalizedName);
 
         if (!item) {
             return null;
