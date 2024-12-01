@@ -17,7 +17,7 @@ jobs:
     steps:
       # https://github.com/github/branch-deploy/blob/d3c24bd92505e623615b75ffdfac5ed5259adbdb/docs/merge-commit-strategy.md
       - name: deployment check
-        uses: github/branch-deploy@v9.9.1
+        uses: github/branch-deploy@v9.10.0
         id: deployment-check
         with:
           merge_deploy_mode: "true"
@@ -43,7 +43,7 @@ jobs:
         run: npm ci
 
       - name: Publish - Production
-        uses: cloudflare/wrangler-action@b2a0191ce60d21388e1a8dcc968b4e9966f938e1 # pin@3.11.0
+        uses: cloudflare/wrangler-action@6d58852c35a27e6034745c5d0bc373d739014f7f # pin@3.13.0
         with:
           wranglerVersion: '2.17.0'
           apiToken: ${{ secrets.CF_API_TOKEN }}
