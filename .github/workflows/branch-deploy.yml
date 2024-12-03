@@ -10,6 +10,7 @@ permissions:
   deployments: write
   contents: write
   checks: read
+  statuses: read
 
 jobs:
   deploy:
@@ -18,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: github/branch-deploy@v9.9.1
+      - uses: github/branch-deploy@v9
         id: branch-deploy
         with:
           admins: the-hideout/core-contributors
@@ -31,7 +32,7 @@ jobs:
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.branch-deploy.outputs.ref }}
+          ref: ${{ steps.branch-deploy.outputs.sha }}
 
       - name: setup node
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
