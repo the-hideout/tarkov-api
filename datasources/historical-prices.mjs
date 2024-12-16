@@ -5,7 +5,7 @@ class historicalPricesAPI extends WorkerKVSplit {
         super('historical_price_data', dataSource);
         this.addGameMode('pve');
         this.defaultDays = 7;
-        this.maxDays = 7;
+        this.maxDays = 30;
         this.itemLimitDays = 2;
     }
 
@@ -27,9 +27,9 @@ class historicalPricesAPI extends WorkerKVSplit {
         if (!prices) {
             return [];
         } 
-        /*if (days === this.maxDays) {
+        if (days === this.maxDays) {
             return prices;
-        }*/
+        }
         const cutoffTimestamp = new Date().setDate(new Date().getDate() - days);
         let dayFiltered = prices.filter(hp => hp.timestamp >= cutoffTimestamp);
         if (halfResults) {
