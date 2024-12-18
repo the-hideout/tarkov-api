@@ -76,9 +76,9 @@ export default {
         historicalItemPrices(obj, args, context, info) {
             return context.util.paginate(context.data.worker.historicalPrice.getByItemId(context, info, args.id, args.days), args);
         },
-        /*archivedItemPrices(obj, args, context, info) {
+        archivedItemPrices(obj, args, context, info) {
             return context.util.paginate(context.data.worker.archivedPrice.getByItemId(context, info, args.id), args);
-        },*/
+        },
         armorMaterials(obj, args, context, info) {
             return context.data.worker.item.getArmorMaterials(context, info);
         },
