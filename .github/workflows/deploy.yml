@@ -13,11 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs: # set outputs for use in downstream jobs
       continue: ${{ steps.deployment-check.outputs.continue }}
+      sha: ${{ steps.deployment-check.outputs.sha }}
 
     steps:
       # https://github.com/github/branch-deploy/blob/d3c24bd92505e623615b75ffdfac5ed5259adbdb/docs/merge-commit-strategy.md
       - name: deployment check
-        uses: github/branch-deploy@v9
+        uses: github/branch-deploy@v10
         id: deployment-check
         with:
           merge_deploy_mode: "true"
@@ -32,6 +33,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.deployment-check.outputs.sha }}
 
       - name: setup node
         uses: actions/setup-node@v4
