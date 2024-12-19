@@ -39,28 +39,6 @@ type Ammo {
   #attributes: AttributeCollection!
 }
 
-#type AttributeCollection {
-#  int: [AttributeInt]!
-#  float: [AttributeFloat]!
-#  string: [ItemAttribute]!
-#  boolean: [AttributeBoolean]!
-#}
-
-#type AttributeBoolean {
-#  name: String!
-#  value: Boolean!
-#}
-
-#type AttributeFloat {
-#  name: String!
-#  value: Float!
-#}
-
-#type AttributeInt {
-#  name: String!
-#  value: Int!
-#}
-
 type ArmorMaterial {
   id: String
   name: String
@@ -234,6 +212,8 @@ type HideoutStationLevel {
 type historicalPricePoint {
   price: Int
   priceMin: Int
+  offerCount: Int
+  offerCountMin: Int
   timestamp: String
 }
 
@@ -1395,7 +1375,7 @@ interface Vendor {
 type Query {
   achievements(lang: LanguageCode, limit: Int, offset: Int): [Achievement]!
   ammo(lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Ammo]
-  #archivedItemPrices(id: ID!, limit: Int, offset: Int): [historicalPricePoint]!
+  archivedItemPrices(id: ID!, limit: Int, offset: Int): [historicalPricePoint]!
   barters(lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Barter]
   bosses(lang: LanguageCode, gameMode: GameMode, name: [String!], limit: Int, offset: Int): [MobInfo]
   crafts(lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Craft]
