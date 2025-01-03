@@ -226,10 +226,11 @@ class ItemsAPI extends WorkerKV {
             // ignore bb
             return ammoItems.filter(item => item.id !== '6241c316234b593b5676b637');
         });
+        const itemProperties = await context.data.worker.handbook.getAllItemProperties(context, info);
         return allAmmo.map(item => {
             return {
                 ...item,
-                ...item.properties
+                ...itemProperties[item.id],
             };
         });
     }
