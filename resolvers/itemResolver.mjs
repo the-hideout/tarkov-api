@@ -225,6 +225,9 @@ export default {
         },
         imageLinkFallback(data) {
             return data.inspectImageLink;
+        },
+        properties(data, args, context, info) {
+            return context.data.worker.handbook.getItemProperties(context, info, data.id);
         }
     },
     ItemArmorSlot: {
@@ -239,7 +242,7 @@ export default {
             return data.type;
         },
         zones(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.zones, context, info);
+            return context.data.worker.handbook.getLocale(data.zones, context, info);
         },
         material(data, args, context, info) {
             return context.data.worker.handbook.getArmorMaterial(context, info, data.armor_material_id);
@@ -251,7 +254,7 @@ export default {
             return data.type;
         },
         zones(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.zones, context, info);
+            return context.data.worker.handbook.getLocale(data.zones, context, info);
         },
         allowedPlates(data, args, context, info) {
             return data.allowedPlates.map(id => context.data.worker.item.getItem(context, info, id));
@@ -306,13 +309,13 @@ export default {
     },
     ItemPropertiesArmor: {
         armorType(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.armorType, context, info);
+            return context.data.worker.handbook.getLocale(data.armorType, context, info);
         },
         material(data, args, context, info) {
             return context.data.worker.handbook.getArmorMaterial(context, info, data.armor_material_id);
         },
         zones(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.zones, context, info);
+            return context.data.worker.handbook.getLocale(data.zones, context, info);
         },
     },
     ItemPropertiesArmorAttachment: {
@@ -320,10 +323,10 @@ export default {
             return context.data.worker.handbook.getArmorMaterial(context, info, data.armor_material_id);
         },
         headZones(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.headZones, context, info);
+            return context.data.worker.handbook.getLocale(data.headZones, context, info);
         },
         zones(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.headZones, context, info);
+            return context.data.worker.handbook.getLocale(data.headZones, context, info);
         }
     },
     ItemPropertiesBackpack: {
@@ -333,13 +336,13 @@ export default {
     },
     ItemPropertiesChestRig: {
         armorType(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.armorType, context, info);
+            return context.data.worker.handbook.getLocale(data.armorType, context, info);
         },
         material(data, args, context, info) {
             return context.data.worker.handbook.getArmorMaterial(context, info, data.armor_material_id);
         },
         zones(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.zones, context, info);
+            return context.data.worker.handbook.getLocale(data.zones, context, info);
         },
         pouches(data) {
             return data.grids;
@@ -352,13 +355,13 @@ export default {
     },
     ItemPropertiesHelmet: {
         armorType(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.armorType, context, info);
+            return context.data.worker.handbook.getLocale(data.armorType, context, info);
         },
         material(data, args, context, info) {
             return context.data.worker.handbook.getArmorMaterial(context, info, data.armor_material_id);
         },
         headZones(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.headZones, context, info);
+            return context.data.worker.handbook.getLocale(data.headZones, context, info);
         }
     },
     ItemPropertiesMagazine: {
@@ -377,7 +380,7 @@ export default {
             return context.data.worker.item.getItem(context, info, data.default_ammo_id);
         },
         fireModes(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.fireModes, context, info);
+            return context.data.worker.handbook.getLocale(data.fireModes, context, info);
         },
         allowedAmmo(data, args, context, info) {
             return data.allowedAmmo.map(id => context.data.worker.item.getItem(context, info, id));
@@ -392,7 +395,7 @@ export default {
     },
     ItemSlot: {
         name(data, ags, context, info) {
-            return context.data.worker.item.getLocale(data.name, context, info);
+            return context.data.worker.handbook.getLocale(data.name, context, info);
         }
     },
     ContainedItem: {
@@ -434,7 +437,7 @@ export default {
     },
     StimEffect: {
         type(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.type, context, info);
+            return context.data.worker.handbook.getLocale(data.type, context, info);
         },
         skill(data, args, context, info) {
             return context.data.worker.handbook.getSkill(context, info, data.skillName);

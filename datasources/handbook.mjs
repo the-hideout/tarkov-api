@@ -85,6 +85,16 @@ class HandbookAPI extends WorkerKV {
         const { cache } = await this.getCache(context, info);
         return cache.PlayerLevel;
     }
+
+    async getAllItemProperties(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.ItemProperties;
+    }
+
+    async getItemProperties(context, info, itemId) {
+        const { cache } = await this.getCache(context, info);
+        return cache.ItemProperties[itemId];
+    }
 }
 
 export default HandbookAPI;
