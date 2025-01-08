@@ -237,9 +237,8 @@ export default {
         }
     },
     ItemArmorSlotLocked: {
-        name(data) {
-            if (data.name) return data.name;
-            return data.type;
+        name(data, args, context, info) {
+            return context.data.worker.handbook.getLocale(data.name, context, info);
         },
         zones(data, args, context, info) {
             return context.data.worker.handbook.getLocale(data.zones, context, info);
@@ -249,9 +248,8 @@ export default {
         },
     },
     ItemArmorSlotOpen: {
-        name(data) {
-            if (data.name) return data.name;
-            return data.type;
+        name(data, args, context, info) {
+            return context.data.worker.handbook.getLocale(data.name, context, info);
         },
         zones(data, args, context, info) {
             return context.data.worker.handbook.getLocale(data.zones, context, info);
