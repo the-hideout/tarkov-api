@@ -46,7 +46,7 @@ jobs:
         run: npm ci
 
       - name: Publish - Production
-        uses: cloudflare/wrangler-action@6d58852c35a27e6034745c5d0bc373d739014f7f # pin@3.13.0
+        uses: cloudflare/wrangler-action@7a5f8bbdfeedcde38e6777a50fe685f89259d4ca # pin@3.13.1
         with:
           wranglerVersion: '2.17.0'
           apiToken: ${{ secrets.CF_API_TOKEN }}
