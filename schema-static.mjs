@@ -724,6 +724,11 @@ type LootContainerPosition {
   position: MapPosition
 }
 
+type LootLoosePosition {
+  items: [Item]
+  position: MapPosition
+}
+
 type Map {
   id: ID!
   tarkovDataId: ID
@@ -747,6 +752,7 @@ type Map {
   switches: [MapSwitch]
   hazards: [MapHazard]
   lootContainers: [LootContainerPosition]
+  lootLoose: [LootLoosePosition]
   stationaryWeapons: [StationaryWeaponPosition]
   artillery: MapArtillerySettings
   #svg: MapSvg
