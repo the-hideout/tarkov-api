@@ -302,6 +302,9 @@ type ItemArmorSlotLocked implements ItemArmorSlot {
   zones: [String]
   armorType: String
   baseValue: Int
+  ricochetX: Float
+  ricochetY: Float
+  ricochetZ: Float
 }
 
 type ItemArmorSlotOpen implements ItemArmorSlot {
