@@ -890,6 +890,7 @@ type OfferUnlock {
 type PlayerLevel {
   level: Int!
   exp: Int!
+  levelBadgeImageLink: String
 }
 
 type PriceRequirement {
