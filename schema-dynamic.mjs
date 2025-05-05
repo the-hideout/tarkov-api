@@ -14,7 +14,7 @@ enum HandbookCategoryName {
     ${handbookCategories}
 }
 enum LanguageCode {
-	${languageCodes}
+    ${languageCodes}
 }
     `;
 };

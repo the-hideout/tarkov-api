@@ -1,14 +1,51 @@
 export default `
+"""
+**In-game achievements players can earn by completing specific objectives.**
+
+- Fields with '!' (e.g., String!) are required (non-nullable).
+- Fields without '!' (e.g., String) are optional (nullable).
+This follows standard GraphQL notation.
+"""
 type Achievement {
+  """
+  A unique 24-character hexadecimal identifier for the achievement. Follows a consistent format across all achievements.
+  """
   id: ID!
+  """
+  The display name of the achievement (e.g., "Welcome to Tarkov", "The Kappa Path").
+  """
   name: String!
+  """
+  Text describing the conditions required to unlock the achievement (e.g., "Neutralize Killa 15 times while playing as a PMC").
+  """
   description: String
+  """
+  Whether the achievement is hidden from players until unlocked (true) or visible from the start (false).
+  """
   hidden: Boolean!
+  """
+  Raw percentage of all players who have completed this achievement (e.g., 0.06, 43.48).
+  """
   playersCompletedPercent: Float!
+  """
+  Statistically adjusted percentage that accounts for active players, providing a more representative completion rate.
+  """
   adjustedPlayersCompletedPercent: Float
+  """
+  The game faction or player type this achievement is associated with. Values include "PMC", "All", or "Scavs".
+  """
   side: String
+  """
+  Lowercase, standardized version of the side field used for consistent sorting and filtering (e.g., "pmc", "all", "scavs").
+  """
   normalizedSide: String
+  """
+  The difficulty/rarity tier of the achievement. Values include "Common", "Rare", or "Legendary".
+  """
   rarity: String
+  """
+  Lowercase, standardized version of the rarity field used for consistent sorting and filtering (e.g., "common", "rare", "legendary").
+  """
   normalizedRarity: String
 }
 
@@ -1500,4 +1537,4 @@ type TraderResetTime {
   name: String @deprecated(reason: "Use Trader.name type instead.")
   resetTimestamp: String @deprecated(reason: "Use Trader.resetTime type instead.")
 }
-`;
+`
