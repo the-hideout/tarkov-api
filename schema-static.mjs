@@ -1,10 +1,6 @@
 export default `
 """
 **In-game achievements players can earn by completing specific objectives.**
-
-- Fields with '!' (e.g., String!) are required (non-nullable).
-- Fields without '!' (e.g., String) are optional (nullable).
-This follows standard GraphQL notation.
 """
 type Achievement {
   """
@@ -28,7 +24,7 @@ type Achievement {
   """
   playersCompletedPercent: Float!
   """
-  Statistically adjusted percentage that accounts for active players, providing a more representative completion rate.
+  Statistically adjusted percentage that accounts for active players, providing a more representative completion rate. Uses the percentage completion of Welcome to Tarkov as the baseline under the assumption that all active accounts have died once.
   """
   adjustedPlayersCompletedPercent: Float
   """
