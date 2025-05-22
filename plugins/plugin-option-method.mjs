@@ -5,7 +5,10 @@ export default function useOptionMethod() {
                 return;
             }
             const optionsResponse = new Response(null, {
-                headers: { 'cache-control': 'public, max-age=2592000' },
+                headers: {
+                    'cache-control': 'public, max-age=2592000',
+                    'Access-Control-Max-Age': '600',
+                },
             });
             //setCors(optionsResponse, graphQLOptions.cors);
             endResponse(optionsResponse);
