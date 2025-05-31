@@ -22,7 +22,7 @@ export default function useCacheMachine(env) {
                 console.log(`Skipping cache check already performed by worker`);
                 return;
             }
-            const cachedResponse = await cacheMachine.get(env, {query: params.query, variables: params.variables, specialCache: specialCache(request)});
+            const cachedResponse = await cacheMachine.get(env, {query: params.query, variables: params.variables, specialCache: getSpecialCache(request)});
             if (cachedResponse) {
                 console.log('Request served from cache');
                 request.cached = true;
