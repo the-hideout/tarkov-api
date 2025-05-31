@@ -29,6 +29,7 @@ import fetchWithTimeout from './utils/fetch-with-timeout.mjs';
 import { getNightbotResponse, useNightbotOnUrl } from './plugins/plugin-nightbot.mjs';
 import { getTwitchResponse } from './plugins/plugin-twitch.mjs';
 import { getLiteApiResponse, useLiteApiOnUrl } from './plugins/plugin-lite-api.mjs';
+import { getSpecialCache } from './plugins/plugin-use-cache-machine.mjs';
 
 let dataAPI;
 
@@ -84,11 +85,7 @@ async function graphqlHandler(request, env, ctx) {
         //return new Response(JSON.stringify({}), responseOptions);
     }
 
-    let specialCache = '';
-    const contentType = request.headers.get('content-type');
-    if (!contentType || !contentType.startsWith('application/json')) {
-        specialCache = 'application/json';
-    }
+    const specialCache = getSpecialCache(request);
 
     let key;
     // Check the cache service for data first - If cached data exists, return it
@@ -204,7 +201,7 @@ export default {
             const optionsResponse = new Response(null, {
                 headers: {
                     'cache-control': 'public, max-age=2592000',
-                    'Access-Control-Max-Age': '600',
+                    'Access-Control-Max-Age': '86400',
                 },
             });
             setCors(optionsResponse, graphQLOptions.cors);
