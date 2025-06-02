@@ -1,10 +1,10 @@
 import cacheMachine from '../utils/cache-machine.mjs';
 import setCors from '../utils/setCors.mjs';
 
-function specialCache(request) {
+export function getSpecialCache(request) {
     const contentType = request.headers.get('content-type');
-    if (!contentType || !contentType.startsWith('application/json')) {
-        return 'application/json';
+    if (request.method === 'POST' && !contentType?.startsWith('application/json')) {
+        //return 'application/json'; // don't enforce content type
     }
     return undefined;
 }
@@ -22,7 +22,7 @@ export default function useCacheMachine(env) {
                 console.log(`Skipping cache check already performed by worker`);
                 return;
             }
-            const cachedResponse = await cacheMachine.get(env, {query: params.query, variables: params.variables, specialCache: specialCache(request)});
+            const cachedResponse = await cacheMachine.get(env, {query: params.query, variables: params.variables, specialCache: getSpecialCache(request)});
             if (cachedResponse) {
                 console.log('Request served from cache');
                 request.cached = true;
@@ -82,7 +82,7 @@ export default function useCacheMachine(env) {
 
             let ttl = request.data?.getRequestTtl(request.requestId) ?? 60 * 5;
 
-            const sCache = specialCache(request);
+            const sCache = getSpecialCache(request);
             if (result.errors?.some(err => err.message === 'Unexpected error.')) {
                 ttl = 0;
             } else if (result.errors?.some(err => err.message.startsWith('Syntax Error'))) {
