@@ -120,7 +120,7 @@ jobs:
           ssh ${{ secrets.SSH_USER }}@${{ steps.setup-ssh.outputs.ssh-host }} "docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -p ${{ env.ENV_PORT }}:${{ env.DEFAULT_PORT }} -e ENVIRONMENT='${{ steps.branch-deploy.outputs.environment }}' -e SENTRY_ENV='${{ steps.branch-deploy.outputs.environment }}' -e SENTRY_DSN='${{ secrets.SENTRY_DSN || '' }}' -e SENTRY_TRACE_RATE=${{ vars.SENTRY_TRACE_RATE || 0 }} -e SENTRY_PROFILE_RATE=${{ vars.SENTRY_PROFILE_RATE || 0 }} -e DEPLOY_REF='${{ github.event.pull_request.head.sha || github.sha }}' -e CLOUDFLARE_TOKEN='${{ secrets.CLOUDFLARE_TOKEN }}' -e CACHE_BASIC_AUTH='${{ secrets.CACHE_BASIC_AUTH }}' ${{ env.IMAGE_TAG }}"
 
       # Post comment on PR with development deploy info
-      - uses: GrantBirki/comment@v2.1.0
+      - uses: GrantBirki/comment@v2.1.1
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'development' }}
@@ -137,7 +137,7 @@ jobs:
             > Pusher: @${{ github.actor }}, Action: `${{ github.event_name }}`, Workflow: `${{ github.workflow }}`;
 
       # Post comment on PR with production deploy info
-      - uses: GrantBirki/comment@v2.1.0
+      - uses: GrantBirki/comment@v2.1.1
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'production' }}

@@ -51,14 +51,15 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
         key = await cacheMachine.createKey(env, url.pathname, { q, lang, gameMode, uid, tags, sort, sort_direction });
         const cachedResponse = await cacheMachine.get(env, {key});
         if (cachedResponse) {
-            // Construct a new response with the cached data
-            const newResponse = new Response(cachedResponse);
-            // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
-            newResponse.headers.append('X-CACHE', 'HIT');
             console.log(`Request served from cache: ${new Date() - requestStart} ms`);
-            // Return the new cached response
             request.cached = true;
-            return newResponse;
+            // Construct a new response with the cached data
+
+            return new Response(cachedResponse, {
+                headers: {
+                    'X-CACHE': 'HIT',
+                }
+            });
         } else {
             console.log('no cached response');
         }
