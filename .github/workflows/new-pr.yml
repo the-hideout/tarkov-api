@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: comment
-        uses: GrantBirki/comment@v2.1.0
+        uses: GrantBirki/comment@v2.1.1
         continue-on-error: true
         with:
           file: .github/new-pr-comment.md
