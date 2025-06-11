@@ -66,7 +66,7 @@ async function graphqlHandler(request, env, ctx) {
     // default headers
     const responseOptions = {
         headers: {
-            'content-type': 'application/json;charset=UTF-8',
+            'Content-Type': 'application/json',
         }
     };
 
@@ -116,7 +116,11 @@ async function graphqlHandler(request, env, ctx) {
             if (env.ORIGIN_OVERRIDE) {
                 originUrl.host = env.ORIGIN_OVERRIDE;
             }
-            const queryResult = await fetchWithTimeout(originUrl, {
+            if (env.ORIGIN_PROTOCOL) {
+                originUrl.protocol = env.ORIGIN_PROTOCOL;
+            } 
+            console.log(`Querying origin server ${originUrl}`);
+            const originResponse = await fetchWithTimeout(originUrl, {
                 method: 'POST',
                 body: JSON.stringify({
                     query,
@@ -128,11 +132,11 @@ async function graphqlHandler(request, env, ctx) {
                 },
                 timeout: 20000
             });
-            if (queryResult.status !== 200) {
-                throw new Error(`${queryResult.status} ${await queryResult.text()}`);
+            if (originResponse.status !== 200) {
+                throw new Error(`${originResponse.status} ${await originResponse.text()}`);
             }
             console.log('Request served from origin server');
-            return new Response(await queryResult.text(), responseOptions);
+            return new Response(originResponse.body, responseOptions);
         } catch (error) {
             console.error(`Error getting response from origin server: ${error}`);
         }

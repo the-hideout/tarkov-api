@@ -76,7 +76,6 @@ const cacheMachine = {
     
             const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${key}`, { 
                 headers: {
-                    'content-type': 'application/json;charset=UTF-8',
                     'Authorization': `Basic ${env.CACHE_BASIC_AUTH}`
                 }, 
             });
