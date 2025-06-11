@@ -56,7 +56,7 @@ jobs:
           environment: "development"
 
       # Post comment on PR with development deploy info
-      - uses: GrantBirki/comment@v2.1.0
+      - uses: GrantBirki/comment@v2.1.1
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'development' }}
@@ -82,7 +82,7 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
 
       # Post comment on PR with production deploy info
-      - uses: GrantBirki/comment@v2.1.0
+      - uses: GrantBirki/comment@v2.1.1
         if: ${{ steps.branch-deploy.outputs.continue == 'true' &&
           steps.branch-deploy.outputs.noop != 'true' &&
           steps.branch-deploy.outputs.environment == 'production' }}
