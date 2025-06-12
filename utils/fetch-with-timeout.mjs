@@ -10,9 +10,7 @@ function fetchWithTimeout(resource, options = {}) {
             controller.abort();
             reject(new Error('The operation was aborted due to timeout'));
         }, timeout);
-        fetch(resource, { ...options, signal: controller.signal }).then(response => {
-            resolve(response);
-        }).catch(reject).finally(() => {
+        fetch(resource, { ...options, signal: controller.signal }).then(resolve).catch(reject).finally(() => {
             clearTimeout(requestTimeout);
         });
     });

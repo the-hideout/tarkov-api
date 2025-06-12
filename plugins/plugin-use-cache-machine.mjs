@@ -26,7 +26,8 @@ export default function useCacheMachine(env) {
             if (cachedResponse) {
                 console.log('Request served from cache');
                 request.cached = true;
-                setResult(JSON.parse(cachedResponse));
+                request.resultTtl = cachedResponse.headers.get('X-Cache-Ttl');
+                setResult(JSON.parse(await cachedResponse.json()));
             } 
         },
         onValidate({ context, extendContext, params, validateFn, addValidationRule, setValidationFn, setResult }) {
@@ -98,6 +99,7 @@ export default function useCacheMachine(env) {
                 ttl = 1800;
             }
             if (env.SKIP_CACHE !== 'true' && ttl > 0 && env.USE_ORIGIN !== 'true') {
+                request.resultTtl = String(ttl);
                 // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
                 const cacheBody = JSON.stringify(result);
                 if (cacheBody.length > 0) {
@@ -119,6 +121,10 @@ export default function useCacheMachine(env) {
         onResponse({request, response, serverContext, setResponse, fetchAPI}) {
             if (request.data && request.requestId) {
                 request.data.clearRequestData(request.requestId);
+            }
+            if (request.resultTtl) {
+                response.headers.set('X-Cache-Ttl', request.resultTtl);
+                response.headers.set('Cache-Control', `public, max-age=${request.resultTtl}`);
             }
             setCors(response);
         },

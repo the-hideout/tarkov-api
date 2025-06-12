@@ -42,14 +42,14 @@ export async function getNightbotResponse(request, url, env, serverContext) {
         key = await cacheMachine.createKey(env, 'nightbot', { q: query, l: lang, m: gameMode });
         const cachedResponse = await cacheMachine.get(env, {key});
         if (cachedResponse) {
-            // Construct a new response with the cached data
-            const newResponse = new Response(cachedResponse);
-            // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
-            newResponse.headers.append('X-CACHE', 'HIT');
             console.log(`Request served from cache: ${new Date() - requestStart} ms`);
-            // Return the new cached response
             request.cached = true;
-            return newResponse;
+            return new Response(await cachedResponse.json(), {
+                headers: {
+                    'X-CACHE': 'HIT',
+                    'Cache-Control': `public, max-age=${cachedResponse.headers.get('X-Cache-Ttl')}`,
+                }
+            });
         } else {
             console.log('no cached response');
         }
@@ -100,6 +100,11 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     } finally {
         data.clearRequestData(context.requestId);
     }
+
+    const headers = {};
+    if (ttl > 0) {
+        headers['Cache-Control'] = `public, max-age=${ttl}`;
+    }
     
     // Update the cache with the results of the query
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
@@ -111,7 +116,9 @@ export async function getNightbotResponse(request, url, env, serverContext) {
             serverContext.waitUntil(putCachePromise);
         }
     }
-    return new Response(responseBody)
+    return new Response(responseBody, {
+        headers,
+    });
 }
 
 export default function useNightbot(env) {
