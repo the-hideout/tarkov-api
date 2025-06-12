@@ -83,7 +83,7 @@ const cacheMachine = {
             });
             cacheFailCount = 0;
             if (response.status === 200) {
-                return await response.json();
+                return response;
             } else if (response.status !== 404) {
                 console.error(`failed to read from cache: ${response.status}`);
             }
@@ -138,7 +138,7 @@ const cacheMachine = {
                     //'sentry-trace': Sentry.spanToTraceHeader(Sentry.getActiveSpan()),
                     //'baggage': Sentry.spanToBaggageHeader(Sentry.getActiveSpan()),
                 },
-                timeout: 10000,
+                timeout: 20000,
             });
             console.log('Response cached');
             response.body.cancel();

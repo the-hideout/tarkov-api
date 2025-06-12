@@ -44,9 +44,10 @@ export async function getNightbotResponse(request, url, env, serverContext) {
         if (cachedResponse) {
             console.log(`Request served from cache: ${new Date() - requestStart} ms`);
             request.cached = true;
-            return new Response(cachedResponse, {
+            return new Response(await cachedResponse.json(), {
                 headers: {
                     'X-CACHE': 'HIT',
+                    'Cache-Control': `public, max-age=${cachedResponse.headers.get('X-Cache-Ttl')}`,
                 }
             });
         } else {
@@ -99,6 +100,11 @@ export async function getNightbotResponse(request, url, env, serverContext) {
     } finally {
         data.clearRequestData(context.requestId);
     }
+
+    const headers = {};
+    if (ttl > 0) {
+        headers['Cache-Control'] = `public, max-age=${ttl}`;
+    }
     
     // Update the cache with the results of the query
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
@@ -110,7 +116,9 @@ export async function getNightbotResponse(request, url, env, serverContext) {
             serverContext.waitUntil(putCachePromise);
         }
     }
-    return new Response(responseBody)
+    return new Response(responseBody, {
+        headers,
+    });
 }
 
 export default function useNightbot(env) {
