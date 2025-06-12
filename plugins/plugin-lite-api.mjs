@@ -55,9 +55,10 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
             request.cached = true;
             // Construct a new response with the cached data
 
-            return new Response(cachedResponse, {
+            return new Response(await cachedResponse.json(), {
                 headers: {
                     'X-CACHE': 'HIT',
+                    'Cache-Control': `public, max-age=${cachedResponse.headers.get('X-Cache-Ttl')}`,
                 }
             });
         } else {
@@ -187,6 +188,10 @@ export async function getLiteApiResponse(request, url, env, serverContext) {
         });
     }
     const responseBody = JSON.stringify(items ?? [], null, 4);
+
+    if (ttl > 0) {
+        responseOptions.headers['Cache-Control'] = `public, max-age=${ttl}`;
+    }
     
     // Update the cache with the results of the query
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
