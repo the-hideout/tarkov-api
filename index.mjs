@@ -64,13 +64,6 @@ async function graphqlHandler(request, env, ctx) {
         );
     }
 
-    // default headers
-    const responseOptions = {
-        headers: {
-            'content-type': 'application/json;charset=UTF-8',
-        }
-    };
-
     if (!dataAPI) {
         dataAPI = new DataSource(env);
     }
@@ -95,9 +88,13 @@ async function graphqlHandler(request, env, ctx) {
         const cachedResponse = await cacheMachine.get(env, {key});
         if (cachedResponse) {
             // Construct a new response with the cached data
-            const newResponse = new Response(cachedResponse, responseOptions);
-            // Add a custom 'X-CACHE: HIT' header so we know the request hit the cache
-            newResponse.headers.append('X-CACHE', 'HIT');
+            const newResponse = new Response(await cachedResponse.json(), {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CACHE': 'HIT', // we know request hit the cache
+                    'Cache-Control': `public, max-age=${cachedResponse.headers.get('X-Cache-Ttl')}`,
+                },
+            });
             console.log('Request served from cache');
             // Return the new cached response
             return newResponse;
@@ -113,7 +110,11 @@ async function graphqlHandler(request, env, ctx) {
             if (env.ORIGIN_OVERRIDE) {
                 originUrl.host = env.ORIGIN_OVERRIDE;
             }
-            const queryResult = await fetchWithTimeout(originUrl, {
+            if (env.ORIGIN_PROTOCOL) {
+                originUrl.protocol = env.ORIGIN_PROTOCOL;
+            } 
+            console.log(`Querying origin server ${originUrl}`);
+            const originResponse = await fetchWithTimeout(originUrl, {
                 method: 'POST',
                 body: JSON.stringify({
                     query,
@@ -125,11 +126,19 @@ async function graphqlHandler(request, env, ctx) {
                 },
                 timeout: 20000
             });
-            if (queryResult.status !== 200) {
-                throw new Error(`${queryResult.status} ${await queryResult.text()}`);
+            if (originResponse.status !== 200) {
+                throw new Error(`${originResponse.status} ${await originResponse.text()}`);
             }
             console.log('Request served from origin server');
-            return new Response(await queryResult.text(), responseOptions);
+            const newResponse = new Response(originResponse.body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (originResponse.headers.has('X-Cache-Ttl')) {
+                newResponse.headers.set('Cache-Control', `public, max-age=${originResponse.headers.get('X-Cache-Ttl')}`);
+            }
+            return newResponse;
         } catch (error) {
             console.error(`Error getting response from origin server: ${error}`);
         }
@@ -177,7 +186,14 @@ async function graphqlHandler(request, env, ctx) {
 
     const body = JSON.stringify(result);
 
-    const response = new Response(body, responseOptions);
+    const response = new Response(body, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    if (ttl > 0) {
+        response.headers.set('Cache-Control', `public, max-age=${ttl}`);
+    }
 
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
         key = key ?? await cacheMachine.createKey(env, query, variables, specialCache);

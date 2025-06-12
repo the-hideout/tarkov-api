@@ -24,8 +24,11 @@ export default function useGraphQLOrigin(env) {
                     throw new Error(`${queryResult.status} ${queryResult.statusText}: ${await queryResult.text()}`);
                 }
                 console.log('Request served from origin server');
-                setResult(await queryResult.json());
                 request.cached = true;
+                if (queryResult.headers.has('X-Cache-Ttl')) {
+                    request.resultTtl = queryResult.headers.get('X-Cache-Ttl');
+                }
+                setResult(await queryResult.json());
             } catch (error) {
                 console.error(`Error getting response from origin server: ${error}`);
             }
