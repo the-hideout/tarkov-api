@@ -13,9 +13,8 @@ let envArg = '';
 let logOnlyError = false;
 let shuttingDown = false;
 
-const outputLog = (rawLog) => {
+const outputLog = (json) => {
     try {
-        const json = JSON.parse(rawLog);
         if (logOnlyError && json.outcome === 'ok') {
             return;
         } 
@@ -30,20 +29,18 @@ const outputLog = (rawLog) => {
             }
             console[level](message);
         }
+        console.log(`Wall time: ${json.wallTime}`);
+        console.log(`CPU time: ${json.cpuTime}`);
         if (json.outcome !== 'ok') {
             const errorDesc = json.exceptions.map(ex => ex.message).join('; ') || json.outcome;
             console.error(`\x1b[${logColors.error}mFatal Error: ${errorDesc}\x1b[0m`);
             //console.error(`\x1b[${logColors.error}mUrl: ${json.event.request.url}\x1b[0m`);
-            if (json.event.request.headers.origin) {
+            if (json.event.request?.headers?.origin) {
                 console.error(`\x1b[${logColors.error}mOrigin: ${json.event.request.headers.origin}\x1b[0m`);
             }
             //console.log(rawLog);
         } 
     } catch (error) {
-        if (error.message.includes('Unexpected token')) {
-            console.error(`\x1b[${logColors.error}mJSON parsing error. Raw log:\x1b[0m`, JSON.stringify(rawLog));
-            return;
-        }
         console.error(`\x1b[${logColors.error}mError processing wrangler output\x1b[0m`, error);
     }
 };
@@ -54,8 +51,19 @@ const startTail = () => {
     });
     wrangler.stdout.on('data', (data) => {
         try {
-            outputLog(String(data));       
+            const jsons = JSON.parse(`[${String(data).replace(/}\s*{/g, '},{')}]`);
+            for (const json of jsons) {
+                outputLog(json);
+            }
         } catch (error) {
+            if (error.message.includes('Unexpected token')) {
+                console.error(`\x1b[${logColors.error}mJSON parsing error. Raw log:\x1b[0m`, String(data));
+                return;
+            }
+            if (error.message.includes('Unexpected non-whitespace')) {
+                console.error(`\x1b[${logColors.error}mJSON parsing error. Raw log:\x1b[0m`, String(data));
+                return;
+            }
             console.error('Error processing wrangler output', error.message);
             console.error(data);
         }

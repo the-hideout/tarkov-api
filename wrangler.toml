@@ -1,4 +1,4 @@
-compatibility_date = "2024-03-04"
+compatibility_date = "2024-11-11"
 name = "api"
 main = "index.mjs"
 account_id = "424ad63426a1ae47d559873f929eb9fc"
