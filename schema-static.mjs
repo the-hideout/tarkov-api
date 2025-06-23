@@ -495,7 +495,7 @@ type ItemPropertiesGlasses {
   blindnessProtection: Float
   #speedPenalty: Float
   #turnPenalty: Float
-  #ergoPenalty: Float
+  ergoPenalty: Float
   material: ArmorMaterial
   bluntThroughput: Float
 }
