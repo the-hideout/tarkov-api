@@ -43,6 +43,10 @@ type Achievement {
   Lowercase, standardized version of the rarity field used for consistent sorting and filtering (e.g., "common", "rare", "legendary").
   """
   normalizedRarity: String
+  """
+  URL to the achievement's image.
+  """
+  imageLink: String
 }
 
 type Ammo {
