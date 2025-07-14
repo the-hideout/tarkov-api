@@ -3,7 +3,7 @@ import WorkerKV from '../utils/worker-kv.mjs';
 class HandbookAPI extends WorkerKV {
     constructor(dataSource) {
         super('handbook_data', dataSource);
-        //this.gameModes.push('pve');
+        this.gameModes.push('pve');
     }
 
     async getCategory(context, info, id) {
