@@ -1354,6 +1354,7 @@ type TraderLevel {
 }
 
 type TraderCashOffer {
+  id: ID
   item: Item!
   minTraderLevel: Int
   price: Int
