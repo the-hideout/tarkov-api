@@ -37,6 +37,9 @@ export default {
         }
     },
     TraderCashOffer: {
+        id(data, args, context, info) {
+            return data.offer_id;
+        },
         item(data, args, context, info) {
             return context.data.worker.item.getItem(context, info, data.id);
         },
