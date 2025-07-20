@@ -1,7 +1,6 @@
 import DataSource from '../datasources/index.mjs';
 import cacheMachine from '../utils/cache-machine.mjs';
 import graphqlUtil from '../utils/graphql-util.mjs';
-import fetchWithTimeout from '../utils/fetch-with-timeout.mjs';
 
 function capitalize(s) {
     return s && s[0].toUpperCase() + s.slice(1);
@@ -63,12 +62,12 @@ export async function getNightbotResponse(request, url, env, serverContext) {
             if (env.ORIGIN_OVERRIDE) {
                 originUrl.host = env.ORIGIN_OVERRIDE;
             }
-            const response = await fetchWithTimeout(originUrl, {
+            const response = await fetch(originUrl, {
                 method: 'GET',
                 headers: {
                     'cache-check-complete': 'true',
                 },
-                timeout: 20000
+                signal: AbortSignal.timeout(20000),
             });
             if (response.status !== 200) {
                 throw new Error(`${response.status} ${await response.text()}`);

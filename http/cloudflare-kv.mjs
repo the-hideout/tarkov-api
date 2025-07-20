@@ -1,7 +1,5 @@
 import { EventEmitter } from 'node:events';
 
-import fetchWithTimeout from '../utils/fetch-with-timeout.mjs';
-
 const completeEmitter = new EventEmitter();
 
 const accountId = '424ad63426a1ae47d559873f929eb9fc';
@@ -28,13 +26,13 @@ const checkQueue = async () => {
     const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${kvName}`;
     let response;
     try {
-        response = await fetchWithTimeout(url, {
+        response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${process.env.CLOUDFLARE_TOKEN}`,
             },
-            timeout: 9000,
+            signal: AbortSignal.timeout(9000),
         });
         completeEmitter.emit(kvName, response);
     } catch (error) {

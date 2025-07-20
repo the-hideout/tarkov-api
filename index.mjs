@@ -24,7 +24,6 @@ import schema from './schema.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
 import graphQLOptions from './utils/graphql-options.mjs';
 import cacheMachine from './utils/cache-machine.mjs';
-import fetchWithTimeout from './utils/fetch-with-timeout.mjs';
 
 import { getNightbotResponse, useNightbotOnUrl } from './plugins/plugin-nightbot.mjs';
 import { getTwitchResponse } from './plugins/plugin-twitch.mjs';
@@ -114,7 +113,7 @@ async function graphqlHandler(request, env, ctx) {
                 originUrl.protocol = env.ORIGIN_PROTOCOL;
             } 
             console.log(`Querying origin server ${originUrl}`);
-            const originResponse = await fetchWithTimeout(originUrl, {
+            const originResponse = await fetch(originUrl, {
                 method: 'POST',
                 body: JSON.stringify({
                     query,
@@ -124,7 +123,7 @@ async function graphqlHandler(request, env, ctx) {
                     'Content-Type': 'application/json',
                     'cache-check-complete': 'true',
                 },
-                timeout: 20000
+                signal: AbortSignal.timeout(20000),
             });
             if (originResponse.status !== 200) {
                 throw new Error(`${originResponse.status} ${await originResponse.text()}`);
