@@ -1,5 +1,3 @@
-import fetchWithTimeout from './fetch-with-timeout.mjs';
-
 import * as Sentry from '@sentry/node';
 
 // cache url
@@ -76,10 +74,11 @@ const cacheMachine = {
                 return false;
             }
     
-            const response = await fetchWithTimeout(`${cacheUrl}/api/cache?key=${key}`, { 
+            const response = await fetch(`${cacheUrl}/api/cache?key=${key}`, { 
                 headers: {
                     'Authorization': `Basic ${env.CACHE_BASIC_AUTH}`
-                }, 
+                },
+                signal: AbortSignal.timeout(5000),
             });
             cacheFailCount = 0;
             if (response.status === 200) {
@@ -127,7 +126,7 @@ const cacheMachine = {
             console.log(`Caching ${body.length} byte response for ${env.ENVIRONMENT} environment${ttl ? ` for ${ttl} seconds` : ''}`);
     
             // Update the cache
-            const response = await fetchWithTimeout(`${cacheUrl}/api/cache`, {
+            const response = await fetch(`${cacheUrl}/api/cache`, {
                 body: JSON.stringify({ key, value: body, ttl }),
                 method: 'POST',
                 headers: {
@@ -138,7 +137,7 @@ const cacheMachine = {
                     //'sentry-trace': Sentry.spanToTraceHeader(Sentry.getActiveSpan()),
                     //'baggage': Sentry.spanToBaggageHeader(Sentry.getActiveSpan()),
                 },
-                timeout: 20000,
+                signal: AbortSignal.timeout(20000),
             });
             console.log('Response cached');
             response.body.cancel();
