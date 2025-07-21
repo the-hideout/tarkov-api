@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 class WorkerKV {
     constructor(kvName, dataSource) {
         this.cache = {};
@@ -76,7 +78,7 @@ class WorkerKV {
             const metadata = response.metadata;
             let responseValue = response.value;
             if (metadata && metadata.compression) {
-                return Promise.reject(new Error(`${metadata.compression} compression is not supported`));
+                return Promise.reject(new GraphQLError(`${metadata.compression} compression is not supported`));
             }
             const parsedValue = JSON.parse(responseValue);
             if (!parsedValue && requestKv !== this.kvName) {

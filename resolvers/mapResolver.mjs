@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 export default {
     Query: {
         async bosses(obj, args, context, info) {
@@ -10,7 +12,7 @@ export default {
             const nonFilterArgs = ['lang', 'gameMode', 'limit', 'offset'];
             for (const argName in args) {
                 if (nonFilterArgs.includes(argName)) continue;
-                if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
+                if (!filters[argName]) return Promise.reject(new GraphQLError(`${argName} is not a recognized argument`));
                 bosses = await filters[argName](args[argName], bosses);
             }
             if (!bosses) {
@@ -39,7 +41,7 @@ export default {
             const nonFilterArgs = ['lang', 'gameMode', 'limit', 'offset'];
             for (const argName in args) {
                 if (nonFilterArgs.includes(argName)) continue;
-                if (!filters[argName]) return Promise.reject(new Error(`${argName} is not a recognized argument`));
+                if (!filters[argName]) return Promise.reject(new GraphQLError(`${argName} is not a recognized argument`));
                 maps = await filters[argName](args[argName], maps);
             }
             if (!maps) {

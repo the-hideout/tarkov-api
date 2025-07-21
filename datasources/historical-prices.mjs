@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKVSplit from '../utils/worker-kv-split.mjs';
 
 class historicalPricesAPI extends WorkerKVSplit {
@@ -12,7 +14,7 @@ class historicalPricesAPI extends WorkerKVSplit {
     async getByItemId(context, info, itemId, days = this.defaultDays, halfResults = false) {
         const { cache } = await this.getCache(context, info, itemId);
         if (!cache) {
-            return Promise.reject(new Error('Historical prices cache is empty'));
+            return Promise.reject(new GraphQLError('Historical prices cache is empty'));
         }
         
         if (days > this.maxDays || days < 1) {

@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKVSplit from '../utils/worker-kv-split.mjs';
 
 class ArchivedPricesAPI extends WorkerKVSplit {
@@ -9,7 +11,7 @@ class ArchivedPricesAPI extends WorkerKVSplit {
     async getByItemId(context, info, itemId) {
         const { cache } = await this.getCache(context, info, itemId);
         if (!cache) {
-            return Promise.reject(new Error('Archived prices data is empty'));
+            return Promise.reject(new GraphQLError('Archived prices data is empty'));
         }
         
         let prices = cache.ArchivedPrices[itemId];

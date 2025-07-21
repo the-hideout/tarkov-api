@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKV from '../utils/worker-kv.mjs';
 
 class TasksAPI extends WorkerKV {
@@ -16,7 +18,7 @@ class TasksAPI extends WorkerKV {
         for (const task of cache.Task) {
             if (task.id === id || task.tarkovDataId === id) return task;
         }
-        return Promise.reject(new Error(`No task found with id ${id}`));
+        return Promise.reject(new GraphQLError(`No task found with id ${id}`));
     }
 
     async getTasksRequiringItem(context, info, itemId) {
@@ -114,7 +116,7 @@ class TasksAPI extends WorkerKV {
                 return quest;
             }
         }
-        return Promise.reject(new Error(`No quest with id ${id} found`));
+        return Promise.reject(new GraphQLError(`No quest with id ${id} found`));
     }
 
     async getQuestItems(context, info) {
@@ -139,7 +141,7 @@ class TasksAPI extends WorkerKV {
                 return achievement;
             }
         }
-        return Promise.reject(new Error(`No achievement with id ${id} found`));
+        return Promise.reject(new GraphQLError(`No achievement with id ${id} found`));
     }
 }
 
