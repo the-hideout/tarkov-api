@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import { v4 as uuidv4 } from 'uuid';
 
 const graphqlUtil =  {
@@ -12,7 +14,7 @@ const graphqlUtil =  {
     },
     testDepthLimit: (info, depthLimit) => {
         const depth = graphqlUtil.getDepth(info);
-        if (depth > depthLimit) throw new Error(`Query depth ${depth} exceeds maximum (${depthLimit}) for ${info.parentType}.${info.fieldName}.`);
+        if (depth > depthLimit) throw new GraphQLError(`Query depth ${depth} exceeds maximum (${depthLimit}) for ${info.parentType}.${info.fieldName}.`);
     },
     getDefaultContext: (dataSource, requestId) => {
         return {

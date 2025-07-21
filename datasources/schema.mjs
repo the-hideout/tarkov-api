@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKV from '../utils/worker-kv.mjs';
 
 class SchemaAPI extends WorkerKV {
@@ -8,7 +10,7 @@ class SchemaAPI extends WorkerKV {
     async getCategories(context) {
         const { cache } = await this.getCache(context);
         if (!cache) {
-            return Promise.reject(new Error('Schema cache is empty'));
+            return Promise.reject(new GraphQLError('Schema cache is empty'));
         }
         return cache.ItemCategory;
     }
@@ -16,7 +18,7 @@ class SchemaAPI extends WorkerKV {
     async getHandbookCategories(context) {
         const { cache } = await this.getCache(context);
         if (!cache) {
-            return Promise.reject(new Error('Schema cache is empty'));
+            return Promise.reject(new GraphQLError('Schema cache is empty'));
         }
         return cache.HandbookCategory;
     }
@@ -24,7 +26,7 @@ class SchemaAPI extends WorkerKV {
     async getItemTypes(context) {
         const { cache } = await this.getCache(context);
         if (!cache) {
-            return Promise.reject(new Error('Schema cache is empty'));
+            return Promise.reject(new GraphQLError('Schema cache is empty'));
         }
         return cache.ItemType;
     }
@@ -32,7 +34,7 @@ class SchemaAPI extends WorkerKV {
     async getLanguageCodes(context) {
         const { cache } = await this.getCache(context);
         if (!cache) {
-            return Promise.reject(new Error('Schema cache is empty'));
+            return Promise.reject(new GraphQLError('Schema cache is empty'));
         }
         return cache.LanguageCode;
     }

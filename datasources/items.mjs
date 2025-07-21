@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKV from '../utils/worker-kv.mjs';
 
 class ItemsAPI extends WorkerKV {
@@ -63,7 +65,7 @@ class ItemsAPI extends WorkerKV {
         const { cache } = await this.getCache(context, info);
         let item = cache.Item[id];
         if (!item) {
-            return Promise.reject(new Error(`No item found with id ${id}`));
+            return Promise.reject(new GraphQLError(`No item found with id ${id}`));
         }
 
         if (contains && Array.isArray(contains)) {
@@ -114,7 +116,7 @@ class ItemsAPI extends WorkerKV {
             items = Object.values(cache.Item);
         }
         const searchString = name.toLowerCase();
-        if (searchString === '') return Promise.reject(new Error('Searched item name cannot be blank'));
+        if (searchString === '') return Promise.reject(new GraphQLError('Searched item name cannot be blank'));
 
         return items.filter((item) => {
             if (this.getLocale(item.name, context, info).toString().toLowerCase().includes(searchString)) {
@@ -133,7 +135,7 @@ class ItemsAPI extends WorkerKV {
             items = Object.values(cache.Item);
         }
         const searchStrings = names.map(name => {
-            if (name === '') throw new Error('Searched item name cannot be blank');
+            if (name === '') throw new GraphQLError('Searched item name cannot be blank');
             return name.toLowerCase();
         });
         return items.filter((item) => {

@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKV from '../utils/worker-kv.mjs';
 
 const currencyMap = {
@@ -55,7 +57,7 @@ class TradersAPI extends WorkerKV {
             }
         }
 
-        return Promise.reject(new Error(`No trader found with id ${id}`));
+        return Promise.reject(new GraphQLError(`No trader found with id ${id}`));
     }
 
     async getByName(context, info, name) {
@@ -66,7 +68,7 @@ class TradersAPI extends WorkerKV {
             }
         }
 
-        return Promise.reject(new Error(`No trader found with name ${name}`));
+        return Promise.reject(new GraphQLError(`No trader found with name ${name}`));
     }
 
     async getByLevel(context, info, traderId, level) {
@@ -79,7 +81,7 @@ class TradersAPI extends WorkerKV {
                 }
             }
         }
-        return Promise.reject(new Error(`No trader found with id ${traderId} and level ${level}`));
+        return Promise.reject(new GraphQLError(`No trader found with id ${traderId} and level ${level}`));
     }
 
     getByDataId(context, info, dataId) {

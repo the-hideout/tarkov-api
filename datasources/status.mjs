@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKV from '../utils/worker-kv.mjs';
 
 class StatusAPI extends WorkerKV {
@@ -8,7 +10,7 @@ class StatusAPI extends WorkerKV {
     async getStatus(context) {
         const { cache } = await this.getCache(context);
         if (!cache) {
-            return Promise.reject(new Error('Status cache is empty'));
+            return Promise.reject(new GraphQLError('Status cache is empty'));
         }
         return cache.ServerStatus;
     }

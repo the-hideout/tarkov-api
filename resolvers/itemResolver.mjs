@@ -1,9 +1,11 @@
+import { GraphQLError } from 'graphql';
+
 export default {
     Query: {
         item(obj, args, context, info) {
             if (args.id) return context.data.worker.item.getItem(context, info, args.id);
             if (args.normalizedName) return context.data.worker.item.getItemByNormalizedName(context, info, args.normalizedName);
-            return Promise.reject(new Error('You must specify either the id or the normalizedName argument'));
+            return Promise.reject(new GraphQLError('You must specify either the id or the normalizedName argument'));
         },
         async items(obj, args, context, info) {
             let items = false;
