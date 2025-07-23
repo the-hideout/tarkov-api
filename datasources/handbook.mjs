@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKV from '../utils/worker-kv.mjs';
 
 class HandbookAPI extends WorkerKV {
@@ -20,7 +22,7 @@ class HandbookAPI extends WorkerKV {
     async getCategories(context, info) {
         const { cache } = await this.getCache(context, info);
         if (!cache) {
-            return Promise.reject(new Error('Item cache is empty'));
+            return Promise.reject(new GraphQLError('Item cache is empty'));
         }
         const categories = [];
         for (const id in cache.ItemCategory) {
@@ -46,7 +48,7 @@ class HandbookAPI extends WorkerKV {
     async getHandbookCategories(context, info) {
         const { cache } = await this.getCache(context, info);
         if (!cache) {
-            return Promise.reject(new Error('Item cache is empty'));
+            return Promise.reject(new GraphQLError('Item cache is empty'));
         }
         return Object.values(cache.HandbookCategory);
     }

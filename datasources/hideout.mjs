@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKV from '../utils/worker-kv.mjs';
 
 class HideoutAPI extends WorkerKV {
@@ -20,7 +22,7 @@ class HideoutAPI extends WorkerKV {
                 }
             }
         }
-        return Promise.reject(new Error(`No hideout station level found with id ${id}`));
+        return Promise.reject(new GraphQLError(`No hideout station level found with id ${id}`));
     }
 
     async getModuleByLevel(context, info, stationId, level) {
@@ -33,7 +35,7 @@ class HideoutAPI extends WorkerKV {
                 }
             }
         }
-        return Promise.reject(new Error(`No hideout station level found with id ${stationId} and level ${level}`));
+        return Promise.reject(new GraphQLError(`No hideout station level found with id ${stationId} and level ${level}`));
     }
 
     async getStation(context, info, id) {
@@ -41,7 +43,7 @@ class HideoutAPI extends WorkerKV {
         for (const station of cache.HideoutStation) {
             if (station.id === id) return station;
         }
-        return Promise.reject(new Error(`No hideout station found with id ${id}`));
+        return Promise.reject(new GraphQLError(`No hideout station found with id ${id}`));
     }
 
     async getLegacyList(context, info) {
@@ -56,7 +58,7 @@ class HideoutAPI extends WorkerKV {
                 return module;
             }
         }
-        return Promise.reject(new Error(`No hideout module with id ${id} found`));
+        return Promise.reject(new GraphQLError(`No hideout module with id ${id} found`));
     }
 }
 

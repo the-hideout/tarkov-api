@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import WorkerKV from '../utils/worker-kv.mjs';
 
 class MapAPI extends WorkerKV {
@@ -16,7 +18,7 @@ class MapAPI extends WorkerKV {
         for (const map of cache.Map) {
             if (map.id === id || map.tarkovDataId === id) return map;
         }
-        return Promise.reject(new Error(`No map found with id ${id}`));
+        return Promise.reject(new GraphQLError(`No map found with id ${id}`));
     }
 
     async getMapsByNames(context, info, names, maps = false) {
@@ -25,7 +27,7 @@ class MapAPI extends WorkerKV {
             maps = cache.Map;
         }
         const searchStrings = names.map(name => {
-            if (name === '') throw new Error('Searched map name cannot be blank');
+            if (name === '') throw new GraphQLError('Searched map name cannot be blank');
             return name.toLowerCase();
         });
 
@@ -45,7 +47,7 @@ class MapAPI extends WorkerKV {
             maps = cache.Map;
         }
         const searchStrings = enemies.map(name => {
-            if (name === '') throw new Error('Searched enemy name cannot be blank');
+            if (name === '') throw new GraphQLError('Searched enemy name cannot be blank');
             return name.toLowerCase();
         });
 
@@ -76,7 +78,7 @@ class MapAPI extends WorkerKV {
             bosses = Object.values(cache.MobInfo);
         }
         const searchStrings = names.map(name => {
-            if (name === '') throw new Error('Searched boss name cannot be blank');
+            if (name === '') throw new GraphQLError('Searched boss name cannot be blank');
             return name.toLowerCase();
         });
 
