@@ -15,10 +15,11 @@ class TasksAPI extends WorkerKV {
 
     async get(context, info, id) {
         const { cache } = await this.getCache(context, info);
-        for (const task of cache.Task) {
-            if (task.id === id || task.tarkovDataId === id) return task;
+        const task = cache.Task.find(t => t.id === id || t.tarkovDataId === id);
+        if (!task) {
+            return Promise.reject(new GraphQLError(`No task found with id ${id}`));
         }
-        return Promise.reject(new GraphQLError(`No task found with id ${id}`));
+        return task;
     }
 
     async getTasksRequiringItem(context, info, itemId) {
