@@ -1003,6 +1003,7 @@ type ServerStatus {
 type Skill {
   id: ID
   name: String
+  imageLink: String
 }
 
 type SkillLevel {
