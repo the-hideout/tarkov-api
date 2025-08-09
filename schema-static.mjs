@@ -363,6 +363,10 @@ type ItemCategory {
   normalizedName: String!
   parent: ItemCategory
   children: [ItemCategory]
+  """
+  Only Handbook categories have image links
+  """
+  imageLink: String
 }
 
 type ItemFilters {
