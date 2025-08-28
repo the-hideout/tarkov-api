@@ -819,6 +819,7 @@ type MapExtract {
   name: String
   faction: String
   switches: [MapSwitch]
+  transferItem: ContainedItem
   position: MapPosition
   outline: [MapPosition]
   top: Float
