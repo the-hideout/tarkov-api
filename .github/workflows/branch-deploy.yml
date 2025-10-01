@@ -36,7 +36,7 @@ jobs:
 
       - name: setup node
         if: ${{ steps.branch-deploy.outputs.continue == 'true' }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: .node-version
           cache: npm
