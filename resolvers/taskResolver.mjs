@@ -3,6 +3,9 @@ export default {
         achievements(obj, args, context, info) {
             return context.util.paginate(context.data.worker.task.getAchievements(context, info), args);
         },
+        prestige(obj, args, context, info) {
+            return context.util.paginate(context.data.worker.task.getPrestiges(context, info), args);
+        },
         async tasks(obj, args, context, info) {
             let tasks = await context.data.worker.task.getList(context, info);
             if (args.faction) {
@@ -40,6 +43,33 @@ export default {
             return context.data.worker.task.getLocale(data.rarity, context, info);
         },
     },
+    CustomizationItem: {
+        __resolveType(data, args, context) {
+            return data.__typename;
+        },
+    },
+    CustomizationItemBasic: {
+        name(data, args, context, info) {
+            return context.data.worker.task.getLocale(data.name, context, info);
+        },
+        customizationTypeName(data, args, context, info) {
+            return context.data.worker.task.getLocale(data.customizationTypeName, context, info);
+        },
+    },
+    CustomizationItems: {
+        name(data, args, context, info) {
+            return context.data.worker.task.getLocale(data.name, context, info);
+        },
+        customizationTypeName(data, args, context, info) {
+            return context.data.worker.task.getLocale(data.customizationTypeName, context, info);
+        },
+        items(data, args, context, info) {
+            if (!data.items?.length) {
+                return [];
+            }
+            return data.items.map(id => context.data.worker.item.getItem(context, info, id));
+        },
+    },
     HealthEffect: {
         bodyParts(data, args, context, info) {
             if (data.bodyParts.length === 0) {
@@ -57,6 +87,24 @@ export default {
     MapWithPosition: {
         map(data, args, context, info) {
             return context.data.worker.map.get(context, info, data.map);
+        },
+    },
+    Prestige: {
+        name(data, args, context, info) {
+            return context.data.worker.task.getLocale(data.name, context, info);
+        },
+    },
+    PrestigeTransferSettings: {
+        __resolveType(data, args, context) {
+            if (data.gridWidth) {
+                return 'PrestigeTransferSettingsStash';
+            }
+            return 'PrestigeTransferSettingsSkill';
+        },
+    },
+    PrestigeTransferSettingsSkill: {
+        name(data, args, context, info) {
+            return context.data.worker.task.getLocale(data.name, context, info);
         },
     },
     SkillLevel: {
@@ -77,7 +125,13 @@ export default {
         map(data, args, context, info) {
             if (data.location_id) return context.data.worker.map.get(context, info, data.location_id);
             return null;
-        }
+        },
+        requiredPrestige(data, args, context, info) {
+            if (!data.requiredPrestige) {
+                return null;
+            }
+            return context.data.worker.task.getPrestige(context, info, data.requiredPrestige)
+        },
     },
     TaskKey: {
         keys(data, args, context, info) {
@@ -95,12 +149,14 @@ export default {
             //return data.gql_type;
             if (data.type === 'findQuestItem' || data.type === 'giveQuestItem' || data.type === 'plantQuestItem') {
                 return 'TaskObjectiveQuestItem';
-            } else if (data.type === 'findItem' || data.type === 'giveItem' || data.type === 'plantItem' || data.type === 'sellItem') {
+            } else if (data.type === 'findItem' || data.type === 'giveItem' || data.type === 'plantItem' || data.type === 'sellItem' || data.type === 'haveItem') {
                 return 'TaskObjectiveItem';
             } else if (data.type === 'mark') {
                 return 'TaskObjectiveMark';
             } else if (data.type === 'extract') {
                 return 'TaskObjectiveExtract';
+            } else if (data.type === 'hideoutStation') {
+                return 'TaskObjectiveHideoutStation';
             } else if (data.type === 'skill') {
                 return 'TaskObjectiveSkill';
             } else if (data.type === 'traderLevel') {
@@ -209,6 +265,14 @@ export default {
             }
             return data.requiredKeys.map(keyIds => keyIds.map(keyId => context.data.worker.item.getItem(context, info, keyId)));
         },
+    },
+    TaskObjectiveHideoutStation: {
+        hideoutStation(data, args, context, info) {
+            return context.data.worker.hideout.getStation(context, info, data.station);
+        },
+        maps(data, args, context, info) {
+            return [];
+        }
     },
     TaskObjectiveItem: {
         item(data, args, context, info) {
@@ -449,7 +513,20 @@ export default {
                     return true;
                 });
             }).filter(Boolean);
-        }
+        },
+        async achievement(data, args, context, info) {
+            if (!data.achievement?.length) {
+                return [];
+            }
+            const achievements = await context.data.worker.task.getAchievements(context, info);
+            return data.achievement.map(id => {
+                const achievement = achievements.find(a => a.id === id);
+                if (!achievement) {
+                    return false;
+                }
+                return achievement;
+            }).filter(Boolean);
+        },
     },
     TaskStatusRequirement: {
         task(data, args, context, info) {
