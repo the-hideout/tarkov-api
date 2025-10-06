@@ -161,6 +161,31 @@ type Craft {
   requirements: [PriceRequirement]! @deprecated(reason: "Use stationLevel instead.")
 }
 
+interface CustomizationItem {
+  id: ID!
+  name: String!
+  customizationType: String!
+  customizationTypeName: String!
+  imageLink: String
+}
+
+type CustomizationItemBasic implements CustomizationItem {
+  id: ID!
+  name: String!
+  customizationType: String!
+  customizationTypeName: String!
+  imageLink: String
+}
+
+type CustomizationItems implements CustomizationItem {
+  id: ID!
+  name: String!
+  customizationType: String!
+  customizationTypeName: String!
+  imageLink: String
+  items: [Item]!
+}
+
 type GameProperty {
   key: String!
   numericValue: Float
@@ -935,6 +960,31 @@ type PlayerLevel {
   levelBadgeImageLink: String
 }
 
+type Prestige {
+  id: ID!
+  name: String
+  prestigeLevel: Int
+  imageLink: String
+  iconLink: String
+  conditions: [TaskObjective]
+  rewards: TaskRewards
+  transferSettings: [PrestigeTransferSettings]
+}
+
+union PrestigeTransferSettings = PrestigeTransferSettingsStash | PrestigeTransferSettingsSkill
+
+type PrestigeTransferSettingsStash {
+  gridWidth: Int
+  gridHeight: Int
+  itemFilters: ItemFilters
+}
+
+type PrestigeTransferSettingsSkill {
+  name: String
+  skillType: String
+  transferRate: Float
+}
+
 type PriceRequirement {
   type: RequirementType!
   value: Int
@@ -1084,6 +1134,7 @@ type Task {
   failureOutcome: TaskRewards
   restartable: Boolean
   factionName: String
+  requiredPrestige: Prestige
   neededKeys: [TaskKey] @deprecated(reason: "Use requiredKeys on objectives instead.")
   kappaRequired: Boolean
   lightkeeperRequired: Boolean
@@ -1156,6 +1207,17 @@ type TaskObjectiveExtract implements TaskObjective {
   zoneNames: [String]!
   count: Int!
   requiredKeys: [[Item]]
+}
+
+type TaskObjectiveHideoutStation implements TaskObjective {
+  id: ID
+  type: String!
+  description: String!
+  #locationNames: [String]!
+  maps: [Map]!
+  optional: Boolean!
+  hideoutStation: HideoutStation
+  stationLevel: Int
 }
 
 type TaskObjectiveItem implements TaskObjective {
@@ -1304,6 +1366,8 @@ type TaskRewards {
   skillLevelReward: [SkillLevel]!
   traderUnlock: [Trader]!
   craftUnlock: [Craft]!
+  achievement: [Achievement]!
+  customization: [CustomizationItem]
 }
 
 type TaskStatusRequirement {
@@ -1452,6 +1516,7 @@ type Query {
   fleaMarket(lang: LanguageCode, gameMode: GameMode): FleaMarket!
   armorMaterials(lang: LanguageCode): [ArmorMaterial]!
   playerLevels: [PlayerLevel]!
+  prestige(lang: LanguageCode, gameMode: GameMode): [Prestige]!
   skills(lang: LanguageCode): [Skill]!
   mastering(lang: LanguageCode): [Mastering]!
   hideoutModules: [HideoutModule] @deprecated(reason: "Use hideoutStations instead.")
