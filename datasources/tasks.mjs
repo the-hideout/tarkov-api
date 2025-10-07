@@ -144,6 +144,21 @@ class TasksAPI extends WorkerKV {
         }
         return Promise.reject(new GraphQLError(`No achievement with id ${id} found`));
     }
+
+    async getPrestiges(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Prestige;
+    }
+
+    async getPrestige(context, info, id) {
+        const prestiges = await this.getPrestiges(context, info);
+        for (const prestige of prestiges) {
+            if (prestige.id === id) {
+                return prestige;
+            }
+        }
+        return Promise.reject(new GraphQLError(`No prestiges with id ${id} found`));
+    }
 }
 
 export default TasksAPI;
