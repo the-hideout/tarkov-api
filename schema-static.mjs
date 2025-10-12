@@ -824,6 +824,7 @@ type Map {
   lootLoose: [LootLoosePosition]
   stationaryWeapons: [StationaryWeaponPosition]
   artillery: MapArtillerySettings
+  btrStops: [MapPositionNamed]
   #svg: MapSvg
 }
 
@@ -874,6 +875,13 @@ type MapWithPosition {
 }
 
 type MapPosition {
+  x: Float!
+  y: Float!
+  z: Float!
+}
+
+type MapPositionNamed {
+  name: String
   x: Float!
   y: Float!
   z: Float!
