@@ -824,6 +824,7 @@ type Map {
   lootLoose: [LootLoosePosition]
   stationaryWeapons: [StationaryWeaponPosition]
   artillery: MapArtillerySettings
+  btrRoutes: [Route]
   #svg: MapSvg
 }
 
@@ -1047,6 +1048,10 @@ enum RequirementType {
   loyaltyLevel
   questCompleted
   stationLevel
+}
+
+type Route {
+  waypoints: [MapPosition]
 }
 
 type ServerStatus {
