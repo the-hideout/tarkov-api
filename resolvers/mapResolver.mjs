@@ -114,6 +114,11 @@ export default {
             return context.data.worker.map.getLocale(data.name, context, info);
         },
     },
+    MapPositionNamed: {
+        name(data, args, context, info) {
+            return context.data.worker.map.getLocale(data.name, context, info);
+        },
+    },
     MapSwitch: {
         /*door(data, args, context) {
 

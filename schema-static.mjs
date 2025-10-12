@@ -824,7 +824,7 @@ type Map {
   lootLoose: [LootLoosePosition]
   stationaryWeapons: [StationaryWeaponPosition]
   artillery: MapArtillerySettings
-  btrRoutes: [Route]
+  btrStops: [MapPositionNamed]
   #svg: MapSvg
 }
 
@@ -875,6 +875,13 @@ type MapWithPosition {
 }
 
 type MapPosition {
+  x: Float!
+  y: Float!
+  z: Float!
+}
+
+type MapPositionNamed {
+  name: String
   x: Float!
   y: Float!
   z: Float!
@@ -1048,10 +1055,6 @@ enum RequirementType {
   loyaltyLevel
   questCompleted
   stationLevel
-}
-
-type Route {
-  waypoints: [MapPosition]
 }
 
 type ServerStatus {
