@@ -71,6 +71,8 @@ async function graphqlHandler(request, env, ctx) {
     console.info(requestId);
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
     console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
+    console.log('query', query);
+    console.log('variables', variables);
     //console.log(query);
     if (request.headers.has('x-newrelic-synthetics')) {
         console.log('NewRelic health check');
