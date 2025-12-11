@@ -15,11 +15,11 @@ jobs:
     environment: secrets
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v6
 
-      - name: Setup Node Environment
-        uses: actions/setup-node@v4
+      - name: setup node
+        uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: npm

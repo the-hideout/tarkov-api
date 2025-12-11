@@ -71,7 +71,8 @@ async function graphqlHandler(request, env, ctx) {
     console.info(requestId);
     console.log(new Date().toLocaleString('en-US', { timeZone: 'UTC' }));
     console.log(`KVs pre-loaded: ${dataAPI.kvLoaded.join(', ') || 'none'}`);
-    //console.log(query);
+    //console.log('query', query);
+    //console.log('variables', variables);
     if (request.headers.has('x-newrelic-synthetics')) {
         console.log('NewRelic health check');
         //return new Response(JSON.stringify({}), responseOptions);
@@ -106,6 +107,7 @@ async function graphqlHandler(request, env, ctx) {
     if (env.USE_ORIGIN === 'true') {
         try {
             const originUrl = new URL(request.url);
+            originUrl.search = '';
             if (env.ORIGIN_OVERRIDE) {
                 originUrl.host = env.ORIGIN_OVERRIDE;
             }
