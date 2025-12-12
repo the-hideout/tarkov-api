@@ -324,6 +324,7 @@ type Item {
   weight: Float
   velocity: Float
   loudness: Int
+  minLevelForFlea: Int
   #discardLimit: Int
   usedInTasks: [Task]!
   receivedFromTasks: [Task]!
@@ -392,6 +393,10 @@ type ItemCategory {
   Only Handbook categories have image links
   """
   imageLink: String
+  """
+  Only Handbook categories have minLevelForFlea
+  """
+  minLevelForFlea: Int
 }
 
 type ItemFilters {
