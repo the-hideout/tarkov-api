@@ -324,6 +324,7 @@ type Item {
   weight: Float
   velocity: Float
   loudness: Int
+  minLevelForFlea: Int
   #discardLimit: Int
   usedInTasks: [Task]!
   receivedFromTasks: [Task]!
