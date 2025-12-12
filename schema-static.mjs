@@ -393,6 +393,10 @@ type ItemCategory {
   Only Handbook categories have image links
   """
   imageLink: String
+  """
+  Only Handbook categories have minLevelForFlea
+  """
+  minLevelForFlea: Int
 }
 
 type ItemFilters {
