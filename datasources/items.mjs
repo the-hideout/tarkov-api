@@ -226,7 +226,12 @@ class ItemsAPI extends WorkerKV {
     async getAmmoList(context, info) {
         return this.getItemsByBsgCategoryId(context, info, '5485a8684bdc2da71d8b4567').then(ammoItems => {
             // ignore bb
-            return ammoItems.filter(item => item.id !== '6241c316234b593b5676b637');
+            return ammoItems.filter(item => item.id !== '6241c316234b593b5676b637').map(item => {
+                return {
+                    ...item,
+                    ...item.properties,
+                };
+            });
         });
     }
 
