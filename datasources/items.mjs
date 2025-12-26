@@ -1,10 +1,10 @@
 import { GraphQLError } from 'graphql';
 
-import WorkerKV from '../utils/worker-kv.mjs';
+import WorkerKVSplitLocale from '../utils/worker-kv-split-locale.mjs';
 
-class ItemsAPI extends WorkerKV {
+class ItemsAPI extends WorkerKVSplitLocale {
     constructor(dataSource) {
-        super('item_data', dataSource);
+        super('item_data', dataSource, 'items_locale_data');
         this.gameModes.push('pve');
     }
 
@@ -327,9 +327,9 @@ class ItemsAPI extends WorkerKV {
         return cache.PlayerLevel;
     }
 
-    async getLocale(key, context, info) {
+    /*async getLocale(key, context, info) {
         return context.data.worker.itemLocale.getLocale(key, context, info)
-    }
+    }*/
 }
 
 export default ItemsAPI;
