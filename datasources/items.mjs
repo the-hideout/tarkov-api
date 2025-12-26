@@ -118,15 +118,19 @@ class ItemsAPI extends WorkerKV {
         const searchString = name.toLowerCase();
         if (searchString === '') return Promise.reject(new GraphQLError('Searched item name cannot be blank'));
 
-        return items.filter((item) => {
-            if (this.getLocale(item.name, context, info).toString().toLowerCase().includes(searchString)) {
-                return true;
+        const matchingItems = [];
+        for (const item of items) {
+            const fullName = await this.getLocale(item.name, context, info);
+            if (fullName.toString().toLowerCase().includes(searchString)) {
+                matchingItems.push(item);
+                continue;
             }
-            if (this.getLocale(item.shortName, context, info).toString().toLowerCase().includes(searchString)) {
-                return true;
+            const shortName = await this.getLocale(item.shortName, context, info);
+            if (shortName.toString().toLowerCase().includes(searchString)) {
+                matchingItems.push(item);
             }
-            return false;
-        });
+        }
+        return matchingItems;
     }
 
     async getItemsByNames(context, info, names, items = false) {
@@ -138,17 +142,21 @@ class ItemsAPI extends WorkerKV {
             if (name === '') throw new GraphQLError('Searched item name cannot be blank');
             return name.toLowerCase();
         });
-        return items.filter((item) => {
+        const matchingItems = [];
+        for (const item of items) {
             for (const search of searchStrings) {
-                if (this.getLocale(item.name, context, info).toString().toLowerCase().includes(search)) {
-                    return true;
+                const fullName = await this.getLocale(item.name, context, info);
+                if (fullName.toString().toLowerCase().includes(search)) {
+                    matchingItems.push(item);
+                    continue;
                 }
-                if (this.getLocale(item.shortName, context, info).toString().toLowerCase().includes(search)) {
-                    return true;
+                const shortName = await this.getLocale(item.shortName, context, info);
+                if (shortName.toString().toLowerCase().includes(search)) {
+                    matchingItems.push(item);
                 }
             }
-            return false;
-        });
+        }
+        return matchingItems;
     }
 
     async getItemsByBsgCategoryId(context, info, bsgCategoryId, items = false) {
@@ -317,6 +325,10 @@ class ItemsAPI extends WorkerKV {
     async getPlayerLevels(context, info) {
         const { cache } = await this.getCache(context, info);
         return cache.PlayerLevel;
+    }
+
+    async getLocale(key, context, info) {
+        return context.data.worker.itemLocale.getLocale(key, context, info)
     }
 }
 
