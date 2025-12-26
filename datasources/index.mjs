@@ -1,10 +1,10 @@
 import BartersAPI from './barters.mjs';
 import CraftsAPI from './crafts.mjs';
-import HandbookAPI from './handbook.mjs';
 import HideoutAPI from './hideout.mjs';
 import HistoricalPricesAPI from './historical-prices.mjs';
 import ArchivedPricesAPI from './archived-prices.mjs';
 import ItemsAPI from './items.mjs';
+import ItemsLocaleAPI from './items-locale.mjs';
 import MapAPI from './maps.mjs';
 import SchemaAPI from './schema.mjs';
 import StatusAPI from './status.mjs';
@@ -24,11 +24,11 @@ class DataSource {
         this.worker = {
             barter: new BartersAPI(this),
             craft: new CraftsAPI(this),
-            handbook: new HandbookAPI(this),
             hideout: new HideoutAPI(this),
             historicalPrice: new HistoricalPricesAPI(this),
             archivedPrice: new ArchivedPricesAPI(this),
             item: new ItemsAPI(this),
+            itemLocale: new ItemsLocaleAPI(this),
             map: new MapAPI(this),
             schema: new SchemaAPI(this),
             status: new StatusAPI(this),

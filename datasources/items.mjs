@@ -172,7 +172,7 @@ class ItemsAPI extends WorkerKV {
         if (!items) {
             items = Object.values(cache.Item);
         }
-        const categories = (await context.data.worker.handbook.getCategories(context, info)).filter(cat => names.includes(cat.enumName));
+        const categories = (await this.getCategories(context, info)).filter(cat => names.includes(cat.enumName));
         return items.filter((item) => {
             return item.categories.some(catId => categories.some(cat => cat.id === catId));
         });
@@ -183,7 +183,7 @@ class ItemsAPI extends WorkerKV {
         if (!items) {
             items = Object.values(cache.Item);
         }
-        const categories = (await context.data.worker.handbook.getHandbookCategories(context, info)).filter(cat => names.includes(cat.enumName));
+        const categories = (await this.getHandbookCategories(context, info)).filter(cat => names.includes(cat.enumName));
         return items.filter((item) => {
             return item.handbookCategories.some(catId => categories.some(cat => cat.id === catId));
         });
@@ -224,17 +224,94 @@ class ItemsAPI extends WorkerKV {
     }
 
     async getAmmoList(context, info) {
-        const allAmmo = await this.getItemsByBsgCategoryId(context, info, '5485a8684bdc2da71d8b4567').then(ammoItems => {
+        return this.getItemsByBsgCategoryId(context, info, '5485a8684bdc2da71d8b4567').then(ammoItems => {
             // ignore bb
             return ammoItems.filter(item => item.id !== '6241c316234b593b5676b637');
         });
-        const itemProperties = await context.data.worker.handbook.getAllItemProperties(context, info);
-        return allAmmo.map(item => {
-            return {
-                ...item,
-                ...itemProperties[item.id],
-            };
-        });
+    }
+
+    async getCategory(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.ItemCategory[id] || cache.HandbookCategory[id];
+    }
+
+    async getTopCategory(context, info, id) {
+        const cat = await this.getCategory(context, info, id);
+        if (cat && cat.parent_id) return this.getTopCategory(context, info, cat.parent_id);
+        return cat;
+    }
+
+    async getCategories(context, info) {
+        const { cache } = await this.getCache(context, info);
+        if (!cache) {
+            return Promise.reject(new GraphQLError('Item cache is empty'));
+        }
+        const categories = [];
+        for (const id in cache.ItemCategory) {
+            categories.push(cache.ItemCategory[id]);
+        }
+        return categories;
+    }
+
+    async getCategoriesEnum(context, info) {
+        const cats = await this.getCategories(context, info);
+        const map = {};
+        for (const id in cats) {
+            map[cats[id].enumName] = cats[id];
+        }
+        return map;
+    }
+
+    async getHandbookCategory(context, info, id) {
+        const { cache } = await this.getCache(context, info);
+        return cache.HandbookCategory[id];
+    }
+
+    async getHandbookCategories(context, info) {
+        const { cache } = await this.getCache(context, info);
+        if (!cache) {
+            return Promise.reject(new GraphQLError('Item cache is empty'));
+        }
+        return Object.values(cache.HandbookCategory);
+    }
+
+    async getArmorMaterials(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return Object.values(cache.ArmorMaterial).sort();
+    }
+
+    async getArmorMaterial(context, info, matKey) {
+        const { cache } = await this.getCache(context, info);
+        return cache.ArmorMaterial[matKey];
+    }
+
+    async getMasterings(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Mastering;
+    }
+
+    async getMastering(context, info, mastId) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Mastering.find(m => m.id === mastId);
+    }
+
+    async getSkills(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.Skill;
+    }
+
+    async getSkill(context, info, skillId) {
+        const { cache } = await this.getCache(context, info);
+        const skill = cache.Skill.find(s => s.id === skillId);
+        if (!skill) {
+            console.log('no skill found', skillId);
+        }
+        return cache.Skill.find(s => s.id === skillId);
+    }
+
+    async getPlayerLevels(context, info) {
+        const { cache } = await this.getCache(context, info);
+        return cache.PlayerLevel;
     }
 }
 
