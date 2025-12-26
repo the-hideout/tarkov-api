@@ -6,6 +6,7 @@ class ItemsAPI extends WorkerKVSplitLocale {
     constructor(dataSource) {
         super('item_data', dataSource, 'items_locale_data');
         this.gameModes.push('pve');
+        this.kvs.data.postLoad = this.postLoad;
     }
 
     postLoad({ cache }) {
