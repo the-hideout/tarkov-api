@@ -4,7 +4,6 @@ class WorkerKVSplitLocale {
     constructor(kvName, dataSource, localeKvName) {
         this.cache = {};
         this.gameModes = ['regular'];
-        this.localeKvName = localeKvName;
         this.kvs = {
             data: new WorkerKV(kvName, dataSource),
             locale: new WorkerKV(localeKvName, dataSource),
@@ -31,29 +30,7 @@ class WorkerKVSplitLocale {
     }
 
     getLocale(key, context, info) {
-        if (!key) {
-            return null;
-        }
-        const lang = context.util.getLang(info, context);
-        const gameMode = this.getGameMode(context, info);
-        const cache = this.kvs.locale.cache[gameMode];
-        const getTranslation = (k) => {
-            if (cache?.locale[lang] && typeof cache.locale[lang][k] !== 'undefined') {
-                return cache.locale[lang][k];
-            }
-            if (cache?.locale.en && typeof cache.locale.en[k] !== 'undefined') {
-                return cache.locale.en[k];
-            }
-            const errorMessage = `Missing translation for key ${k}`;
-            if (!context.errors.some(err => err.message === errorMessage)) {
-                context.errors.push({message: errorMessage});
-            }
-            return k;
-        };
-        if (Array.isArray(key)) {
-            return key.map(k => getTranslation(k)).filter(Boolean);
-        }
-        return getTranslation(key);
+        return this.kvs.locale.getLocale(key, context, info);
     }
 }
 
