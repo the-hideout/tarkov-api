@@ -143,7 +143,8 @@ class WorkerKV {
         return getTranslation(key);
     }
 
-    postLoad() { /* some KVs may require initial processing after retrieval */ }
+    /* some KVs may require initial processing after retrieval */
+    postLoad(cache) {}
 }
 
 export default WorkerKV;
