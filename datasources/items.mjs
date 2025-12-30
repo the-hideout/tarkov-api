@@ -4,7 +4,7 @@ import WorkerKVSplitLocale from '../utils/worker-kv-split-locale.mjs';
 
 class ItemsAPI extends WorkerKVSplitLocale {
     constructor(dataSource) {
-        super('item_data', dataSource, 'items_locale_data');
+        super('item_data', dataSource);
         this.gameModes.push('pve');
         this.kvs.data.postLoad = this.postLoad;
     }
@@ -327,10 +327,6 @@ class ItemsAPI extends WorkerKVSplitLocale {
         const { cache } = await this.getCache(context, info);
         return cache.PlayerLevel;
     }
-
-    /*async getLocale(key, context, info) {
-        return context.data.worker.itemLocale.getLocale(key, context, info)
-    }*/
 }
 
 export default ItemsAPI;
