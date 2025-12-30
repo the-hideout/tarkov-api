@@ -1,12 +1,12 @@
 import WorkerKV from './worker-kv.mjs';
 
 class WorkerKVSplitLocale {
-    constructor(kvName, dataSource, localeKvName) {
+    constructor(kvName, dataSource) {
         this.cache = {};
         this.gameModes = ['regular'];
         this.kvs = {
             data: new WorkerKV(kvName, dataSource),
-            locale: new WorkerKV(localeKvName, dataSource),
+            locale: new WorkerKV(`${kvName}_locale`, dataSource),
         };
     }
     
