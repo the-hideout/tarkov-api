@@ -5,7 +5,7 @@ import WorkerKVSplitLocale from '../utils/worker-kv-split-locale.mjs';
 class ItemsAPI extends WorkerKVSplitLocale {
     constructor(dataSource) {
         super('item_data', dataSource);
-        this.gameModes.push('pve');
+        this.addGameMode('pve');
         this.kvs.data.postLoad = this.postLoad;
     }
 
