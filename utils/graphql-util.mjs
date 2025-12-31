@@ -56,15 +56,16 @@ const graphqlUtil =  {
                 return context.arguments[myRoot][argumentName];
             }
             for (const arg of selection.arguments) {
-                if (arg.name.value === argumentName) {
-                    if (arg.value.kind === 'Variable') {
-                        argValue = info.variableValues[arg.value.name.value];
-                    } else {
-                        argValue = arg.value.value;
-                    }
-                    argumentFound = true;
-                    break;
+                if (arg.name.value !== argumentName) {
+                    continue;
                 }
+                if (arg.value.kind === 'Variable') {
+                    argValue = info.variableValues[arg.value.name.value];
+                } else {
+                    argValue = arg.value.value;
+                }
+                argumentFound = true;
+                break;
             }
             if (argumentFound) break;
         }
