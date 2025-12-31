@@ -24,7 +24,7 @@ async function messageParentProcess(message) {
         const messageId = uuidv4();
         const responseTimeout = setTimeout(() => {
             emitter.off(messageId, messageResponseHandler);
-            reject(new Error('Response from primary process timed out'));
+            reject(new Error(`Response from primary process timed out for: ${JSON.stringify(message)}`));
         }, message.timeout ?? 10000);
         const messageResponseHandler = (response) => {
             clearTimeout(responseTimeout);

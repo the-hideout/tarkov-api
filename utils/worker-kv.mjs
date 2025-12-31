@@ -14,11 +14,11 @@ class WorkerKV {
         this.gameModes = ['regular'];
     }
 
-    async getCache(context, info, forceRegular) {
+    async getCache(context, info, settings = {}) {
         const requestId = typeof context === 'object' ? context.requestId : context;
         const gameMode = this.getGameMode(context, info);
         let requestKv = this.kvName;
-        if (gameMode !== 'regular' && !forceRegular) {
+        if (gameMode !== 'regular' && !settings.forceRegular) {
             requestKv += `_${gameMode}`;
         }
         let dataNeedsRefresh = false;
@@ -85,7 +85,7 @@ class WorkerKV {
                 console.warn(`${requestKv} data not found; falling back to ${this.kvName}`);
                 this.loading[gameMode] = false;
                 delete this.loadingPromises[gameMode][requestId];
-                return this.getCache(context, info, true);
+                return this.getCache(context, info, {...settings, forceRegular: true});
             }
             this.cache[gameMode] = parsedValue;
             let newDataExpires = false;
@@ -143,7 +143,8 @@ class WorkerKV {
         return getTranslation(key);
     }
 
-    postLoad() { /* some KVs may require initial processing after retrieval */ }
+    /* some KVs may require initial processing after retrieval */
+    postLoad(cache) {}
 }
 
 export default WorkerKV;
