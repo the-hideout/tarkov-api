@@ -82,14 +82,14 @@ const cacheMachine = {
             if (response.status === 200) {
                 return response;
             } else if (response.status !== 404) {
-                console.error(`failed to read from cache: ${response.status}`);
+                console.error(`failed to read from custom cache: ${response.status}`);
             }
             response.body.cancel();
     
             return false
         } catch (error) {
             if (error.message === 'The operation was aborted due to timeout') {
-                console.warn('Checking cache timed out');
+                console.warn('Checking custom cache timed out');
                 cacheRequestFail();
                 return false;
             }

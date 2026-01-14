@@ -24,6 +24,7 @@ import schema from './schema.mjs';
 import graphqlUtil from './utils/graphql-util.mjs';
 import graphQLOptions from './utils/graphql-options.mjs';
 import cacheMachine from './utils/cache-machine.mjs';
+import cfCache from './utils/cf-cache.mjs';
 
 import { getNightbotResponse, useNightbotOnUrl } from './plugins/plugin-nightbot.mjs';
 import { getTwitchResponse } from './plugins/plugin-twitch.mjs';
@@ -80,22 +81,34 @@ async function graphqlHandler(request, env, ctx) {
 
     const specialCache = getSpecialCache(request);
 
-    let key;
+    const key = await cacheMachine.createKey(env, query, variables, specialCache);
     // Check the cache service for data first - If cached data exists, return it
     // we don't check the cache if we're the http server because the worker already did
     if (env.SKIP_CACHE !== 'true' && env.SKIP_CACHE_CHECK !== 'true' && !env.CLOUDFLARE_TOKEN) {
-        key = await cacheMachine.createKey(env, query, variables, specialCache);
+        const cfCached = await cfCache.get(env, key);
+        if (cfCached) {
+            console.log('Request served from CF cache');
+            return new Response(await cfCached.json(), {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        }
         const cachedResponse = await cacheMachine.get(env, {key});
         if (cachedResponse) {
             // Construct a new response with the cached data
-            const newResponse = new Response(await cachedResponse.json(), {
+            const cachedJson = await cachedResponse.json();
+            const newResponse = new Response(cachedJson, {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CACHE': 'HIT', // we know request hit the cache
                     'Cache-Control': `public, max-age=${cachedResponse.headers.get('X-Cache-Ttl')}`,
                 },
             });
-            console.log('Request served from cache');
+            console.log('Request served from custom cache');
+            // update CF cache
+            const ttl = cachedResponse.headers.get('X-Cache-Ttl') ?? '300';
+            ctx.waitUntil(cfCache.put(env, cachedJson, {key, ttl}));
             // Return the new cached response
             return newResponse;
         }
@@ -127,18 +140,23 @@ async function graphqlHandler(request, env, ctx) {
                 },
                 signal: AbortSignal.timeout(20000),
             });
+            const originBody = await originResponse.text();
             if (originResponse.status !== 200) {
-                throw new Error(`${originResponse.status} ${await originResponse.text()}`);
+                throw new Error(`${originResponse.status} ${originBody}`);
             }
             console.log('Request served from origin server');
-            const newResponse = new Response(originResponse.body, {
+            const newResponse = new Response(originBody, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
+            let ttl = '300';
             if (originResponse.headers.has('X-Cache-Ttl')) {
                 newResponse.headers.set('Cache-Control', `public, max-age=${originResponse.headers.get('X-Cache-Ttl')}`);
+                ttl = originResponse.headers.get('X-Cache-Ttl');
             }
+            // update CF cache
+            ctx.waitUntil(cfCache.put(env, originBody, {key, ttl}));
             return newResponse;
         } catch (error) {
             console.error(`Error getting response from origin server: ${error}`);
@@ -197,8 +215,8 @@ async function graphqlHandler(request, env, ctx) {
     }
 
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
-        key = key ?? await cacheMachine.createKey(env, query, variables, specialCache);
-        ctx.waitUntil(cacheMachine.put(env, body, {key}));
+        ctx.waitUntil(cacheMachine.put(env, body, {key, ttl}));
+        ctx.waitUntil(cfCache.put(env, body, {key, ttl}));
     }
 
     return response;
