@@ -35,7 +35,7 @@ export default async function getYoga(env) {
             if (context.ctx) {
                 context.request.ctx = context.ctx;
             }
-            return schema(dataAPI, graphqlUtil.getDefaultContext(dataAPI, context.request.requestId));
+            return schema();
         },
         context: async ({request, params}) => {
             return graphqlUtil.getDefaultContext(dataAPI, request.requestId);
