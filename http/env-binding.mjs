@@ -24,7 +24,7 @@ async function messageParentProcess(message) {
         const messageId = uuidv4();
         const responseTimeout = setTimeout(() => {
             emitter.off(messageId, messageResponseHandler);
-            reject(new Error(`Response from primary process timed out for: ${JSON.stringify(message)}`));
+            reject(new Error(`Response from primary process timed out for ${message.action}`));
         }, message.timeout ?? 10000);
         const messageResponseHandler = (response) => {
             clearTimeout(responseTimeout);
@@ -75,7 +75,7 @@ const DATA_CACHE = {
 
 const putCacheWorker = async (env, body, options) => {
     const key = await cacheMachine.createKey(env, options.query, options.variables, options.specialCache);
-    messageParentProcess({action: 'cacheResponse', key, body, ttl: options.ttl}).catch(error => {
+    messageParentProcess({action: 'cacheResponse', key, body, ttl: options.ttl, timeout: 21000}).catch(error => {
         console.error(`Error updating cache`, error);
     });
     return;
