@@ -176,25 +176,41 @@ class ItemsAPI extends WorkerKVSplitLocale {
         return items.filter((item) => bsgCategoryIds.some(catId => catId === item.bsgCategoryId));
     }
 
-    async getItemsByCategoryEnums(context, info, names, items = false) {
+    async getItemsByCategoryNames(context, info, names, items = false) {
         const { cache } = await this.getCache(context, info);
         if (!items) {
             items = Object.values(cache.Item);
         }
-        const categories = (await this.getCategories(context, info)).filter(cat => names.includes(cat.enumName));
+        const categories = await this.getCategories(context, info);
+        const categoryIds = [];
+        for (const category of categories) {
+            const catName = await this.getLocale(category.name, context, info);
+            if (!names.includes(catName)) {
+                continue;
+            }
+            categoryIds.push(category.id);
+        }
         return items.filter((item) => {
-            return item.categories.some(catId => categories.some(cat => cat.id === catId));
+            return item.categories.some(catId => categoryIds.includes(catId));
         });
     }
 
-    async getItemsByHandbookCategoryEnums(context, info, names, items = false) {
+    async getItemsByHandbookCategoryNames(context, info, names, items = false) {
         const { cache } = await this.getCache(context, info);
         if (!items) {
             items = Object.values(cache.Item);
         }
-        const categories = (await this.getHandbookCategories(context, info)).filter(cat => names.includes(cat.enumName));
+        const categories = await this.getHandbookCategories(context, info);
+        const categoryIds = [];
+        for (const category of categories) {
+            const catName = await this.getLocale(category.name, context, info);
+            if (!names.includes(catName)) {
+                continue;
+            }
+            categoryIds.push(category.id);
+        }
         return items.filter((item) => {
-            return item.handbookCategories.some(catId => categories.some(cat => cat.id === catId));
+            return item.handbookCategories.some(catId => categoryIds.includes(catId));
         });
     }
 

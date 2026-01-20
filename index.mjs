@@ -148,7 +148,7 @@ async function graphqlHandler(request, env, ctx) {
     const context = graphqlUtil.getDefaultContext(dataAPI, requestId);
     let result, ttl;
     try {
-        result = await graphql({schema: await schema(dataAPI, context), source: query, rootValue: {}, contextValue: context, variableValues: variables});
+        result = await graphql({schema: schema(), source: query, rootValue: {}, contextValue: context, variableValues: variables});
         ttl = dataAPI.getRequestTtl(requestId);
         //console.log(`${requestId} kvs loaded: ${dataAPI.requests[requestId].kvLoaded.join(', ')}`);
     } catch (error) {
