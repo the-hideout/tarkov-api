@@ -1562,7 +1562,7 @@ type Query {
   hideoutStations(lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [HideoutStation]!
   historicalItemPrices(id: ID!, days: Int, lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [historicalPricePoint]!
   item(id: ID, normalizedName: String, lang: LanguageCode, gameMode: GameMode): Item
-  items(ids: [ID], name: String, names: [String], type: ItemType, types: [String], categoryNames: [String], handbookCategoryNames: [String] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Item]!
+  items(ids: [ID], name: String, names: [String], type: ItemType, types: [ItemType], categoryNames: [String], handbookCategoryNames: [String] bsgCategoryId: String, bsgCategoryIds: [String], bsgCategory: String, lang: LanguageCode, gameMode: GameMode, limit: Int, offset: Int): [Item]!
   itemPrices(id: ID!, gameMode: GameMode, limit: Int, offset: Int): [historicalPricePoint]!
   itemCategories(lang: LanguageCode, limit: Int, offset: Int): [ItemCategory]!
   goonReports(lang: LanguageCode, gameMode: GameMode, limit: Int, ofset: Int): [GoonReport]!
