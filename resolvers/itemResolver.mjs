@@ -26,10 +26,10 @@ export default {
                     return context.data.worker.item.getItemsByTypes(context, info, types, items);
                 },
                 categoryNames: async bsgcats => {
-                    return context.data.worker.item.getItemsByCategoryEnums(context, info, bsgcats, items);
+                    return context.data.worker.item.getItemsByCategoryNames(context, info, bsgcats, items);
                 },
                 handbookCategoryNames: async handbookcats => {
-                    return context.data.worker.item.getItemsByHandbookCategoryEnums(context, info, handbookcats, items);
+                    return context.data.worker.item.getItemsByHandbookCategoryNames(context, info, handbookcats, items);
                 },
                 bsgCategoryId: async bsgcat => {
                     return context.data.worker.item.getItemsByBsgCategoryId(context, info, bsgcat, items);
