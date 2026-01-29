@@ -5,7 +5,6 @@ import HistoricalPricesAPI from './historical-prices.mjs';
 import ArchivedPricesAPI from './archived-prices.mjs';
 import ItemsAPI from './items.mjs';
 import MapAPI from './maps.mjs';
-import SchemaAPI from './schema.mjs';
 import StatusAPI from './status.mjs';
 import TasksAPI from './tasks.mjs';
 import TraderInventoryAPI from './trader-inventory.mjs';
@@ -28,7 +27,6 @@ class DataSource {
             archivedPrice: new ArchivedPricesAPI(this),
             item: new ItemsAPI(this),
             map: new MapAPI(this),
-            schema: new SchemaAPI(this),
             status: new StatusAPI(this),
             task: new TasksAPI(this),
             trader: new TradersAPI(this),
