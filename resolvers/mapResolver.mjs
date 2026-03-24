@@ -176,7 +176,10 @@ export default {
     MobInfo: {
         name(data, args, context, info) {
             return context.data.worker.map.getLocale(data.name, context, info);
-        }
+        },
+        items(data, args, context, info) {
+            return context.data.worker.item.getItemsByIDs(context, info, data.items.map(it => it.id));
+        },
     },
     BossSpawn: {
         boss(data, args, context, info) {
