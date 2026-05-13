@@ -11,6 +11,8 @@ updates:
           - "*"
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 45
   - package-ecosystem: npm
     directory: "/"
     groups:
@@ -20,4 +22,10 @@ updates:
     schedule:
       interval: monthly
     cooldown:
-      default-days: 90
+      default-days: 45
+  - package-ecosystem: "npm"
+    directory: "/http"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 45
