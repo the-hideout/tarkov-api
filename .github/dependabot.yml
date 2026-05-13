@@ -26,6 +26,6 @@ updates:
   - package-ecosystem: "npm"
     directory: "/http"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     cooldown:
       default-days: 45
