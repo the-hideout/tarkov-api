@@ -17,7 +17,7 @@
         "nodemon": "^3.1.14"
     },
     "dependencies": {
-        "@graphql-tools/merge": "9.1.7",
+        "@graphql-tools/merge": "9.1.8",
         "@graphql-tools/schema": "10.0.31",
         "graphql-yoga": "^5.18.1",
         "dotenv": "^17.3.1",
