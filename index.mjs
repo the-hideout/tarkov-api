@@ -197,8 +197,10 @@ async function graphqlHandler(request, env, ctx) {
     }
 
     if (env.SKIP_CACHE !== 'true' && ttl > 0) {
+        console.log(parseInt(env.MIN_CACHE_TTL ?? 60 * 15));
+        ttl = Math.min(ttl, parseInt(env.MIN_CACHE_TTL ?? 60 * 15)); // set ttl min to var or 15 minutes
         key = key ?? await cacheMachine.createKey(env, query, variables, specialCache);
-        ctx.waitUntil(cacheMachine.put(env, body, {key}));
+        ctx.waitUntil(cacheMachine.put(env, body, {key, ttl}));
     }
 
     return response;
