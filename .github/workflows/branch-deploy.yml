@@ -24,7 +24,7 @@ jobs:
         with:
           admins: GrantBirki,Razzmatazzz
           environment_targets: production,development
-          environment_urls: production|https://api.tarkov.dev/graphql,development|https://dev-api.tarkov.dev/graphql
+          environment_urls: production|https://api.tarkov.dev/,development|https://dev-api.tarkov.dev/
           sticky_locks: "true"
 
       - name: checkout
@@ -66,7 +66,7 @@ jobs:
 
             The API has been **deployed** to the **development** environment 🚀
 
-            - Endpoint: `dev-api.tarkov.dev/graphql`
+            - Endpoint: `dev-api.tarkov.dev/`
             - Playground: [dev-api.tarkov.dev](https://dev-api.tarkov.dev)
 
             > Pusher: @${{ github.actor }}, Action: `${{ github.event_name }}`, Workflow: `${{ github.workflow }}`;
@@ -92,7 +92,7 @@ jobs:
 
             The API has been **deployed** to the **production** environment 🚀
 
-            - Endpoint: `api.tarkov.dev/graphql`
+            - Endpoint: `api.tarkov.dev/`
             - Playground: [api.tarkov.dev](https://api.tarkov.dev)
 
             > Pusher: @${{ github.actor }}, Action: `${{ github.event_name }}`, Workflow: `${{ github.workflow }}`;
