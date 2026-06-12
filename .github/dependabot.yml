@@ -14,22 +14,14 @@ updates:
     cooldown:
       default-days: 45
   - package-ecosystem: npm
-    directory: "/"
+    directories:
+      - "/"
+      - "/http"
     groups:
       npm-dependencies:
         patterns:
           - "*"
     schedule:
       interval: monthly
-    cooldown:
-      default-days: 45
-  - package-ecosystem: "npm"
-    directory: "/http"
-    groups:
-      npm-dependencies:
-        patterns:
-          - "*"
-    schedule:
-      interval: "monthly"
     cooldown:
       default-days: 45
