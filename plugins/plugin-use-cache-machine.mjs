@@ -99,6 +99,7 @@ export default function useCacheMachine(env) {
                 ttl = 1800;
             }
             if (env.SKIP_CACHE !== 'true' && ttl > 0 && env.USE_ORIGIN !== 'true') {
+                ttl = Math.min(ttl, parseInt(env.MIN_CACHE_TTL ?? 60 * 15)); // set ttl min to var or 15 minutes
                 request.resultTtl = String(ttl);
                 // using waitUntil doesn't hold up returning a response but keeps the worker alive as long as needed
                 const cacheBody = JSON.stringify(result);
