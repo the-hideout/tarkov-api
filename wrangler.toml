@@ -28,4 +28,4 @@ routes = [
 # TWITCH_TOKEN
 
 [limits]
-cpu_ms = 500
+cpu_ms = 1
