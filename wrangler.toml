@@ -26,3 +26,6 @@ routes = [
 # CACHE_BASIC_AUTH
 # TWITCH_CLIENT_ID
 # TWITCH_TOKEN
+
+[limits]
+cpu_ms = 100
