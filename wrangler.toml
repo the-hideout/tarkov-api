@@ -4,6 +4,9 @@ main = "index.mjs"
 account_id = "424ad63426a1ae47d559873f929eb9fc"
 workers_dev = true
 
+[limits]
+cpu_ms = 100
+
 [env.production]
 kv_namespaces = [
     { binding = "DATA_CACHE", id = "2e6feba88a9e4097b6d2209191ed4ae5", preview_id = "17fd725f04984e408d4a70b37c817171" },
@@ -14,8 +17,8 @@ routes = [
     { pattern = "streamer.tarkov.dev/*", zone_name = "tarkov.dev" }
 ]
 
-    [env.production.limits]
-    cpu_ms = 100
+[env.production.limits]
+cpu_ms = 100
 
 [env.development]
 kv_namespaces = [
@@ -27,8 +30,8 @@ routes = [
     { pattern = "dev-streamer.tarkov.dev/*", zone_name = "tarkov.dev" }
 ]
 
-    [env.development.limits]
-    cpu_ms = 100
+[env.development.limits]
+cpu_ms = 100
 
 # [secrets]
 # CACHE_BASIC_AUTH
