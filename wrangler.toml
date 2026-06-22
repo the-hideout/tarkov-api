@@ -15,8 +15,10 @@ routes = [
 [limits]
 cpu_ms = 100
 
-[env.production.limits]
-cpu_ms = 100
+[env.production]
+
+    [env.production.limits]
+    cpu_ms = 100
 
 [env.development]
 kv_namespaces = [
@@ -28,8 +30,8 @@ routes = [
     { pattern = "dev-streamer.tarkov.dev/*", zone_name = "tarkov.dev" }
 ]
 
-[env.development.limits]
-cpu_ms = 100
+    [env.development.limits]
+    cpu_ms = 100
 
 # [secrets]
 # CACHE_BASIC_AUTH
