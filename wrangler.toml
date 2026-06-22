@@ -12,7 +12,7 @@ routes = [
     { pattern = "streamer.tarkov.dev/*", zone_name = "tarkov.dev" }
 ]
 
-[limits]
+[env.production.limits]
 cpu_ms = 100
 
 [env.development]
