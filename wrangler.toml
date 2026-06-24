@@ -16,6 +16,7 @@ routes = [
 cpu_ms = 100
 
 [env.production]
+workers_dev = false
 kv_namespaces = [
     { binding = "DATA_CACHE", id = "2e6feba88a9e4097b6d2209191ed4ae5", preview_id = "17fd725f04984e408d4a70b37c817171" },
 ]
