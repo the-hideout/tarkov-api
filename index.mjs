@@ -145,13 +145,16 @@ async function graphqlHandler(request, env, ctx) {
         }
     }
     if (env.GRAPHQL_IN_WORKER !== 'true') {
-        return new Response(JSON.stringify({
-            errors: [
-                'GraphQL server unavailable. Try again later.',
-            ]
-        }), {
-            status: 503,
-        });
+        return new Response(
+            JSON.stringify({
+                errors: [
+                    'GraphQL server unavailable. Try again later.',
+                ]
+            }), 
+            {
+                status: 503,
+            }
+        );
     }
 
     const context = graphqlUtil.getDefaultContext(dataAPI, requestId);
