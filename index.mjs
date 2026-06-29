@@ -144,6 +144,15 @@ async function graphqlHandler(request, env, ctx) {
             console.error(`Error getting response from origin server: ${error}`);
         }
     }
+    if (env.GRAPHQL_IN_WORKER !== 'true') {
+        return new Response(JSON.stringify({
+            errors: [
+                'GraphQL server unavailable. Try again later.',
+            ]
+        }), {
+            status: 503,
+        });
+    }
 
     const context = graphqlUtil.getDefaultContext(dataAPI, requestId);
     let result, ttl;
