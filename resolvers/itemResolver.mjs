@@ -371,9 +371,9 @@ export default {
             return context.data.worker.item.getItem(context, info, data.base_item_id);
         }
     },
-    ItemPropertiesTape: {
-        subtitles(data, args, context, info) {
-            return context.data.worker.item.getLocale(data.subtitles, context, info);
+    ItemPropertiesInfoContent: {
+        content(data, args, context, info) {
+            return context.data.worker.item.getLocale(data.content, context, info);
         }
     },
     ItemPropertiesWeapon: {
