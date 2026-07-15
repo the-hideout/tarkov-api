@@ -371,6 +371,11 @@ export default {
             return context.data.worker.item.getItem(context, info, data.base_item_id);
         }
     },
+    ItemPropertiesTape: {
+        subtitles(data, args, context, info) {
+            return context.data.worker.item.getLocale(data.subtitles, context, info);
+        }
+    },
     ItemPropertiesWeapon: {
         defaultAmmo(data, args, context, info) {
             if (!data.default_ammo_id) return null;
