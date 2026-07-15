@@ -7,3 +7,4 @@ dist/
 tmp/
 kv/
 .*.vars
+.wrangler/state/v3/cache/miniflare-CacheObject/

@@ -4,7 +4,7 @@
     "description": "Tarkov Data API",
     "main": "index.mjs",
     "engines": {
-        "node": ">=20.15.1"
+        "node": ">=24.17.0"
     },
     "scripts": {
         "test": "echo \"Error: no test specified\"",
@@ -20,7 +20,7 @@
     "devDependencies": {
         "newman": "^6.2.2",
         "prettier": "^3.8.3",
-        "wrangler": "^4.83.0"
+        "wrangler": "^4.103.0"
     },
     "dependencies": {
         "@graphql-tools/merge": "9.1.9",
