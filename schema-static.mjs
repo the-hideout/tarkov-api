@@ -677,8 +677,8 @@ type ItemPropertiesSurgicalKit {
   maxLimbHealth: Float
 }
 
-type ItemPropertiesTape {
-  subtitles: [String]
+type ItemPropertiesInfoContent {
+  content: [String]
 }
 
 type ItemPropertiesWeapon {
@@ -749,7 +749,7 @@ union ItemProperties =
   ItemPropertiesWeapon | 
   ItemPropertiesWeaponMod |
   ItemPropertiesStim | 
-  ItemPropertiesTape
+  ItemPropertiesInfoContent
 
 type ItemSlot {
   id: ID!
