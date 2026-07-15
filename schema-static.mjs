@@ -678,7 +678,7 @@ type ItemPropertiesSurgicalKit {
 }
 
 type ItemPropertiesInfoContent {
-  subtitles: [String]
+  content: [String]
 }
 
 type ItemPropertiesWeapon {
