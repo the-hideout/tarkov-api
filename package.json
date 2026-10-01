@@ -19,13 +19,13 @@
     "license": "ISC",
     "devDependencies": {
         "newman": "^6.2.2",
-        "prettier": "^3.8.3",
-        "wrangler": "^4.120.1"
+        "prettier": "^3.9.6",
+        "wrangler": "^4.123.0"
     },
     "dependencies": {
-        "@graphql-tools/merge": "9.1.9",
-        "@graphql-tools/schema": "10.0.33",
-        "graphql-yoga": "^5.21.0",
-        "uuid": "^14.0.0"
+        "@graphql-tools/merge": "9.2.3",
+        "@graphql-tools/schema": "10.1.0",
+        "graphql-yoga": "^5.21.3",
+        "uuid": "^14.0.1"
     }
 }
