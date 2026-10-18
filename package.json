@@ -23,9 +23,9 @@
         "wrangler": "^4.120.1"
     },
     "dependencies": {
-        "@graphql-tools/merge": "9.1.9",
-        "@graphql-tools/schema": "10.0.33",
-        "graphql-yoga": "^5.21.0",
+        "@graphql-tools/merge": "9.2.8",
+        "@graphql-tools/schema": "10.1.5",
+        "graphql-yoga": "^5.24.6",
         "uuid": "^14.0.0"
     }
 }
